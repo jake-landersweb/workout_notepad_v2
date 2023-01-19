@@ -28,7 +28,7 @@ class _WorkoutsHomeState extends State<WorkoutsHome> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        for (var i in dmodel.workouts) WorkoutCell(workout: i),
+        for (var i in dmodel.workouts) WorkoutCell(wc: i),
       ],
     );
   }

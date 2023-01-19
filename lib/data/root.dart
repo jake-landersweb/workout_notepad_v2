@@ -4,3 +4,4 @@ export 'exercise.dart';
 export 'user.dart';
 export 'workout_exercise.dart';
 export 'workout.dart';
+export 'workout_cat.dart';

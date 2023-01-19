@@ -18,8 +18,8 @@ class DataModel extends ChangeNotifier {
 
   List<Category> _categories = [];
   List<Category> get categories => _categories;
-  List<Workout> _workouts = [];
-  List<Workout> get workouts => _workouts;
+  List<WorkoutCategories> _workouts = [];
+  List<WorkoutCategories> get workouts => _workouts;
   List<Exercise> _exercises = [];
   List<Exercise> get exercises => _exercises;
 
@@ -71,7 +71,7 @@ class DataModel extends ChangeNotifier {
 
   Future<void> fetchData(String userId) async {
     var getC = Category.getList(userId);
-    var getW = Workout.getList(userId);
+    var getW = WorkoutCategories.getList(userId);
     var getE = Exercise.getList(userId);
     _categories = await getC;
     _workouts = await getW;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
@@ -11,28 +12,15 @@ import 'package:workout_notepad_v2/utils/root.dart';
 class WorkoutCell extends StatefulWidget {
   const WorkoutCell({
     super.key,
-    required this.workout,
+    required this.wc,
   });
-  final Workout workout;
+  final WorkoutCategories wc;
 
   @override
   State<WorkoutCell> createState() => _WorkoutCellState();
 }
 
 class _WorkoutCellState extends State<WorkoutCell> {
-  List<String> _categories = [];
-
-  @override
-  void initState() {
-    _init();
-    super.initState();
-  }
-
-  Future<void> _init() async {
-    _categories = await widget.workout.getCategories();
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
@@ -40,7 +28,7 @@ class _WorkoutCellState extends State<WorkoutCell> {
       onTap: () {
         sui.Navigate(
           context,
-          WorkoutDetail(workout: widget.workout),
+          WorkoutDetail(workout: widget.wc.workout),
         );
       },
       child: Container(
@@ -52,10 +40,10 @@ class _WorkoutCellState extends State<WorkoutCell> {
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
           child: Row(
             children: [
-              if (widget.workout.icon.isNotEmpty)
+              if (widget.wc.workout.icon.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(right: 16.0),
-                  child: widget.workout.getIcon(size: 40),
+                  child: widget.wc.workout.getIcon(size: 40),
                 ),
               Expanded(
                 child: Column(
@@ -63,18 +51,18 @@ class _WorkoutCellState extends State<WorkoutCell> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      widget.workout.title,
+                      widget.wc.workout.title,
                       style: ttSubTitle(context, color: dmodel.color),
                     ),
-                    if (widget.workout.description?.isNotEmpty ?? false)
+                    if (widget.wc.workout.description?.isNotEmpty ?? false)
                       Text(
-                        widget.workout.description!,
+                        widget.wc.workout.description!,
                         style: Theme.of(context)
                             .textTheme
                             .bodyLarge!
                             .copyWith(color: dmodel.accentColor(context)),
                       ),
-                    if (_categories.isNotEmpty) _cat(context),
+                    if (widget.wc.categories.isNotEmpty) _cat(context),
                   ],
                 ),
               ),
@@ -91,9 +79,9 @@ class _WorkoutCellState extends State<WorkoutCell> {
 
   Widget _cat(BuildContext context) {
     String t = "";
-    for (int i = 0; i < _categories.length; i++) {
-      t = "$t${_categories[i].uppercase()}";
-      if (i < _categories.length - 1) {
+    for (int i = 0; i < widget.wc.categories.length; i++) {
+      t = "$t${widget.wc.categories[i].uppercase()}";
+      if (i < widget.wc.categories.length - 1) {
         t = "$t, ";
       }
     }

@@ -6,7 +6,6 @@ import 'package:sqflite/sqflite.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/load_tests.dart';
 import 'package:path/path.dart';
-import 'package:workout_notepad_v2/model/root.dart';
 
 enum LoadStatus { init, noUser, done }
 
@@ -25,13 +24,7 @@ class DataModel extends ChangeNotifier {
   List<Exercise> get exercises => _exercises;
 
   DataModel() {
-    initTest(delete: false);
-  }
-
-  @override
-  void dispose() {
-    print("DISPOSE");
-    super.dispose();
+    initTest(delete: true);
   }
 
   Future<void> init() async {

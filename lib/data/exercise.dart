@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart';
 import 'package:sqflite/sql.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 
 class Exercise {
   late String id;
@@ -15,6 +17,8 @@ class Exercise {
   late int reps;
   late int time;
   late String timePost;
+
+  // --- Constructors
 
   Exercise({
     required this.id,
@@ -95,6 +99,8 @@ class Exercise {
     timePost = json['timePost'] ?? e.timePost;
   }
 
+  // --- Class methods
+
   Map<String, dynamic> toMap() {
     return {
       "id": id,
@@ -110,6 +116,12 @@ class Exercise {
       "timePost": timePost,
     };
   }
+
+  Image getIcon({double? size}) {
+    return getImageIcon(icon, size: size);
+  }
+
+  // Database methods
 
   Future<void> insert() async {
     final db = await getDB();

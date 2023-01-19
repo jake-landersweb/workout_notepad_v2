@@ -4,7 +4,8 @@
             "workout": {
                 "id": "46DAA214-725E-47E8-83D3-A44B863CC623",
                 "title": "Day 1",
-                "description": "GGII day 1"
+                "description": "GGII day 1",
+                "icon": "pushups"
             },
             "exercises": [
                 {
@@ -85,6 +86,7 @@
             "category": "shoulders",
             "title": "Lateral Raises",
             "description": "Pre-Exhaustion",
+            "icon": "rowing-machine",
             "type": 0,
             "sets": 2,
             "reps": 20,

@@ -52,6 +52,11 @@ class _WorkoutCellState extends State<WorkoutCell> {
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
           child: Row(
             children: [
+              if (widget.workout.icon.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(right: 16.0),
+                  child: widget.workout.getIcon(size: 40),
+                ),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

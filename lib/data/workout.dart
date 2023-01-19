@@ -1,6 +1,8 @@
+import 'package:flutter/material.dart';
 import 'package:sqflite/sql.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/utils/icons.dart';
 
 class Workout {
   late String id;
@@ -10,6 +12,8 @@ class Workout {
   late String icon;
   late String created;
   late String updated;
+
+  // --- Constructors
 
   Workout({
     required this.id,
@@ -51,6 +55,8 @@ class Workout {
     updated = "";
   }
 
+  // --- Class Methods
+
   Map<String, dynamic> toMap() {
     return {
       "id": id,
@@ -60,6 +66,12 @@ class Workout {
       "description": description,
     };
   }
+
+  Image getIcon({double? size}) {
+    return getImageIcon(icon, size: size);
+  }
+
+  // --- DB Methods
 
   Future<void> insert({ConflictAlgorithm? conflictAlgorithm}) async {
     final db = await getDB();

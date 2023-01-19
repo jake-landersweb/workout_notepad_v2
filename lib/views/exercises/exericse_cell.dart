@@ -33,6 +33,11 @@ class _ExerciseCellState extends State<ExerciseCell> {
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
           child: Row(
             children: [
+              if (widget.exercise.icon.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(right: 16),
+                  child: widget.exercise.getIcon(),
+                ),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

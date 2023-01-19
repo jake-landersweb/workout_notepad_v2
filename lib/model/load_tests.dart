@@ -102,5 +102,5 @@ Future<void> loadTests() async {
     }
   }
 
-  log("[TEST] DATA THAT WAS INSERTED");
+  log("[TEST] successfully created test data");
 }

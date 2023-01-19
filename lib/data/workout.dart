@@ -7,6 +7,7 @@ class Workout {
   late String userId;
   late String title;
   String? description;
+  late String icon;
   late String created;
   late String updated;
 
@@ -15,6 +16,7 @@ class Workout {
     required this.userId,
     required this.title,
     this.description,
+    required this.icon,
     required this.created,
     required this.updated,
   });
@@ -24,6 +26,7 @@ class Workout {
         userId: userId,
         title: title,
         description: description,
+        icon: icon,
         created: created,
         updated: updated,
       );
@@ -33,6 +36,7 @@ class Workout {
     userId = json['userId'];
     title = json['title'];
     description = json['description'];
+    icon = json['icon'];
     created = json['created'];
     updated = json['updated'];
   }
@@ -42,6 +46,7 @@ class Workout {
     userId = "1";
     title = json['title'];
     description = json['description'];
+    icon = json['icon'] ?? "";
     created = "";
     updated = "";
   }
@@ -51,6 +56,7 @@ class Workout {
       "id": id,
       "userId": userId,
       "title": title,
+      "icon": icon,
       "description": description,
     };
   }

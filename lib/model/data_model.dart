@@ -25,7 +25,7 @@ class DataModel extends ChangeNotifier {
   List<Exercise> get exercises => _exercises;
 
   DataModel() {
-    initTest(delete: true);
+    initTest(delete: false);
   }
 
   @override

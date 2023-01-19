@@ -7,6 +7,7 @@ class Exercise {
   late String category;
   late String title;
   String? description;
+  late String icon;
   late String created;
   late String updated;
   late int type;
@@ -21,6 +22,7 @@ class Exercise {
     required this.category,
     required this.title,
     this.description,
+    required this.icon,
     required this.created,
     required this.updated,
     required this.type,
@@ -35,6 +37,8 @@ class Exercise {
         userId: userId,
         category: category,
         title: title,
+        description: description,
+        icon: icon,
         created: created,
         updated: updated,
         type: type,
@@ -50,6 +54,7 @@ class Exercise {
     category = json['category'];
     title = json['title'];
     description = json['description'];
+    icon = json['icon'];
     created = json['created'];
     updated = json['updated'];
     type = json['type'];
@@ -65,6 +70,7 @@ class Exercise {
     category = json['category'];
     title = json['title'];
     description = json['description'];
+    icon = json['icon'] ?? "";
     created = "";
     updated = "";
     type = json['type'];
@@ -96,6 +102,7 @@ class Exercise {
       "category": category,
       "title": title,
       "description": description,
+      "icon": icon,
       "type": type,
       "reps": reps,
       "sets": sets,

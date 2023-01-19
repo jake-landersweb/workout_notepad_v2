@@ -31,7 +31,6 @@ class WorkoutExercise {
   });
 
   WorkoutExercise.init(Workout w, Exercise e, ExerciseChildArgs args) {
-    print(args);
     var uuid = const Uuid();
     id = uuid.v4();
     workoutId = w.id;

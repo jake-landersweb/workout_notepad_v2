@@ -13,8 +13,10 @@ class ExerciseCell extends StatefulWidget {
   const ExerciseCell({
     super.key,
     required this.exercise,
+    this.isClickable = true,
   });
   final Exercise exercise;
+  final bool isClickable;
 
   @override
   State<ExerciseCell> createState() => _ExerciseCellState();
@@ -24,52 +26,60 @@ class _ExerciseCellState extends State<ExerciseCell> {
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
-    return sui.Button(
-      onTap: () {
-        sui.showFloatingSheet(
-          context: context,
-          builder: (context) => ExerciseDetail(exercise: widget.exercise),
-          title: widget.exercise.title,
-        );
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: sui.CustomColors.cellColor(context),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-          child: Row(
-            children: [
-              if (widget.exercise.icon.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(right: 16),
-                  child: widget.exercise.getIcon(),
-                ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.exercise.title,
-                      style: ttLabel(context, color: dmodel.color),
-                    ),
-                    Text("${widget.exercise.sets} x ${widget.exercise.reps}",
-                        style: ttBody(context)),
-                    if (widget.exercise.category.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4.0),
-                        child: CategoryBuble(text: widget.exercise.category),
-                      ),
-                  ],
-                ),
+    if (widget.isClickable) {
+      return sui.Button(
+        onTap: () {
+          sui.showFloatingSheet(
+            context: context,
+            builder: (context) => ExerciseDetail(exercise: widget.exercise),
+            title: widget.exercise.title,
+          );
+        },
+        child: _body(context, dmodel),
+      );
+    }
+    return _body(context, dmodel);
+  }
+
+  Container _body(BuildContext context, DataModel dmodel) {
+    return Container(
+      decoration: BoxDecoration(
+        color: sui.CustomColors.cellColor(context),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+        child: Row(
+          children: [
+            if (widget.exercise.icon.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(right: 16),
+                child: widget.exercise.getIcon(),
               ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.exercise.title,
+                    style: ttLabel(context, color: dmodel.color),
+                  ),
+                  Text("${widget.exercise.sets} x ${widget.exercise.reps}",
+                      style: ttBody(context)),
+                  if (widget.exercise.category.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4.0),
+                      child: CategoryBuble(text: widget.exercise.category),
+                    ),
+                ],
+              ),
+            ),
+            if (widget.isClickable)
               Icon(
                 LineIcons.verticalEllipsis,
                 color: dmodel.accentColor(context),
               ),
-            ],
-          ),
+          ],
         ),
       ),
     );

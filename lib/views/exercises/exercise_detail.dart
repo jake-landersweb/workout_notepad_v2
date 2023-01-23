@@ -98,7 +98,8 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         sui.ListView<Widget>(
-          horizontalPadding: 0,
+          leadingPadding: 0,
+          trailingPadding: 0,
           children: [
             if (widget.exercise.category.isNotEmpty)
               Text(widget.exercise.category.uppercase(),

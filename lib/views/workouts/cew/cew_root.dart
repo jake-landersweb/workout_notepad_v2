@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
 import 'package:workout_notepad_v2/components/root.dart' as comp;
+import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -55,13 +56,41 @@ class _CEWRootState extends State<CEWRoot> {
     var cmodel = Provider.of<CEWModel>(context);
     return sui.AppBar.sheet(
       title: "Create Workout",
-      isFluid: true,
-      itemSpacing: 16,
+      horizontalSpacing: 0,
       crossAxisAlignment: CrossAxisAlignment.center,
       leading: [comp.CloseButton(useRoot: widget.useRoot)],
       children: [
-        _icon(context, cmodel),
+        Center(child: _icon(context, cmodel)),
         _title(context, cmodel),
+        comp.LabeledWidget(
+          label: "Exercises",
+          child: sui.ListView<CEWExercise>(
+            children: cmodel.exercises,
+            showStyling: false,
+            leadingPadding: 0,
+            trailingPadding: 0,
+            allowsDelete: true,
+            isAnimated: true,
+            onDelete: (item) {},
+            childBuilder: ((context, item) {
+              return _exerciseCell(
+                context,
+                dmodel,
+                cmodel,
+                cmodel.exercises.indexOf(item),
+              );
+            }),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: sui.Button(
+            onTap: () {
+              cmodel.addExercise(Exercise.empty("1"));
+            },
+            child: Text("Add exercise"),
+          ),
+        ),
       ],
     );
   }
@@ -96,7 +125,8 @@ class _CEWRootState extends State<CEWRoot> {
     return sui.ListView<Widget>(
       childPadding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
       backgroundColor: sui.CustomColors.textColor(context).withOpacity(0.1),
-      horizontalPadding: 0,
+      leadingPadding: 16,
+      trailingPadding: 16,
       children: [
         sui.TextField(
           labelText: "Title",
@@ -121,6 +151,40 @@ class _CEWRootState extends State<CEWRoot> {
             });
           },
         ),
+      ],
+    );
+  }
+
+  Widget _exerciseCell(
+      BuildContext context, DataModel dmodel, CEWModel cmodel, int index) {
+    return Column(
+      children: [
+        ExerciseCell(
+          exercise: cmodel.exercises[index].exercise,
+          isClickable: false,
+        ),
+        if (cmodel.exercises[index].children.isNotEmpty)
+          sui.ListView<Exercise>(
+            children: cmodel.exercises[index].children,
+            animateOpen: true,
+            childPadding: EdgeInsets.zero,
+            leadingPadding: 32,
+            trailingPadding: 0,
+            allowsDelete: true,
+            isAnimated: true,
+            childBuilder: (context, item) {
+              return ExerciseCell(exercise: item, isClickable: false);
+            },
+            onDelete: ((item) {
+              cmodel.removeExerciseChild(index, item);
+            }),
+          ),
+        sui.Button(
+          onTap: () {
+            cmodel.addExerciseChild(index, Exercise.empty("1"));
+          },
+          child: Text("Add sub exercise"),
+        )
       ],
     );
   }

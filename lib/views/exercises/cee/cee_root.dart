@@ -132,7 +132,8 @@ class _CEERootState extends State<CEERoot> {
     return sui.ListView<Widget>(
       childPadding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
       backgroundColor: sui.CustomColors.textColor(context).withOpacity(0.1),
-      horizontalPadding: 0,
+      leadingPadding: 0,
+      trailingPadding: 0,
       children: [
         sui.TextField(
           labelText: "Title",

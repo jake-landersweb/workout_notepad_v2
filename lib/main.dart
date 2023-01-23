@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
-import 'package:sapphireui/functions/root.dart' as sui;
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/views/home.dart';
-import 'package:workout_notepad_v2/views/workouts/workouts_home.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -21,6 +19,8 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => DataModel()),
         ChangeNotifierProvider(create: (context) => LogicModel()),
+        ChangeNotifierProvider(
+            create: (context) => sui.CupertinoSheetProvider()),
       ],
       builder: (context, child) {
         return _body(context);

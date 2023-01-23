@@ -45,8 +45,8 @@ Future<void> loadTests() async {
     for (var jexercise in jworkout['exercises']) {
       List<ExerciseSet> exerciseSets = [];
       try {
-        Exercise parentExercise = exercises
-            .firstWhere((element) => element.id == jexercise['parent']['id']);
+        Exercise parentExercise = exercises.firstWhere((element) =>
+            element.exerciseId == jexercise['parent']['exerciseId']);
         // create the workout exercise
         workoutExercises.add(
           WorkoutExercise.init(
@@ -65,7 +65,7 @@ Future<void> loadTests() async {
         for (var jchild in jexercise['children']) {
           try {
             Exercise childEx = exercises.firstWhere(
-              (element) => element.id == jchild['id'],
+              (element) => element.exerciseId == jchild['exerciseId'],
             );
             // create exercise set
             exerciseSets.add(

@@ -33,7 +33,7 @@ class _WorkoutCellState extends State<WorkoutCell> {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: dmodel.cellColor(context),
+          color: sui.CustomColors.cellColor(context),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Padding(

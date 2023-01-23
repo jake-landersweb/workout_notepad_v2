@@ -5,7 +5,7 @@ import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/icons.dart';
 
 class Workout {
-  late String id;
+  late String workoutId;
   late String userId;
   late String title;
   String? description;
@@ -16,7 +16,7 @@ class Workout {
   // --- Constructors
 
   Workout({
-    required this.id,
+    required this.workoutId,
     required this.userId,
     required this.title,
     this.description,
@@ -26,7 +26,7 @@ class Workout {
   });
 
   Workout copy() => Workout(
-        id: id,
+        workoutId: workoutId,
         userId: userId,
         title: title,
         description: description,
@@ -36,7 +36,7 @@ class Workout {
       );
 
   Workout.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    workoutId = json['workoutId'];
     userId = json['userId'];
     title = json['title'];
     description = json['description'];
@@ -46,7 +46,7 @@ class Workout {
   }
 
   Workout.fromTest(Map<String, dynamic> json) {
-    id = json['id'];
+    workoutId = json['workoutId'];
     userId = "1";
     title = json['title'];
     description = json['description'];
@@ -59,7 +59,7 @@ class Workout {
 
   Map<String, dynamic> toMap() {
     return {
-      "id": id,
+      "workoutId": workoutId,
       "userId": userId,
       "title": title,
       "icon": icon,
@@ -85,10 +85,10 @@ class Workout {
   Future<List<Exercise>> getChildren() async {
     final db = await getDB();
     String query = """
-      SELECT * FROM workout_exercise we
-      JOIN exercise e ON e.id = we.exerciseId
-      WHERE we.workoutId = '$id'
-      ORDER BY we.exerciseOrder;
+      SELECT * FROM exercise e
+      JOIN workout_exercise we ON we.exerciseId = e.exerciseId
+      WHERE we.workoutId = '$workoutId'
+      ORDER BY we.exerciseOrder
     """;
     final List<Map<String, dynamic>> response = await db.rawQuery(query.trim());
     List<Exercise> e = [];

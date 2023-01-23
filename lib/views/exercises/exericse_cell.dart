@@ -6,6 +6,8 @@ import 'package:sapphireui/sapphireui.dart' as sui;
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/category_bubble.dart';
+import 'package:workout_notepad_v2/views/root.dart';
 
 class ExerciseCell extends StatefulWidget {
   const ExerciseCell({
@@ -23,10 +25,16 @@ class _ExerciseCellState extends State<ExerciseCell> {
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
     return sui.Button(
-      onTap: () {},
+      onTap: () {
+        sui.showFloatingSheet(
+          context: context,
+          builder: (context) => ExerciseDetail(exercise: widget.exercise),
+          title: widget.exercise.title,
+        );
+      },
       child: Container(
         decoration: BoxDecoration(
-          color: dmodel.cellColor(context),
+          color: sui.CustomColors.cellColor(context),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Padding(
@@ -51,25 +59,13 @@ class _ExerciseCellState extends State<ExerciseCell> {
                     if (widget.exercise.category.isNotEmpty)
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: dmodel.color[300],
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
-                            child: Text(
-                              widget.exercise.category.uppercase(),
-                              style: ttBody(context, color: Colors.white),
-                            ),
-                          ),
-                        ),
+                        child: CategoryBuble(text: widget.exercise.category),
                       ),
                   ],
                 ),
               ),
               Icon(
-                LineIcons.angleDoubleRight,
+                LineIcons.verticalEllipsis,
                 color: dmodel.accentColor(context),
               ),
             ],

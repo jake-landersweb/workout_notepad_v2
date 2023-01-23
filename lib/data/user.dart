@@ -4,7 +4,7 @@ import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 
 class User {
-  late String id;
+  late String userId;
   String? email;
   String? firstName;
   String? lastName;
@@ -16,7 +16,7 @@ class User {
   late String updated;
 
   User({
-    required this.id,
+    required this.userId,
     this.email,
     this.firstName,
     this.lastName,
@@ -30,14 +30,14 @@ class User {
 
   User.init() {
     var uuid = const Uuid();
-    id = uuid.v4();
+    userId = uuid.v4();
     sync = 0;
     created = "";
     updated = "";
   }
 
   User copy() => User(
-        id: id,
+        userId: userId,
         email: email,
         firstName: firstName,
         lastName: lastName,
@@ -50,7 +50,7 @@ class User {
       );
 
   User.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    userId = json['userId'];
     email = json['email'];
     firstName = json['firstName'];
     lastName = json['lastName'];
@@ -64,7 +64,7 @@ class User {
 
   Map<String, dynamic> toMap() {
     return {
-      "id": id,
+      "userId": userId,
       "email": email,
       "firstName": firstName,
       "lastName": lastName,

@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sql.dart';
+import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
 class Exercise {
-  late String id;
+  late String exerciseId;
   late String userId;
   late String category;
   late String title;
@@ -21,7 +22,7 @@ class Exercise {
   // --- Constructors
 
   Exercise({
-    required this.id,
+    required this.exerciseId,
     required this.userId,
     required this.category,
     required this.title,
@@ -36,8 +37,25 @@ class Exercise {
     required this.timePost,
   });
 
+  Exercise.empty(String uid) {
+    var uuid = const Uuid();
+    exerciseId = uuid.v4();
+    userId = uid;
+    category = "";
+    title = "";
+    description = "";
+    icon = "";
+    created = "";
+    updated = "";
+    type = 0;
+    reps = 1;
+    sets = 1;
+    time = 0;
+    timePost = "sec";
+  }
+
   Exercise copy() => Exercise(
-        id: id,
+        exerciseId: exerciseId,
         userId: userId,
         category: category,
         title: title,
@@ -53,7 +71,7 @@ class Exercise {
       );
 
   Exercise.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    exerciseId = json['exerciseId'];
     userId = json['userId'];
     category = json['category'];
     title = json['title'];
@@ -69,7 +87,7 @@ class Exercise {
   }
 
   Exercise.fromTest(Map<String, dynamic> json) {
-    id = json['id'];
+    exerciseId = json['exerciseId'];
     userId = "1";
     category = json['category'];
     title = json['title'];
@@ -85,7 +103,7 @@ class Exercise {
   }
 
   Exercise.testWorkoutChild(Map<String, dynamic> json, Exercise e) {
-    id = json['id'];
+    exerciseId = json['exerciseId'];
     userId = "1";
     category = json['category'] ?? e.category;
     title = json['title'] ?? e.title;
@@ -103,7 +121,7 @@ class Exercise {
 
   Map<String, dynamic> toMap() {
     return {
-      "id": id,
+      "exerciseId": exerciseId,
       "userId": userId,
       "category": category,
       "title": title,
@@ -123,21 +141,34 @@ class Exercise {
 
   // Database methods
 
-  Future<void> insert() async {
+  Future<bool> insert() async {
     final db = await getDB();
-    await db.insert(
+    var response = await db.insert(
       'exercise',
       toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+    return response != 0;
+  }
+
+  Future<bool> update() async {
+    final db = await getDB();
+    var response = await db.update(
+      'exercise',
+      toMap(),
+      where: "exerciseId = ?",
+      whereArgs: [exerciseId],
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+    return response != 0;
   }
 
   Future<List<Exercise>> getChildren() async {
     final db = await getDB();
     String query = """
       SELECT * FROM exercise_set es
-      JOIN exercise e ON e.id = es.parentId
-      WHERE es.parentId = '$id'
+      JOIN exercise e ON e.exerciseId = es.parentId
+      WHERE es.parentId = '$exerciseId'
       ORDER BY es.exerciseOrder
     """;
     final List<Map<String, dynamic>> response = await db.rawQuery(query.trim());
@@ -150,8 +181,12 @@ class Exercise {
 
   static Future<List<Exercise>> getList(String userId) async {
     final db = await getDB();
-    final List<Map<String, dynamic>> response =
-        await db.query('exercise', where: "userId = ?", whereArgs: [userId]);
+    var sql = """
+      SELECT * FROM exercise
+      WHERE userId = '$userId'
+      ORDER BY created DESC
+    """;
+    final List<Map<String, dynamic>> response = await db.rawQuery(sql);
     List<Exercise> w = [];
     for (var i in response) {
       w.add(Exercise.fromJson(i));

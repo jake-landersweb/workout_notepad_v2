@@ -88,3 +88,35 @@ Image getImageIcon(String name, {double? size}) {
           height: size ?? 50, width: size ?? 50);
   }
 }
+
+List<String> getAllIconNames() {
+  return [
+    "bench-press",
+    "bouldering",
+    "calves",
+    "curls-with-dumbbells",
+    "deadlift-skin-type-2",
+    "exercise",
+    "floating-guru-skin-type-2",
+    "gymnastics",
+    "judo-skin-type-2",
+    "leg",
+    "middle-back",
+    "muscle",
+    "prelum",
+    "pushups",
+    "roller-skating",
+    "rowing-machine",
+    "sit-ups",
+    "skipping-rope",
+    "squats",
+    "staircase",
+    "stepper",
+    "swimming",
+    "taekwondo",
+    "treadmill",
+    "trekking",
+    "weightlifting",
+    "workout",
+  ];
+}

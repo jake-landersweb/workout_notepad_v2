@@ -1,5 +1,5 @@
 CREATE TABLE user(
-    id TEXT PRIMARY KEY,
+    userId TEXT PRIMARY KEY,
     email TEXT,
     firstName TEXT,
     lastName TEXT,
@@ -24,7 +24,7 @@ CREATE TABLE category(
     created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
-    FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE
+    FOREIGN KEY (userId) REFERENCES user(userId) ON DELETE CASCADE
 );
 --
 CREATE TRIGGER category_update AFTER UPDATE ON category
@@ -33,7 +33,7 @@ BEGIN
 END;
 --
 CREATE TABLE exercise(
-    id TEXT PRIMARY KEY,
+    exerciseId TEXT PRIMARY KEY,
     userId TEXT NOT NULL,
     category TEXT DEFAULT "" NOT NULL,
     title TEXT NOT NULL,
@@ -47,7 +47,7 @@ CREATE TABLE exercise(
     created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
-    FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE
+    FOREIGN KEY (userId) REFERENCES user(userId) ON DELETE CASCADE
 );
 --
 CREATE INDEX exercise_category ON exercise(category);
@@ -58,7 +58,7 @@ BEGIN
 END;
 --
 CREATE TABLE exercise_set(
-    id TEXT PRIMARY KEY,
+    exerciseSetId TEXT PRIMARY KEY,
     workoutId TEXT NOT NULL,
     parentId TEXT NOT NULL,
     childId TEXT NOT NULL,
@@ -70,9 +70,9 @@ CREATE TABLE exercise_set(
     created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
-    FOREIGN KEY (workoutId) REFERENCES workout(id) ON DELETE CASCADE,
-    FOREIGN KEY (parentId) REFERENCES exercise(id) ON DELETE CASCADE,
-    FOREIGN KEY (childId) REFERENCES exercise(id) ON DELETE CASCADE
+    FOREIGN KEY (workoutId) REFERENCES workout(workoutId) ON DELETE CASCADE,
+    FOREIGN KEY (parentId) REFERENCES exercise(exerciseId) ON DELETE CASCADE,
+    FOREIGN KEY (childId) REFERENCES exercise(exerciseId) ON DELETE CASCADE
 );
 --
 CREATE INDEX exercise_set_workout ON exercise_set(workoutId);
@@ -85,7 +85,7 @@ BEGIN
 END;
 --
 CREATE TABLE workout(
-    id TEXT PRIMARY KEY,
+    workoutId TEXT PRIMARY KEY,
     userId TEXT NOT NULL,
     title TEXT NOT NULL,
     description TEXT,
@@ -93,7 +93,7 @@ CREATE TABLE workout(
     created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
-    FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE
+    FOREIGN KEY (userId) REFERENCES user(userId) ON DELETE CASCADE
 );
 --
 CREATE TRIGGER workout_update AFTER UPDATE ON workout
@@ -102,7 +102,7 @@ BEGIN
 END;
 --
 CREATE TABLE workout_exercise(
-    id TEXT PRIMARY KEY,
+    workoutExerciseId TEXT PRIMARY KEY,
     workoutId TEXT NOT NULL,
     exerciseId TEXT NOT NULL,
     exerciseOrder INTEGER NOT NULL,
@@ -113,8 +113,8 @@ CREATE TABLE workout_exercise(
     created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
-    FOREIGN KEY (workoutId) REFERENCES workout(id) ON DELETE CASCADE,
-    FOREIGN KEY (exerciseId) REFERENCES exercise(id) ON DELETE CASCADE
+    FOREIGN KEY (workoutId) REFERENCES workout(workoutId) ON DELETE CASCADE,
+    FOREIGN KEY (exerciseId) REFERENCES exercise(exerciseId) ON DELETE CASCADE
 );
 --
 CREATE INDEX workout_exercise_parent ON workout_exercise(workoutId);
@@ -125,7 +125,7 @@ BEGIN
 END;
 --
 CREATE TABLE exercise_log(
-    id TEXT PRIMARY KEY,
+    exerciseLogId TEXT PRIMARY KEY,
     userId TEXT NOT NULL,
     exerciseId TEXT NOT NULL,
     type INTEGER DEFAULT 0 NOT NULL,
@@ -139,8 +139,8 @@ CREATE TABLE exercise_log(
     created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
-    FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE,
-    FOREIGN KEY (exerciseId) REFERENCES exercise(id) ON DELETE CASCADE
+    FOREIGN KEY (userId) REFERENCES user(userId) ON DELETE CASCADE,
+    FOREIGN KEY (exerciseId) REFERENCES exercise(exerciseId) ON DELETE CASCADE
 );
 --
 CREATE INDEX exercise_log_exerciseid ON exercise_log(exerciseId);

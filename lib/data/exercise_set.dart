@@ -5,7 +5,7 @@ import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 
 class ExerciseSet {
-  late String id;
+  late String exerciseSetId;
   late String workoutId;
   late String parentId;
   late String childId;
@@ -18,7 +18,7 @@ class ExerciseSet {
   late String updated;
 
   ExerciseSet({
-    required this.id,
+    required this.exerciseSetId,
     required this.workoutId,
     required this.parentId,
     required this.childId,
@@ -34,10 +34,10 @@ class ExerciseSet {
   ExerciseSet.init(Workout workout, Exercise parent, Exercise child,
       ExerciseChildArgs args) {
     var uuid = const Uuid();
-    id = uuid.v4();
-    workoutId = workout.id;
-    parentId = parent.id;
-    childId = child.id;
+    exerciseSetId = uuid.v4();
+    workoutId = workout.workoutId;
+    parentId = parent.exerciseId;
+    childId = child.exerciseId;
     exerciseOrder = args.order;
     sets = args.sets ?? child.sets;
     reps = args.reps ?? child.reps;
@@ -48,7 +48,7 @@ class ExerciseSet {
   }
 
   ExerciseSet.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
+    exerciseSetId = json['exerciseSetId'];
     workoutId = json['workoutId'];
     parentId = json['parentId'];
     childId = json['childId'];
@@ -63,7 +63,7 @@ class ExerciseSet {
 
   Map<String, dynamic> toMap() {
     return {
-      "id": id,
+      "exerciseSetId": exerciseSetId,
       "workoutId": workoutId,
       "parentId": parentId,
       "childId": childId,

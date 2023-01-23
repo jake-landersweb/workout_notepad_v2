@@ -2,7 +2,7 @@
     "workouts": [
         {
             "workout": {
-                "id": "46DAA214-725E-47E8-83D3-A44B863CC623",
+                "workoutId": "46DAA214-725E-47E8-83D3-A44B863CC623",
                 "title": "Day 1",
                 "description": "GGII day 1",
                 "icon": "pushups"
@@ -10,70 +10,70 @@
             "exercises": [
                 {
                     "parent": {
-                        "id": "706F2565-D1CD-4845-A942-4597297E6D1E"
+                        "exerciseId": "706F2565-D1CD-4845-A942-4597297E6D1E"
                     },
                     "children": []
                 },
                 {
                     "parent": {
-                        "id": "9E5AC299-5FE3-4BC6-9CBA-BBF721133DF6"
+                        "exerciseId": "9E5AC299-5FE3-4BC6-9CBA-BBF721133DF6"
                     },
                     "children": []
                 },
                 {
                     "parent": {
-                        "id": "C7A2E7FA-E2CF-4382-8677-C53B2DBFA5D2"
+                        "exerciseId": "C7A2E7FA-E2CF-4382-8677-C53B2DBFA5D2"
                     },
                     "children": [
                         {
-                            "id": "51036566-0857-4221-822F-7AB5974A2DA2"
+                            "exerciseId": "51036566-0857-4221-822F-7AB5974A2DA2"
                         }
                     ]
                 },
                 {
                     "parent": {
-                        "id": "706F2565-D1CD-4845-A942-4597297E6D1E",
+                        "exerciseId": "706F2565-D1CD-4845-A942-4597297E6D1E",
                         "sets": 4,
                         "reps": 10
                     }
                 },
                 {
                     "parent": {
-                        "id": "F3FF0F2D-E85B-4293-942C-4DAB037B287F"
+                        "exerciseId": "F3FF0F2D-E85B-4293-942C-4DAB037B287F"
                     },
                     "children": [
                         {
-                            "id": "AFCB0E6B-863A-43CD-808B-3E241821455E"
+                            "exerciseId": "AFCB0E6B-863A-43CD-808B-3E241821455E"
                         }
                     ]
                 },
                 {
                     "parent": {
-                        "id": "3658B161-3FEF-4AFF-818C-7D7A25ED26B5"
+                        "exerciseId": "3658B161-3FEF-4AFF-818C-7D7A25ED26B5"
                     },
                     "children": [
                         {
-                            "id": "ED34EEFB-5227-484D-B004-E27550531DF3"
+                            "exerciseId": "ED34EEFB-5227-484D-B004-E27550531DF3"
                         }
                     ]
                 },
                 {
                     "parent": {
-                        "id": "B5D48850-8DD8-4085-BEF4-7C14DB0A03E4"
+                        "exerciseId": "B5D48850-8DD8-4085-BEF4-7C14DB0A03E4"
                     },
                     "children": [
                         {
-                            "id": "EAC32290-11BA-49A9-9518-3C267434C1DB"
+                            "exerciseId": "EAC32290-11BA-49A9-9518-3C267434C1DB"
                         }
                     ]
                 },
                 {
                     "parent": {
-                        "id": "E09D9BB8-5A6D-403B-A07A-6698EA9BCEB3"
+                        "exerciseId": "E09D9BB8-5A6D-403B-A07A-6698EA9BCEB3"
                     },
                     "children": [
                         {
-                            "id": "445AD2B6-869F-4191-B422-7E2B41924801"
+                            "exerciseId": "445AD2B6-869F-4191-B422-7E2B41924801"
                         }
                     ]
                 }
@@ -82,7 +82,7 @@
     ],
     "exercises": [
         {
-            "id": "706F2565-D1CD-4845-A942-4597297E6D1E",
+            "exerciseId": "706F2565-D1CD-4845-A942-4597297E6D1E",
             "category": "shoulders",
             "title": "Lateral Raises",
             "description": "Pre-Exhaustion",
@@ -93,7 +93,7 @@
             "time": 0
         },
         {
-            "id": "9E5AC299-5FE3-4BC6-9CBA-BBF721133DF6",
+            "exerciseId": "9E5AC299-5FE3-4BC6-9CBA-BBF721133DF6",
             "category": "shoulders",
             "title": "Dumbbell Shoulder Press",
             "description": "Increase weight each set",
@@ -103,7 +103,7 @@
             "time": 0
         },
         {
-            "id": "C7A2E7FA-E2CF-4382-8677-C53B2DBFA5D2",
+            "exerciseId": "C7A2E7FA-E2CF-4382-8677-C53B2DBFA5D2",
             "category": "shoulders",
             "title": "Front DB Raises",
             "description": "",
@@ -113,7 +113,7 @@
             "time": 0
         },
         {
-            "id": "51036566-0857-4221-822F-7AB5974A2DA2",
+            "exerciseId": "51036566-0857-4221-822F-7AB5974A2DA2",
             "category": "shoulders",
             "title": "Bent Over Rear-Delt Fly",
             "description": "",
@@ -123,7 +123,7 @@
             "time": 0
         },
         {
-            "id": "F3FF0F2D-E85B-4293-942C-4DAB037B287F",
+            "exerciseId": "F3FF0F2D-E85B-4293-942C-4DAB037B287F",
             "category": "biceps",
             "title": "Incline Dumbbell Curls",
             "description": "",
@@ -133,7 +133,7 @@
             "time": 0
         },
         {
-            "id": "AFCB0E6B-863A-43CD-808B-3E241821455E",
+            "exerciseId": "AFCB0E6B-863A-43CD-808B-3E241821455E",
             "category": "biceps",
             "title": "Cable Curls",
             "description": "",
@@ -143,7 +143,7 @@
             "time": 0
         },
         {
-            "id": "3658B161-3FEF-4AFF-818C-7D7A25ED26B5",
+            "exerciseId": "3658B161-3FEF-4AFF-818C-7D7A25ED26B5",
             "category": "biceps",
             "title": "Alternating Dumbbell Curls",
             "description": "",
@@ -153,7 +153,7 @@
             "time": 0
         },
         {
-            "id": "ED34EEFB-5227-484D-B004-E27550531DF3",
+            "exerciseId": "ED34EEFB-5227-484D-B004-E27550531DF3",
             "category": "biceps",
             "title": "Dumbbell Hold",
             "description": "Static hold on contraction",
@@ -163,7 +163,7 @@
             "time": 30
         },
         {
-            "id": "B5D48850-8DD8-4085-BEF4-7C14DB0A03E4",
+            "exerciseId": "B5D48850-8DD8-4085-BEF4-7C14DB0A03E4",
             "category": "triceps",
             "title": "Underhand Cable Extension",
             "description": "",
@@ -173,7 +173,7 @@
             "time": 0
         },
         {
-            "id": "EAC32290-11BA-49A9-9518-3C267434C1DB",
+            "exerciseId": "EAC32290-11BA-49A9-9518-3C267434C1DB",
             "category": "triceps",
             "title": "Close Grip Extension",
             "description": "",
@@ -183,7 +183,7 @@
             "time": 0
         },
         {
-            "id": "E09D9BB8-5A6D-403B-A07A-6698EA9BCEB3",
+            "exerciseId": "E09D9BB8-5A6D-403B-A07A-6698EA9BCEB3",
             "category": "triceps",
             "title": "Close Grip Bench",
             "description": "",
@@ -193,7 +193,7 @@
             "time": 0
         },
         {
-            "id": "445AD2B6-869F-4191-B422-7E2B41924801",
+            "exerciseId": "445AD2B6-869F-4191-B422-7E2B41924801",
             "category": "triceps",
             "title": "Dumbbell Skullcrushers",
             "description": "",

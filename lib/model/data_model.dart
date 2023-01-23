@@ -6,25 +6,34 @@ import 'package:sqflite/sqflite.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/load_tests.dart';
 import 'package:path/path.dart';
+import 'package:workout_notepad_v2/model/root.dart';
 
 enum LoadStatus { init, noUser, done }
 
 class DataModel extends ChangeNotifier {
+  DataModel() {
+    initTest(delete: false);
+  }
+
   LoadStatus loadStatus = LoadStatus.init;
   MaterialColor color = Colors.deepPurple;
 
-  User? _user;
-  User? get user => _user;
+  User? user;
 
   List<Category> _categories = [];
   List<Category> get categories => _categories;
+  Future<void> refreshCategories() async {
+    _categories = await Category.getList(user!.userId);
+    notifyListeners();
+  }
+
   List<WorkoutCategories> _workouts = [];
   List<WorkoutCategories> get workouts => _workouts;
   List<Exercise> _exercises = [];
   List<Exercise> get exercises => _exercises;
-
-  DataModel() {
-    initTest(delete: true);
+  Future<void> refreshExercises() async {
+    _exercises = await Exercise.getList(user!.userId);
+    notifyListeners();
   }
 
   Future<void> init() async {
@@ -39,7 +48,7 @@ class DataModel extends ChangeNotifier {
     }
 
     // get the user
-    _user = await User.fromId(prefs.getString("userId")!);
+    user = await User.fromId(prefs.getString("userId")!);
     if (user == null) {
       log("[INIT] userId in prefs is invalid");
       prefs.remove("userId");
@@ -52,7 +61,7 @@ class DataModel extends ChangeNotifier {
     log("[INIT] User exists");
 
     // get all user data
-    await fetchData(user!.id);
+    await fetchData(user!.userId);
     loadStatus = LoadStatus.done;
     notifyListeners();
   }
@@ -62,11 +71,13 @@ class DataModel extends ChangeNotifier {
       String path = join(await getDatabasesPath(), 'workout_notepad.db');
       await databaseFactory.deleteDatabase(path);
       User u = User.init();
-      u.id = "1";
+      u.userId = "1";
       await u.insert();
       await loadTests();
     }
-    await fetchData("1");
+    var prefs = await SharedPreferences.getInstance();
+    user = await User.fromId(prefs.getString("userId")!);
+    await fetchData(user!.userId);
   }
 
   Future<void> fetchData(String userId) async {

@@ -26,7 +26,6 @@ class ECreateCategoryState extends State<CreateCategory> {
     return Column(
       children: [
         sui.CellWrapper(
-          padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
           child: sui.TextField(
             labelText: "Category",
             hintText: "Category (ex. Arms)",

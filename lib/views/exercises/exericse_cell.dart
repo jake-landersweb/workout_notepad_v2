@@ -9,32 +9,25 @@ import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/category_bubble.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 
-class ExerciseCell extends StatefulWidget {
+class ExerciseCell extends StatelessWidget {
   const ExerciseCell({
     super.key,
     required this.exercise,
-    this.isClickable = true,
+    this.onTap,
+    this.showTapIcon = true,
+    this.showBackground = true,
   });
   final Exercise exercise;
-  final bool isClickable;
+  final VoidCallback? onTap;
+  final bool showTapIcon;
+  final bool showBackground;
 
-  @override
-  State<ExerciseCell> createState() => _ExerciseCellState();
-}
-
-class _ExerciseCellState extends State<ExerciseCell> {
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
-    if (widget.isClickable) {
+    if (onTap != null) {
       return sui.Button(
-        onTap: () {
-          sui.showFloatingSheet(
-            context: context,
-            builder: (context) => ExerciseDetail(exercise: widget.exercise),
-            title: widget.exercise.title,
-          );
-        },
+        onTap: onTap!,
         child: _body(context, dmodel),
       );
     }
@@ -44,37 +37,37 @@ class _ExerciseCellState extends State<ExerciseCell> {
   Container _body(BuildContext context, DataModel dmodel) {
     return Container(
       decoration: BoxDecoration(
-        color: sui.CustomColors.cellColor(context),
+        color: showBackground ? sui.CustomColors.cellColor(context) : null,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
         child: Row(
           children: [
-            if (widget.exercise.icon.isNotEmpty)
+            if (exercise.icon.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(right: 16),
-                child: widget.exercise.getIcon(),
+                child: exercise.getIcon(),
               ),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.exercise.title,
+                    exercise.title,
                     style: ttLabel(context, color: dmodel.color),
                   ),
-                  Text("${widget.exercise.sets} x ${widget.exercise.reps}",
+                  Text("${exercise.sets} x ${exercise.reps}",
                       style: ttBody(context)),
-                  if (widget.exercise.category.isNotEmpty)
+                  if (exercise.category.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.only(top: 4.0),
-                      child: CategoryBuble(text: widget.exercise.category),
+                      child: CategoryBuble(text: exercise.category),
                     ),
                 ],
               ),
             ),
-            if (widget.isClickable)
+            if (showTapIcon)
               Icon(
                 LineIcons.verticalEllipsis,
                 color: dmodel.accentColor(context),

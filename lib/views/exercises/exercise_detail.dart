@@ -3,11 +3,9 @@ import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
-import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:workout_notepad_v2/views/category_bubble.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 
 class ExerciseDetail extends StatefulWidget {
@@ -53,14 +51,11 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
                 builder: (context) => CEERoot(
                   isCreate: false,
                   exercise: widget.exercise,
-                  onUpdate: () async {
-                    await dmodel.refreshExercises();
-                  },
+                  onAction: (_) {},
                 ),
               );
             },
             child: sui.CellWrapper(
-              padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
               child: Row(
                 children: [
                   Icon(LineIcons.edit, color: Theme.of(context).primaryColor),
@@ -78,7 +73,6 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
               // TODO: Implement
             },
             child: sui.CellWrapper(
-              padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
               child: Row(
                 children: [
                   Icon(LineIcons.plus, color: Theme.of(context).primaryColor),

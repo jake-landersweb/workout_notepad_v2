@@ -15,6 +15,7 @@ class NumberPicker extends StatefulWidget {
     this.fontWeight = FontWeight.w600,
     this.maxValue = 999,
     this.minValue = 0,
+    this.showPicker = true,
   });
   final Function(int val) onChanged;
   final int? intialValue;
@@ -23,6 +24,7 @@ class NumberPicker extends StatefulWidget {
   final FontWeight fontWeight;
   final int maxValue;
   final int minValue;
+  final bool showPicker;
 
   @override
   State<NumberPicker> createState() => _NumberPickerState();
@@ -84,26 +86,29 @@ class _NumberPickerState extends State<NumberPicker> {
                   ),
                 ),
               ),
-              const SizedBox(width: 16),
-              SizedBox(
-                width: 60,
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Column(
-                      children: [
-                        _plusMinusCell(
-                            context, getColor(true), getAccent(true), true),
-                        _plusMinusCell(
-                            context, getColor(false), getAccent(false), false),
-                      ],
+              if (widget.showPicker)
+                Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: SizedBox(
+                    width: 60,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Column(
+                          children: [
+                            _plusMinusCell(
+                                context, getColor(true), getAccent(true), true),
+                            _plusMinusCell(context, getColor(false),
+                                getAccent(false), false),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
             ],
           ),
         ),

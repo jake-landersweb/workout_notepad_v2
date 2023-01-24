@@ -12,13 +12,15 @@ void showIconPicker({
 }) {
   sui.showFloatingSheet(
     context: context,
-    builder: (context) => _IconPicker(
-      onSelection: onSelection,
-      initialIcon: initialIcon,
-      closeOnSelection: closeOnSelection,
+    builder: (context) => sui.FloatingSheet(
+      title: "",
+      icon: LineIcons.times,
+      child: _IconPicker(
+        onSelection: onSelection,
+        initialIcon: initialIcon,
+        closeOnSelection: closeOnSelection,
+      ),
     ),
-    title: "",
-    closeIcon: LineIcons.times,
   );
 }
 

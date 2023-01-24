@@ -9,11 +9,13 @@ class ActionButton extends StatelessWidget {
     required this.onTap,
     this.isValid = true,
     this.isLoading,
+    this.minHeight = 50,
   });
   final String title;
   final VoidCallback onTap;
   final bool isValid;
   final bool? isLoading;
+  final double minHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -33,19 +35,24 @@ class ActionButton extends StatelessWidget {
                   : sui.CustomColors.textColor(context).withOpacity(0.1),
               width: 1),
         ),
-        height: 50,
-        width: double.infinity,
-        child: Center(
-          child: isLoading ?? false
-              ? const sui.LoadingIndicator()
-              : Text(
-                  title,
-                  style: ttLabel(context).copyWith(
-                    color: isValid
-                        ? Colors.white
-                        : sui.CustomColors.textColor(context).withOpacity(0.3),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: minHeight,
+            minWidth: double.infinity,
+          ),
+          child: Center(
+            child: isLoading ?? false
+                ? const sui.LoadingIndicator()
+                : Text(
+                    title,
+                    style: ttLabel(context).copyWith(
+                      color: isValid
+                          ? Colors.white
+                          : sui.CustomColors.textColor(context)
+                              .withOpacity(0.3),
+                    ),
                   ),
-                ),
+          ),
         ),
       ),
     );

@@ -40,27 +40,15 @@ class _WorkoutsHomeState extends State<WorkoutsHome> {
         )
       ],
       children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 8.0),
-          child: sui.CellWrapper(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Row(
-              children: [
-                Icon(LineIcons.search, color: Theme.of(context).primaryColor),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: sui.TextField(
-                    labelText: "Search",
-                    hintText: "Search by title or category",
-                    value: _searchText,
-                    onChanged: (val) => setState(() {
-                      _searchText = val.toLowerCase();
-                    }),
-                  ),
-                )
-              ],
-            ),
-          ),
+        comp.SearchBar(
+          onChanged: (val) {
+            setState(() {
+              _searchText = val.toLowerCase();
+            });
+          },
+          labelText: "Search",
+          hintText: "Search by title or category",
+          initText: _searchText,
         ),
         for (var i in _workouts(context, dmodel)) WorkoutCell(wc: i),
       ],

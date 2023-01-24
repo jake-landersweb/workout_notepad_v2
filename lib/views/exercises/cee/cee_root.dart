@@ -13,16 +13,16 @@ class CEERoot extends StatefulWidget {
   const CEERoot({
     super.key,
     required this.isCreate,
+    this.onAction,
     this.exercise,
-    this.onCreate,
-    this.onUpdate,
     this.useRoot = true,
+    this.runPostAction = true,
   });
   final bool isCreate;
   final Exercise? exercise;
-  final VoidCallback? onCreate;
-  final VoidCallback? onUpdate;
+  final Function(Exercise e)? onAction;
   final bool useRoot;
+  final bool runPostAction;
 
   @override
   State<CEERoot> createState() => _CEERootState();
@@ -31,13 +31,6 @@ class CEERoot extends StatefulWidget {
 class _CEERootState extends State<CEERoot> {
   @override
   void initState() {
-    if (widget.isCreate && widget.onCreate == null) {
-      throw ("When the widget is set to create mode, [onCreate] cannot be null.");
-    }
-    if (!widget.isCreate &&
-        (widget.onUpdate == null || widget.exercise == null)) {
-      throw ("When the widget is set to update mode, [onUpdate, exercise] cannot be null.");
-    }
     super.initState();
   }
 
@@ -66,18 +59,17 @@ class _CEERootState extends State<CEERoot> {
           title: widget.isCreate ? "Add" : "Edit",
           isValid: cemodel.isValid(),
           onTap: () async {
-            if (widget.isCreate) {
-              var response = await cemodel.post(dmodel, false);
-              if (response) {
-                widget.onCreate!();
-                Navigator.of(context, rootNavigator: widget.useRoot).pop();
+            if (widget.runPostAction) {
+              Exercise? response = await cemodel.post(dmodel, !widget.isCreate);
+              if (response != null && widget.runPostAction) {
+                await dmodel.refreshExercises();
+                await dmodel.refreshCategories();
+                if (widget.onAction != null) {
+                  widget.onAction!(cemodel.exercise);
+                }
               }
             } else {
-              var response = await cemodel.post(dmodel, true);
-              if (response) {
-                widget.onUpdate!();
-                Navigator.of(context, rootNavigator: widget.useRoot).pop();
-              }
+              widget.onAction!(cemodel.exercise);
             }
           },
         )
@@ -181,16 +173,18 @@ class _CEERootState extends State<CEERoot> {
               onTap: () {
                 sui.showFloatingSheet(
                   context: context,
-                  builder: (context) => CreateCategory(
-                      categories: cemodel.categories,
-                      onCompletion: (val) {
-                        setState(() {
-                          cemodel.categories.insert(0, val);
-                          cemodel.exercise.category = val;
-                        });
-                      }),
-                  title: "New Category",
-                  closeIcon: LineIcons.times,
+                  builder: (context) => sui.FloatingSheet(
+                    title: "New Category",
+                    icon: LineIcons.times,
+                    child: CreateCategory(
+                        categories: cemodel.categories,
+                        onCompletion: (val) {
+                          setState(() {
+                            cemodel.categories.insert(0, val);
+                            cemodel.exercise.category = val;
+                          });
+                        }),
+                  ),
                 );
               },
               child: Container(

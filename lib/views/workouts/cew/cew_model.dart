@@ -38,9 +38,19 @@ class CEWModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateExercise(int index, Exercise e) {
+    _exercises[index].exercise = e;
+    notifyListeners();
+  }
+
   void insertExerciseChild(int index, Exercise e, int childIndex) {
     var cewe = _exercises.elementAt(index);
     cewe.children.insert(childIndex, e);
+    notifyListeners();
+  }
+
+  void removeExercise(int index) {
+    exercises.removeAt(index);
     notifyListeners();
   }
 

@@ -24,9 +24,9 @@ class CreateExerciseModel extends ChangeNotifier {
     return true;
   }
 
-  Future<bool> post(DataModel dmodel, bool update) async {
+  Future<Exercise?> post(DataModel dmodel, bool update) async {
     if (!isValid()) {
-      return false;
+      return null;
     }
     bool response;
     if (update) {
@@ -35,7 +35,7 @@ class CreateExerciseModel extends ChangeNotifier {
       response = await exercise.insert();
     }
     if (!response) {
-      return false;
+      return null;
     }
     if (exercise.category.isNotEmpty &&
         !dmodel.categories.map((e) => e.title).contains(exercise.category)) {
@@ -45,6 +45,6 @@ class CreateExerciseModel extends ChangeNotifier {
       await c.insert();
       await dmodel.refreshCategories();
     }
-    return true;
+    return exercise;
   }
 }

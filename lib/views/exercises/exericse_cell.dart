@@ -13,13 +13,13 @@ class ExerciseCell extends StatelessWidget {
   const ExerciseCell({
     super.key,
     required this.exercise,
+    this.trailingIcon,
     this.onTap,
-    this.showTapIcon = true,
     this.showBackground = true,
   });
   final Exercise exercise;
   final VoidCallback? onTap;
-  final bool showTapIcon;
+  final IconData? trailingIcon;
   final bool showBackground;
 
   @override
@@ -67,9 +67,9 @@ class ExerciseCell extends StatelessWidget {
                 ],
               ),
             ),
-            if (showTapIcon)
+            if (trailingIcon != null)
               Icon(
-                LineIcons.verticalEllipsis,
+                trailingIcon,
                 color: dmodel.accentColor(context),
               ),
           ],

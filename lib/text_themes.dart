@@ -23,7 +23,20 @@ TextStyle ttSubTitle(
   return TextStyle(
     fontSize: size ?? 22,
     color: color ?? sui.CustomColors.textColor(context),
-    fontWeight: fontWeight ?? FontWeight.w500,
+    fontWeight: fontWeight ?? FontWeight.w600,
+  );
+}
+
+TextStyle ttLargeLabel(
+  BuildContext context, {
+  Color? color,
+  double? size,
+  FontWeight? fontWeight,
+}) {
+  return TextStyle(
+    fontSize: size ?? 20,
+    color: color ?? sui.CustomColors.textColor(context),
+    fontWeight: fontWeight ?? FontWeight.w600,
   );
 }
 
@@ -49,6 +62,6 @@ TextStyle ttBody(
   return TextStyle(
     fontSize: size ?? 16,
     color: color ?? sui.CustomColors.textColor(context),
-    fontWeight: fontWeight ?? FontWeight.w400,
+    fontWeight: fontWeight ?? FontWeight.w500,
   );
 }

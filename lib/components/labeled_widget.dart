@@ -6,11 +6,13 @@ class LabeledWidget extends StatelessWidget {
     super.key,
     required this.label,
     required this.child,
-    this.labelInsets = const EdgeInsets.fromLTRB(16, 0, 16, 0),
+    this.padding = const EdgeInsets.fromLTRB(16, 0, 16, 0),
+    this.labelSpacing = 4,
   });
   final String label;
   final Widget child;
-  final EdgeInsets labelInsets;
+  final EdgeInsets padding;
+  final double labelSpacing;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class LabeledWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: labelInsets,
+          padding: padding,
           child: Text(
             label.toUpperCase(),
             style: TextStyle(
@@ -29,6 +31,7 @@ class LabeledWidget extends StatelessWidget {
             ),
           ),
         ),
+        SizedBox(height: labelSpacing),
         child,
       ],
     );

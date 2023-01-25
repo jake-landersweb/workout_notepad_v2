@@ -16,14 +16,14 @@ class SelectExercise extends StatefulWidget {
   const SelectExercise({
     super.key,
     required this.onSelect,
-    this.header,
-    this.footer,
     this.closeOnSelect = true,
+    this.useCupertino = true,
+    this.useRoot = false,
   });
   final Function(Exercise e) onSelect;
-  final Widget? header;
-  final Widget? footer;
   final bool closeOnSelect;
+  final bool useCupertino;
+  final bool useRoot;
 
   @override
   State<SelectExercise> createState() => _SelectExerciseState();
@@ -36,69 +36,88 @@ class _SelectExerciseState extends State<SelectExercise>
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.7,
-      ),
-      child: sui.FluidScrollView(
-        spacing: 8,
-        children: [
-          if (widget.header != null) widget.header!,
-          // add new
-          sui.Button(
-            onTap: () {
-              sui.showBottomSheet(
-                context: context,
-                vsync: this,
-                builder: (context) => CEERoot(
-                  isCreate: true,
-                  useRoot: false,
-                  onAction: (e) {
-                    widget.onSelect(e);
-                    if (widget.closeOnSelect) {
-                      Navigator.of(context).pop();
-                    }
-                  },
-                ),
-              );
-            },
-            child: sui.CellWrapper(
-              child: Row(
-                children: [
-                  Icon(
-                    LineIcons.plusCircle,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  const SizedBox(width: 16),
-                  Text("Create New", style: ttLabel(context)),
-                ],
-              ),
-            ),
-          ),
-          // search bar
-          comp.SearchBar(
-            onChanged: (val) {
-              setState(() {
-                _searchText = val.toLowerCase();
-              });
-            },
-            initText: _searchText,
-            labelText: "Search",
-            hintText: "Search by title or category",
-          ),
-          // exercise list
-          for (var i in filteredExercises(dmodel.exercises, _searchText))
-            ExerciseCell(
-              exercise: i,
+    return sui.FloatingSheet(
+      title: "Select or Create",
+      useRoot: widget.useRoot,
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.7,
+        ),
+        child: sui.FluidScrollView(
+          spacing: 8,
+          children: [
+            // add new
+            sui.Button(
               onTap: () {
-                widget.onSelect(i);
-                if (widget.closeOnSelect) {
-                  Navigator.of(context).pop();
+                if (widget.useCupertino) {
+                  sui.showCupertinoSheet(
+                    context: context,
+                    builder: (context) => CEERoot(
+                      isCreate: true,
+                      useRoot: widget.useRoot,
+                      onAction: (e) {
+                        widget.onSelect(e);
+                        if (widget.closeOnSelect) {
+                          Navigator.of(context).pop();
+                        }
+                      },
+                    ),
+                  );
+                } else {
+                  sui.showBottomSheet(
+                    context: context,
+                    vsync: this,
+                    builder: (context) => CEERoot(
+                      isCreate: true,
+                      useRoot: false,
+                      onAction: (e) {
+                        widget.onSelect(e);
+                        if (widget.closeOnSelect) {
+                          Navigator.of(context).pop();
+                        }
+                      },
+                    ),
+                  );
                 }
               },
+              child: sui.CellWrapper(
+                child: Row(
+                  children: [
+                    Icon(
+                      LineIcons.plusCircle,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    const SizedBox(width: 16),
+                    Text("Create New", style: ttLabel(context)),
+                  ],
+                ),
+              ),
             ),
-          if (widget.footer != null) widget.footer!,
-        ],
+            // search bar
+            comp.SearchBar(
+              onChanged: (val) {
+                setState(() {
+                  _searchText = val.toLowerCase();
+                });
+              },
+              initText: _searchText,
+              labelText: "Search",
+              hintText: "Search by title or category",
+            ),
+            // exercise list
+            for (var i in filteredExercises(dmodel.exercises, _searchText))
+              ExerciseCell(
+                exercise: i,
+                onTap: () {
+                  widget.onSelect(i);
+                  if (widget.closeOnSelect) {
+                    Navigator.of(context).pop();
+                  }
+                },
+              ),
+          ],
+        ),
       ),
     );
   }

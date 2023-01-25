@@ -13,6 +13,7 @@ class ReorderableList<T extends Object> extends StatefulWidget {
     required this.onReorderFinished,
     this.slideBuilder,
     required this.builder,
+    this.onChildTap,
     this.shrinkWrap = true,
     this.horizontalSpacing = 16,
     this.borderRadius = 10,
@@ -23,6 +24,7 @@ class ReorderableList<T extends Object> extends StatefulWidget {
       onReorderFinished;
   final ActionPane? Function(T item, int index)? slideBuilder;
   final Widget Function(T item, int index) builder;
+  final Function(T item, int index)? onChildTap;
   final bool shrinkWrap;
   final double horizontalSpacing;
   final double borderRadius;
@@ -81,35 +83,13 @@ class _ReorderableListState<T extends Object>
                       child: Stack(
                         alignment: Alignment.bottomCenter,
                         children: [
-                          AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
-                            decoration: BoxDecoration(
-                              color: inDrag ? Colors.grey[100] : Colors.white,
-                              borderRadius: BorderRadius.only(
-                                topLeft: index == 0
-                                    ? Radius.circular(widget.borderRadius)
-                                    : Radius.zero,
-                                bottomLeft: index == widget.items.length - 1
-                                    ? Radius.circular(widget.borderRadius)
-                                    : Radius.zero,
-                              ),
+                          if (widget.onChildTap == null)
+                            _child(context, item, index, inDrag)
+                          else
+                            sui.Button(
+                              onTap: () => widget.onChildTap!(item, index),
+                              child: _child(context, item, index, inDrag),
                             ),
-                            child: Row(
-                              children: [
-                                Expanded(child: widget.builder(item, index)),
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 16),
-                                  child: Handle(
-                                    delay: Duration.zero,
-                                    child: Icon(
-                                      LineIcons.bars,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
                           if (index < widget.items.length)
                             Divider(
                               height: 0.5,
@@ -129,6 +109,37 @@ class _ReorderableListState<T extends Object>
         );
       },
       shrinkWrap: widget.shrinkWrap,
+    );
+  }
+
+  Widget _child(BuildContext context, T item, int index, bool inDrag) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      decoration: BoxDecoration(
+        color: inDrag ? Colors.grey[100] : Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft:
+              index == 0 ? Radius.circular(widget.borderRadius) : Radius.zero,
+          bottomLeft: index == widget.items.length - 1
+              ? Radius.circular(widget.borderRadius)
+              : Radius.zero,
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(child: widget.builder(item, index)),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Handle(
+              delay: Duration.zero,
+              child: Icon(
+                LineIcons.bars,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -29,6 +29,11 @@ class DataModel extends ChangeNotifier {
 
   List<WorkoutCategories> _workouts = [];
   List<WorkoutCategories> get workouts => _workouts;
+  Future<void> refreshWorkouts() async {
+    _workouts = await WorkoutCategories.getList(user!.userId);
+    notifyListeners();
+  }
+
   List<Exercise> _exercises = [];
   List<Exercise> get exercises => _exercises;
   Future<void> refreshExercises() async {

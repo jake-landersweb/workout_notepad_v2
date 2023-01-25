@@ -42,7 +42,7 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
           for (var i in _exercises)
             Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
-              child: WECell(exercise: i),
+              child: WECell(workout: widget.workout, exercise: i),
             ),
         ],
       ),

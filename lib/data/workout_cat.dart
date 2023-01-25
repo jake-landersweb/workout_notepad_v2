@@ -12,8 +12,11 @@ class WorkoutCategories {
 
   static Future<List<WorkoutCategories>> getList(String userId) async {
     final db = await getDB();
-    final List<Map<String, dynamic>> response =
-        await db.query('workout', where: "userId = ?", whereArgs: [userId]);
+    String sql = """
+      SELECT * FROM workout WHERE userId = '$userId'
+      ORDER BY created DESC
+    """;
+    final List<Map<String, dynamic>> response = await db.rawQuery(sql);
     List<WorkoutCategories> wc = [];
     for (var i in response) {
       var w = Workout.fromJson(i);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sql.dart';
+import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/icons.dart';
@@ -24,6 +25,17 @@ class Workout {
     required this.created,
     required this.updated,
   });
+
+  Workout.init(String uid) {
+    var uuid = const Uuid();
+    workoutId = uuid.v4();
+    userId = uid;
+    title = "";
+    description = "";
+    icon = "";
+    created = "";
+    updated = "";
+  }
 
   Workout copy() => Workout(
         workoutId: workoutId,
@@ -118,5 +130,10 @@ class Workout {
       w.add(Workout.fromJson(i));
     }
     return w;
+  }
+
+  @override
+  String toString() {
+    return toMap().toString();
   }
 }

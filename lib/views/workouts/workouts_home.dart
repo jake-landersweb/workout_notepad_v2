@@ -29,11 +29,13 @@ class _WorkoutsHomeState extends State<WorkoutsHome> {
       trailing: [
         comp.AddButton(
           onTap: () {
-            sui.showCupertinoSheet(
-              context: context,
-              builder: (context) => CEWRoot(
+            sui.Navigate(
+              context,
+              CEWRoot(
                 isCreate: true,
-                onCreate: () {},
+                onAction: (w) {
+                  print(w);
+                },
               ),
             );
           },

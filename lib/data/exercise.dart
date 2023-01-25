@@ -163,12 +163,12 @@ class Exercise {
     return response != 0;
   }
 
-  Future<List<Exercise>> getChildren() async {
+  Future<List<Exercise>> getChildren(String workoutId) async {
     final db = await getDB();
     String query = """
-      SELECT * FROM exercise_set es
-      JOIN exercise e ON e.exerciseId = es.parentId
-      WHERE es.parentId = '$exerciseId'
+      SELECT * FROM exercise e
+      JOIN exercise_set es ON e.exerciseId = es.parentId
+      WHERE es.parentId = '$exerciseId' AND es.workoutId = '$workoutId'
       ORDER BY es.exerciseOrder
     """;
     final List<Map<String, dynamic>> response = await db.rawQuery(query.trim());

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
+import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
 import 'package:workout_notepad_v2/text_themes.dart';
@@ -9,8 +10,10 @@ import 'package:workout_notepad_v2/text_themes.dart';
 class WECell extends StatefulWidget {
   const WECell({
     super.key,
+    required this.workout,
     required this.exercise,
   });
+  final Workout workout;
   final Exercise exercise;
 
   @override
@@ -27,7 +30,7 @@ class _WECellState extends State<WECell> {
   }
 
   Future<void> _init() async {
-    _children = await widget.exercise.getChildren();
+    _children = await widget.exercise.getChildren(widget.workout.workoutId);
     setState(() {});
   }
 

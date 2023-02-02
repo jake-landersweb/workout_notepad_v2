@@ -10,16 +10,18 @@ void showIconPicker({
   required Function(String icon) onSelection,
   bool closeOnSelection = false,
 }) {
-  sui.showFloatingSheet(
+  comp.cupertinoSheet(
     context: context,
-    builder: (context) => sui.FloatingSheet(
+    builder: (context) => sui.AppBar.sheet(
       title: "",
-      icon: LineIcons.times,
-      child: _IconPicker(
-        onSelection: onSelection,
-        initialIcon: initialIcon,
-        closeOnSelection: closeOnSelection,
-      ),
+      leading: const [comp.CloseButton()],
+      children: [
+        _IconPicker(
+          onSelection: onSelection,
+          initialIcon: initialIcon,
+          closeOnSelection: closeOnSelection,
+        ),
+      ],
     ),
   );
 }

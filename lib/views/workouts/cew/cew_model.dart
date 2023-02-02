@@ -10,19 +10,21 @@ import 'package:workout_notepad_v2/views/root.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
 
 class CEWModel extends ChangeNotifier {
-  CEWModel.create(DataModel dmodel) {
+  CEWModel.create() {
     title = "";
     description = "";
     icon = "";
     _exercises = [];
-
-    for (var i = 0; i < 3; i++) {
-      _exercises.add(CEWExercise.init(dmodel.exercises[i].copy()));
-    }
   }
   CEWModel.update(Workout w) {
     // TODO: Implement
     throw "unimplemented";
+  }
+
+  @override
+  void dispose() {
+    print("DISPOSE");
+    super.dispose();
   }
 
   late String title;
@@ -72,6 +74,28 @@ class CEWModel extends ChangeNotifier {
   void removeExerciseChild(int index, Exercise e) {
     var cewe = _exercises.elementAt(index);
     cewe.children.removeWhere((element) => element.exerciseId == e.exerciseId);
+    notifyListeners();
+  }
+
+  void refreshExercises(List<CEWExercise> exercises) {
+    _exercises
+      ..clear()
+      ..addAll(exercises);
+    notifyListeners();
+  }
+
+  void setIcon(String icon) {
+    this.icon = icon;
+    notifyListeners();
+  }
+
+  void setTitle(String title) {
+    this.title = title;
+    notifyListeners();
+  }
+
+  void setDescription(String description) {
+    this.description = description;
     notifyListeners();
   }
 

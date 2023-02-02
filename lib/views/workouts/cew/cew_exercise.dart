@@ -131,11 +131,10 @@ class _CEWExerciseEditState extends State<CEWExerciseEdit> {
                 child: comp.ActionButton(
                   title: "Add Super-Set",
                   onTap: () {
-                    sui.showFloatingSheet(
+                    comp.cupertinoSheet(
                         context: context,
                         builder: (context) {
                           return SelectExercise(
-                            useCupertino: false,
                             onSelect: (e) {
                               setState(() {
                                 _children.add(e.copy());

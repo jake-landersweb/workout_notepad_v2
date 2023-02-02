@@ -2,6 +2,7 @@ import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
 import 'package:workout_notepad_v2/components/root.dart' as comp;
@@ -13,7 +14,7 @@ import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/icon_picker.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 
-class CEWRoot extends StatefulWidget {
+class CEWRoot extends StatelessWidget {
   const CEWRoot({
     super.key,
     required this.isCreate,
@@ -25,56 +26,59 @@ class CEWRoot extends StatefulWidget {
   final Function(Workout w) onAction;
 
   @override
-  State<CEWRoot> createState() => _CEWRootState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) =>
+          isCreate ? CEWModel.create() : CEWModel.update(workout!),
+      builder: (context, _) => _CEW(
+        isCreate: isCreate,
+        onAction: onAction,
+        workout: workout,
+      ),
+    );
+  }
 }
 
-class _CEWRootState extends State<CEWRoot> with TickerProviderStateMixin {
-  @override
-  void initState() {
-    super.initState();
-  }
+class _CEW extends StatelessWidget {
+  const _CEW({
+    super.key,
+    required this.isCreate,
+    required this.onAction,
+    this.workout,
+  });
+  final bool isCreate;
+  final Workout? workout;
+  final Function(Workout w) onAction;
 
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
-    return ChangeNotifierProvider(
-      create: (context) => widget.isCreate
-          ? CEWModel.create(dmodel)
-          : CEWModel.update(widget.workout!),
-      builder: (context, _) => _body(context),
-    );
-  }
-
-  Widget _body(BuildContext context) {
-    var dmodel = Provider.of<DataModel>(context);
     var cmodel = Provider.of<CEWModel>(context);
     return Scaffold(
-      body: sui.AppBar(
+      body: sui.AppBar.sheet(
         title: "Create Workout",
         horizontalSpacing: 0,
-        isLarge: true,
+        scrollController: ModalScrollController.of(context),
         largeTitlePadding: const EdgeInsets.only(left: 16),
         crossAxisAlignment: CrossAxisAlignment.center,
-        leading: const [comp.BackButton()],
+        leading: const [comp.CancelButton()],
         trailing: [
-          sui.Button(
+          comp.ModelCreateButton(
+            title: isCreate ? "Create" : "Update",
+            isValid: cmodel.isValid(),
             onTap: () async {
               if (cmodel.isValid()) {
-                if (widget.isCreate) {
+                if (isCreate) {
                   var w = await cmodel.createWorkout(dmodel);
                   if (w == null) {
                     return;
                   }
-                  widget.onAction(w);
+                  onAction(w);
                   Navigator.of(context).pop();
                 }
               }
             },
-            child: Text(
-              widget.isCreate ? "Create" : "Update",
-              style: ttLabel(context, color: dmodel.color),
-            ),
-          )
+          ),
         ],
         children: [
           Center(child: _icon(context, cmodel)),
@@ -84,13 +88,12 @@ class _CEWRootState extends State<CEWRoot> with TickerProviderStateMixin {
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
             child: comp.ActionButton(
               onTap: () {
-                sui.showFloatingSheet(
+                comp.cupertinoSheet(
                   context: context,
-                  childSpace: 0,
                   builder: (context) => SelectExercise(
-                    useCupertino: true,
-                    useRoot: true,
-                    onSelect: (e) => cmodel.addExercise(e),
+                    onSelect: (e) {
+                      cmodel.addExercise(e);
+                    },
                   ),
                 );
               },
@@ -100,20 +103,16 @@ class _CEWRootState extends State<CEWRoot> with TickerProviderStateMixin {
           Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: comp.LabeledWidget(
-              label: "Exercises",
+              label: "Exercises (Click to edit)",
               padding: const EdgeInsets.fromLTRB(32, 0, 16, 0),
               child: comp.ReorderableList<CEWExercise>(
                 items: cmodel.exercises,
                 areItemsTheSame: (p0, p1) => p0.id == p1.id,
                 onReorderFinished: (item, from, to, newItems) {
-                  setState(() {
-                    cmodel.exercises
-                      ..clear()
-                      ..addAll(newItems);
-                  });
+                  cmodel.refreshExercises(newItems);
                 },
                 onChildTap: ((item, index) {
-                  sui.showCupertinoSheet(
+                  comp.cupertinoSheet(
                     context: context,
                     builder: (context) => CEWExerciseEdit(
                       exercise: item,
@@ -162,11 +161,7 @@ class _CEWRootState extends State<CEWRoot> with TickerProviderStateMixin {
           context: context,
           initialIcon: cmodel.icon,
           closeOnSelection: true,
-          onSelection: (icon) {
-            setState(() {
-              cmodel.icon = icon;
-            });
-          }),
+          onSelection: (icon) => cmodel.setIcon(icon)),
       child: Column(
         children: [
           getImageIcon(cmodel.icon, size: 100),
@@ -194,22 +189,15 @@ class _CEWRootState extends State<CEWRoot> with TickerProviderStateMixin {
           charLimit: 40,
           value: cmodel.title,
           showCharacters: true,
-          onChanged: (val) {
-            setState(() {
-              cmodel.title = val;
-            });
-          },
+          onChanged: (val) => cmodel.setTitle(val),
         ),
         sui.TextField(
           labelText: "Description",
           charLimit: 100,
+          maxLines: 4,
           value: cmodel.description,
           showCharacters: true,
-          onChanged: (val) {
-            setState(() {
-              cmodel.description = val;
-            });
-          },
+          onChanged: (val) => cmodel.setDescription(val),
         ),
       ],
     );
@@ -264,226 +252,6 @@ class _CEWRootState extends State<CEWRoot> with TickerProviderStateMixin {
             ),
         ],
       ),
-    );
-  }
-
-  Widget _exerciseCell(BuildContext context, DataModel dmodel, CEWModel cmodel,
-      CEWExercise item, int index) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Text(
-            item.exercise.title,
-            style: ttSubTitle(context, color: dmodel.color),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            children: [
-              Expanded(
-                child: Stack(
-                  alignment: Alignment.topLeft,
-                  children: [
-                    comp.NumberPicker(
-                      showPicker: false,
-                      textFontSize: 40,
-                      intialValue: item.exercise.sets,
-                      onChanged: (val) {
-                        setState(() {
-                          item.exercise.sets = val;
-                        });
-                      },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Text(
-                        "SETS",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: dmodel.color.withOpacity(0.7),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Text("x", style: ttLabel(context, color: dmodel.color)),
-              ),
-              Expanded(
-                child: Stack(
-                  alignment: Alignment.topLeft,
-                  children: [
-                    comp.NumberPicker(
-                      showPicker: false,
-                      textFontSize: 40,
-                      intialValue: item.exercise.reps,
-                      onChanged: (val) {
-                        setState(() {
-                          item.exercise.reps = val;
-                        });
-                      },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Text(
-                        "REPS",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: dmodel.color.withOpacity(0.7),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 8),
-        if (item.children.isNotEmpty)
-          // exercise children
-          comp.LabeledWidget(
-            label: "SUPER SETS",
-            child: comp.ReorderableList<Exercise>(
-              items: item.children,
-              areItemsTheSame: (p0, p1) => p0.exerciseId == p1.exerciseId,
-              onReorderFinished: (it, from, to, newItems) {
-                setState(() {
-                  cmodel.exercises[index].children
-                    ..clear()
-                    ..addAll(newItems);
-                });
-              },
-              slideBuilder: (item, index) {
-                return ActionPane(
-                  extentRatio: 0.3,
-                  motion: const DrawerMotion(),
-                  children: [
-                    Expanded(
-                      child: Row(children: [
-                        SlidableAction(
-                          onPressed: (context) async {
-                            await Future.delayed(
-                              const Duration(milliseconds: 100),
-                            );
-                            cmodel.removeExercise(index);
-                          },
-                          icon: LineIcons.alternateTrash,
-                          label: "Delete",
-                          foregroundColor: Colors.white,
-                          backgroundColor: Colors.red,
-                        ),
-                      ]),
-                    ),
-                  ],
-                );
-              },
-              builder: (ex, exindex) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        ex.title,
-                        style: ttSubTitle(context, color: dmodel.color),
-                      ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Stack(
-                              alignment: Alignment.topLeft,
-                              children: [
-                                comp.NumberPicker(
-                                  showPicker: false,
-                                  textFontSize: 40,
-                                  intialValue: ex.sets,
-                                  onChanged: (val) {
-                                    setState(() {
-                                      cmodel.exercises[index].children[exindex]
-                                          .sets = val;
-                                    });
-                                  },
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: Text(
-                                    "SETS",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: dmodel.color.withOpacity(0.7),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Text("x",
-                                style: ttLabel(context, color: dmodel.color)),
-                          ),
-                          Expanded(
-                            child: Stack(
-                              alignment: Alignment.topLeft,
-                              children: [
-                                comp.NumberPicker(
-                                  showPicker: false,
-                                  textFontSize: 40,
-                                  intialValue: ex.reps,
-                                  onChanged: (val) {
-                                    setState(() {
-                                      cmodel.exercises[index].children[exindex]
-                                          .reps = val;
-                                    });
-                                  },
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: Text(
-                                    "REPS",
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: dmodel.color.withOpacity(0.7),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-          child: comp.ActionButton(
-            onTap: () {
-              sui.showFloatingSheet(
-                context: context,
-                builder: (context) => SelectExercise(onSelect: (e) {
-                  cmodel.addExerciseChild(index, e);
-                }),
-              );
-            },
-            title: "Add Super-Set",
-            minHeight: 30,
-          ),
-        ),
-      ],
     );
   }
 }

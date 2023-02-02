@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
-import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 
 class CreateCategory extends StatefulWidget {
@@ -23,8 +22,11 @@ class ECreateCategoryState extends State<CreateCategory> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return sui.AppBar.sheet(
+      title: "Create Category",
+      leading: const [comp.CancelButton()],
       children: [
+        const SizedBox(height: 16),
         sui.CellWrapper(
           child: sui.TextField(
             labelText: "Category",

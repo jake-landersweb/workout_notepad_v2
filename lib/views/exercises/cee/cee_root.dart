@@ -15,13 +15,11 @@ class CEERoot extends StatefulWidget {
     required this.isCreate,
     this.onAction,
     this.exercise,
-    this.useRoot = true,
     this.runPostAction = true,
   });
   final bool isCreate;
   final Exercise? exercise;
   final Function(Exercise e)? onAction;
-  final bool useRoot;
   final bool runPostAction;
 
   @override
@@ -53,21 +51,24 @@ class _CEERootState extends State<CEERoot> {
       isFluid: true,
       itemSpacing: 16,
       crossAxisAlignment: CrossAxisAlignment.center,
-      leading: [comp.CloseButton(useRoot: widget.useRoot)],
+      leading: const [comp.CloseButton()],
       trailing: [
         comp.ModelCreateButton(
-          title: widget.isCreate ? "Add" : "Edit",
+          title: widget.isCreate ? "Create" : "Edit",
           isValid: cemodel.isValid(),
           onTap: () async {
             if (widget.runPostAction) {
               Exercise? response = await cemodel.post(dmodel, !widget.isCreate);
-              if (response != null && widget.runPostAction) {
-                await dmodel.refreshExercises();
-                await dmodel.refreshCategories();
+              if (response != null) {
+                if (widget.runPostAction) {
+                  await dmodel.refreshExercises();
+                  await dmodel.refreshCategories();
+                }
                 if (widget.onAction != null) {
                   widget.onAction!(cemodel.exercise);
                 }
               }
+              Navigator.of(context).pop();
             } else {
               widget.onAction!(cemodel.exercise);
             }
@@ -171,20 +172,16 @@ class _CEERootState extends State<CEERoot> {
             const SizedBox(width: 16),
             sui.Button(
               onTap: () {
-                sui.showFloatingSheet(
+                comp.cupertinoSheet(
                   context: context,
-                  builder: (context) => sui.FloatingSheet(
-                    title: "New Category",
-                    icon: LineIcons.times,
-                    child: CreateCategory(
-                        categories: cemodel.categories,
-                        onCompletion: (val) {
-                          setState(() {
-                            cemodel.categories.insert(0, val);
-                            cemodel.exercise.category = val;
-                          });
-                        }),
-                  ),
+                  builder: (context) => CreateCategory(
+                      categories: cemodel.categories,
+                      onCompletion: (val) {
+                        setState(() {
+                          cemodel.categories.insert(0, val);
+                          cemodel.exercise.category = val;
+                        });
+                      }),
                 );
               },
               child: Container(
@@ -251,7 +248,9 @@ class _CEERootState extends State<CEERoot> {
       child: comp.NumberPicker(
         minValue: 0,
         intialValue: cemodel.exercise.sets,
-        onChanged: (val) {},
+        onChanged: (val) {
+          cemodel.exercise.sets = val;
+        },
       ),
     );
   }
@@ -262,7 +261,9 @@ class _CEERootState extends State<CEERoot> {
       child: comp.NumberPicker(
         minValue: 0,
         intialValue: cemodel.exercise.reps,
-        onChanged: (val) {},
+        onChanged: (val) {
+          cemodel.exercise.reps = val;
+        },
       ),
     );
   }

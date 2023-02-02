@@ -27,7 +27,7 @@ class _ExerciseHomeState extends State<ExerciseHome> {
       itemSpacing: 8,
       trailing: [
         comp.AddButton(onTap: () {
-          sui.showCupertinoSheet(
+          comp.cupertinoSheet(
             context: context,
             builder: (context) => const CEERoot(isCreate: true),
           );
@@ -48,12 +48,9 @@ class _ExerciseHomeState extends State<ExerciseHome> {
           ExerciseCell(
             exercise: i,
             onTap: () {
-              sui.showFloatingSheet(
+              comp.cupertinoSheet(
                 context: context,
-                builder: (context) => sui.FloatingSheet(
-                  title: i.title,
-                  child: ExerciseDetail(exercise: i),
-                ),
+                builder: (context) => ExerciseDetail(exercise: i),
               );
             },
           ),

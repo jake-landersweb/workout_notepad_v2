@@ -7,6 +7,7 @@ import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
+import 'package:workout_notepad_v2/components/root.dart' as comp;
 
 class ExerciseDetail extends StatefulWidget {
   const ExerciseDetail({
@@ -23,15 +24,42 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        _icon(context),
-        const SizedBox(height: 16),
-        _actions(context, dmodel),
-        const SizedBox(height: 16),
-        _details(context),
-      ],
+    return SafeArea(
+      top: false,
+      bottom: true,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // title bar
+            Stack(
+              alignment: Alignment.centerLeft,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        widget.exercise.title,
+                        textAlign: TextAlign.center,
+                        style: ttSubTitle(context),
+                      ),
+                    ),
+                  ],
+                ),
+                const comp.CloseButton(),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _icon(context),
+            const SizedBox(height: 16),
+            _actions(context, dmodel),
+            const SizedBox(height: 16),
+            _details(context),
+          ],
+        ),
+      ),
     );
   }
 
@@ -45,13 +73,15 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
         Expanded(
           child: sui.Button(
             onTap: () {
-              Navigator.of(context).pop();
-              sui.showCupertinoSheet(
+              comp.cupertinoSheet(
                 context: context,
                 builder: (context) => CEERoot(
                   isCreate: false,
                   exercise: widget.exercise,
-                  onAction: (_) {},
+                  onAction: (_) {
+                    // close the detail screen
+                    Navigator.of(context).pop();
+                  },
                 ),
               );
             },

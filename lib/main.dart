@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
 import 'package:workout_notepad_v2/model/root.dart';
@@ -19,8 +20,6 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => DataModel()),
         ChangeNotifierProvider(create: (context) => LogicModel()),
-        ChangeNotifierProvider(
-            create: (context) => sui.CupertinoSheetProvider()),
       ],
       builder: (context, child) {
         return _body(context);
@@ -36,14 +35,21 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: dmodel.color,
         scaffoldBackgroundColor: sui.CustomColors.backgroundColor(context),
+        backgroundColor: sui.CustomColors.backgroundColor(context),
         cardColor: sui.CustomColors.cellColor(context),
         textTheme: GoogleFonts.openSansTextTheme(),
       ),
-      home: sui.CupertinoSheetBase(child: const Index()),
-      // wrap entire app in curpertino sheet base
-      builder: ((context, child) {
-        return child ?? Container();
-      }),
+      onGenerateRoute: (settings) {
+        return MaterialWithModalsPageRoute(
+          settings: settings,
+          builder: (context) => const Index(),
+        );
+      },
+      // home: sui.CupertinoSheetBase(child: const Index()),
+      // // wrap entire app in curpertino sheet base
+      // builder: ((context, child) {
+      //   return child ?? Container();
+      // }),
     );
   }
 }

@@ -22,7 +22,7 @@ class _WorkoutsHomeState extends State<WorkoutsHome> {
     return sui.AppBar(
       title: "Workouts",
       isFluid: true,
-      itemSpacing: 8,
+      itemSpacing: 16,
       isLarge: true,
       trailing: [
         comp.AddButton(

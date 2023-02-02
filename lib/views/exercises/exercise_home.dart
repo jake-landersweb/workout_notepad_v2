@@ -24,7 +24,7 @@ class _ExerciseHomeState extends State<ExerciseHome> {
       title: "Exercises",
       isLarge: true,
       isFluid: true,
-      itemSpacing: 8,
+      itemSpacing: 16,
       trailing: [
         comp.AddButton(onTap: () {
           comp.cupertinoSheet(

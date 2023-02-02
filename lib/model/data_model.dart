@@ -12,7 +12,7 @@ enum LoadStatus { init, noUser, done }
 
 class DataModel extends ChangeNotifier {
   DataModel() {
-    initTest(delete: false);
+    initTest(delete: true);
   }
 
   LoadStatus loadStatus = LoadStatus.init;
@@ -72,6 +72,8 @@ class DataModel extends ChangeNotifier {
   }
 
   Future<void> initTest({bool? delete}) async {
+    var prefs = await SharedPreferences.getInstance();
+    prefs.setString("userId", "1");
     if (delete ?? false) {
       String path = join(await getDatabasesPath(), 'workout_notepad.db');
       await databaseFactory.deleteDatabase(path);
@@ -80,7 +82,7 @@ class DataModel extends ChangeNotifier {
       await u.insert();
       await loadTests();
     }
-    var prefs = await SharedPreferences.getInstance();
+
     user = await User.fromId(prefs.getString("userId")!);
     await fetchData(user!.userId);
   }

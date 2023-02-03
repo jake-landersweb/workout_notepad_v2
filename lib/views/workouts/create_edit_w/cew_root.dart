@@ -75,6 +75,13 @@ class _CEW extends StatelessWidget {
                   }
                   onAction(w);
                   Navigator.of(context).pop();
+                } else {
+                  var w = await cmodel.updateWorkout(dmodel);
+                  if (w == null) {
+                    return;
+                  }
+                  onAction(w);
+                  Navigator.of(context).pop();
                 }
               }
             },

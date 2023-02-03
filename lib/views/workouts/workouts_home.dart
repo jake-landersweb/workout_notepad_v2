@@ -24,6 +24,7 @@ class _WorkoutsHomeState extends State<WorkoutsHome> {
       isFluid: true,
       itemSpacing: 16,
       isLarge: true,
+      forceMaxSize: true,
       trailing: [
         comp.AddButton(
           onTap: () {
@@ -36,16 +37,6 @@ class _WorkoutsHomeState extends State<WorkoutsHome> {
                 },
               ),
             );
-            // sui.Navigate(
-            //   context,
-            // CEWRoot(
-            //   isCreate: true,
-            //   onAction: (w) {
-            //     print(w);
-            //   },
-            // ),
-            //   maintainState: false,
-            // );
           },
         )
       ],

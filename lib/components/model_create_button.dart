@@ -29,7 +29,6 @@ class ModelCreateButton extends StatelessWidget {
           : Text(
               title,
               style: ttLabel(context).copyWith(
-                fontWeight: isValid ? FontWeight.w600 : null,
                 color: isValid
                     ? Theme.of(context).primaryColor
                     : sui.CustomColors.textColor(context).withOpacity(0.3),

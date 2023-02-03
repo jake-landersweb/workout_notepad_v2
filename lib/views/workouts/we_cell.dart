@@ -37,31 +37,41 @@ class _WECellState extends State<WECell> {
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
-    return sui.Button(
-      onTap: () {},
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 70,
-            child: Text(
-              "${widget.exercise.sets} x ${widget.exercise.reps}",
-              style: ttLabel(context, color: dmodel.color),
-            ),
-          ),
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          widget.exercise.title,
+          style: ttLabel(context, color: dmodel.color),
+        ),
+        Text(
+          "${widget.exercise.sets} x ${widget.exercise.reps}",
+          style: ttBody(context),
+        ),
+        for (var i in _children)
+          RichText(
+            text: TextSpan(
+              text: "- ",
+              style: ttBody(context),
               children: [
-                Text(widget.exercise.title, style: ttLabel(context)),
-                if (_children.isNotEmpty)
-                  for (var i in _children) _superSet(context, i),
+                TextSpan(
+                  text: i.title,
+                  style: ttBody(
+                    context,
+                    color: dmodel.color,
+                  ),
+                ),
+                TextSpan(
+                  text: " (${i.sets} x ${i.reps})",
+                  style: ttBody(
+                    context,
+                    color: sui.CustomColors.textColor(context).withOpacity(0.5),
+                  ),
+                ),
               ],
             ),
           ),
-        ],
-      ),
+      ],
     );
   }
 

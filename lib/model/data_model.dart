@@ -12,7 +12,7 @@ enum LoadStatus { init, noUser, done }
 
 class DataModel extends ChangeNotifier {
   DataModel() {
-    initTest(delete: true);
+    initTest(delete: false);
   }
 
   LoadStatus loadStatus = LoadStatus.init;

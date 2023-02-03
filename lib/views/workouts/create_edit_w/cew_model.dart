@@ -17,16 +17,27 @@ class CEWModel extends ChangeNotifier {
     _exercises = [];
   }
   CEWModel.update(Workout w) {
-    // TODO: Implement
-    throw "unimplemented";
+    // create the exercise structure
+    workoutId = w.workoutId;
+    title = w.title;
+    description = w.description ?? "";
+    icon = w.icon;
+    _exercises = [];
+    updateInit(w);
   }
 
-  @override
-  void dispose() {
-    print("DISPOSE");
-    super.dispose();
+  void updateInit(Workout w) async {
+    List<Exercise> children = await w.getChildren();
+
+    for (var i in children) {
+      List<Exercise> ec = await i.getChildren(w.workoutId);
+      var cewe = CEWExercise.from(i, ec);
+      _exercises.add(cewe);
+    }
+    notifyListeners();
   }
 
+  String? workoutId;
   late String title;
   late String description;
   late String icon;
@@ -181,6 +192,124 @@ class CEWModel extends ChangeNotifier {
         for (var i in exerciseSets) {
           // add all exercise super sets
           r = await txn.insert('exercise_set', i.toMap());
+          if (r == 0) {
+            throw Exception("There was an issue inserting an exercise set");
+          }
+        }
+      });
+      // update the data
+      await dmodel.refreshWorkouts();
+      return w;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      return null;
+    }
+  }
+
+  Future<Workout?> updateWorkout(DataModel dmodel) async {
+    // update the workout
+    Workout w = Workout.init(dmodel.user!.userId);
+    w.workoutId = workoutId!;
+    w.title = title;
+    w.description = description;
+    w.icon = icon;
+
+    // create the workout exercises
+    var workoutExercises = <WorkoutExercise>[];
+
+    // compose the exercise super sets
+    var exerciseSets = <ExerciseSet>[];
+
+    // create the exercise sets from the exercise list
+    for (int i = 0; i < _exercises.length; i++) {
+      // create the workout exercise
+      var we = WorkoutExercise.init(
+        w,
+        _exercises[i].exercise,
+        ExerciseChildArgs(
+          order: i,
+          sets: _exercises[i].exercise.sets,
+          reps: _exercises[i].exercise.reps,
+          time: _exercises[i].exercise.time,
+          timePost: _exercises[i].exercise.timePost,
+        ),
+      );
+
+      workoutExercises.add(we);
+
+      // loop through children and create exercise sets
+      for (int j = 0; j < _exercises[i].children.length; j++) {
+        // create an exercise set with new args
+        var es = ExerciseSet.init(
+          w,
+          _exercises[i].exercise,
+          _exercises[i].children[j],
+          ExerciseChildArgs(
+            order: j,
+            sets: _exercises[i].children[j].sets,
+            reps: _exercises[i].children[j].reps,
+            time: _exercises[i].children[j].time,
+            timePost: _exercises[i].children[j].timePost,
+          ),
+        );
+        exerciseSets.add(es);
+      }
+    }
+
+    var db = await getDB();
+    // start a transaction
+    try {
+      await db.transaction((txn) async {
+        int r = await txn.update('workout', w.toMap(),
+            where: "workoutId = ?", whereArgs: [workoutId!]);
+        if (r == 0) {
+          throw Exception("There was an issue updating the workout");
+        }
+
+        // EXERCISES ALREADY INSERTED
+
+        // remove all workout exercises
+        r = await txn.delete(
+          "workout_exercise",
+          where: "workoutId = ?",
+          whereArgs: [workoutId!],
+        );
+        if (r == 0) {
+          throw Exception("There was an issue removing the workout exercises");
+        }
+
+        // remove all exercise sets
+        r = await txn.delete(
+          "exercise_set",
+          where: "workoutId = ?",
+          whereArgs: [workoutId!],
+        );
+        if (r == 0) {
+          throw Exception("There was an issue removing the exercise sets");
+        }
+
+        // add workout exercises
+        for (var i in workoutExercises) {
+          r = await txn.insert(
+            'workout_exercise',
+            i.toMap(),
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+          if (r == 0) {
+            throw Exception("There was an issue inserting a workout exercise");
+          }
+        }
+
+        // add exercise super sets
+        for (var i in exerciseSets) {
+          // add all exercise super sets
+          r = await txn.insert(
+            'exercise_set',
+            i.toMap(),
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
           if (r == 0) {
             throw Exception("There was an issue inserting an exercise set");
           }

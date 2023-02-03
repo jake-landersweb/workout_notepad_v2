@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout.dart';
@@ -8,6 +9,7 @@ import 'package:sapphireui/sapphireui.dart' as sui;
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/views/workouts/workout_detail.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/components/root.dart' as comp;
 
 class WorkoutCell extends StatefulWidget {
   const WorkoutCell({
@@ -26,9 +28,9 @@ class _WorkoutCellState extends State<WorkoutCell> {
     var dmodel = Provider.of<DataModel>(context);
     return sui.Button(
       onTap: () {
-        sui.Navigate(
-          context,
-          WorkoutDetail(workout: widget.wc.workout),
+        comp.navigate(
+          context: context,
+          builder: (context) => WorkoutDetail(workout: widget.wc.workout),
         );
       },
       child: Container(

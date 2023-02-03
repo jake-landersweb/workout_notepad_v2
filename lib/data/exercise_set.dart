@@ -34,7 +34,7 @@ class ExerciseSet {
   ExerciseSet.init(Workout workout, Exercise parent, Exercise child,
       ExerciseChildArgs args) {
     var uuid = const Uuid();
-    exerciseSetId = uuid.v4();
+    exerciseSetId = child.exerciseSetId ?? uuid.v4();
     workoutId = workout.workoutId;
     parentId = parent.exerciseId;
     childId = child.exerciseId;

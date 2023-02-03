@@ -32,7 +32,8 @@ class WorkoutExercise {
 
   WorkoutExercise.init(Workout w, Exercise e, ExerciseChildArgs args) {
     var uuid = const Uuid();
-    workoutExerciseId = uuid.v4();
+    workoutExerciseId =
+        e.workoutExerciseId == null ? uuid.v4() : e.workoutExerciseId!;
     workoutId = w.workoutId;
     exerciseId = e.exerciseId;
     exerciseOrder = args.order;
@@ -43,6 +44,19 @@ class WorkoutExercise {
     created = "";
     updated = "";
   }
+
+  WorkoutExercise copy() => WorkoutExercise(
+        workoutExerciseId: workoutExerciseId,
+        workoutId: workoutId,
+        exerciseId: exerciseId,
+        exerciseOrder: exerciseOrder,
+        sets: sets,
+        reps: reps,
+        time: time,
+        timePost: timePost,
+        created: created,
+        updated: updated,
+      );
 
   WorkoutExercise.fromJson(Map<String, dynamic> json) {
     workoutExerciseId = json['workoutExerciseId'];

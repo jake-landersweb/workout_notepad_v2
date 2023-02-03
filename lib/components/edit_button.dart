@@ -2,17 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
 import 'package:workout_notepad_v2/text_themes.dart';
 
-class CancelButton extends StatelessWidget {
-  const CancelButton({super.key});
+class EditButton extends StatelessWidget {
+  const EditButton({
+    super.key,
+    required this.onTap,
+  });
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     return sui.Button(
-        onTap: () => Navigator.of(context).pop(),
+        onTap: onTap,
         child: Text(
-          "Cancel",
-          style: ttLabel(context,
-              color: sui.CustomColors.textColor(context).withOpacity(0.5)),
+          "Edit",
+          style: ttLabel(context, color: Theme.of(context).primaryColor),
         ));
   }
 }

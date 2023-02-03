@@ -6,6 +6,8 @@ import 'package:workout_notepad_v2/utils/root.dart';
 
 class Exercise {
   late String exerciseId;
+  String? exerciseSetId;
+  String? workoutExerciseId;
   late String userId;
   late String category;
   late String title;
@@ -23,6 +25,8 @@ class Exercise {
 
   Exercise({
     required this.exerciseId,
+    this.exerciseSetId,
+    this.workoutExerciseId,
     required this.userId,
     required this.category,
     required this.title,
@@ -56,6 +60,8 @@ class Exercise {
 
   Exercise copy() => Exercise(
         exerciseId: exerciseId,
+        exerciseSetId: exerciseSetId,
+        workoutExerciseId: workoutExerciseId,
         userId: userId,
         category: category,
         title: title,
@@ -72,6 +78,8 @@ class Exercise {
 
   Exercise.fromJson(Map<String, dynamic> json) {
     exerciseId = json['exerciseId'];
+    exerciseSetId = json['exerciseSetId'];
+    workoutExerciseId = json['workoutExerciseId'];
     userId = json['userId'];
     category = json['category'];
     title = json['title'];
@@ -167,7 +175,7 @@ class Exercise {
     final db = await getDB();
     String query = """
       SELECT * FROM exercise e
-      JOIN exercise_set es ON e.exerciseId = es.parentId
+      JOIN exercise_set es ON e.exerciseId = es.childId
       WHERE es.parentId = '$exerciseId' AND es.workoutId = '$workoutId'
       ORDER BY es.exerciseOrder
     """;

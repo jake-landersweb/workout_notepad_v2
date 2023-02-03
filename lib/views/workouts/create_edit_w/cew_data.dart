@@ -12,4 +12,13 @@ class CEWExercise {
     exercise = e.copy();
     children = [];
   }
+
+  CEWExercise.from(Exercise e, List<Exercise> c) {
+    if (e.workoutExerciseId == null) {
+      throw "ERROR: CANNOT BE NULL";
+    }
+    id = e.workoutExerciseId!;
+    exercise = e.copy();
+    children = [for (var i in c) i.copy()];
+  }
 }

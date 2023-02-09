@@ -33,7 +33,7 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
         crossAxisAlignment: CrossAxisAlignment.center,
         leading: const [comp.CloseButton()],
         children: [
-          _icon(context),
+          if (widget.exercise.icon.isNotEmpty) _icon(context),
           const SizedBox(height: 16),
           _actions(context, dmodel),
           const SizedBox(height: 16),
@@ -104,14 +104,26 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
         sui.ListView<Widget>(
           leadingPadding: 0,
           trailingPadding: 0,
+          childPadding: const EdgeInsets.symmetric(horizontal: 16),
           children: [
             if (widget.exercise.category.isNotEmpty)
-              Text(widget.exercise.category.uppercase(),
-                  style: ttBody(context)),
+              sui.LabeledCell(
+                label: "Category",
+                child: Text(
+                  widget.exercise.category.uppercase(),
+                  style: ttLabel(context),
+                ),
+              ),
             if (widget.exercise.description.isNotEmpty)
-              Text(widget.exercise.description, style: ttBody(context)),
-            Text("${widget.exercise.sets} x ${widget.exercise.reps}",
-                style: ttBody(context)),
+              sui.LabeledCell(
+                label: "Description",
+                child:
+                    Text(widget.exercise.description, style: ttLabel(context)),
+              ),
+            sui.LabeledCell(
+              label: "",
+              child: widget.exercise.info(context, style: ttLabel(context)),
+            ),
           ],
         ),
       ],

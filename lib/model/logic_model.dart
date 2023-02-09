@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 enum TabBarPage { workouts, exercises, logs, settings }
 
-/// This is a class for holding all of the app state that does not
-/// persist between app launches. There is no references from
+/// This is a class for holding all of the app state decdoupled from the user
 /// [SharedPreferences] or [SQLite].
 class LogicModel extends ChangeNotifier {
   TabBarPage _tabBarIndex = TabBarPage.workouts;

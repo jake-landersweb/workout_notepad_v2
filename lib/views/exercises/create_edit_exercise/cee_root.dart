@@ -5,6 +5,7 @@ import 'package:sapphireui/sapphireui.dart' as sui;
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/views/exercises/create_edit_exercise/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/icon_picker.dart';
@@ -85,12 +86,27 @@ class _CEERootState extends State<CEERoot> {
         _category(context, cemodel, dmodel),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: _sets(context, cemodel),
+          child: sui.SegmentedPicker(
+            titles: const ["Weighted", "Timed"],
+            selections: const [0, 1],
+            style: sui.SegmentedPickerStyle(
+              height: 36,
+              pickerColor: Theme.of(context).primaryColor,
+              selectedTextColor: Colors.white,
+              selectedWeight: FontWeight.w500,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(50),
+              ),
+            ),
+            onSelection: (p0) {
+              setState(() {
+                cemodel.exercise.type = p0;
+              });
+            },
+            selection: cemodel.exercise.type,
+          ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: _reps(context, cemodel),
-        ),
+        for (var i in _setBody(context, cemodel)) i
       ],
     );
   }
@@ -112,9 +128,10 @@ class _CEERootState extends State<CEERoot> {
           Text(
             "Edit",
             style: TextStyle(
-                fontSize: 12,
-                color: sui.CustomColors.textColor(context).withOpacity(0.3),
-                fontWeight: FontWeight.w300),
+              fontSize: 12,
+              color: sui.CustomColors.textColor(context).withOpacity(0.3),
+              fontWeight: FontWeight.w300,
+            ),
           ),
         ],
       ),
@@ -242,6 +259,33 @@ class _CEERootState extends State<CEERoot> {
     );
   }
 
+  List<Widget> _setBody(BuildContext context, CreateExerciseModel cemodel) {
+    switch (cemodel.exercise.type) {
+      case 1:
+        return [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: _sets(context, cemodel),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: _time(context, cemodel),
+          ),
+        ];
+      default:
+        return [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: _sets(context, cemodel),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: _reps(context, cemodel),
+          ),
+        ];
+    }
+  }
+
   Widget _sets(BuildContext context, CreateExerciseModel cemodel) {
     return comp.LabeledWidget(
       label: "Sets",
@@ -264,6 +308,75 @@ class _CEERootState extends State<CEERoot> {
         onChanged: (val) {
           cemodel.exercise.reps = val;
         },
+      ),
+    );
+  }
+
+  Widget _time(BuildContext context, CreateExerciseModel cemodel) {
+    return comp.LabeledWidget(
+      label: "Time",
+      child: comp.NumberPicker(
+        minValue: 0,
+        intialValue: cemodel.exercise.time,
+        showPicker: true,
+        maxValue: 99999,
+        onChanged: (val) {
+          cemodel.exercise.time = val;
+        },
+        picker: SizedBox(
+          width: 60,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Column(
+                children: [
+                  _timeCell(context, cemodel, "sec"),
+                  _timeCell(context, cemodel, "min"),
+                  _timeCell(context, cemodel, "hour"),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _timeCell(
+    BuildContext context,
+    CreateExerciseModel cemodel,
+    String post,
+  ) {
+    return Expanded(
+      child: sui.Button(
+        onTap: () {
+          setState(() {
+            cemodel.exercise.timePost = post;
+          });
+        },
+        child: Container(
+          color: cemodel.exercise.timePost == post
+              ? Theme.of(context).primaryColor.withOpacity(0.3)
+              : sui.CustomColors.textColor(context).withOpacity(0.1),
+          width: double.infinity,
+          child: Center(
+            child: Text(
+              post.toUpperCase(),
+              style: TextStyle(
+                color: cemodel.exercise.timePost == post
+                    ? Theme.of(context).primaryColor
+                    : sui.CustomColors.textColor(context).withOpacity(0.5),
+                fontWeight: cemodel.exercise.timePost == post
+                    ? FontWeight.w600
+                    : FontWeight.w400,
+                fontSize: 14,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

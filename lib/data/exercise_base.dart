@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:sapphireui/sapphireui.dart' as sui;
 
 abstract class ExerciseBase {
   late String title;
@@ -76,5 +78,41 @@ abstract class ExerciseBase {
   @override
   String toString() {
     return toMap().toString();
+  }
+
+  Widget info(
+    BuildContext context, {
+    TextStyle? style,
+  }) {
+    return RichText(text: infoRaw(context));
+  }
+
+  TextSpan infoRaw(
+    BuildContext context, {
+    TextStyle? style,
+  }) {
+    switch (type) {
+      case 1:
+        return TextSpan(
+          text: "$sets x $time",
+          style: style ?? ttBody(context),
+          children: [
+            TextSpan(
+              text: timePost,
+              style: TextStyle(
+                fontWeight: style?.fontWeight ?? FontWeight.w500,
+                fontSize: style?.fontSize ?? 16,
+                color: style?.color?.withOpacity(0.5) ??
+                    sui.CustomColors.textColor(context).withOpacity(0.5),
+              ),
+            ),
+          ],
+        );
+      default:
+        return TextSpan(
+          text: "$sets x $reps",
+          style: style ?? ttBody(context),
+        );
+    }
   }
 }

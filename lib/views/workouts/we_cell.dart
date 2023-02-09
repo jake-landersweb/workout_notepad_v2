@@ -46,10 +46,7 @@ class _WECellState extends State<WECell> {
           widget.exercise.title,
           style: ttLabel(context, color: dmodel.color),
         ),
-        Text(
-          "${widget.exercise.sets} x ${widget.exercise.reps}",
-          style: ttBody(context),
-        ),
+        widget.exercise.info(context),
         for (var i in _children)
           RichText(
             text: TextSpan(
@@ -64,11 +61,29 @@ class _WECellState extends State<WECell> {
                   ),
                 ),
                 TextSpan(
-                  text: " (${i.sets} x ${i.reps})",
+                  text: " (",
                   style: ttBody(
                     context,
                     color: sui.CustomColors.textColor(context).withOpacity(0.5),
                   ),
+                  children: [
+                    i.infoRaw(
+                      context,
+                      style: ttBody(
+                        context,
+                        color: sui.CustomColors.textColor(context)
+                            .withOpacity(0.5),
+                      ),
+                    ),
+                    TextSpan(
+                      text: ")",
+                      style: ttBody(
+                        context,
+                        color: sui.CustomColors.textColor(context)
+                            .withOpacity(0.5),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

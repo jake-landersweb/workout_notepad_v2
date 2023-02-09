@@ -8,7 +8,6 @@ import 'package:sqflite/sqflite.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/load_tests.dart';
 import 'package:path/path.dart';
-import 'package:workout_notepad_v2/model/root.dart';
 
 enum LoadStatus { init, noUser, done }
 
@@ -18,7 +17,26 @@ class DataModel extends ChangeNotifier {
   }
 
   LoadStatus loadStatus = LoadStatus.init;
+
   MaterialColor color = Colors.deepPurple;
+  Future<void> setColor(String c) async {
+    var prefs = await SharedPreferences.getInstance();
+    var r = await prefs.setString("color", c);
+    if (r) {
+      color = appColorMap[c]!;
+    }
+    notifyListeners();
+  }
+
+  bool? isLight;
+  Future<void> setIsLight(bool val) async {
+    var prefs = await SharedPreferences.getInstance();
+    var r = await prefs.setBool("isLight", val);
+    if (r) {
+      isLight = val;
+    }
+    notifyListeners();
+  }
 
   User? user;
 
@@ -65,6 +83,18 @@ class DataModel extends ChangeNotifier {
       return;
     }
 
+    // get the color
+    var c = prefs.getString("color");
+    if (c != null) {
+      setColor(c);
+    }
+
+    // set color scheme
+    var il = prefs.getBool("isLight");
+    if (il != null) {
+      setIsLight(il);
+    }
+
     log("[INIT] User exists");
 
     // get all user data
@@ -84,6 +114,19 @@ class DataModel extends ChangeNotifier {
       await u.insert();
       await loadTests();
     }
+
+    // get the color
+    var c = prefs.getString("color");
+    if (c != null) {
+      setColor(c);
+    }
+
+    // set color scheme
+    var il = prefs.getBool("isLight");
+    if (il != null) {
+      setIsLight(il);
+    }
+
     user = await User.fromId(prefs.getString("userId")!);
     await fetchData(user!.userId);
   }
@@ -114,4 +157,48 @@ class DataModel extends ChangeNotifier {
       return color[500]!;
     }
   }
+}
+
+final List<MaterialColor> appColors = [
+  Colors.blue,
+  Colors.blueGrey,
+  Colors.brown,
+  Colors.cyan,
+  Colors.deepOrange,
+  Colors.deepPurple,
+  Colors.green,
+  Colors.grey,
+  Colors.indigo,
+  Colors.lightBlue,
+  Colors.lightGreen,
+  Colors.lime,
+  Colors.orange,
+  Colors.pink,
+  Colors.purple,
+  Colors.red,
+  Colors.teal,
+];
+
+final Map<String, MaterialColor> appColorMap = {
+  Colors.blue.toString(): Colors.blue,
+  Colors.blueGrey.toString(): Colors.blueGrey,
+  Colors.brown.toString(): Colors.brown,
+  Colors.cyan.toString(): Colors.cyan,
+  Colors.deepOrange.toString(): Colors.deepOrange,
+  Colors.deepPurple.toString(): Colors.deepPurple,
+  Colors.green.toString(): Colors.green,
+  Colors.grey.toString(): Colors.grey,
+  Colors.indigo.toString(): Colors.indigo,
+  Colors.lightBlue.toString(): Colors.lightBlue,
+  Colors.lightGreen.toString(): Colors.lightGreen,
+  Colors.lime.toString(): Colors.lime,
+  Colors.orange.toString(): Colors.orange,
+  Colors.pink.toString(): Colors.pink,
+  Colors.purple.toString(): Colors.purple,
+  Colors.red.toString(): Colors.red,
+  Colors.teal.toString(): Colors.teal,
+};
+
+MaterialColor getAppColor(String color) {
+  return appColorMap[color] ?? Colors.deepPurple;
 }

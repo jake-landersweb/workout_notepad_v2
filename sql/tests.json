@@ -157,10 +157,11 @@
             "category": "biceps",
             "title": "Dumbbell Hold",
             "description": "Static hold on contraction",
-            "type": 2,
+            "type": 1,
             "sets": 4,
             "reps": 0,
-            "time": 30
+            "time": 30,
+            "timePost": "sec"
         },
         {
             "exerciseId": "B5D48850-8DD8-4085-BEF4-7C14DB0A03E4",

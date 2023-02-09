@@ -60,8 +60,7 @@ class ExerciseCell extends StatelessWidget {
                         exercise.title,
                         style: ttLabel(context, color: dmodel.color),
                       ),
-                      Text("${exercise.sets} x ${exercise.reps}",
-                          style: ttBody(context)),
+                      exercise.info(context),
                       if (exercise.category.isNotEmpty)
                         Padding(
                           padding: const EdgeInsets.only(top: 4.0),

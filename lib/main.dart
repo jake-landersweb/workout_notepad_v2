@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
@@ -29,27 +30,36 @@ class MyApp extends StatelessWidget {
 
   Widget _body(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
-    return MaterialApp(
-      title: 'Workout Notepad',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: dmodel.color,
-        scaffoldBackgroundColor: sui.CustomColors.backgroundColor(context),
-        backgroundColor: sui.CustomColors.backgroundColor(context),
-        cardColor: sui.CustomColors.cellColor(context),
-        textTheme: GoogleFonts.openSansTextTheme(),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: dmodel.isLight == null
+          ? ThemeMode.system == Brightness.light
+              ? SystemUiOverlayStyle.dark
+              : SystemUiOverlayStyle.light
+          : dmodel.isLight!
+              ? SystemUiOverlayStyle.dark
+              : SystemUiOverlayStyle.light,
+      child: MaterialApp(
+        title: 'Workout Notepad',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: dmodel.color,
+          brightness: dmodel.isLight == null
+              ? null
+              : dmodel.isLight!
+                  ? Brightness.light
+                  : Brightness.dark,
+          scaffoldBackgroundColor: sui.CustomColors.backgroundColor(context),
+          backgroundColor: sui.CustomColors.backgroundColor(context),
+          cardColor: sui.CustomColors.cellColor(context),
+          textTheme: GoogleFonts.openSansTextTheme(),
+        ),
+        onGenerateRoute: (settings) {
+          return MaterialWithModalsPageRoute(
+            settings: settings,
+            builder: (context) => const Index(),
+          );
+        },
       ),
-      onGenerateRoute: (settings) {
-        return MaterialWithModalsPageRoute(
-          settings: settings,
-          builder: (context) => const Index(),
-        );
-      },
-      // home: sui.CupertinoSheetBase(child: const Index()),
-      // // wrap entire app in curpertino sheet base
-      // builder: ((context, child) {
-      //   return child ?? Container();
-      // }),
     );
   }
 }

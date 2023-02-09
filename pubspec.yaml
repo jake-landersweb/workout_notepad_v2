@@ -78,6 +78,7 @@ flutter:
     - sql/init.sql
     - sql/tests.json
     
+    - assets/icons/unavailable-96.png
     - assets/icons/bench-press-96.png
     - assets/icons/bouldering-96.png
     - assets/icons/calves-96.png

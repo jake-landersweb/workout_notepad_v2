@@ -16,6 +16,12 @@ class NumberPicker extends StatefulWidget {
     this.maxValue = 999,
     this.minValue = 0,
     this.showPicker = true,
+    this.topButtonChild,
+    this.bottomButtonChild,
+    this.onTopClick,
+    this.onBottomClick,
+    this.picker,
+    this.spacing = 16,
   });
   final Function(int val) onChanged;
   final int? intialValue;
@@ -25,6 +31,12 @@ class NumberPicker extends StatefulWidget {
   final int maxValue;
   final int minValue;
   final bool showPicker;
+  final Widget? topButtonChild;
+  final Widget? bottomButtonChild;
+  final VoidCallback? onTopClick;
+  final VoidCallback? onBottomClick;
+  final Widget? picker;
+  final double spacing;
 
   @override
   State<NumberPicker> createState() => _NumberPickerState();
@@ -88,27 +100,41 @@ class _NumberPickerState extends State<NumberPicker> {
               ),
               if (widget.showPicker)
                 Padding(
-                  padding: const EdgeInsets.only(left: 16.0),
-                  child: SizedBox(
-                    width: 60,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Column(
-                          children: [
-                            _plusMinusCell(
-                                context, getColor(true), getAccent(true), true),
-                            _plusMinusCell(context, getColor(false),
-                                getAccent(false), false),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+                  padding: EdgeInsets.only(left: widget.spacing),
+                  child: widget.picker == null
+                      ? SizedBox(
+                          width: 60,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: Column(
+                                children: [
+                                  _plusMinusCell(
+                                    context,
+                                    getColor(true),
+                                    getAccent(true),
+                                    true,
+                                    child: widget.topButtonChild,
+                                    onTap: widget.onBottomClick,
+                                  ),
+                                  _plusMinusCell(
+                                    context,
+                                    getColor(false),
+                                    getAccent(false),
+                                    false,
+                                    child: widget.bottomButtonChild,
+                                    onTap: widget.onBottomClick,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      : widget.picker!,
+                )
             ],
           ),
         ),
@@ -138,34 +164,44 @@ class _NumberPickerState extends State<NumberPicker> {
     }
   }
 
-  Widget _plusMinusCell(BuildContext context, Color textColor,
-      Color backgroundColor, bool isPlus) {
+  Widget _plusMinusCell(
+    BuildContext context,
+    Color textColor,
+    Color backgroundColor,
+    bool isPlus, {
+    Widget? child,
+    VoidCallback? onTap,
+  }) {
     return Expanded(
       child: sui.Button(
         onTap: () {
-          if (isPlus) {
-            int? tmp = int.tryParse(_controller.text);
-            if (tmp != null) {
-              tmp += 1;
-              if (tmp > widget.maxValue) {
-                tmp = widget.maxValue;
-              }
-              widget.onChanged(tmp);
-              setState(() {
-                _controller.text = tmp.toString();
-              });
-            }
+          if (onTap != null) {
+            onTap();
           } else {
-            int? tmp = int.tryParse(_controller.text);
-            if (tmp != null) {
-              tmp -= 1;
-              if (tmp < widget.minValue) {
-                tmp = widget.minValue;
+            if (isPlus) {
+              int? tmp = int.tryParse(_controller.text);
+              if (tmp != null) {
+                tmp += 1;
+                if (tmp > widget.maxValue) {
+                  tmp = widget.maxValue;
+                }
+                widget.onChanged(tmp);
+                setState(() {
+                  _controller.text = tmp.toString();
+                });
               }
-              widget.onChanged(tmp);
-              setState(() {
-                _controller.text = tmp.toString();
-              });
+            } else {
+              int? tmp = int.tryParse(_controller.text);
+              if (tmp != null) {
+                tmp -= 1;
+                if (tmp < widget.minValue) {
+                  tmp = widget.minValue;
+                }
+                widget.onChanged(tmp);
+                setState(() {
+                  _controller.text = tmp.toString();
+                });
+              }
             }
           }
         },
@@ -173,10 +209,11 @@ class _NumberPickerState extends State<NumberPicker> {
           color: backgroundColor,
           width: double.infinity,
           child: Center(
-            child: Icon(
-              isPlus ? LineIcons.plus : LineIcons.minus,
-              color: textColor,
-            ),
+            child: child ??
+                Icon(
+                  isPlus ? LineIcons.plus : LineIcons.minus,
+                  color: textColor,
+                ),
           ),
         ),
       ),

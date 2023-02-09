@@ -1,4 +1,3 @@
-import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:line_icons/line_icons.dart';
@@ -6,9 +5,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
 import 'package:workout_notepad_v2/components/root.dart' as comp;
-import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/root.dart';
-import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -233,10 +230,7 @@ class _CEW extends StatelessWidget {
             style: ttLabel(context, color: dmodel.color),
           ),
           // sets and reps
-          Text(
-            "${item.exercise.sets} x ${item.exercise.reps}",
-            style: ttBody(context),
-          ),
+          item.exercise.info(context),
           // super sets
           for (var i in item.children)
             RichText(
@@ -252,12 +246,30 @@ class _CEW extends StatelessWidget {
                     ),
                   ),
                   TextSpan(
-                    text: " (${i.sets} x ${i.reps})",
+                    text: " (",
                     style: ttBody(
                       context,
                       color:
                           sui.CustomColors.textColor(context).withOpacity(0.5),
                     ),
+                    children: [
+                      i.infoRaw(
+                        context,
+                        style: ttBody(
+                          context,
+                          color: sui.CustomColors.textColor(context)
+                              .withOpacity(0.5),
+                        ),
+                      ),
+                      TextSpan(
+                        text: ")",
+                        style: ttBody(
+                          context,
+                          color: sui.CustomColors.textColor(context)
+                              .withOpacity(0.5),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

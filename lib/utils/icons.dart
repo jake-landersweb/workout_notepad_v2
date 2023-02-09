@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 Image getImageIcon(String name, {double? size}) {
   switch (name) {
+    case "":
+      return Image.asset("assets/icons/unavailable-96.png",
+          height: size ?? 50, width: size ?? 50);
     case "bench-press":
       return Image.asset("assets/icons/bench-press-96.png",
           height: size ?? 50, width: size ?? 50);
@@ -91,6 +94,7 @@ Image getImageIcon(String name, {double? size}) {
 
 List<String> getAllIconNames() {
   return [
+    "",
     "bench-press",
     "bouldering",
     "calves",

@@ -37,21 +37,25 @@ class LWExerciseCell extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16.0),
                   child: sui.CellWrapper(
-                    child: Row(
-                      children: [
-                        Icon(
-                          LineIcons.infoCircle,
-                          color: Theme.of(context).primaryColor,
-                        ),
-                        Expanded(
-                          child: Center(
-                            child: Text(
-                              exercise.note,
-                              style: ttLabel(context),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Row(
+                        children: [
+                          Icon(
+                            LineIcons.infoCircle,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Center(
+                              child: Text(
+                                exercise.note,
+                                style: ttBody(context),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -125,10 +129,10 @@ class LWExerciseCell extends StatelessWidget {
     }
 
     switch (e.type) {
-      case 0:
-        return wrap(_type0(context, e));
+      case 1:
+        return wrap(_type1(context, e));
       default:
-        return Container();
+        return wrap(_type0(context, e));
     }
   }
 
@@ -149,6 +153,28 @@ class LWExerciseCell extends StatelessWidget {
             ),
           ),
           _detailCell(context, "reps", e.reps.toString()),
+        ],
+      ),
+    );
+  }
+
+  Widget _type1(BuildContext context, ExerciseBase e) {
+    return comp.LabeledWidget(
+      label: e.title,
+      child: Row(
+        children: [
+          _detailCell(context, "sets", e.sets.toString()),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text(
+              "x",
+              style: ttLabel(
+                context,
+                color: Theme.of(context).primaryColor,
+              ),
+            ),
+          ),
+          _detailCell(context, e.timePost, e.time.toString()),
         ],
       ),
     );

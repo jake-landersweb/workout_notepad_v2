@@ -53,21 +53,14 @@ class _IconPickerState extends State<_IconPicker> {
 
   @override
   Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.6,
-      ),
-      child: SingleChildScrollView(
-        child: sui.DynamicGridView(
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: _icons.length,
-          crossAxisCount: 3,
-          builder: (context, index) {
-            return _iconCell(context, _icons[index]);
-          },
-        ),
-      ),
+    return sui.DynamicGridView(
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: _icons.length,
+      crossAxisCount: 3,
+      builder: (context, index) {
+        return _iconCell(context, _icons[index]);
+      },
     );
   }
 
@@ -82,18 +75,21 @@ class _IconPickerState extends State<_IconPicker> {
           Navigator.of(context).pop();
         }
       },
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-              color: name == _selected
-                  ? Theme.of(context).primaryColor
-                  : Colors.transparent,
-              width: 2),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: getImageIcon(name),
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+                color: name == _selected
+                    ? Theme.of(context).primaryColor
+                    : Colors.transparent,
+                width: 2),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: getImageIcon(name),
+          ),
         ),
       ),
     );

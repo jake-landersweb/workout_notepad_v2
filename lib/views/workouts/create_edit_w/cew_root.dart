@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/data/exercise.dart';
+import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
@@ -27,9 +28,11 @@ class CEWRoot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var dmodel = Provider.of<DataModel>(context);
     return ChangeNotifierProvider(
-      create: (context) =>
-          isCreate ? CEWModel.create() : CEWModel.update(workout!),
+      create: (context) => isCreate
+          ? CEWModel.create(dmodel.user!.userId)
+          : CEWModel.update(workout!),
       builder: (context, _) => _CEW(
         isCreate: isCreate,
         onAction: onAction,
@@ -56,7 +59,7 @@ class _CEW extends StatelessWidget {
     var cmodel = Provider.of<CEWModel>(context);
     return Scaffold(
       body: sui.AppBar.sheet(
-        title: "Create Workout",
+        title: isCreate ? "Create Workout" : "Edit Workout",
         horizontalSpacing: 0,
         scrollController: ModalScrollController.of(context),
         largeTitlePadding: const EdgeInsets.only(left: 16),
@@ -64,7 +67,7 @@ class _CEW extends StatelessWidget {
         leading: const [comp.CancelButton()],
         trailing: [
           comp.ModelCreateButton(
-            title: isCreate ? "Create" : "Update",
+            title: isCreate ? "Create" : "Save",
             isValid: cmodel.isValid(),
             onTap: () async {
               if (cmodel.isValid()) {
@@ -99,7 +102,8 @@ class _CEW extends StatelessWidget {
                   context: context,
                   builder: (context) => SelectExercise(
                     onSelect: (e) {
-                      cmodel.addExercise(e);
+                      cmodel.addExercise(
+                          WorkoutExercise.fromExercise(cmodel.workout, e));
                     },
                   ),
                 );
@@ -122,6 +126,7 @@ class _CEW extends StatelessWidget {
                   comp.cupertinoSheet(
                     context: context,
                     builder: (context) => CEWExerciseEdit(
+                      workoutId: cmodel.workout.workoutId,
                       exercise: item,
                       onSave: (e) => cmodel.updateExercise(index, e),
                     ),

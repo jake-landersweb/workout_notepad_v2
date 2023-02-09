@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
+import 'package:workout_notepad_v2/data/exercise_set.dart';
+import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
@@ -14,14 +16,14 @@ class WECell extends StatefulWidget {
     required this.exercise,
   });
   final Workout workout;
-  final Exercise exercise;
+  final WorkoutExercise exercise;
 
   @override
   State<WECell> createState() => _WECellState();
 }
 
 class _WECellState extends State<WECell> {
-  List<Exercise> _children = [];
+  List<ExerciseSet> _children = [];
 
   @override
   void initState() {
@@ -73,11 +75,5 @@ class _WECellState extends State<WECell> {
           ),
       ],
     );
-  }
-
-  Widget _superSet(BuildContext context, Exercise e) {
-    return Text("Superset ${e.sets} x ${e.reps} ${e.title}",
-        style: ttBody(context,
-            color: sui.CustomColors.textColor(context).withOpacity(0.5)));
   }
 }

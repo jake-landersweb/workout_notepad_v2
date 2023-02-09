@@ -28,13 +28,13 @@ class CreateExerciseModel extends ChangeNotifier {
     if (!isValid()) {
       return null;
     }
-    bool response;
+    int response;
     if (update) {
       response = await exercise.update();
     } else {
       response = await exercise.insert();
     }
-    if (!response) {
+    if (response == 0) {
       return null;
     }
     if (exercise.category.isNotEmpty &&

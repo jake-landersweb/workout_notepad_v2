@@ -6,8 +6,10 @@ class CloseButton extends StatelessWidget {
   const CloseButton({
     super.key,
     this.useRoot = false,
+    this.color,
   });
   final bool useRoot;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +19,7 @@ class CloseButton extends StatelessWidget {
       },
       child: Icon(
         LineIcons.times,
-        color: Theme.of(context).primaryColor,
+        color: color ?? Theme.of(context).primaryColor,
       ),
     );
   }

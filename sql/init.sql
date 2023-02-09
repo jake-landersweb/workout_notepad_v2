@@ -60,6 +60,7 @@ END;
 CREATE TABLE exercise_set(
     exerciseSetId TEXT PRIMARY KEY,
     workoutId TEXT NOT NULL,
+    workoutExerciseId TEXT NOT NULL,
     parentId TEXT NOT NULL,
     childId TEXT NOT NULL,
     exerciseOrder INTEGER NOT NULL,
@@ -71,11 +72,14 @@ CREATE TABLE exercise_set(
     updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
     FOREIGN KEY (workoutId) REFERENCES workout(workoutId) ON DELETE CASCADE,
+    FOREIGN KEY (workoutExerciseId) REFERENCES workout_exercise(workoutExerciseId) ON DELETE CASCADE,
     FOREIGN KEY (parentId) REFERENCES exercise(exerciseId) ON DELETE CASCADE,
     FOREIGN KEY (childId) REFERENCES exercise(exerciseId) ON DELETE CASCADE
 );
 --
 CREATE INDEX exercise_set_workout ON exercise_set(workoutId);
+--
+CREATE INDEX exercise_set_we ON exercise_set(workoutExerciseId);
 --
 CREATE INDEX exercise_set_parent ON exercise_set(parentId);
 --
@@ -110,6 +114,7 @@ CREATE TABLE workout_exercise(
     reps INTEGER DEFAULT 0 NOT NULL,
     time INTEGER DEFAULT 0 NOT NULL,
     timePost TEXT NOT NULL DEFAULT "sec",
+    note TEXT,
     created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
 

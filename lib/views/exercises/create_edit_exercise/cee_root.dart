@@ -5,7 +5,7 @@ import 'package:sapphireui/sapphireui.dart' as sui;
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/model/root.dart';
-import 'package:workout_notepad_v2/views/exercises/cee/root.dart';
+import 'package:workout_notepad_v2/views/exercises/create_edit_exercise/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/icon_picker.dart';
 
@@ -51,10 +51,10 @@ class _CEERootState extends State<CEERoot> {
       isFluid: true,
       itemSpacing: 16,
       crossAxisAlignment: CrossAxisAlignment.center,
-      leading: const [comp.CloseButton()],
+      leading: const [comp.CancelButton()],
       trailing: [
         comp.ModelCreateButton(
-          title: widget.isCreate ? "Create" : "Edit",
+          title: widget.isCreate ? "Create" : "Save",
           isValid: cemodel.isValid(),
           onTap: () async {
             if (widget.runPostAction) {
@@ -141,7 +141,7 @@ class _CEERootState extends State<CEERoot> {
           },
         ),
         sui.TextField(
-          labelText: "Description",
+          labelText: "Note",
           charLimit: 100,
           value: cemodel.exercise.description,
           showCharacters: true,

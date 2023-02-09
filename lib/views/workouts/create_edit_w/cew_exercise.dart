@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/data/exercise.dart';
+import 'package:workout_notepad_v2/data/exercise_set.dart';
+import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/views/root.dart';
@@ -12,9 +14,11 @@ import 'package:workout_notepad_v2/views/root.dart';
 class CEWExerciseEdit extends StatefulWidget {
   const CEWExerciseEdit({
     super.key,
+    required this.workoutId,
     required this.exercise,
     required this.onSave,
   });
+  final String workoutId;
   final CEWExercise exercise;
   final Function(CEWExercise e) onSave;
 
@@ -23,8 +27,8 @@ class CEWExerciseEdit extends StatefulWidget {
 }
 
 class _CEWExerciseEditState extends State<CEWExerciseEdit> {
-  late Exercise _exercise;
-  late List<Exercise> _children;
+  late WorkoutExercise _exercise;
+  late List<ExerciseSet> _children;
 
   @override
   void initState() {
@@ -39,6 +43,7 @@ class _CEWExerciseEditState extends State<CEWExerciseEdit> {
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
+
     return sui.AppBar.sheet(
       title: "Configure Exercise",
       leading: const [comp.CloseButton(useRoot: true)],
@@ -126,22 +131,41 @@ class _CEWExerciseEditState extends State<CEWExerciseEdit> {
                   ],
                 ),
               ),
+              const SizedBox(height: 16),
+              sui.CellWrapper(
+                child: sui.TextField(
+                  labelText: "Note",
+                  value: _exercise.note,
+                  onChanged: (val) {
+                    setState(() {
+                      _exercise.note = val;
+                    });
+                  },
+                ),
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: comp.ActionButton(
                   title: "Add Super-Set",
                   onTap: () {
                     comp.cupertinoSheet(
-                        context: context,
-                        builder: (context) {
-                          return SelectExercise(
-                            onSelect: (e) {
-                              setState(() {
-                                _children.add(e.copy());
-                              });
-                            },
-                          );
-                        });
+                      context: context,
+                      builder: (context) {
+                        return SelectExercise(
+                          onSelect: (e) {
+                            setState(() {
+                              _children.add(
+                                ExerciseSet.fromExercise(
+                                  widget.workoutId,
+                                  widget.exercise.exercise,
+                                  e,
+                                ),
+                              );
+                            });
+                          },
+                        );
+                      },
+                    );
                   },
                 ),
               ),
@@ -151,9 +175,9 @@ class _CEWExerciseEditState extends State<CEWExerciseEdit> {
         comp.LabeledWidget(
           label: "Super-Sets",
           padding: const EdgeInsets.fromLTRB(32, 0, 16, 0),
-          child: comp.ReorderableList<Exercise>(
+          child: comp.ReorderableList<ExerciseSet>(
             items: _children,
-            areItemsTheSame: (p0, p1) => p0.exerciseId == p1.exerciseId,
+            areItemsTheSame: (p0, p1) => p0.exerciseSetId == p1.exerciseSetId,
             onReorderFinished: (item, from, to, newItems) {
               setState(() {
                 _children
@@ -197,7 +221,7 @@ class _CEWExerciseEditState extends State<CEWExerciseEdit> {
   }
 
   Widget _exerciseSuperSet(
-      BuildContext context, DataModel dmodel, Exercise exercise, int index) {
+      BuildContext context, DataModel dmodel, ExerciseSet exercise, int index) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 0, 8),
       child: Column(

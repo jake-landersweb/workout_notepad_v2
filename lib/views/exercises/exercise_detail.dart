@@ -24,41 +24,21 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
-    return SafeArea(
-      top: false,
-      bottom: true,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // title bar
-            Stack(
-              alignment: Alignment.centerLeft,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        widget.exercise.title,
-                        textAlign: TextAlign.center,
-                        style: ttSubTitle(context),
-                      ),
-                    ),
-                  ],
-                ),
-                const comp.CloseButton(),
-              ],
-            ),
-            const SizedBox(height: 16),
-            _icon(context),
-            const SizedBox(height: 16),
-            _actions(context, dmodel),
-            const SizedBox(height: 16),
-            _details(context),
-          ],
-        ),
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.6,
+      ),
+      child: sui.AppBar.sheet(
+        title: widget.exercise.title,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        leading: const [comp.CloseButton()],
+        children: [
+          _icon(context),
+          const SizedBox(height: 16),
+          _actions(context, dmodel),
+          const SizedBox(height: 16),
+          _details(context),
+        ],
       ),
     );
   }
@@ -128,8 +108,8 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
             if (widget.exercise.category.isNotEmpty)
               Text(widget.exercise.category.uppercase(),
                   style: ttBody(context)),
-            if (widget.exercise.description?.isNotEmpty ?? false)
-              Text(widget.exercise.description!, style: ttBody(context)),
+            if (widget.exercise.description.isNotEmpty)
+              Text(widget.exercise.description, style: ttBody(context)),
             Text("${widget.exercise.sets} x ${widget.exercise.reps}",
                 style: ttBody(context)),
           ],

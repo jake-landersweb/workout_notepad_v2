@@ -10,7 +10,8 @@ import 'package:workout_notepad_v2/views/root.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
 
 class CEWModel extends ChangeNotifier {
-  CEWModel.create() {
+  CEWModel.create(String uid) {
+    workout = Workout.init(uid);
     title = "";
     description = "";
     icon = "";
@@ -18,7 +19,7 @@ class CEWModel extends ChangeNotifier {
   }
   CEWModel.update(Workout w) {
     // create the exercise structure
-    workoutId = w.workoutId;
+    workout = w.copy();
     title = w.title;
     description = w.description ?? "";
     icon = w.icon;
@@ -27,17 +28,17 @@ class CEWModel extends ChangeNotifier {
   }
 
   void updateInit(Workout w) async {
-    List<Exercise> children = await w.getChildren();
+    List<WorkoutExercise> children = await w.getChildren();
 
     for (var i in children) {
-      List<Exercise> ec = await i.getChildren(w.workoutId);
+      List<ExerciseSet> ec = await i.getChildren(w.workoutId);
       var cewe = CEWExercise.from(i, ec);
       _exercises.add(cewe);
     }
     notifyListeners();
   }
 
-  String? workoutId;
+  late Workout workout;
   late String title;
   late String description;
   late String icon;
@@ -45,17 +46,17 @@ class CEWModel extends ChangeNotifier {
 
   List<CEWExercise> get exercises => _exercises;
 
-  void addExercise(Exercise e) {
+  void addExercise(WorkoutExercise e) {
     _exercises.add(CEWExercise.init(e));
     notifyListeners();
   }
 
-  void insertExercise(int index, Exercise e) {
+  void insertExercise(int index, WorkoutExercise e) {
     _exercises.insert(index, CEWExercise.init(e));
     notifyListeners();
   }
 
-  void addExerciseChild(int index, Exercise e) {
+  void addExerciseChild(int index, ExerciseSet e) {
     var cewe = _exercises.elementAt(index);
     cewe.children.add(e);
     notifyListeners();
@@ -66,12 +67,12 @@ class CEWModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateSuperSetExercise(int index, Exercise e) {
+  void updateSuperSetExercise(int index, WorkoutExercise e) {
     _exercises[index].exercise = e;
     notifyListeners();
   }
 
-  void insertExerciseChild(int index, Exercise e, int childIndex) {
+  void insertExerciseChild(int index, ExerciseSet e, int childIndex) {
     var cewe = _exercises.elementAt(index);
     cewe.children.insert(childIndex, e);
     notifyListeners();
@@ -84,7 +85,7 @@ class CEWModel extends ChangeNotifier {
 
   void removeExerciseChild(int index, Exercise e) {
     var cewe = _exercises.elementAt(index);
-    cewe.children.removeWhere((element) => element.exerciseId == e.exerciseId);
+    cewe.children.removeWhere((element) => element.childId == e.exerciseId);
     notifyListeners();
   }
 
@@ -122,84 +123,48 @@ class CEWModel extends ChangeNotifier {
 
   Future<Workout?> createWorkout(DataModel dmodel) async {
     // create the workout
-    Workout w = Workout.init(dmodel.user!.userId);
-    w.title = title;
-    w.description = description;
-    w.icon = icon;
-
-    // create the workout exercises
-    var workoutExercises = <WorkoutExercise>[];
-
-    // compose the exercise super sets
-    var exerciseSets = <ExerciseSet>[];
-
-    // create the exercise sets from the exercise list
-    for (int i = 0; i < _exercises.length; i++) {
-      // create the workout exercise
-      var we = WorkoutExercise.init(
-        w,
-        _exercises[i].exercise,
-        ExerciseChildArgs(
-          order: i,
-          sets: _exercises[i].exercise.sets,
-          reps: _exercises[i].exercise.reps,
-          time: _exercises[i].exercise.time,
-          timePost: _exercises[i].exercise.timePost,
-        ),
-      );
-
-      workoutExercises.add(we);
-
-      // loop through children and create exercise sets
-      for (int j = 0; j < _exercises[i].children.length; j++) {
-        // create an exercise set with new args
-        var es = ExerciseSet.init(
-          w,
-          _exercises[i].exercise,
-          _exercises[i].children[j],
-          ExerciseChildArgs(
-            order: j,
-            sets: _exercises[i].children[j].sets,
-            reps: _exercises[i].children[j].reps,
-            time: _exercises[i].children[j].time,
-            timePost: _exercises[i].children[j].timePost,
-          ),
-        );
-        exerciseSets.add(es);
-      }
-    }
+    workout.title = title;
+    workout.description = description;
+    workout.icon = icon;
 
     var db = await getDB();
     // start a transaction
     try {
       await db.transaction((txn) async {
-        int r = await txn.insert('workout', w.toMap());
+        int r = await txn.insert('workout', workout.toMap());
         if (r == 0) {
           throw Exception("There was an issue inserting the workout");
         }
 
         // EXERCISE IS ALREADY INSERTED
 
-        // add workout exercises
-        for (var i in workoutExercises) {
-          r = await txn.insert('workout_exercise', i.toMap());
-          if (r == 0) {
-            throw Exception("There was an issue inserting a workout exercise");
+        // set proper order
+        for (int i = 0; i < exercises.length; i++) {
+          exercises[i].exercise.exerciseOrder = i;
+          for (int j = 0; j < exercises[i].children.length; j++) {
+            exercises[i].children[j].exerciseOrder = j;
           }
         }
 
-        // add exercise super sets
-        for (var i in exerciseSets) {
-          // add all exercise super sets
-          r = await txn.insert('exercise_set', i.toMap());
+        // add workout exercises
+        for (var i in exercises) {
+          r = await txn.insert('workout_exercise', i.exercise.toMap());
           if (r == 0) {
-            throw Exception("There was an issue inserting an exercise set");
+            throw Exception("There was an issue inserting a workout exercise");
+          }
+          // add exercise super sets
+          for (var j in i.children) {
+            // add all exercise super sets
+            r = await txn.insert('exercise_set', j.toMap());
+            if (r == 0) {
+              throw Exception("There was an issue inserting an exercise set");
+            }
           }
         }
       });
       // update the data
       await dmodel.refreshWorkouts();
-      return w;
+      return workout;
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -210,51 +175,15 @@ class CEWModel extends ChangeNotifier {
 
   Future<Workout?> updateWorkout(DataModel dmodel) async {
     // update the workout
-    Workout w = Workout.init(dmodel.user!.userId);
-    w.workoutId = workoutId!;
-    w.title = title;
-    w.description = description;
-    w.icon = icon;
+    workout.title = title;
+    workout.description = description;
+    workout.icon = icon;
 
-    // create the workout exercises
-    var workoutExercises = <WorkoutExercise>[];
-
-    // compose the exercise super sets
-    var exerciseSets = <ExerciseSet>[];
-
-    // create the exercise sets from the exercise list
-    for (int i = 0; i < _exercises.length; i++) {
-      // create the workout exercise
-      var we = WorkoutExercise.init(
-        w,
-        _exercises[i].exercise,
-        ExerciseChildArgs(
-          order: i,
-          sets: _exercises[i].exercise.sets,
-          reps: _exercises[i].exercise.reps,
-          time: _exercises[i].exercise.time,
-          timePost: _exercises[i].exercise.timePost,
-        ),
-      );
-
-      workoutExercises.add(we);
-
-      // loop through children and create exercise sets
-      for (int j = 0; j < _exercises[i].children.length; j++) {
-        // create an exercise set with new args
-        var es = ExerciseSet.init(
-          w,
-          _exercises[i].exercise,
-          _exercises[i].children[j],
-          ExerciseChildArgs(
-            order: j,
-            sets: _exercises[i].children[j].sets,
-            reps: _exercises[i].children[j].reps,
-            time: _exercises[i].children[j].time,
-            timePost: _exercises[i].children[j].timePost,
-          ),
-        );
-        exerciseSets.add(es);
+    // set proper order
+    for (int i = 0; i < exercises.length; i++) {
+      exercises[i].exercise.exerciseOrder = i;
+      for (int j = 0; j < exercises[i].children.length; j++) {
+        exercises[i].children[j].exerciseOrder = j;
       }
     }
 
@@ -262,8 +191,8 @@ class CEWModel extends ChangeNotifier {
     // start a transaction
     try {
       await db.transaction((txn) async {
-        int r = await txn.update('workout', w.toMap(),
-            where: "workoutId = ?", whereArgs: [workoutId!]);
+        int r = await txn.update('workout', workout.toMap(),
+            where: "workoutId = ?", whereArgs: [workout.workoutId]);
         if (r == 0) {
           throw Exception("There was an issue updating the workout");
         }
@@ -274,50 +203,38 @@ class CEWModel extends ChangeNotifier {
         r = await txn.delete(
           "workout_exercise",
           where: "workoutId = ?",
-          whereArgs: [workoutId!],
+          whereArgs: [workout.workoutId],
         );
-        if (r == 0) {
-          throw Exception("There was an issue removing the workout exercises");
-        }
 
         // remove all exercise sets
         r = await txn.delete(
           "exercise_set",
           where: "workoutId = ?",
-          whereArgs: [workoutId!],
+          whereArgs: [workout.workoutId],
         );
-        if (r == 0) {
-          throw Exception("There was an issue removing the exercise sets");
-        }
 
         // add workout exercises
-        for (var i in workoutExercises) {
-          r = await txn.insert(
-            'workout_exercise',
-            i.toMap(),
-            conflictAlgorithm: ConflictAlgorithm.replace,
-          );
+        for (var i in exercises) {
+          r = await txn.insert('workout_exercise', i.exercise.toMap());
           if (r == 0) {
             throw Exception("There was an issue inserting a workout exercise");
           }
-        }
-
-        // add exercise super sets
-        for (var i in exerciseSets) {
-          // add all exercise super sets
-          r = await txn.insert(
-            'exercise_set',
-            i.toMap(),
-            conflictAlgorithm: ConflictAlgorithm.replace,
-          );
-          if (r == 0) {
-            throw Exception("There was an issue inserting an exercise set");
+          // add exercise super sets
+          for (var j in i.children) {
+            // add all exercise super sets
+            r = await txn.insert(
+              'exercise_set',
+              j.toMap(),
+            );
+            if (r == 0) {
+              throw Exception("There was an issue inserting an exercise set");
+            }
           }
         }
       });
       // update the data
       await dmodel.refreshWorkouts();
-      return w;
+      return workout;
     } catch (e) {
       if (kDebugMode) {
         print(e);

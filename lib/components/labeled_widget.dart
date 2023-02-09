@@ -25,7 +25,7 @@ class LabeledWidget extends StatelessWidget {
           child: Text(
             label.toUpperCase(),
             style: TextStyle(
-              color: sui.CustomColors.textColor(context),
+              color: sui.CustomColors.textColor(context).withOpacity(0.5),
               fontSize: 18,
               fontWeight: FontWeight.w500,
             ),

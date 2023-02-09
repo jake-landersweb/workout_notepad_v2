@@ -5,6 +5,7 @@ import 'package:sapphireui/sapphireui.dart' as sui;
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/views/root.dart';
+import 'package:workout_notepad_v2/views/settings/settings.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -23,15 +24,17 @@ class _HomeState extends State<Home> {
       children: [
         _getView(lmodel, dmodel),
         comp.TabBar(
-          index: lmodel.tabBarIndex,
+          index: lmodel.tabBarIndex.index,
           onItemTap: (context, index, item) {
-            lmodel.setTabBarIndex(index);
+            lmodel.setTabBarIndex(TabBarPage.values[index]);
           },
           builder: (context, index, item) {
             return Icon(
               item.child,
               size: 35,
-              color: index == lmodel.tabBarIndex ? dmodel.color : Colors.grey,
+              color: index == lmodel.tabBarIndex.index
+                  ? dmodel.color
+                  : Colors.grey,
             );
           },
           items: [
@@ -42,6 +45,10 @@ class _HomeState extends State<Home> {
             comp.TabBarItem(
               child: LineIcons.dumbbell,
               title: "Exercises",
+            ),
+            comp.TabBarItem(
+              child: LineIcons.book,
+              title: "Logs",
             ),
             comp.TabBarItem(
               child: LineIcons.cog,
@@ -55,12 +62,14 @@ class _HomeState extends State<Home> {
 
   Widget _getView(LogicModel lmodel, DataModel dmodel) {
     switch (lmodel.tabBarIndex) {
-      case 0:
-        return const Center(child: WorkoutsHome());
-      case 1:
-        return const Center(child: ExerciseHome());
-      default:
+      case TabBarPage.workouts:
+        return const WorkoutsHome();
+      case TabBarPage.exercises:
+        return const ExerciseHome();
+      case TabBarPage.logs:
         return Container();
+      case TabBarPage.settings:
+        return const Settings();
     }
   }
 }

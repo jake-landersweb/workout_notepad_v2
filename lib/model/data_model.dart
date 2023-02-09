@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -82,7 +84,6 @@ class DataModel extends ChangeNotifier {
       await u.insert();
       await loadTests();
     }
-
     user = await User.fromId(prefs.getString("userId")!);
     await fetchData(user!.userId);
   }

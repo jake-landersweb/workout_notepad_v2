@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sql.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
+import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/icons.dart';
 
@@ -94,7 +95,7 @@ class Workout {
     );
   }
 
-  Future<List<Exercise>> getChildren() async {
+  Future<List<WorkoutExercise>> getChildren() async {
     final db = await getDB();
     String query = """
       SELECT * FROM exercise e
@@ -103,9 +104,9 @@ class Workout {
       ORDER BY we.exerciseOrder
     """;
     final List<Map<String, dynamic>> response = await db.rawQuery(query.trim());
-    List<Exercise> e = [];
+    List<WorkoutExercise> e = [];
     for (var i in response) {
-      e.add(Exercise.fromJson(i));
+      e.add(WorkoutExercise.fromJson(i));
     }
     return e;
   }

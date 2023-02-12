@@ -116,7 +116,11 @@ class _ReorderableListState<T extends Object>
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       decoration: BoxDecoration(
-        color: inDrag ? Colors.grey[100] : Colors.white,
+        color: inDrag
+            ? MediaQuery.of(context).platformBrightness == Brightness.light
+                ? sui.CustomColors.cellColor(context).darken(0.1)
+                : sui.CustomColors.cellColor(context).lighten(0.1)
+            : sui.CustomColors.cellColor(context),
         borderRadius: BorderRadius.only(
           topLeft:
               index == 0 ? Radius.circular(widget.borderRadius) : Radius.zero,

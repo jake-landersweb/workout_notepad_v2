@@ -28,16 +28,6 @@ class DataModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool? isLight;
-  Future<void> setIsLight(bool val) async {
-    var prefs = await SharedPreferences.getInstance();
-    var r = await prefs.setBool("isLight", val);
-    if (r) {
-      isLight = val;
-    }
-    notifyListeners();
-  }
-
   User? user;
 
   List<Category> _categories = [];
@@ -89,12 +79,6 @@ class DataModel extends ChangeNotifier {
       setColor(c);
     }
 
-    // set color scheme
-    var il = prefs.getBool("isLight");
-    if (il != null) {
-      setIsLight(il);
-    }
-
     log("[INIT] User exists");
 
     // get all user data
@@ -119,12 +103,6 @@ class DataModel extends ChangeNotifier {
     var c = prefs.getString("color");
     if (c != null) {
       setColor(c);
-    }
-
-    // set color scheme
-    var il = prefs.getBool("isLight");
-    if (il != null) {
-      setIsLight(il);
     }
 
     user = await User.fromId(prefs.getString("userId")!);

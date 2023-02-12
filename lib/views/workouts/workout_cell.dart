@@ -87,6 +87,11 @@ class _WorkoutCellState extends State<WorkoutCell> {
         t = "$t, ";
       }
     }
-    return Text(t);
+    return Text(
+      t,
+      style: TextStyle(
+        color: sui.CustomColors.textColor(context).withOpacity(0.5),
+      ),
+    );
   }
 }

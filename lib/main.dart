@@ -31,27 +31,37 @@ class MyApp extends StatelessWidget {
   Widget _body(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: dmodel.isLight == null
-          ? ThemeMode.system == Brightness.light
-              ? SystemUiOverlayStyle.dark
-              : SystemUiOverlayStyle.light
-          : dmodel.isLight!
-              ? SystemUiOverlayStyle.dark
-              : SystemUiOverlayStyle.light,
+      value: ThemeMode.system == Brightness.light
+          ? SystemUiOverlayStyle.dark
+          : SystemUiOverlayStyle.light,
       child: MaterialApp(
         title: 'Workout Notepad',
         debugShowCheckedModeBanner: false,
+        color: dmodel.color,
         theme: ThemeData(
           primarySwatch: dmodel.color,
-          brightness: dmodel.isLight == null
-              ? null
-              : dmodel.isLight!
-                  ? Brightness.light
-                  : Brightness.dark,
-          scaffoldBackgroundColor: sui.CustomColors.backgroundColor(context),
-          backgroundColor: sui.CustomColors.backgroundColor(context),
-          cardColor: sui.CustomColors.cellColor(context),
+          primaryColor: dmodel.color,
+          brightness: Brightness.light,
+          canvasColor: sui.CustomColors.lightList,
+          scaffoldBackgroundColor: sui.CustomColors.lightList,
+          backgroundColor: sui.CustomColors.lightList,
+          cardColor: Colors.white,
+          dividerColor: Colors.black.withOpacity(0.1),
           textTheme: GoogleFonts.openSansTextTheme(),
+          colorScheme:
+              const ColorScheme.light().copyWith(primary: dmodel.color),
+        ),
+        darkTheme: ThemeData(
+          primarySwatch: dmodel.color,
+          primaryColor: dmodel.color,
+          brightness: Brightness.dark,
+          canvasColor: sui.CustomColors.darkBG,
+          scaffoldBackgroundColor: sui.CustomColors.darkBG,
+          backgroundColor: sui.CustomColors.darkBG,
+          cardColor: sui.CustomColors.darkList,
+          dividerColor: Colors.white.withOpacity(0.1),
+          textTheme: GoogleFonts.openSansTextTheme(),
+          colorScheme: const ColorScheme.dark().copyWith(primary: dmodel.color),
         ),
         onGenerateRoute: (settings) {
           return MaterialWithModalsPageRoute(

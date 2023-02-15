@@ -28,8 +28,9 @@ class _WorkoutsHomeState extends State<WorkoutsHome> {
       trailing: [
         comp.AddButton(
           onTap: () {
-            comp.cupertinoSheet(
+            showMaterialModalBottomSheet(
               context: context,
+              enableDrag: false,
               builder: (context) => CEWRoot(
                 isCreate: true,
                 onAction: (w) {
@@ -37,6 +38,15 @@ class _WorkoutsHomeState extends State<WorkoutsHome> {
                 },
               ),
             );
+            // comp.cupertinoSheet(
+            //   context: context,
+            // builder: (context) => CEWRoot(
+            //   isCreate: true,
+            //   onAction: (w) {
+            //     print(w);
+            //   },
+            // ),
+            // );
           },
         )
       ],

@@ -7,7 +7,6 @@ import 'package:sapphireui/sapphireui.dart' as sui;
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:workout_notepad_v2/views/exercises/category_bubble.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 
 class ExerciseCell extends StatelessWidget {
@@ -17,11 +16,13 @@ class ExerciseCell extends StatelessWidget {
     this.trailingIcon,
     this.onTap,
     this.showBackground = true,
+    this.padding = const EdgeInsets.only(bottom: 16),
   });
   final Exercise exercise;
   final VoidCallback? onTap;
   final IconData? trailingIcon;
   final bool showBackground;
+  final EdgeInsets padding;
 
   @override
   Widget build(BuildContext context) {
@@ -35,17 +36,14 @@ class ExerciseCell extends StatelessWidget {
     return _body(context, dmodel);
   }
 
-  Container _body(BuildContext context, DataModel dmodel) {
-    return Container(
-      decoration: BoxDecoration(
-        color: showBackground ? sui.CustomColors.cellColor(context) : null,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-            child: Row(
+  Widget _body(BuildContext context, DataModel dmodel) {
+    return Padding(
+      padding: padding,
+      child: Container(
+        color: sui.CustomColors.backgroundColor(context),
+        child: Column(
+          children: [
+            Row(
               children: [
                 if (exercise.icon.isNotEmpty)
                   Padding(
@@ -58,13 +56,34 @@ class ExerciseCell extends StatelessWidget {
                     children: [
                       Text(
                         exercise.title,
-                        style: ttLabel(context, color: dmodel.color),
+                        style: ttLabel(
+                          context,
+                          color: sui.CustomColors.textColor(context),
+                        ),
                       ),
-                      exercise.info(context),
                       if (exercise.category.isNotEmpty)
                         Padding(
-                          padding: const EdgeInsets.only(top: 4.0),
-                          child: CategoryBuble(text: exercise.category),
+                          padding: const EdgeInsets.only(top: 8),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: sui.CustomColors.textColor(context)
+                                    .withOpacity(0.5),
+                                width: 0.5,
+                              ),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
+                              child: Text(
+                                exercise.category.uppercase(),
+                                style: TextStyle(
+                                  color: sui.CustomColors.textColor(context)
+                                      .withOpacity(0.5),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                     ],
                   ),
@@ -73,11 +92,16 @@ class ExerciseCell extends StatelessWidget {
                   Icon(
                     trailingIcon,
                     color: dmodel.accentColor(context),
+                  )
+                else
+                  exercise.info(
+                    context,
+                    style: ttBody(context, color: dmodel.color),
                   ),
               ],
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

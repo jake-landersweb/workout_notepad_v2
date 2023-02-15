@@ -301,10 +301,10 @@ class _CEWExerciseEditState extends State<CEWExerciseEdit> {
         return comp.NumberPicker(
           showPicker: false,
           textFontSize: 40,
-          intialValue: _exercise.reps,
+          intialValue: e.reps,
           onChanged: (val) {
             setState(() {
-              _exercise.reps = val;
+              e.reps = val;
             });
           },
         );

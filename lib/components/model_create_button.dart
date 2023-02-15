@@ -10,11 +10,13 @@ class ModelCreateButton extends StatelessWidget {
     this.title = "Create",
     this.isValid = true,
     this.isLoading,
+    this.textColor,
   });
   final VoidCallback onTap;
   final String title;
   final bool isValid;
   final bool? isLoading;
+  final Color? textColor;
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +31,10 @@ class ModelCreateButton extends StatelessWidget {
           : Text(
               title,
               style: ttLabel(context).copyWith(
-                color: isValid
-                    ? Theme.of(context).primaryColor
-                    : sui.CustomColors.textColor(context).withOpacity(0.3),
+                color: textColor ??
+                    (isValid
+                        ? Theme.of(context).primaryColor
+                        : sui.CustomColors.textColor(context).withOpacity(0.3)),
               ),
             ),
     );

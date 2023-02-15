@@ -23,7 +23,7 @@ TextStyle ttSubTitle(
   return TextStyle(
     fontSize: size ?? 22,
     color: color ?? sui.CustomColors.textColor(context),
-    fontWeight: fontWeight ?? FontWeight.w600,
+    fontWeight: fontWeight ?? FontWeight.w500,
   );
 }
 

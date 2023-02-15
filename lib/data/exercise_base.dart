@@ -84,7 +84,7 @@ abstract class ExerciseBase {
     BuildContext context, {
     TextStyle? style,
   }) {
-    return RichText(text: infoRaw(context));
+    return RichText(text: infoRaw(context, style: style));
   }
 
   TextSpan infoRaw(

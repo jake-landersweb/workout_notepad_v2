@@ -26,72 +26,148 @@ class _WorkoutCellState extends State<WorkoutCell> {
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
-    return sui.Button(
-      onTap: () {
-        comp.navigate(
-          context: context,
-          builder: (context) => WorkoutDetail(workout: widget.wc.workout),
-        );
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: sui.CustomColors.cellColor(context),
-          borderRadius: BorderRadius.circular(10),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        gradient: LinearGradient(
+          begin: Alignment.topRight,
+          end: Alignment.bottomLeft,
+          colors: [
+            dmodel.color.shade300,
+            dmodel.color.shade800,
+          ],
         ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-          child: Row(
-            children: [
-              if (widget.wc.workout.icon.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(right: 16.0),
-                  child: widget.wc.workout.getIcon(size: 40),
-                ),
-              Expanded(
-                child: Column(
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       widget.wc.workout.title,
-                      style: ttSubTitle(context, color: dmodel.color),
+                      style: ttTitle(context),
                     ),
                     if (widget.wc.workout.description?.isNotEmpty ?? false)
-                      Text(
-                        widget.wc.workout.description!,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyLarge!
-                            .copyWith(color: dmodel.accentColor(context)),
-                      ),
-                    if (widget.wc.categories.isNotEmpty) _cat(context),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4.0),
+                        child: Text(
+                          widget.wc.workout.description!,
+                          style: ttBody(
+                            context,
+                            color: Colors.white,
+                          ),
+                        ),
+                      )
                   ],
                 ),
+              ],
+            ),
+            if (widget.wc.categories.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: _cat(context),
               ),
-              Icon(
-                LineIcons.angleDoubleRight,
-                color: dmodel.accentColor(context),
-              ),
-            ],
-          ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: sui.Button(
+                    onTap: () {
+                      comp.navigate(
+                        context: context,
+                        builder: (context) => WorkoutDetail(workout: widget.wc),
+                      );
+                    },
+                    child: Container(
+                      constraints: const BoxConstraints(minHeight: 45),
+                      decoration: BoxDecoration(
+                        border:
+                            Border.all(color: Colors.white.withOpacity(0.5)),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "VIEW",
+                          style: ttLabel(
+                            context,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: sui.Button(
+                    onTap: () {},
+                    child: Container(
+                      constraints: const BoxConstraints(minHeight: 45),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomLeft,
+                          end: Alignment.topRight,
+                          colors: [
+                            dmodel.color.shade300,
+                            dmodel.color.shade800,
+                          ],
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "START",
+                          style: ttLabel(
+                            context,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget _cat(BuildContext context) {
-    String t = "";
-    for (int i = 0; i < widget.wc.categories.length; i++) {
-      t = "$t${widget.wc.categories[i].uppercase()}";
-      if (i < widget.wc.categories.length - 1) {
-        t = "$t, ";
-      }
-    }
-    return Text(
-      t,
-      style: TextStyle(
-        color: sui.CustomColors.textColor(context).withOpacity(0.5),
-      ),
+    return sui.DynamicGridView(
+      itemCount: widget.wc.categories.length,
+      crossAxisCount: 3,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      builder: (context, index) {
+        return Container(
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: sui.CustomColors.textColor(context),
+              width: 0.5,
+            ),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: Text(
+                widget.wc.categories[index].uppercase(),
+                style: TextStyle(
+                  color: sui.CustomColors.textColor(context),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

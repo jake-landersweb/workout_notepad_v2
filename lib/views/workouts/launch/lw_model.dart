@@ -43,26 +43,47 @@ class LaunchWorkoutModel extends ChangeNotifier {
   }
 
   Widget header(BuildContext context) {
-    return Row(
-      children: [
-        for (int i = 0; i < exercises.length; i++)
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _cell(context, exercises[i], i),
-              if (i < exercises.length - 1)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Container(
-                    // color: Theme.of(context).primaryColor,
-                    color: Colors.white,
-                    height: 1,
-                    width: 20,
+    if (exercises.length > 8) {
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: _header(context),
+      );
+    } else {
+      return _header(context);
+    }
+  }
+
+  Widget _header(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 16, 8, 16),
+      child: Row(
+        children: [
+          for (int i = 0; i < exercises.length; i++)
+            if (exercises.length > 8)
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                    child: _cell(context, exercises[i], i),
                   ),
+                ],
+              )
+            else
+              Expanded(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Expanded(
+                        child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: _cell(context, exercises[i], i),
+                    )),
+                  ],
                 ),
-            ],
-          ),
-      ],
+              ),
+        ],
+      ),
     );
   }
 
@@ -70,8 +91,8 @@ class LaunchWorkoutModel extends ChangeNotifier {
     return sui.Button(
       onTap: () => setPage(index),
       child: Container(
-        height: 60,
-        width: 60,
+        width: exercises.length > 8 ? 50 : double.infinity,
+        constraints: const BoxConstraints(maxHeight: 60),
         decoration: BoxDecoration(
           // color: workoutIndex >= index
           //     ? Theme.of(context).primaryColor
@@ -83,17 +104,20 @@ class LaunchWorkoutModel extends ChangeNotifier {
           // border: Border.all(color: Theme.of(context).primaryColor, width: 2),
           border: Border.all(color: Colors.white, width: 2),
         ),
-        child: Center(
-          child: Text(
-            (index + 1).toString(),
-            style: ttLabel(
-              context,
-              // color: workoutIndex >= index
-              //     ? Colors.white
-              //     : Theme.of(context).primaryColor,
-              color: workoutIndex >= index
-                  ? Theme.of(context).primaryColor
-                  : Colors.white,
+        child: AspectRatio(
+          aspectRatio: 1,
+          child: Center(
+            child: Text(
+              (index + 1).toString(),
+              style: ttLabel(
+                context,
+                // color: workoutIndex >= index
+                //     ? Colors.white
+                //     : Theme.of(context).primaryColor,
+                color: workoutIndex >= index
+                    ? Theme.of(context).primaryColor
+                    : Colors.white,
+              ),
             ),
           ),
         ),

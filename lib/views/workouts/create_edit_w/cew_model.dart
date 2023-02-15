@@ -16,6 +16,7 @@ class CEWModel extends ChangeNotifier {
     description = "";
     icon = "";
     _exercises = [];
+    _showExerciseButton();
   }
   CEWModel.update(Workout w) {
     // create the exercise structure
@@ -27,14 +28,24 @@ class CEWModel extends ChangeNotifier {
     updateInit(w);
   }
 
-  void updateInit(Workout w) async {
+  Future<void> updateInit(Workout w) async {
     List<WorkoutExercise> children = await w.getChildren();
+
+    List<CEWExercise> e = [];
 
     for (var i in children) {
       List<ExerciseSet> ec = await i.getChildren(w.workoutId);
       var cewe = CEWExercise.from(i, ec);
-      _exercises.add(cewe);
+      e.add(cewe);
     }
+    _exercises = e;
+    notifyListeners();
+    _showExerciseButton();
+  }
+
+  Future<void> _showExerciseButton() async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    showExerciseButton = true;
     notifyListeners();
   }
 
@@ -43,6 +54,7 @@ class CEWModel extends ChangeNotifier {
   late String description;
   late String icon;
   late List<CEWExercise> _exercises;
+  bool showExerciseButton = false;
 
   List<CEWExercise> get exercises => _exercises;
 
@@ -58,7 +70,7 @@ class CEWModel extends ChangeNotifier {
 
   void addExerciseChild(int index, ExerciseSet e) {
     var cewe = _exercises.elementAt(index);
-    cewe.children.add(e);
+    cewe.children.add(e.copy());
     notifyListeners();
   }
 
@@ -74,7 +86,7 @@ class CEWModel extends ChangeNotifier {
 
   void insertExerciseChild(int index, ExerciseSet e, int childIndex) {
     var cewe = _exercises.elementAt(index);
-    cewe.children.insert(childIndex, e);
+    cewe.children.insert(childIndex, e.copy());
     notifyListeners();
   }
 
@@ -83,9 +95,10 @@ class CEWModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeExerciseChild(int index, Exercise e) {
+  void removeExerciseChild(int index, ExerciseSet e) {
     var cewe = _exercises.elementAt(index);
-    cewe.children.removeWhere((element) => element.childId == e.exerciseId);
+    cewe.children
+        .removeWhere((element) => element.exerciseSetId == e.exerciseSetId);
     notifyListeners();
   }
 

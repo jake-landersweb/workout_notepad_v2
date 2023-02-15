@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icon.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
 import 'package:workout_notepad_v2/components/root.dart' as comp;
@@ -14,7 +15,7 @@ class WorkoutDetail extends StatefulWidget {
     super.key,
     required this.workout,
   });
-  final Workout workout;
+  final WorkoutCategories workout;
 
   @override
   State<WorkoutDetail> createState() => _WorkoutDetailState();
@@ -26,7 +27,7 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
 
   @override
   void initState() {
-    _workout = widget.workout.copy();
+    _workout = widget.workout.workout.copy();
     _init();
     super.initState();
   }
@@ -64,8 +65,9 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
         trailing: [
           comp.EditButton(
             onTap: () {
-              comp.cupertinoSheet(
+              showMaterialModalBottomSheet(
                 context: context,
+                enableDrag: false,
                 builder: (context) => CEWRoot(
                   isCreate: false,
                   workout: _workout,

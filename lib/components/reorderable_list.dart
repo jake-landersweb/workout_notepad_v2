@@ -17,6 +17,8 @@ class ReorderableList<T extends Object> extends StatefulWidget {
     this.shrinkWrap = true,
     this.horizontalSpacing = 16,
     this.borderRadius = 10,
+    this.header,
+    this.footer,
   });
   final List<T> items;
   final bool Function(T item1, T item2) areItemsTheSame;
@@ -28,6 +30,8 @@ class ReorderableList<T extends Object> extends StatefulWidget {
   final bool shrinkWrap;
   final double horizontalSpacing;
   final double borderRadius;
+  final Widget? header;
+  final Widget? footer;
 
   @override
   State<ReorderableList<T>> createState() => _ReorderableListState<T>();
@@ -47,6 +51,8 @@ class _ReorderableListState<T extends Object>
       updateDuration: const Duration(milliseconds: 300),
       reorderDuration: const Duration(milliseconds: 300),
       onReorderFinished: widget.onReorderFinished,
+      header: widget.header,
+      footer: widget.footer,
       itemBuilder: (context, itemAnimation, item, index) {
         // Each item must be wrapped in a Reorderable widget.
         return Reorderable(

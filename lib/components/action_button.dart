@@ -27,13 +27,16 @@ class ActionButton extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).primaryColor.withOpacity(isValid ? 1 : 0.2),
+          color: isValid
+              ? Theme.of(context).colorScheme.primary
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-              color: isValid
-                  ? Theme.of(context).primaryColor
-                  : sui.CustomColors.textColor(context).withOpacity(0.1),
-              width: 1),
+            color: isValid
+                ? Theme.of(context).colorScheme.primary
+                : Theme.of(context).colorScheme.outline,
+            width: 1,
+          ),
         ),
         child: ConstrainedBox(
           constraints: BoxConstraints(
@@ -47,9 +50,8 @@ class ActionButton extends StatelessWidget {
                     title,
                     style: ttLabel(context).copyWith(
                       color: isValid
-                          ? Colors.white
-                          : sui.CustomColors.textColor(context)
-                              .withOpacity(0.3),
+                          ? Theme.of(context).colorScheme.onPrimary
+                          : Theme.of(context).colorScheme.primary,
                     ),
                   ),
           ),

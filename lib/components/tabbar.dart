@@ -41,12 +41,12 @@ class _TabBarState extends State<TabBar> {
           height: 0.5,
           indent: 0,
           endIndent: 0,
-          color: sui.CustomColors.textColor(context).withOpacity(0.3),
+          color: Theme.of(context).colorScheme.onBackground.withOpacity(0.3),
         ),
         sui.BlurredContainer(
           width: double.infinity,
           borderRadius: BorderRadius.circular(0),
-          backgroundColor: sui.CustomColors.backgroundColor(context),
+          backgroundColor: Theme.of(context).colorScheme.background,
           opacity: 0.8,
           blur: 12,
           child: SafeArea(

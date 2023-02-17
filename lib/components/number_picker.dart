@@ -62,7 +62,7 @@ class _NumberPickerState extends State<NumberPicker> {
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor.withOpacity(0.1),
+                    color: Theme.of(context).colorScheme.primaryContainer,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: sui.TextField(
@@ -81,10 +81,7 @@ class _NumberPickerState extends State<NumberPicker> {
                     ],
                     style: TextStyle(
                       fontSize: widget.textFontSize,
-                      color: MediaQuery.of(context).platformBrightness ==
-                              Brightness.light
-                          ? Theme.of(context).primaryColor
-                          : Theme.of(context).primaryColor.lighten(0.15),
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
                       fontWeight: widget.fontWeight,
                     ),
                     onChanged: (val) {
@@ -148,19 +145,17 @@ class _NumberPickerState extends State<NumberPicker> {
 
   Color getColor(bool plus) {
     if (plus) {
-      return MediaQuery.of(context).platformBrightness == Brightness.light
-          ? Theme.of(context).primaryColor
-          : Theme.of(context).primaryColor.lighten(0.15);
+      return Theme.of(context).colorScheme.onTertiaryContainer;
     } else {
-      return CustomColors.textColor(context).withOpacity(0.5);
+      return Theme.of(context).colorScheme.onSurfaceVariant;
     }
   }
 
   Color getAccent(bool plus) {
     if (plus) {
-      return Theme.of(context).primaryColor.withOpacity(0.3);
+      return Theme.of(context).colorScheme.tertiaryContainer;
     } else {
-      return CustomColors.textColor(context).withOpacity(0.1);
+      return Theme.of(context).colorScheme.surfaceVariant;
     }
   }
 

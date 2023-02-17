@@ -33,8 +33,8 @@ class _HomeState extends State<Home> {
               item.child,
               size: 35,
               color: index == lmodel.tabBarIndex.index
-                  ? dmodel.color
-                  : Colors.grey,
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.primaryContainer,
             );
           },
           items: [

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:workout_notepad_v2/data/exercise.dart';
+import 'package:workout_notepad_v2/data/exercise_log.dart';
+import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
@@ -103,7 +106,7 @@ abstract class ExerciseBase {
                 fontWeight: style?.fontWeight ?? FontWeight.w500,
                 fontSize: style?.fontSize ?? 16,
                 color: style?.color?.withOpacity(0.5) ??
-                    sui.CustomColors.textColor(context).withOpacity(0.5),
+                    Theme.of(context).colorScheme.outline,
               ),
             ),
           ],
@@ -114,5 +117,19 @@ abstract class ExerciseBase {
           style: style ?? ttBody(context),
         );
     }
+  }
+
+  Future<List<ExerciseLog>> getLogs(String exerciseId) async {
+    var db = await getDB();
+    String sql = """
+      SELECT * FROM exercise_log WHERE exerciseId = '$exerciseId'
+      ORDER BY created DESC
+    """;
+    var response = await db.rawQuery(sql);
+    List<ExerciseLog> items = [];
+    for (var i in response) {
+      items.add(ExerciseLog.fromJson(i));
+    }
+    return items;
   }
 }

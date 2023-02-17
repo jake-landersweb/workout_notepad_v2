@@ -7,6 +7,7 @@ import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
 import 'package:workout_notepad_v2/text_themes.dart';
+import 'package:workout_notepad_v2/views/workouts/launch/launch_workout.dart';
 import 'package:workout_notepad_v2/views/workouts/workout_detail.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
@@ -29,14 +30,7 @@ class _WorkoutCellState extends State<WorkoutCell> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        gradient: LinearGradient(
-          begin: Alignment.topRight,
-          end: Alignment.bottomLeft,
-          colors: [
-            dmodel.color.shade300,
-            dmodel.color.shade800,
-          ],
-        ),
+        color: Theme.of(context).colorScheme.surfaceVariant,
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -51,7 +45,10 @@ class _WorkoutCellState extends State<WorkoutCell> {
                   children: [
                     Text(
                       widget.wc.workout.title,
-                      style: ttTitle(context),
+                      style: ttTitle(
+                        context,
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                      ),
                     ),
                     if (widget.wc.workout.description?.isNotEmpty ?? false)
                       Padding(
@@ -60,7 +57,7 @@ class _WorkoutCellState extends State<WorkoutCell> {
                           widget.wc.workout.description!,
                           style: ttBody(
                             context,
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.secondary,
                           ),
                         ),
                       )
@@ -87,8 +84,8 @@ class _WorkoutCellState extends State<WorkoutCell> {
                     child: Container(
                       constraints: const BoxConstraints(minHeight: 45),
                       decoration: BoxDecoration(
-                        border:
-                            Border.all(color: Colors.white.withOpacity(0.5)),
+                        border: Border.all(
+                            color: Theme.of(context).colorScheme.secondary),
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Center(
@@ -96,7 +93,7 @@ class _WorkoutCellState extends State<WorkoutCell> {
                           "VIEW",
                           style: ttLabel(
                             context,
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.secondary,
                           ),
                         ),
                       ),
@@ -106,26 +103,26 @@ class _WorkoutCellState extends State<WorkoutCell> {
                 const SizedBox(width: 16),
                 Expanded(
                   child: sui.Button(
-                    onTap: () {},
+                    onTap: () {
+                      showMaterialModalBottomSheet(
+                        context: context,
+                        enableDrag: false,
+                        builder: (context) =>
+                            LaunchWorkout(workout: widget.wc.workout),
+                      );
+                    },
                     child: Container(
                       constraints: const BoxConstraints(minHeight: 45),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
-                        gradient: LinearGradient(
-                          begin: Alignment.bottomLeft,
-                          end: Alignment.topRight,
-                          colors: [
-                            dmodel.color.shade300,
-                            dmodel.color.shade800,
-                          ],
-                        ),
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
                       ),
                       child: Center(
                         child: Text(
                           "START",
                           style: ttLabel(
                             context,
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.onPrimary,
                           ),
                         ),
                       ),
@@ -150,7 +147,7 @@ class _WorkoutCellState extends State<WorkoutCell> {
         return Container(
           decoration: BoxDecoration(
             border: Border.all(
-              color: sui.CustomColors.textColor(context),
+              color: Theme.of(context).colorScheme.secondary,
               width: 0.5,
             ),
             borderRadius: BorderRadius.circular(5),
@@ -161,7 +158,7 @@ class _WorkoutCellState extends State<WorkoutCell> {
               child: Text(
                 widget.wc.categories[index].uppercase(),
                 style: TextStyle(
-                  color: sui.CustomColors.textColor(context),
+                  color: Theme.of(context).colorScheme.secondary,
                 ),
               ),
             ),

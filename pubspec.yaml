@@ -51,6 +51,7 @@ dependencies:
   google_fonts: ^3.0.1
   modal_bottom_sheet: ^2.1.2
   expandable_page_view: ^1.0.17
+  intl: ^0.18.0
 
 dev_dependencies:
   flutter_test:

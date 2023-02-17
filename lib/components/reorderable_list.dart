@@ -99,8 +99,7 @@ class _ReorderableListState<T extends Object>
                           if (index < widget.items.length)
                             Divider(
                               height: 0.5,
-                              color: sui.CustomColors.textColor(context)
-                                  .withOpacity(0.1),
+                              color: Theme.of(context).colorScheme.onBackground,
                               indent: 16,
                               endIndent: 0,
                             ),
@@ -123,10 +122,8 @@ class _ReorderableListState<T extends Object>
       duration: const Duration(milliseconds: 200),
       decoration: BoxDecoration(
         color: inDrag
-            ? MediaQuery.of(context).platformBrightness == Brightness.light
-                ? sui.CustomColors.cellColor(context).darken(0.1)
-                : sui.CustomColors.cellColor(context).lighten(0.1)
-            : sui.CustomColors.cellColor(context),
+            ? Theme.of(context).colorScheme.surface
+            : Theme.of(context).colorScheme.surfaceVariant,
         borderRadius: BorderRadius.only(
           topLeft:
               index == 0 ? Radius.circular(widget.borderRadius) : Radius.zero,

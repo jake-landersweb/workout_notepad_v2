@@ -106,8 +106,9 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
         Expanded(
           child: sui.Button(
             onTap: () {
-              comp.cupertinoSheet(
+              showMaterialModalBottomSheet(
                 context: context,
+                enableDrag: false,
                 builder: (context) =>
                     LaunchWorkout(workout: _workout, exercises: _exercises),
               );

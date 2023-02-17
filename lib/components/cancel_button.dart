@@ -8,11 +8,14 @@ class CancelButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return sui.Button(
-        onTap: () => Navigator.of(context).pop(),
-        child: Text(
-          "Cancel",
-          style: ttLabel(context,
-              color: sui.CustomColors.textColor(context).withOpacity(0.5)),
-        ));
+      onTap: () => Navigator.of(context).pop(),
+      child: Text(
+        "Cancel",
+        style: ttLabel(
+          context,
+          color: Theme.of(context).colorScheme.outline,
+        ),
+      ),
+    );
   }
 }

@@ -10,6 +10,7 @@ class WorkoutExercise extends ExerciseBase {
   late String exerciseId;
   late int exerciseOrder;
   late String note;
+  late int superSetOrdering;
   late String created;
   late String updated;
 
@@ -19,6 +20,7 @@ class WorkoutExercise extends ExerciseBase {
     required this.exerciseId,
     required this.exerciseOrder,
     required this.note,
+    required this.superSetOrdering,
     required this.created,
     required this.updated,
     required super.title,
@@ -50,6 +52,7 @@ class WorkoutExercise extends ExerciseBase {
     exerciseId = e.exerciseId;
     exerciseOrder = args.order;
     note = "";
+    superSetOrdering = 0;
     created = "";
     updated = "";
   }
@@ -61,6 +64,7 @@ class WorkoutExercise extends ExerciseBase {
     exerciseId = e.exerciseId;
     exerciseOrder = 0;
     note = "";
+    superSetOrdering = 0;
     created = "";
     updated = "";
   }
@@ -71,6 +75,7 @@ class WorkoutExercise extends ExerciseBase {
         exerciseId: exerciseId,
         exerciseOrder: exerciseOrder,
         note: note,
+        superSetOrdering: superSetOrdering,
         created: created,
         updated: updated,
         title: title,
@@ -90,6 +95,7 @@ class WorkoutExercise extends ExerciseBase {
     exerciseId = json['exerciseId'];
     exerciseOrder = json['exerciseOrder'];
     note = json['note'] ?? "";
+    superSetOrdering = json['superSetOrdering'] ?? 0;
     created = json['created'];
     updated = json['updated'];
   }
@@ -106,6 +112,7 @@ class WorkoutExercise extends ExerciseBase {
       "time": time,
       "timePost": timePost,
       "note": note,
+      "superSetOrdering": superSetOrdering,
     };
   }
 

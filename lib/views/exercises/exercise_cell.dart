@@ -40,7 +40,7 @@ class ExerciseCell extends StatelessWidget {
     return Padding(
       padding: padding,
       child: Container(
-        color: sui.CustomColors.backgroundColor(context),
+        color: Theme.of(context).colorScheme.background,
         child: Column(
           children: [
             Row(
@@ -58,7 +58,7 @@ class ExerciseCell extends StatelessWidget {
                         exercise.title,
                         style: ttLabel(
                           context,
-                          color: sui.CustomColors.textColor(context),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                       if (exercise.category.isNotEmpty)
@@ -67,8 +67,7 @@ class ExerciseCell extends StatelessWidget {
                           child: Container(
                             decoration: BoxDecoration(
                               border: Border.all(
-                                color: sui.CustomColors.textColor(context)
-                                    .withOpacity(0.5),
+                                color: Theme.of(context).colorScheme.outline,
                                 width: 0.5,
                               ),
                               borderRadius: BorderRadius.circular(5),
@@ -78,8 +77,7 @@ class ExerciseCell extends StatelessWidget {
                               child: Text(
                                 exercise.category.uppercase(),
                                 style: TextStyle(
-                                  color: sui.CustomColors.textColor(context)
-                                      .withOpacity(0.5),
+                                  color: Theme.of(context).colorScheme.outline,
                                 ),
                               ),
                             ),
@@ -96,7 +94,10 @@ class ExerciseCell extends StatelessWidget {
                 else
                   exercise.info(
                     context,
-                    style: ttBody(context, color: dmodel.color),
+                    style: ttBody(
+                      context,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
               ],
             ),

@@ -13,10 +13,11 @@ void cupertinoSheet({
   showCupertinoModalBottomSheet(
     context: context,
     builder: (context) => Material(
-      color: sui.CustomColors.backgroundColor(context),
+      color: Theme.of(context).colorScheme.surfaceVariant,
       child: builder(context),
     ),
     expand: expand,
+    backgroundColor: Theme.of(context).backgroundColor,
     animationCurve: Sprung(36),
     previousRouteAnimationCurve: Sprung(36),
     duration: const Duration(milliseconds: 500),

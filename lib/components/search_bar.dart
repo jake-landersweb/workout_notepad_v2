@@ -18,13 +18,20 @@ class SearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return sui.CellWrapper(
+      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
       child: Row(
         children: [
-          Icon(LineIcons.search, color: Theme.of(context).primaryColor),
+          Icon(
+            LineIcons.search,
+            color: Theme.of(context).colorScheme.outline,
+          ),
           const SizedBox(width: 16),
           Expanded(
             child: sui.TextField(
               labelText: labelText,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.outline,
+              ),
               hintText: hintText ?? labelText,
               value: initText,
               onChanged: onChanged,

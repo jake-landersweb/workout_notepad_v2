@@ -92,7 +92,7 @@ class _CEERootState extends State<CEERoot> {
             style: sui.SegmentedPickerStyle(
               height: 36,
               pickerColor: Theme.of(context).primaryColor,
-              selectedTextColor: Colors.white,
+              selectedTextColor: Theme.of(context).colorScheme.onPrimary,
               selectedWeight: FontWeight.w500,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(50),
@@ -129,7 +129,7 @@ class _CEERootState extends State<CEERoot> {
             "Edit",
             style: TextStyle(
               fontSize: 12,
-              color: sui.CustomColors.textColor(context).withOpacity(0.3),
+              color: Theme.of(context).colorScheme.secondary,
               fontWeight: FontWeight.w300,
             ),
           ),
@@ -141,7 +141,6 @@ class _CEERootState extends State<CEERoot> {
   Widget _title(BuildContext context, CreateExerciseModel cemodel) {
     return sui.ListView<Widget>(
       childPadding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
-      backgroundColor: sui.CustomColors.textColor(context).withOpacity(0.1),
       leadingPadding: 0,
       trailingPadding: 0,
       children: [
@@ -160,6 +159,7 @@ class _CEERootState extends State<CEERoot> {
         sui.TextField(
           labelText: "Note",
           charLimit: 100,
+          maxLines: 3,
           value: cemodel.exercise.description,
           showCharacters: true,
           onChanged: (val) {
@@ -203,13 +203,14 @@ class _CEERootState extends State<CEERoot> {
               },
               child: Container(
                 decoration: BoxDecoration(
-                  color: sui.CustomColors.textColor(context).withOpacity(0.1),
+                  color: Theme.of(context).colorScheme.surfaceVariant,
                   borderRadius: BorderRadius.circular(100),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
                   child: Icon(LineIcons.plus,
-                      color: sui.CustomColors.textColor(context), size: 20),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      size: 20),
                 ),
               ),
             ),
@@ -238,8 +239,8 @@ class _CEERootState extends State<CEERoot> {
       child: Container(
         decoration: BoxDecoration(
           color: title == cemodel.exercise.category
-              ? Theme.of(context).primaryColor
-              : sui.CustomColors.textColor(context).withOpacity(0.1),
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.surfaceVariant,
           borderRadius: BorderRadius.circular(100),
         ),
         child: Padding(
@@ -248,8 +249,8 @@ class _CEERootState extends State<CEERoot> {
             title.uppercase(),
             style: TextStyle(
               color: title == cemodel.exercise.category
-                  ? Colors.white
-                  : sui.CustomColors.textColor(context),
+                  ? Theme.of(context).colorScheme.onPrimary
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: 14,
               fontWeight: FontWeight.w500,
             ),
@@ -359,16 +360,16 @@ class _CEERootState extends State<CEERoot> {
         },
         child: Container(
           color: cemodel.exercise.timePost == post
-              ? Theme.of(context).primaryColor.withOpacity(0.3)
-              : sui.CustomColors.textColor(context).withOpacity(0.1),
+              ? Theme.of(context).colorScheme.tertiaryContainer
+              : Theme.of(context).colorScheme.surfaceVariant,
           width: double.infinity,
           child: Center(
             child: Text(
               post.toUpperCase(),
               style: TextStyle(
                 color: cemodel.exercise.timePost == post
-                    ? Theme.of(context).primaryColor
-                    : sui.CustomColors.textColor(context).withOpacity(0.5),
+                    ? Theme.of(context).colorScheme.onTertiaryContainer
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: cemodel.exercise.timePost == post
                     ? FontWeight.w600
                     : FontWeight.w400,

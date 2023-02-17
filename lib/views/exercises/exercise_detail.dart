@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
@@ -66,11 +67,22 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
               );
             },
             child: sui.CellWrapper(
+              backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
               child: Row(
                 children: [
-                  Icon(LineIcons.edit, color: Theme.of(context).primaryColor),
+                  Icon(LineIcons.edit,
+                      color: Theme.of(context).colorScheme.tertiary),
                   const SizedBox(width: 16),
-                  Expanded(child: Text("Edit", style: ttBody(context))),
+                  Expanded(
+                    child: Text(
+                      "Edit",
+                      style: ttBody(
+                        context,
+                        color:
+                            Theme.of(context).colorScheme.onTertiaryContainer,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -83,11 +95,22 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
               // TODO: Implement
             },
             child: sui.CellWrapper(
+              backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
               child: Row(
                 children: [
-                  Icon(LineIcons.plus, color: Theme.of(context).primaryColor),
+                  Icon(LineIcons.plus,
+                      color: Theme.of(context).colorScheme.tertiary),
                   const SizedBox(width: 16),
-                  Expanded(child: Text("Workout", style: ttBody(context))),
+                  Expanded(
+                    child: Text(
+                      "Workout",
+                      style: ttBody(
+                        context,
+                        color:
+                            Theme.of(context).colorScheme.onTertiaryContainer,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -123,6 +146,21 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
             sui.LabeledCell(
               label: "",
               child: widget.exercise.info(context, style: ttLabel(context)),
+            ),
+            sui.Button(
+              onTap: () async {
+                showMaterialModalBottomSheet(
+                  context: context,
+                  enableDrag: false,
+                  builder: (context) => ExerciseLogs(
+                    exercise: widget.exercise,
+                  ),
+                );
+              },
+              child: sui.LabeledCell(
+                label: "",
+                child: Text("Logs", style: ttLabel(context)),
+              ),
             ),
           ],
         ),

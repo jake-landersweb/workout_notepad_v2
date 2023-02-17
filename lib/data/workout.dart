@@ -3,6 +3,7 @@ import 'package:sqflite/sql.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/root.dart';
+import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/icons.dart';
 
@@ -131,6 +132,21 @@ class Workout {
       w.add(Workout.fromJson(i));
     }
     return w;
+  }
+
+  Future<List<WorkoutLog>> getLogs() async {
+    var db = await getDB();
+    String sql = """
+      SELECT * FROM workout_log WHERE workoutId = '$workoutId'
+      AND userId = '$userId'
+      ORDER BY created DESC
+    """;
+    var response = await db.rawQuery(sql);
+    List<WorkoutLog> logs = [];
+    for (var i in response) {
+      logs.add(WorkoutLog.fromJson(i));
+    }
+    return logs;
   }
 
   @override

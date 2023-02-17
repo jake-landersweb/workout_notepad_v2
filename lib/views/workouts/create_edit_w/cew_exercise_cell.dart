@@ -36,8 +36,8 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
       curve: Sprung(36),
       duration: const Duration(milliseconds: 700),
       color: widget.inDrag
-          ? sui.CustomColors.cellColor(context)
-          : sui.CustomColors.backgroundColor(context),
+          ? Theme.of(context).colorScheme.surface
+          : Theme.of(context).colorScheme.surfaceVariant,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -112,7 +112,7 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                        color: sui.CustomColors.cellColor(context),
+                        color: Theme.of(context).colorScheme.surfaceVariant,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Padding(
@@ -128,21 +128,13 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                                       Expanded(
                                           child: Text(
                                         item.title,
-                                        style: ttLabel(
-                                          context,
-                                          color: sui.CustomColors.textColor(
-                                              context),
-                                        ),
+                                        style: ttLabel(context),
                                       )),
                                     ],
                                   ),
                                   item.info(
                                     context,
-                                    style: ttLabel(
-                                      context,
-                                      color: sui.CustomColors.textColor(context)
-                                          .withOpacity(0.5),
-                                    ),
+                                    style: ttLabel(context),
                                   ),
                                 ],
                               ),
@@ -161,37 +153,85 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
           ),
           const SizedBox(height: 8),
           Padding(
-            padding: const EdgeInsets.only(left: 16.0),
-            child: sui.Button(
-              onTap: () {
-                comp.cupertinoSheet(
-                  context: context,
-                  builder: (context) {
-                    return SelectExercise(
-                      onSelect: (e) {
-                        cmodel.addExerciseChild(
-                          widget.index,
-                          ExerciseSet.fromExercise(
-                            cmodel.workout.workoutId,
-                            widget.cewe.exercise,
-                            e,
-                          ),
-                        );
-                      },
-                    );
-                  },
-                );
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: sui.CustomColors.cellColor(context),
-                  borderRadius: BorderRadius.circular(5),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: sui.Button(
+                    onTap: () {
+                      comp.cupertinoSheet(
+                        context: context,
+                        builder: (context) {
+                          return SelectExercise(
+                            onSelect: (e) {
+                              cmodel.addExerciseChild(
+                                widget.index,
+                                ExerciseSet.fromExercise(
+                                  cmodel.workout.workoutId,
+                                  widget.cewe.exercise,
+                                  e,
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      );
+                    },
+                    child: Container(
+                      constraints: const BoxConstraints(minHeight: 40),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surfaceVariant,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Center(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(LineIcons.plus),
+                            const SizedBox(width: 8),
+                            Text("Super-Set", style: ttLabel(context))
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-                child: const Padding(
-                  padding: EdgeInsets.all(4.0),
-                  child: Icon(LineIcons.plus),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: sui.Button(
+                    onTap: () {
+                      sui.showFloatingSheet(
+                        context: context,
+                        builder: (context) => _ExerciseNote(
+                          note: widget.cewe.exercise.note,
+                          onSave: (val) {
+                            setState(() {
+                              widget.cewe.exercise.note = val;
+                            });
+                          },
+                        ),
+                      );
+                    },
+                    child: Container(
+                      constraints: const BoxConstraints(minHeight: 40),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surfaceVariant,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Center(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(LineIcons.infoCircle),
+                            const SizedBox(width: 8),
+                            Text("Note", style: ttLabel(context))
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
           const SizedBox(height: 16),
@@ -200,5 +240,121 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
         ],
       ),
     );
+  }
+}
+
+class _ExerciseNote extends StatefulWidget {
+  const _ExerciseNote({
+    super.key,
+    required this.note,
+    required this.onSave,
+  });
+  final String note;
+  final Function(String val) onSave;
+
+  @override
+  State<_ExerciseNote> createState() => __ExerciseNoteState();
+}
+
+class __ExerciseNoteState extends State<_ExerciseNote> {
+  late String _note;
+
+  @override
+  void initState() {
+    _note = widget.note;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return sui.FloatingSheet(
+      title: "",
+      child: Column(
+        children: [
+          sui.CellWrapper(
+            backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+            child: sui.TextField(
+              value: _note,
+              maxLines: 4,
+              labelText: "Note",
+              onChanged: (val) {
+                setState(() {
+                  _note = val;
+                });
+              },
+            ),
+          ),
+          const SizedBox(height: 16),
+          comp.ActionButton(
+            title: "Save",
+            onTap: () {
+              widget.onSave(_note);
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SuperSetOrder extends StatefulWidget {
+  const _SuperSetOrder({
+    super.key,
+    required this.exercise,
+    required this.onSelect,
+  });
+  final WorkoutExercise exercise;
+  final Function(int val) onSelect;
+
+  @override
+  State<_SuperSetOrder> createState() => __SuperSetOrderState();
+}
+
+class __SuperSetOrderState extends State<_SuperSetOrder> {
+  late int _val;
+
+  @override
+  void initState() {
+    _val = widget.exercise.superSetOrdering;
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return sui.FloatingSheet(
+      title: "Super-Set Ordering",
+      child: sui.ListView<int>(
+        children: const [0, 1, 2],
+        allowsSelect: true,
+        selected: [_val],
+        color: Theme.of(context).primaryColor,
+        leadingPadding: 0,
+        trailingPadding: 0,
+        onSelect: (item) {
+          setState(() {
+            _val = item;
+          });
+          widget.onSelect(item);
+          Navigator.of(context).pop();
+        },
+        childBuilder: (context, item) {
+          return Text(_getTitle(item), style: ttLabel(context));
+        },
+      ),
+    );
+  }
+
+  String _getTitle(int v) {
+    switch (v) {
+      case 0:
+        return "Default";
+      case 1:
+        return "Every Other (Top)";
+      case 2:
+        return "Every Other (Bottom)";
+      default:
+        return "";
+    }
   }
 }

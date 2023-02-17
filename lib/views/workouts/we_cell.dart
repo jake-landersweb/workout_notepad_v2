@@ -62,26 +62,15 @@ class _WECellState extends State<WECell> {
                 ),
                 TextSpan(
                   text: " (",
-                  style: ttBody(
-                    context,
-                    color: sui.CustomColors.textColor(context).withOpacity(0.5),
-                  ),
+                  style: ttBody(context),
                   children: [
                     i.infoRaw(
                       context,
-                      style: ttBody(
-                        context,
-                        color: sui.CustomColors.textColor(context)
-                            .withOpacity(0.5),
-                      ),
+                      style: ttBody(context),
                     ),
                     TextSpan(
                       text: ")",
-                      style: ttBody(
-                        context,
-                        color: sui.CustomColors.textColor(context)
-                            .withOpacity(0.5),
-                      ),
+                      style: ttBody(context),
                     ),
                   ],
                 ),

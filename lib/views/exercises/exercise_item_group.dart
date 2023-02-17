@@ -129,16 +129,16 @@ class _ExerciseItemGroupState extends State<ExerciseItemGroup> {
         },
         child: Container(
           color: e.timePost == post
-              ? Theme.of(context).primaryColor.withOpacity(0.3)
-              : sui.CustomColors.textColor(context).withOpacity(0.1),
+              ? Theme.of(context).colorScheme.tertiary
+              : Theme.of(context).colorScheme.tertiaryContainer,
           width: double.infinity,
           child: Center(
             child: Text(
               post.toUpperCase(),
               style: TextStyle(
                 color: e.timePost == post
-                    ? Theme.of(context).primaryColor
-                    : sui.CustomColors.textColor(context).withOpacity(0.5),
+                    ? Theme.of(context).colorScheme.onTertiary
+                    : Theme.of(context).colorScheme.onTertiaryContainer,
                 fontWeight:
                     e.timePost == post ? FontWeight.w600 : FontWeight.w400,
                 fontSize: 14,

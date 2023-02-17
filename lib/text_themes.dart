@@ -9,7 +9,7 @@ TextStyle ttTitle(
 }) {
   return TextStyle(
     fontSize: size ?? 24,
-    color: color ?? sui.CustomColors.textColor(context),
+    color: color ?? Theme.of(context).colorScheme.onBackground,
     fontWeight: fontWeight ?? FontWeight.w600,
   );
 }
@@ -22,7 +22,7 @@ TextStyle ttSubTitle(
 }) {
   return TextStyle(
     fontSize: size ?? 22,
-    color: color ?? sui.CustomColors.textColor(context),
+    color: color ?? Theme.of(context).colorScheme.onBackground,
     fontWeight: fontWeight ?? FontWeight.w500,
   );
 }
@@ -35,7 +35,7 @@ TextStyle ttLargeLabel(
 }) {
   return TextStyle(
     fontSize: size ?? 20,
-    color: color ?? sui.CustomColors.textColor(context),
+    color: color ?? Theme.of(context).colorScheme.onBackground,
     fontWeight: fontWeight ?? FontWeight.w600,
   );
 }
@@ -48,7 +48,7 @@ TextStyle ttLabel(
 }) {
   return TextStyle(
     fontSize: size ?? 18,
-    color: color ?? sui.CustomColors.textColor(context),
+    color: color ?? Theme.of(context).colorScheme.onBackground,
     fontWeight: fontWeight ?? FontWeight.w500,
   );
 }
@@ -61,7 +61,7 @@ TextStyle ttBody(
 }) {
   return TextStyle(
     fontSize: size ?? 16,
-    color: color ?? sui.CustomColors.textColor(context),
+    color: color ?? Theme.of(context).colorScheme.onBackground,
     fontWeight: fontWeight ?? FontWeight.w500,
   );
 }

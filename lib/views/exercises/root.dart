@@ -4,3 +4,4 @@ export 'create_edit_exercise/root.dart';
 export 'exercise_detail.dart';
 export 'exercise_item_cell.dart';
 export 'exercise_item_group.dart';
+export 'logs/root.dart';

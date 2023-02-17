@@ -115,6 +115,7 @@ CREATE TABLE workout_exercise(
     time INTEGER DEFAULT 0 NOT NULL,
     timePost TEXT NOT NULL DEFAULT "sec",
     note TEXT,
+    superSetOrdering INTEGER DEFAULT 0 NOT NULL,
     created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
@@ -133,26 +134,55 @@ CREATE TABLE exercise_log(
     exerciseLogId TEXT PRIMARY KEY,
     userId TEXT NOT NULL,
     exerciseId TEXT NOT NULL,
+    workoutLogId TEXT,
     type INTEGER DEFAULT 0 NOT NULL,
     sets INTEGER NOT NULL,
-    reps INTEGER DEFAULT 0 NOT NULL,
-    time INTEGER DEFAULT 0 NOT NULL,
+    reps TEXT DEFAULT "" NOT NULL,
+    time TEXT DEFAULT "" NOT NULL,
     timePost TEXT DEFAULT "sec" NOT NULL,
-    weight INTEGER DEFAULT 0 NOT NULL,
+    weight TEXT DEFAULT "" NOT NULL,
     weightPost TEXT DEFAULT "lbs" NOT NULL,
     note TEXT,
     created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
     FOREIGN KEY (userId) REFERENCES user(userId) ON DELETE CASCADE,
-    FOREIGN KEY (exerciseId) REFERENCES exercise(exerciseId) ON DELETE CASCADE
+    FOREIGN KEY (exerciseId) REFERENCES exercise(exerciseId) ON DELETE CASCADE,
+    FOREIGN KEY (workoutLogId) REFERENCES workout_log(workoutLogId)
 );
+
 --
 CREATE INDEX exercise_log_exerciseid ON exercise_log(exerciseId);
 --
 CREATE INDEX exercise_log_userid ON exercise_log(userId);
 --
+CREATE INDEX exercise_log_workoutlogid ON exercise_log(workoutLogId);
+--
 CREATE TRIGGER exercise_log_update AFTER UPDATE ON exercise_log
 BEGIN
     UPDATE exercise_log SET updated = CURRENT_TIMESTAMP;
+END;
+--
+CREATE TABLE workout_log(
+    workoutLogId TEXT PRIMARY KEY,
+    userId TEXT NOT NULL,
+    workoutId TEXT NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT,
+    duration INTEGER DEFAULT 0 NOT NULL, /* duration in seconds */
+    note TEXT,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+
+    FOREIGN KEY (userId) REFERENCES user(userId) ON DELETE CASCADE,
+    FOREIGN KEY (workoutId) REFERENCES workout(workoutId) ON DELETE CASCADE
+);
+--
+CREATE INDEX workout_log_userid ON workout_log(userId);
+--
+CREATE INDEX workout_log_workoutid ON workout_log(workoutId);
+--
+CREATE TRIGGER workout_log_update AFTER UPDATE ON workout_log
+BEGIN
+    UPDATE workout_log SET updated = CURRENT_TIMESTAMP;
 END;

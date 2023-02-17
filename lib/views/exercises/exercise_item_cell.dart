@@ -35,7 +35,7 @@ class _ExerciseItemCellState extends State<ExerciseItemCell> {
             widget.label,
             style: TextStyle(
               fontSize: 12,
-              color: Theme.of(context).primaryColor.withOpacity(0.7),
+              color: Theme.of(context).primaryColor,
             ),
           ),
         ),

@@ -9,12 +9,14 @@ void cupertinoSheet({
   required BuildContext context,
   required Widget Function(BuildContext context) builder,
   bool expand = false,
+  bool resizeToAvoidBottomInset = true,
 }) {
   showCupertinoModalBottomSheet(
     context: context,
-    builder: (context) => Material(
-      color: Theme.of(context).colorScheme.surfaceVariant,
-      child: builder(context),
+    builder: (context) => Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+      body: builder(context),
     ),
     expand: expand,
     backgroundColor: Theme.of(context).backgroundColor,

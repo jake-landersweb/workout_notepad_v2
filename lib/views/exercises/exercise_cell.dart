@@ -49,6 +49,11 @@ class ExerciseCell extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(right: 16),
                     child: exercise.getIcon(),
+                  )
+                else
+                  const Padding(
+                    padding: EdgeInsets.only(right: 16),
+                    child: SizedBox(height: 50, width: 50),
                   ),
                 Expanded(
                   child: Column(

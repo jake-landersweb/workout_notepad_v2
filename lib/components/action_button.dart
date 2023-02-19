@@ -10,12 +10,14 @@ class ActionButton extends StatelessWidget {
     this.isValid = true,
     this.isLoading,
     this.minHeight = 50,
+    this.icon,
   });
   final String title;
   final VoidCallback onTap;
   final bool isValid;
   final bool? isLoading;
   final double minHeight;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -46,13 +48,26 @@ class ActionButton extends StatelessWidget {
           child: Center(
             child: isLoading ?? false
                 ? const sui.LoadingIndicator()
-                : Text(
-                    title,
-                    style: ttLabel(context).copyWith(
-                      color: isValid
-                          ? Theme.of(context).colorScheme.onPrimary
-                          : Theme.of(context).colorScheme.primary,
-                    ),
+                : Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (icon != null)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Icon(
+                            icon,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        ),
+                      Text(
+                        title,
+                        style: ttLabel(context).copyWith(
+                          color: isValid
+                              ? Theme.of(context).colorScheme.onPrimary
+                              : Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                    ],
                   ),
           ),
         ),

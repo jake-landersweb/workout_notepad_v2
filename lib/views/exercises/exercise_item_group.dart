@@ -4,6 +4,7 @@ import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:sapphireui/sapphireui.dart' as sui;
+import 'package:workout_notepad_v2/utils/root.dart';
 
 class ExerciseItemGoup extends StatelessWidget {
   const ExerciseItemGoup({
@@ -17,7 +18,6 @@ class ExerciseItemGoup extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          flex: exercise.type == 1 ? 3 : 1,
           child: ExerciseItemCell(
             label: "SETS",
             val: exercise.sets,
@@ -29,7 +29,6 @@ class ExerciseItemGoup extends StatelessWidget {
               style: ttLabel(context, color: Theme.of(context).primaryColor)),
         ),
         Expanded(
-          flex: exercise.type == 1 ? 4 : 1,
           child: _getSecond(context),
         ),
       ],
@@ -40,7 +39,7 @@ class ExerciseItemGoup extends StatelessWidget {
     switch (exercise.type) {
       case 1:
         return ExerciseItemCell(
-          label: exercise.timePost,
+          label: exercise.timePost.toUpperCase(),
           val: exercise.time,
         );
       default:

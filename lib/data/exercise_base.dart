@@ -119,6 +119,23 @@ abstract class ExerciseBase {
     }
   }
 
+  Duration getDuration() {
+    if (type == 1) {
+      switch (timePost) {
+        case "sec":
+          return Duration(seconds: time);
+        case "min":
+          return Duration(minutes: time);
+        case "hour":
+          return Duration(hours: time);
+        default:
+          return Duration.zero;
+      }
+    } else {
+      return Duration.zero;
+    }
+  }
+
   Future<List<ExerciseLog>> getLogs(String exerciseId) async {
     var db = await getDB();
     String sql = """

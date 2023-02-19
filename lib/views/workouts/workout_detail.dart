@@ -127,9 +127,9 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
             const SizedBox(width: 16),
             _actionCell(
               context: context,
-              icon: Icons.delete_rounded,
-              title: "Delete",
-              description: "Delete this workout",
+              icon: Icons.sticky_note_2_rounded,
+              title: "Logs",
+              description: "View workout logs",
               onTap: () {
                 // TODO -- implement
               },
@@ -137,9 +137,9 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
             const SizedBox(width: 16),
             _actionCell(
               context: context,
-              icon: Icons.sticky_note_2_rounded,
-              title: "Logs",
-              description: "View workout logs",
+              icon: Icons.delete_rounded,
+              title: "Delete",
+              description: "Delete this workout",
               onTap: () {
                 // TODO -- implement
               },

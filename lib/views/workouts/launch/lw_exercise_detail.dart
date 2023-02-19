@@ -160,47 +160,64 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
     ExerciseLog e,
     LaunchWorkoutModel lmodel,
   ) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _default(context, e, lmodel),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                flex: 3,
-                child: Container(),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (e.type == 1)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 300),
+              child: comp.CountdownTimer(
+                duration: lmodel.exercises[widget.index].getDuration(),
+                fontSize: 60,
               ),
-              sui.Button(
-                onTap: () => lmodel.addLogSet(widget.index),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Theme.of(context).colorScheme.tertiary,
+            ),
+          ),
+        Container(
+          decoration: BoxDecoration(
+            color:
+                Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _default(context, e, lmodel),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: Container(),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Icon(
-                      Icons.add,
-                      color: Theme.of(context).colorScheme.onTertiary,
+                  sui.Button(
+                    onTap: () => lmodel.addLogSet(widget.index),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Theme.of(context).colorScheme.tertiary,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Icon(
+                          Icons.add,
+                          color: Theme.of(context).colorScheme.onTertiary,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  Expanded(
+                    flex: 6,
+                    child: Container(),
+                  ),
+                ],
               ),
-              Expanded(
-                flex: 6,
-                child: Container(),
-              ),
+              const SizedBox(height: 16),
             ],
           ),
-          const SizedBox(height: 16),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -263,47 +280,66 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
     ExerciseLog e,
     LaunchWorkoutModel lmodel,
   ) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _child(context, childIndex, e, lmodel),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                flex: 3,
-                child: Container(),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (e.type == 1)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 300),
+              child: comp.CountdownTimer(
+                duration: lmodel.exerciseChildren[widget.index][childIndex]
+                    .getDuration(),
+                fontSize: 60,
               ),
-              sui.Button(
-                onTap: () => lmodel.addLogChildSet(widget.index, childIndex),
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: Theme.of(context).colorScheme.tertiary,
+            ),
+          ),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color:
+                Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _child(context, childIndex, e, lmodel),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: Container(),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Icon(
-                      Icons.add,
-                      color: Theme.of(context).colorScheme.onTertiary,
+                  sui.Button(
+                    onTap: () =>
+                        lmodel.addLogChildSet(widget.index, childIndex),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Theme.of(context).colorScheme.tertiary,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Icon(
+                          Icons.add,
+                          color: Theme.of(context).colorScheme.onTertiary,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  Expanded(
+                    flex: 6,
+                    child: Container(),
+                  ),
+                ],
               ),
-              Expanded(
-                flex: 6,
-                child: Container(),
-              ),
+              const SizedBox(height: 16),
             ],
           ),
-          const SizedBox(height: 16),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -341,8 +377,8 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                   saved: item.saved,
                   onRepsChange: (val) =>
                       lmodel.setLogChildReps(widget.index, childIndex, i, val),
-                  onWeightChange: (val) =>
-                      lmodel.setLogChildReps(widget.index, childIndex, i, val),
+                  onWeightChange: (val) => lmodel.setLogChildWeight(
+                      widget.index, childIndex, i, val),
                   onWeightPostChange: (val) =>
                       lmodel.setLogChildTimePost(widget.index, childIndex, val),
                   onTimeChange: (val) =>

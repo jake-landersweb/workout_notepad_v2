@@ -63,10 +63,8 @@ class _TextTimerState extends State<TextTimer> {
     while (_isActive) {
       // wait for the time duration
       await Future.delayed(Duration(milliseconds: widget.msIterate));
-      // add the time
       setState(() {
-        _currentTime =
-            _currentTime.add(Duration(milliseconds: widget.msIterate));
+        _currentTime = DateTime.now();
       });
       // send observer
       if (widget.onTick != null) {

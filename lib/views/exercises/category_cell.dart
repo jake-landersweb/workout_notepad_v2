@@ -17,7 +17,7 @@ class CategoryCell extends StatelessWidget {
       ),
       child: Center(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
+          padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
           child: Text(
             title.uppercase(),
             style: TextStyle(

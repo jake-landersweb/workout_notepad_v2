@@ -91,7 +91,9 @@ class _CEERootState extends State<CEERoot> {
             selections: const [0, 1],
             style: sui.SegmentedPickerStyle(
               height: 36,
-              pickerColor: Theme.of(context).primaryColor,
+              pickerColor: Theme.of(context).colorScheme.primary,
+              backgroundColor:
+                  Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
               selectedTextColor: Theme.of(context).colorScheme.onPrimary,
               selectedWeight: FontWeight.w500,
               shape: RoundedRectangleBorder(
@@ -142,6 +144,8 @@ class _CEERootState extends State<CEERoot> {
     return sui.ListView<Widget>(
       childPadding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
       leadingPadding: 0,
+      backgroundColor:
+          Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
       trailingPadding: 0,
       children: [
         sui.TextField(
@@ -203,7 +207,10 @@ class _CEERootState extends State<CEERoot> {
               },
               child: Container(
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceVariant,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .surfaceVariant
+                      .withOpacity(0.5),
                   borderRadius: BorderRadius.circular(100),
                 ),
                 child: Padding(
@@ -240,7 +247,7 @@ class _CEERootState extends State<CEERoot> {
         decoration: BoxDecoration(
           color: title == cemodel.exercise.category
               ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.surfaceVariant,
+              : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
           borderRadius: BorderRadius.circular(100),
         ),
         child: Padding(
@@ -361,7 +368,7 @@ class _CEERootState extends State<CEERoot> {
         child: Container(
           color: cemodel.exercise.timePost == post
               ? Theme.of(context).colorScheme.tertiaryContainer
-              : Theme.of(context).colorScheme.surfaceVariant,
+              : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
           width: double.infinity,
           child: Center(
             child: Text(

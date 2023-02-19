@@ -70,12 +70,13 @@ class _CEWState extends State<_CEW> {
             curve: Sprung(36),
             duration: const Duration(milliseconds: 500),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Divider(height: 0.5),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 48),
-                  child: comp.ActionButton(
+                  child: sui.Button(
                     onTap: () {
                       comp.cupertinoSheet(
                         context: context,
@@ -87,7 +88,21 @@ class _CEWState extends State<_CEW> {
                         ),
                       );
                     },
-                    title: "Add Exercise",
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.secondaryContainer,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Icon(
+                          Icons.add,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSecondaryContainer,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -113,8 +128,8 @@ class _CEWState extends State<_CEW> {
                       },
                       icon: LineIcons.alternateTrash,
                       label: "Delete",
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.red,
+                      foregroundColor: Theme.of(context).colorScheme.onError,
+                      backgroundColor: Theme.of(context).colorScheme.error,
                     ),
                   ]),
                 ),
@@ -140,14 +155,14 @@ class _CEWState extends State<_CEW> {
       children: [
         Row(
           children: [
-            comp.CloseButton(color: dmodel.color.shade200),
+            comp.CloseButton(color: Theme.of(context).colorScheme.primary),
             const Spacer(),
             comp.ModelCreateButton(
               title: widget.isCreate ? "Create" : "Save",
               isValid: cmodel.isValid(),
               textColor: cmodel.isValid()
-                  ? dmodel.color.shade900
-                  : Colors.white.withOpacity(0.5),
+                  ? Theme.of(context).colorScheme.primary
+                  : Theme.of(context).colorScheme.outline,
               onTap: () async {
                 if (cmodel.isValid()) {
                   if (widget.isCreate) {
@@ -175,10 +190,10 @@ class _CEWState extends State<_CEW> {
           showBackground: false,
           charLimit: 50,
           value: cmodel.title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w600,
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
           ),
           labelText: "Title",
           onChanged: (val) => cmodel.setTitle(val),
@@ -188,7 +203,7 @@ class _CEWState extends State<_CEW> {
           showBackground: false,
           value: cmodel.description,
           charLimit: 150,
-          style: TextStyle(color: Colors.white.withOpacity(0.7)),
+          style: TextStyle(color: Theme.of(context).colorScheme.primary),
           labelText: "Description",
           onChanged: (val) => cmodel.setDescription(val),
         ),

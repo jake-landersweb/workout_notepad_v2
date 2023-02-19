@@ -25,22 +25,69 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.6,
-      ),
-      child: sui.AppBar.sheet(
-        title: widget.exercise.title,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        leading: const [comp.CloseButton()],
-        children: [
-          if (widget.exercise.icon.isNotEmpty) _icon(context),
-          const SizedBox(height: 16),
-          _actions(context, dmodel),
-          const SizedBox(height: 16),
-          _details(context),
-        ],
-      ),
+    return sui.AppBar.sheet(
+      title: widget.exercise.title,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      isFluid: true,
+      itemSpacing: 16,
+      horizontalSpacing: 0,
+      leading: const [comp.CloseButton()],
+      children: [
+        if (widget.exercise.icon.isNotEmpty) _icon(context),
+        _actions(context, dmodel),
+        Padding(
+          padding: const EdgeInsets.only(left: 32.0),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              "About",
+              style: ttLargeLabel(
+                context,
+                color: Theme.of(context).colorScheme.onBackground,
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: ExerciseItemGoup(exercise: widget.exercise),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: sui.CellWrapper(
+            backgroundColor:
+                Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: sui.LabeledCell(
+                label: "Category",
+                child: Text(
+                  widget.exercise.category.uppercase(),
+                  style: ttLabel(context),
+                ),
+              ),
+            ),
+          ),
+        ),
+        if (widget.exercise.description.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: sui.CellWrapper(
+              backgroundColor:
+                  Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: sui.LabeledCell(
+                  label: "Description",
+                  child: Text(
+                    widget.exercise.description.uppercase(),
+                    style: ttLabel(context),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 
@@ -49,122 +96,119 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
   }
 
   Widget _actions(BuildContext context, DataModel dmodel) {
-    return Row(
-      children: [
-        Expanded(
-          child: sui.Button(
-            onTap: () {
-              comp.cupertinoSheet(
-                context: context,
-                builder: (context) => CEERoot(
-                  isCreate: false,
-                  exercise: widget.exercise,
-                  onAction: (_) {
-                    // close the detail screen
-                    Navigator.of(context).pop();
-                  },
-                ),
-              );
-            },
-            child: sui.CellWrapper(
-              backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-              child: Row(
-                children: [
-                  Icon(LineIcons.edit,
-                      color: Theme.of(context).colorScheme.tertiary),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      "Edit",
-                      style: ttBody(
-                        context,
-                        color:
-                            Theme.of(context).colorScheme.onTertiaryContainer,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 8),
-        Expanded(
-          child: sui.Button(
-            onTap: () {
-              // TODO: Implement
-            },
-            child: sui.CellWrapper(
-              backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-              child: Row(
-                children: [
-                  Icon(LineIcons.plus,
-                      color: Theme.of(context).colorScheme.tertiary),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      "Workout",
-                      style: ttBody(
-                        context,
-                        color:
-                            Theme.of(context).colorScheme.onTertiaryContainer,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _details(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        sui.ListView<Widget>(
-          leadingPadding: 0,
-          trailingPadding: 0,
-          childPadding: const EdgeInsets.symmetric(horizontal: 16),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Row(
           children: [
-            if (widget.exercise.category.isNotEmpty)
-              sui.LabeledCell(
-                label: "Category",
-                child: Text(
-                  widget.exercise.category.uppercase(),
-                  style: ttLabel(context),
-                ),
-              ),
-            if (widget.exercise.description.isNotEmpty)
-              sui.LabeledCell(
-                label: "Description",
-                child:
-                    Text(widget.exercise.description, style: ttLabel(context)),
-              ),
-            sui.LabeledCell(
-              label: "",
-              child: widget.exercise.info(context, style: ttLabel(context)),
-            ),
-            sui.Button(
-              onTap: () async {
-                showMaterialModalBottomSheet(
+            _actionCell(
+              context: context,
+              icon: Icons.edit_rounded,
+              title: "Edit",
+              description: "Change the attributes",
+              onTap: () {
+                comp.cupertinoSheet(
                   context: context,
-                  enableDrag: false,
-                  builder: (context) => ExerciseLogs(
+                  builder: (context) => CEERoot(
+                    isCreate: false,
                     exercise: widget.exercise,
+                    onAction: (_) {
+                      // close the detail screen
+                      Navigator.of(context).pop();
+                    },
                   ),
                 );
               },
-              child: sui.LabeledCell(
-                label: "",
-                child: Text("Logs", style: ttLabel(context)),
-              ),
+            ),
+            const SizedBox(width: 16),
+            _actionCell(
+              context: context,
+              icon: Icons.sticky_note_2_rounded,
+              title: "Logs",
+              description: "View exercise logs",
+              onTap: () {
+                showMaterialModalBottomSheet(
+                  context: context,
+                  enableDrag: false,
+                  builder: (context) => ExerciseLogs(exercise: widget.exercise),
+                );
+              },
+            ),
+            const SizedBox(width: 16),
+            _actionCell(
+              context: context,
+              icon: Icons.add_rounded,
+              title: "Add",
+              description: "Exercise to workout",
+              onTap: () {
+                // TODO -- implement
+              },
+            ),
+            const SizedBox(width: 16),
+            _actionCell(
+              context: context,
+              icon: Icons.delete_rounded,
+              title: "Delete",
+              description: "Delete this exercise",
+              onTap: () {
+                // TODO -- implement
+              },
             ),
           ],
         ),
-      ],
+      ),
+    );
+  }
+
+  Widget _actionCell({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    required String description,
+    required VoidCallback onTap,
+  }) {
+    final bgColor = Theme.of(context).colorScheme.tertiaryContainer;
+    final textColor = Theme.of(context).colorScheme.onTertiaryContainer;
+    return sui.Button(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width / 2.5,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                icon,
+                color: textColor,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                title,
+                style: ttLabel(
+                  context,
+                  color: textColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                description,
+                style: ttBody(
+                  context,
+                  color: textColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -5,8 +5,55 @@ import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:sapphireui/sapphireui.dart' as sui;
 
-class ExerciseItemGroup extends StatefulWidget {
-  const ExerciseItemGroup({
+class ExerciseItemGoup extends StatelessWidget {
+  const ExerciseItemGoup({
+    super.key,
+    required this.exercise,
+  });
+  final ExerciseBase exercise;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          flex: exercise.type == 1 ? 3 : 1,
+          child: ExerciseItemCell(
+            label: "SETS",
+            val: exercise.sets,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Text("x",
+              style: ttLabel(context, color: Theme.of(context).primaryColor)),
+        ),
+        Expanded(
+          flex: exercise.type == 1 ? 4 : 1,
+          child: _getSecond(context),
+        ),
+      ],
+    );
+  }
+
+  Widget _getSecond(BuildContext context) {
+    switch (exercise.type) {
+      case 1:
+        return ExerciseItemCell(
+          label: exercise.timePost,
+          val: exercise.time,
+        );
+      default:
+        return ExerciseItemCell(
+          label: "REPS",
+          val: exercise.reps,
+        );
+    }
+  }
+}
+
+class EditableExerciseItemGroup extends StatefulWidget {
+  const EditableExerciseItemGroup({
     super.key,
     required this.exercise,
     this.flex1 = 3,
@@ -19,17 +66,18 @@ class ExerciseItemGroup extends StatefulWidget {
   final VoidCallback? onChanged;
 
   @override
-  State<ExerciseItemGroup> createState() => _ExerciseItemGroupState();
+  State<EditableExerciseItemGroup> createState() =>
+      _EditableExerciseItemGroupState();
 }
 
-class _ExerciseItemGroupState extends State<ExerciseItemGroup> {
+class _EditableExerciseItemGroupState extends State<EditableExerciseItemGroup> {
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         Expanded(
           flex: widget.exercise.type == 1 ? widget.flex1 : 1,
-          child: ExerciseItemCell(
+          child: EditableExerciseItemCell(
             initialValue: widget.exercise.sets,
             label: "SETS",
             onChanged: (val) {
@@ -60,7 +108,7 @@ class _ExerciseItemGroupState extends State<ExerciseItemGroup> {
       case 1:
         return _time(context, widget.exercise);
       default:
-        return ExerciseItemCell(
+        return EditableExerciseItemCell(
           initialValue: widget.exercise.reps,
           label: "REPS",
           onChanged: (val) {

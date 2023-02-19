@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
+import 'package:workout_notepad_v2/text_themes.dart';
 
 class LabeledWidget extends StatelessWidget {
   const LabeledWidget({
@@ -24,11 +25,7 @@ class LabeledWidget extends StatelessWidget {
           padding: padding,
           child: Text(
             label.toUpperCase(),
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.outline,
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-            ),
+            style: ttLargeLabel(context),
           ),
         ),
         SizedBox(height: labelSpacing),

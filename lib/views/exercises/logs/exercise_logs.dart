@@ -40,7 +40,7 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  comp.CloseButton(color: dmodel.color.shade200),
+                  comp.CloseButton(),
                   const SizedBox(width: 16),
                   Expanded(
                     child: Align(
@@ -56,7 +56,7 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
               if (emodel.exercise.description.isNotEmpty)
                 Text(
                   emodel.exercise.description,
-                  style: ttLabel(context, color: dmodel.color.shade200),
+                  style: ttLabel(context),
                 ),
             ],
           ),

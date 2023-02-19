@@ -61,6 +61,8 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
         isLarge: true,
         isFluid: true,
         itemSpacing: 8,
+        horizontalSpacing: 0,
+        largeTitlePadding: const EdgeInsets.only(left: 16),
         leading: const [comp.BackButton()],
         trailing: [
           comp.EditButton(
@@ -79,21 +81,22 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
         ],
         children: [
           if ((_workout.description ?? "") != "")
-            Text(_workout.description!, style: ttLabel(context)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(_workout.description!, style: ttLabel(context)),
+            ),
           _actions(context),
-          comp.LabeledWidget(
-            label: "Exercises",
-            child: Container(),
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0),
+            child: comp.LabeledWidget(
+              label: "Exercises",
+              child: Container(),
+            ),
           ),
           for (var item in _exercises)
-            sui.CellWrapper(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: WECell(workout: _workout, exercise: item),
-                ),
-              ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: ExerciseCell(exercise: item),
             ),
         ],
       ),
@@ -101,35 +104,100 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
   }
 
   Widget _actions(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: sui.Button(
-            onTap: () {
-              showMaterialModalBottomSheet(
-                context: context,
-                enableDrag: false,
-                builder: (context) =>
-                    LaunchWorkout(workout: _workout, exercises: _exercises),
-              );
-            },
-            child: sui.CellWrapper(
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.play_arrow_rounded,
-                    size: 32,
-                    color: Theme.of(context).primaryColor,
-                  ),
-                  const SizedBox(width: 8),
-                  Text("Launch Workout", style: ttLabel(context))
-                ],
-              ),
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Row(
+          children: [
+            _actionCell(
+              context: context,
+              icon: Icons.play_arrow_rounded,
+              title: "Start",
+              description: "Launch the workout",
+              onTap: () {
+                showMaterialModalBottomSheet(
+                  context: context,
+                  enableDrag: false,
+                  builder: (context) =>
+                      LaunchWorkout(workout: _workout, exercises: _exercises),
+                );
+              },
             ),
+            const SizedBox(width: 16),
+            _actionCell(
+              context: context,
+              icon: Icons.delete_rounded,
+              title: "Delete",
+              description: "Delete this workout",
+              onTap: () {
+                // TODO -- implement
+              },
+            ),
+            const SizedBox(width: 16),
+            _actionCell(
+              context: context,
+              icon: Icons.sticky_note_2_rounded,
+              title: "Logs",
+              description: "View workout logs",
+              onTap: () {
+                // TODO -- implement
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _actionCell({
+    required BuildContext context,
+    required IconData icon,
+    required String title,
+    required String description,
+    required VoidCallback onTap,
+  }) {
+    final bgColor = Theme.of(context).colorScheme.tertiaryContainer;
+    final textColor = Theme.of(context).colorScheme.onTertiaryContainer;
+    return sui.Button(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width / 2.5,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                icon,
+                color: textColor,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                title,
+                style: ttLabel(
+                  context,
+                  color: textColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                description,
+                style: ttBody(
+                  context,
+                  color: textColor,
+                ),
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }

@@ -23,7 +23,7 @@ class DeleteButton extends StatelessWidget {
       },
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.red[400],
+          color: Theme.of(context).colorScheme.error,
           borderRadius: BorderRadius.circular(10),
         ),
         child: ConstrainedBox(
@@ -37,7 +37,7 @@ class DeleteButton extends StatelessWidget {
                 : Text(
                     title,
                     style: ttLabel(context).copyWith(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onError,
                     ),
                   ),
           ),

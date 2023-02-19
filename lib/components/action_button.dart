@@ -30,7 +30,7 @@ class ActionButton extends StatelessWidget {
           color: isValid
               ? Theme.of(context).colorScheme.primary
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(100),
           border: Border.all(
             color: isValid
                 ? Theme.of(context).colorScheme.primary

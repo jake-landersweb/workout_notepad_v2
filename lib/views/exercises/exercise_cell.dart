@@ -18,7 +18,7 @@ class ExerciseCell extends StatelessWidget {
     this.showBackground = true,
     this.padding = const EdgeInsets.only(bottom: 16),
   });
-  final Exercise exercise;
+  final ExerciseBase exercise;
   final VoidCallback? onTap;
   final IconData? trailingIcon;
   final bool showBackground;
@@ -64,23 +64,8 @@ class ExerciseCell extends StatelessWidget {
                       if (exercise.category.isNotEmpty)
                         Padding(
                           padding: const EdgeInsets.only(top: 8),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Theme.of(context).colorScheme.outline,
-                                width: 0.5,
-                              ),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
-                              child: Text(
-                                exercise.category.uppercase(),
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.outline,
-                                ),
-                              ),
-                            ),
+                          child: IntrinsicWidth(
+                            child: CategoryCell(title: exercise.category),
                           ),
                         ),
                     ],
@@ -89,7 +74,7 @@ class ExerciseCell extends StatelessWidget {
                 if (trailingIcon != null)
                   Icon(
                     trailingIcon,
-                    color: dmodel.accentColor(context),
+                    color: Theme.of(context).colorScheme.primary,
                   )
                 else
                   exercise.info(

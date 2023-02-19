@@ -36,8 +36,8 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
       curve: Sprung(36),
       duration: const Duration(milliseconds: 700),
       color: widget.inDrag
-          ? Theme.of(context).colorScheme.surface
-          : Theme.of(context).colorScheme.surfaceVariant,
+          ? Theme.of(context).colorScheme.surfaceVariant
+          : Theme.of(context).colorScheme.background,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,7 +67,7 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: ExerciseItemGroup(exercise: widget.cewe.exercise),
+            child: EditableExerciseItemGroup(exercise: widget.cewe.exercise),
           ),
           ImplicitlyAnimatedList(
             items: widget.cewe.children,
@@ -90,20 +90,59 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               const SizedBox(height: 8),
-                              ExerciseItemGroup(
+                              EditableExerciseItemGroup(
                                 exercise: item,
                                 onChanged: () => setState(() {}),
                               ),
                               const SizedBox(height: 16),
-                              comp.DeleteButton(
-                                title: "Remove",
-                                onTap: () {
-                                  Navigator.of(context).pop();
-                                  cmodel.removeExerciseChild(
-                                    widget.index,
-                                    item,
-                                  );
-                                },
+                              Row(
+                                children: [
+                                  Expanded(child: Container()),
+                                  Expanded(
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: sui.Button(
+                                            onTap: () {
+                                              Navigator.of(context).pop();
+                                              cmodel.removeExerciseChild(
+                                                widget.index,
+                                                item,
+                                              );
+                                            },
+                                            child: Text(
+                                              "Remove",
+                                              style: ttBody(
+                                                context,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .outline,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: sui.Button(
+                                            onTap: () {
+                                              Navigator.of(context).pop();
+                                              cmodel.removeExerciseChild(
+                                                widget.index,
+                                                item,
+                                              );
+                                            },
+                                            child: comp.ActionButton(
+                                              title: "Close",
+                                              minHeight: 40,
+                                              onTap: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -112,7 +151,7 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surfaceVariant,
+                        color: Theme.of(context).colorScheme.secondaryContainer,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Padding(
@@ -128,13 +167,23 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                                       Expanded(
                                           child: Text(
                                         item.title,
-                                        style: ttLabel(context),
+                                        style: ttLabel(
+                                          context,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSecondaryContainer,
+                                        ),
                                       )),
                                     ],
                                   ),
                                   item.info(
                                     context,
-                                    style: ttLabel(context),
+                                    style: ttLabel(
+                                      context,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSecondaryContainer,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -157,6 +206,30 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
             child: Row(
               children: [
                 Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: sui.Button(
+                      onTap: () {
+                        sui.showFloatingSheet(
+                          context: context,
+                          builder: (context) => _ExerciseNote(
+                            note: widget.cewe.exercise.note,
+                            onSave: (val) {
+                              setState(() {
+                                widget.cewe.exercise.note = val;
+                              });
+                            },
+                          ),
+                        );
+                      },
+                      child: Icon(
+                        Icons.sticky_note_2_rounded,
+                        color: Theme.of(context).colorScheme.tertiary,
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
                   child: sui.Button(
                     onTap: () {
                       comp.cupertinoSheet(
@@ -178,53 +251,28 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                       );
                     },
                     child: Container(
-                      constraints: const BoxConstraints(minHeight: 40),
+                      constraints: const BoxConstraints(minHeight: 50),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surfaceVariant,
-                        borderRadius: BorderRadius.circular(5),
+                        color: Theme.of(context).colorScheme.secondary,
+                        borderRadius: BorderRadius.circular(100),
                       ),
                       child: Center(
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(LineIcons.plus),
+                            Icon(
+                              LineIcons.plus,
+                              color: Theme.of(context).colorScheme.onSecondary,
+                            ),
                             const SizedBox(width: 8),
-                            Text("Super-Set", style: ttLabel(context))
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: sui.Button(
-                    onTap: () {
-                      sui.showFloatingSheet(
-                        context: context,
-                        builder: (context) => _ExerciseNote(
-                          note: widget.cewe.exercise.note,
-                          onSave: (val) {
-                            setState(() {
-                              widget.cewe.exercise.note = val;
-                            });
-                          },
-                        ),
-                      );
-                    },
-                    child: Container(
-                      constraints: const BoxConstraints(minHeight: 40),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.surfaceVariant,
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: Center(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(LineIcons.infoCircle),
-                            const SizedBox(width: 8),
-                            Text("Note", style: ttLabel(context))
+                            Text(
+                              "Super-Set",
+                              style: ttLabel(
+                                context,
+                                color:
+                                    Theme.of(context).colorScheme.onSecondary,
+                              ),
+                            )
                           ],
                         ),
                       ),
@@ -267,32 +315,64 @@ class __ExerciseNoteState extends State<_ExerciseNote> {
 
   @override
   Widget build(BuildContext context) {
-    return sui.FloatingSheet(
-      title: "",
-      child: Column(
-        children: [
-          sui.CellWrapper(
-            backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
-            child: sui.TextField(
-              value: _note,
-              maxLines: 4,
-              labelText: "Note",
-              onChanged: (val) {
-                setState(() {
-                  _note = val;
-                });
-              },
+    return Container(
+      color: Theme.of(context).colorScheme.secondaryContainer,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            sui.CellWrapper(
+              backgroundColor: Theme.of(context).colorScheme.onSecondary,
+              child: sui.TextField(
+                value: _note,
+                maxLines: 4,
+                labelText: "Note",
+                onChanged: (val) {
+                  setState(() {
+                    _note = val;
+                  });
+                },
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          comp.ActionButton(
-            title: "Save",
-            onTap: () {
-              widget.onSave(_note);
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(child: Container()),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: sui.Button(
+                          onTap: () {
+                            Navigator.of(context).pop();
+                          },
+                          child: Text(
+                            "Cancel",
+                            style: ttBody(
+                              context,
+                              color: Theme.of(context).colorScheme.outline,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: comp.ActionButton(
+                          title: "Save",
+                          minHeight: 40,
+                          onTap: () {
+                            widget.onSave(_note);
+                            Navigator.of(context).pop();
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

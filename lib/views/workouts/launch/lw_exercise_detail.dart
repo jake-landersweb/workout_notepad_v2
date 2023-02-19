@@ -65,8 +65,10 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                 if (lmodel.exercises[widget.index].description.isNotEmpty)
                   Text(
                     lmodel.exercises[widget.index].description,
-                    style: ttBody(context,
-                        color: Theme.of(context).colorScheme.outline),
+                    style: ttBody(
+                      context,
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
                   ),
                 const SizedBox(height: 8),
                 _getCell(
@@ -87,6 +89,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                     child: Container(
                       width: double.infinity,
                       height: 0.5,
+                      color: Theme.of(context).colorScheme.surfaceVariant,
                     ),
                   ),
                   Padding(
@@ -95,6 +98,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                       "SUPER-SET",
                       style: ttBody(
                         context,
+                        color: Theme.of(context).colorScheme.outline,
                       ),
                     ),
                   ),
@@ -102,6 +106,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                     child: Container(
                       width: double.infinity,
                       height: 0.5,
+                      color: Theme.of(context).colorScheme.surfaceVariant,
                     ),
                   ),
                 ],
@@ -123,13 +128,10 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                       .exerciseChildren[widget.index][i].description.isNotEmpty)
                     Text(
                       lmodel.exerciseChildren[widget.index][i].description,
-                      style: ttBody(context),
-                    ),
-                  if (lmodel
-                      .exerciseChildren[widget.index][i].description.isNotEmpty)
-                    Text(
-                      lmodel.exerciseChildren[widget.index][i].description,
-                      style: ttBody(context),
+                      style: ttBody(
+                        context,
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
                     ),
                   const SizedBox(height: 8),
                   Container(
@@ -160,7 +162,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
   ) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant,
+        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
@@ -178,11 +180,15 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                 onTap: () => lmodel.addLogSet(widget.index),
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
+                    borderRadius: BorderRadius.circular(10),
+                    color: Theme.of(context).colorScheme.tertiary,
                   ),
-                  child: const Padding(
-                    padding: EdgeInsets.all(4.0),
-                    child: Icon(LineIcons.plus),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Icon(
+                      Icons.add,
+                      color: Theme.of(context).colorScheme.onTertiary,
+                    ),
                   ),
                 ),
               ),
@@ -260,6 +266,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
+        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -276,11 +283,15 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                 onTap: () => lmodel.addLogChildSet(widget.index, childIndex),
                 child: Container(
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
+                    borderRadius: BorderRadius.circular(10),
+                    color: Theme.of(context).colorScheme.tertiary,
                   ),
-                  child: const Padding(
-                    padding: EdgeInsets.all(4.0),
-                    child: Icon(LineIcons.plus),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Icon(
+                      Icons.add,
+                      color: Theme.of(context).colorScheme.onTertiary,
+                    ),
                   ),
                 ),
               ),
@@ -400,7 +411,8 @@ class _Cell extends StatelessWidget {
           child: Center(
             child: Text(
               title,
-              style: ttBody(context),
+              style: ttBody(context,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
           ),
         ),
@@ -428,20 +440,20 @@ class _Cell extends StatelessWidget {
           },
           child: Container(
             decoration: BoxDecoration(
-              color:
-                  saved ? Theme.of(context).primaryColor : Colors.transparent,
-              border:
-                  Border.all(color: Theme.of(context).primaryColor, width: 2),
-              borderRadius: BorderRadius.circular(5),
+              color: saved
+                  ? Theme.of(context).colorScheme.tertiary
+                  : Colors.transparent,
+              border: Border.all(
+                  color: Theme.of(context).colorScheme.tertiary, width: 2),
+              borderRadius: BorderRadius.circular(10),
             ),
             height: 30,
             width: 30,
             child: saved
-                ? const Center(
+                ? Center(
                     child: Icon(
-                      LineIcons.check,
-                      color: Colors.white,
-                      size: 18,
+                      Icons.check,
+                      color: Theme.of(context).colorScheme.onTertiary,
                     ),
                   )
                 : null,
@@ -489,13 +501,15 @@ class _Cell extends StatelessWidget {
       children: [
         Text(
           item.toString(),
-          style: ttTitle(context),
+          style: ttTitle(context,
+              color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
         Text(
           title,
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w500,
+            color: Theme.of(context).colorScheme.outline,
           ),
         ),
       ],
@@ -559,43 +573,63 @@ class _CellLogState extends State<_CellLog> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                sui.Button(
-                  onTap: () {
-                    widget.onDelete();
-                    Navigator.of(context).pop();
-                  },
-                  child: Icon(LineIcons.alternateTrash,
-                      color: Theme.of(context).colorScheme.error),
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: const [
+              Spacer(),
+              comp.CloseButton(),
+            ],
+          ),
+          const SizedBox(height: 16),
+          _getContent(context),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(child: Container()),
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: sui.Button(
+                        onTap: () {
+                          widget.onDelete();
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(
+                          "Delete",
+                          style: ttBody(
+                            context,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: comp.ActionButton(
+                        title: "Save",
+                        minHeight: 40,
+                        onTap: () {
+                          widget.onRepsChange(_reps);
+                          widget.onWeightChange(_weight);
+                          widget.onWeightPostChange(_weightPost);
+                          widget.onTimeChange(_time);
+                          widget.onTimePostChange(_timePost);
+                          widget.onSaved(true);
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                  ],
                 ),
-                const Spacer(),
-                const comp.CloseButton(),
-              ],
-            ),
-            const SizedBox(height: 16),
-            _getContent(context),
-            const SizedBox(height: 16),
-            comp.ActionButton(
-              title: "Save",
-              onTap: () {
-                widget.onRepsChange(_reps);
-                widget.onWeightChange(_weight);
-                widget.onWeightPostChange(_weightPost);
-                widget.onTimeChange(_time);
-                widget.onTimePostChange(_timePost);
-                widget.onSaved(true);
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -615,7 +649,7 @@ class _CellLogState extends State<_CellLog> {
           children: [
             Expanded(
               flex: 3,
-              child: ExerciseItemCell(
+              child: EditableExerciseItemCell(
                 initialValue: _reps,
                 label: "REPS",
                 onChanged: (val) {
@@ -751,7 +785,7 @@ class _CellLogState extends State<_CellLog> {
         },
         child: Container(
           color: _timePost == post || _weightPost == post
-              ? Theme.of(context).colorScheme.tertiaryContainer
+              ? Theme.of(context).colorScheme.tertiary
               : Theme.of(context).colorScheme.surfaceVariant,
           width: double.infinity,
           child: Center(
@@ -759,7 +793,7 @@ class _CellLogState extends State<_CellLog> {
               post.toUpperCase(),
               style: TextStyle(
                 color: _timePost == post || _weightPost == post
-                    ? Theme.of(context).colorScheme.onTertiaryContainer
+                    ? Theme.of(context).colorScheme.onTertiary
                     : Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: _timePost == post || _weightPost == post
                     ? FontWeight.w600

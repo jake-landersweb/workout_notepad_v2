@@ -59,7 +59,8 @@ class LaunchWorkout extends StatelessWidget {
         Row(
           children: [
             comp.CloseButton(
-                color: Theme.of(context).colorScheme.onPrimaryContainer),
+              color: Theme.of(context).colorScheme.onSecondaryContainer,
+            ),
             const Spacer(),
             sui.Button(
               onTap: () async {
@@ -69,10 +70,10 @@ class LaunchWorkout extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.primary,
-                  borderRadius: BorderRadius.circular(5),
+                  borderRadius: BorderRadius.circular(20),
                 ),
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+                  padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
                   child: Text(
                     "Finish Workout",
                     style: ttBody(
@@ -87,8 +88,10 @@ class LaunchWorkout extends StatelessWidget {
         ),
         Text(
           lmodel.workout.title,
-          style: ttTitle(context,
-              color: Theme.of(context).colorScheme.onPrimaryContainer),
+          style: ttTitle(
+            context,
+            color: Theme.of(context).colorScheme.onSecondaryContainer,
+          ),
         ),
         if (lmodel.workout.description != null)
           Text(
@@ -97,7 +100,7 @@ class LaunchWorkout extends StatelessWidget {
               context,
               color: Theme.of(context)
                   .colorScheme
-                  .onPrimaryContainer
+                  .onSecondaryContainer
                   .withOpacity(0.5),
             ),
           ),
@@ -106,8 +109,10 @@ class LaunchWorkout extends StatelessWidget {
           child: Row(
             children: [
               comp.TextTimer(
-                style: ttLabel(context,
-                    color: Theme.of(context).colorScheme.onPrimaryContainer),
+                style: ttLabel(
+                  context,
+                  color: Theme.of(context).colorScheme.onSecondaryContainer,
+                ),
                 onMsTick: ((ms) => lmodel.duration = ms),
               ),
               const Spacer(),
@@ -115,7 +120,7 @@ class LaunchWorkout extends StatelessWidget {
                 "${lmodel.workoutIndex + 1}/${lmodel.exercises.length}",
                 style: ttLabel(
                   context,
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  color: Theme.of(context).colorScheme.onSecondaryContainer,
                 ),
               ),
             ],

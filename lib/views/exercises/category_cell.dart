@@ -1,0 +1,31 @@
+import 'package:flutter/material.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
+
+class CategoryCell extends StatelessWidget {
+  const CategoryCell({
+    super.key,
+    required this.title,
+  });
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.tertiaryContainer,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(8, 6, 8, 6),
+          child: Text(
+            title.uppercase(),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onTertiaryContainer,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

@@ -44,7 +44,7 @@ class _WECellState extends State<WECell> {
       children: [
         Text(
           widget.exercise.title,
-          style: ttLabel(context, color: dmodel.color),
+          style: ttLabel(context),
         ),
         widget.exercise.info(context),
         for (var i in _children)
@@ -57,7 +57,6 @@ class _WECellState extends State<WECell> {
                   text: i.title,
                   style: ttBody(
                     context,
-                    color: dmodel.color,
                   ),
                 ),
                 TextSpan(

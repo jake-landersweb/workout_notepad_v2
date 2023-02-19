@@ -1,65 +1,94 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:material_color_utilities/material_color_utilities.dart';
 
-const lightColorScheme = ColorScheme(
-  brightness: Brightness.light,
-  primary: Color(0xFF6E4EA1),
-  onPrimary: Color(0xFFFFFFFF),
-  primaryContainer: Color(0xFFECDCFF),
-  onPrimaryContainer: Color(0xFF270057),
-  secondary: Color(0xFF645B70),
-  onSecondary: Color(0xFFFFFFFF),
-  secondaryContainer: Color(0xFFEADEF7),
-  onSecondaryContainer: Color(0xFF1F182A),
-  tertiary: Color(0xFF7F525C),
-  onTertiary: Color(0xFFFFFFFF),
-  tertiaryContainer: Color(0xFFFFD9E0),
-  onTertiaryContainer: Color(0xFF32101A),
-  error: Color(0xFFBA1A1A),
-  errorContainer: Color(0xFFFFDAD6),
-  onError: Color(0xFFFFFFFF),
-  onErrorContainer: Color(0xFF410002),
-  background: Color(0xFFFFFBFF),
-  onBackground: Color(0xFF1D1B1E),
-  surface: Color(0xFFFFFBFF),
-  onSurface: Color(0xFF1D1B1E),
-  surfaceVariant: Color(0xFFE8E0EB),
-  onSurfaceVariant: Color(0xFF49454E),
-  outline: Color(0xFF7B757F),
-  onInverseSurface: Color(0xFFF5EFF4),
-  inverseSurface: Color(0xFF323033),
-  inversePrimary: Color(0xFFD6BAFF),
-  shadow: Color(0xFF000000),
-  surfaceTint: Color(0xFF6E4EA1),
-);
+class AppColorScheme extends ThemeExtension<AppColorScheme> {
+  final Color primaryColor;
 
-const darkColorScheme = ColorScheme(
-  brightness: Brightness.dark,
-  primary: Color(0xFFD6BAFF),
-  onPrimary: Color(0xFF3E1C6F),
-  primaryContainer: Color(0xFF553587),
-  onPrimaryContainer: Color(0xFFECDCFF),
-  secondary: Color(0xFFCEC2DB),
-  onSecondary: Color(0xFF352D40),
-  secondaryContainer: Color(0xFF4B4357),
-  onSecondaryContainer: Color(0xFFEADEF7),
-  tertiary: Color(0xFFF1B7C3),
-  onTertiary: Color(0xFF4B252E),
-  tertiaryContainer: Color(0xFF643B44),
-  onTertiaryContainer: Color(0xFFFFD9E0),
-  error: Color(0xFFFFB4AB),
-  errorContainer: Color(0xFF93000A),
-  onError: Color(0xFF690005),
-  onErrorContainer: Color(0xFFFFDAD6),
-  background: Color(0xFF1D1B1E),
-  onBackground: Color(0xFFE7E1E6),
-  surface: Color(0xFF1D1B1E),
-  onSurface: Color(0xFFE7E1E6),
-  surfaceVariant: Color(0xFF49454E),
-  onSurfaceVariant: Color(0xFFCBC4CF),
-  outline: Color(0xFF958E99),
-  onInverseSurface: Color(0xFF1D1B1E),
-  inverseSurface: Color(0xFFE7E1E6),
-  inversePrimary: Color(0xFF6E4EA1),
-  shadow: Color(0xFF000000),
-  surfaceTint: Color(0xFFD6BAFF),
-);
+  AppColorScheme({required this.primaryColor});
+
+  @override
+  ThemeExtension<AppColorScheme> copyWith({
+    Color? primaryColor,
+  }) =>
+      AppColorScheme(primaryColor: primaryColor ?? this.primaryColor);
+
+  @override
+  ThemeExtension<AppColorScheme> lerp(
+      ThemeExtension<AppColorScheme>? other, double t) {
+    if (other is! AppColorScheme) return this;
+    return AppColorScheme(
+      primaryColor: Color.lerp(primaryColor, other.primaryColor, t)!,
+    );
+  }
+
+  ThemeData getTheme(Brightness brightness) {
+    var colorScheme = _scheme(brightness).toColorScheme(brightness);
+    return ThemeData(
+      useMaterial3: true,
+      extensions: [this],
+      brightness: brightness,
+      colorScheme: colorScheme,
+      textTheme: GoogleFonts.openSansTextTheme(),
+      primaryColor: colorScheme.primary,
+      scaffoldBackgroundColor: colorScheme.background,
+    );
+  }
+
+  Scheme _scheme(Brightness brightness) {
+    final palette = CorePalette.of(primaryColor.value);
+    if (brightness == Brightness.light) {
+      return Scheme.lightFromCorePalette(palette);
+    }
+    return Scheme.darkFromCorePalette(palette);
+  }
+}
+
+extension on Scheme {
+  ColorScheme toColorScheme(Brightness brightness) {
+    return ColorScheme(
+      brightness: brightness,
+      primary: Color(primary),
+      onPrimary: Color(onPrimary),
+      primaryContainer: Color(primaryContainer),
+      onPrimaryContainer: Color(onPrimaryContainer),
+      secondary: Color(secondary),
+      onSecondary: Color(onSecondary),
+      secondaryContainer: Color(secondaryContainer),
+      onSecondaryContainer: Color(onSecondaryContainer),
+      tertiary: Color(tertiary),
+      onTertiary: Color(onTertiary),
+      tertiaryContainer: Color(tertiaryContainer),
+      onTertiaryContainer: Color(onTertiaryContainer),
+      error: Color(error),
+      onError: Color(onError),
+      errorContainer: Color(errorContainer),
+      onErrorContainer: Color(onErrorContainer),
+      background: Color(background),
+      onBackground: Color(onBackground),
+      surface: Color(surface),
+      onSurface: Color(onSurface),
+      surfaceVariant: Color(surfaceVariant),
+      onSurfaceVariant: Color(onSurfaceVariant),
+      outline: Color(outline),
+      shadow: Color(shadow),
+      inverseSurface: Color(inverseSurface),
+      inversePrimary: Color(inversePrimary),
+    );
+  }
+}
+
+const List<Color> appColors = [
+  Colors.red,
+  Colors.orange,
+  Colors.yellow,
+  Colors.lime,
+  Colors.lightGreen,
+  Colors.green,
+  Colors.lightBlue,
+  Colors.blue,
+  Colors.cyan,
+  Colors.blueGrey,
+  Colors.purple,
+  Colors.pink,
+];

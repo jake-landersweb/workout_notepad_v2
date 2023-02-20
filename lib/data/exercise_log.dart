@@ -132,6 +132,11 @@ class ExerciseLog {
     return true;
   }
 
+  void setDuration(int index, Duration duration) {
+    if (index == -1) return;
+    metadata[index].setDuration(timePost, duration);
+  }
+
   Map<String, dynamic> toMap() {
     var r = [];
     var t = [];
@@ -211,5 +216,21 @@ class ExerciseLogMeta {
     time = m.time;
     weight = m.weight;
     saved = false;
+  }
+
+  void setDuration(String timePost, Duration duration) {
+    switch (timePost) {
+      case "sec":
+        time = duration.inSeconds;
+        break;
+      case "min":
+        time = duration.inMinutes;
+        break;
+      case "hour":
+        time = duration.inHours;
+        break;
+      default:
+        time = 0;
+    }
   }
 }

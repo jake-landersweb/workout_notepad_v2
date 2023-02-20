@@ -9,8 +9,10 @@ class CountupTimer extends StatefulWidget {
   const CountupTimer({
     super.key,
     this.goalDuration,
+    this.onFinish,
   });
   final Duration? goalDuration;
+  final void Function(Duration duration)? onFinish;
 
   @override
   State<CountupTimer> createState() => _CountupTimerState();
@@ -117,9 +119,12 @@ class _CountupTimerState extends State<CountupTimer> {
               child: controller.isActive
                   ? OutlinedButton(
                       onPressed: () {
+                        if (widget.onFinish != null) {
+                          widget.onFinish!(controller.time);
+                        }
                         controller.cancel();
                       },
-                      child: const Text("Reset"),
+                      child: const Text("Finish"),
                     )
                   : FilledButton.icon(
                       onPressed: () {

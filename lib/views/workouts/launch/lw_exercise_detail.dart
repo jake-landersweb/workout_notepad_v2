@@ -182,6 +182,13 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
             padding: const EdgeInsets.only(bottom: 16.0),
             child: comp.CountupTimer(
               goalDuration: lmodel.exercises[widget.index].getDuration(),
+              onFinish: (duration) {
+                int idx = lmodel.exerciseLogs[widget.index].metadata
+                    .indexWhere((element) => !element.saved);
+                if (idx == -1) return;
+                lmodel.exerciseLogs[widget.index].setDuration(idx, duration);
+                lmodel.setLogSaved(widget.index, idx, true);
+              },
             ),
           ),
         Container(
@@ -311,6 +318,15 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
             child: comp.CountupTimer(
               goalDuration: lmodel.exerciseChildren[widget.index][childIndex]
                   .getDuration(),
+              onFinish: (duration) {
+                int idx = lmodel
+                    .exerciseChildLogs[widget.index][childIndex].metadata
+                    .indexWhere((element) => !element.saved);
+                if (idx == -1) return;
+                lmodel.exerciseChildLogs[widget.index][childIndex]
+                    .setDuration(idx, duration);
+                lmodel.setLogChildSaved(widget.index, childIndex, idx, true);
+              },
             ),
           ),
         Container(
@@ -524,6 +540,7 @@ class _Cell extends StatelessWidget {
   Widget _post(BuildContext context) {
     switch (type) {
       case 1:
+      case 2:
         return Row(
           children: [
             Expanded(child: _itemCell(context, timePost.toUpperCase(), time)),
@@ -692,6 +709,7 @@ class _CellLogState extends State<_CellLog> {
   Widget _getContent(BuildContext context) {
     switch (widget.type) {
       case 1:
+      case 2:
         return Row(
           children: [
             Expanded(
@@ -762,7 +780,7 @@ class _CellLogState extends State<_CellLog> {
         Padding(
           padding: const EdgeInsets.all(4.0),
           child: Text(
-            "WEIGHT",
+            "TIME",
             style: TextStyle(
               fontSize: 12,
               color: Theme.of(context).primaryColor,

@@ -54,7 +54,6 @@ class _ExerciseHomeState extends State<ExerciseHome> {
               );
             },
           ),
-        const SizedBox(height: 50),
       ],
     );
   }

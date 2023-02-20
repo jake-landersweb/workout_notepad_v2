@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
 import 'package:workout_notepad_v2/components/root.dart' as comp;
+import 'package:workout_notepad_v2/text_themes.dart';
 
 class CreateCategory extends StatefulWidget {
   const CreateCategory({
@@ -41,13 +42,14 @@ class ECreateCategoryState extends State<CreateCategory> {
           ),
         ),
         const SizedBox(height: 16),
-        comp.ActionButton(
-          title: "Add",
-          isValid: _isValid(),
-          onTap: () {
-            widget.onCompletion(_category.toLowerCase());
-            Navigator.of(context).pop();
-          },
+        FilledButton(
+          onPressed: _isValid()
+              ? () {
+                  widget.onCompletion(_category.toLowerCase());
+                  Navigator.of(context).pop();
+                }
+              : null,
+          child: Text("Add"),
         ),
       ],
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
 import 'package:sprung/sprung.dart';
@@ -62,27 +63,12 @@ class LaunchWorkout extends StatelessWidget {
               color: Theme.of(context).colorScheme.onSecondaryContainer,
             ),
             const Spacer(),
-            sui.Button(
-              onTap: () async {
+            FilledButton(
+              onPressed: () async {
                 await lmodel.finishWorkout(dmodel);
                 Navigator.of(context).pop();
               },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primary,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
-                  child: Text(
-                    "Finish Workout",
-                    style: ttBody(
-                      context,
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-                  ),
-                ),
-              ),
+              child: Text("Finish Workout"),
             ),
           ],
         ),
@@ -113,7 +99,7 @@ class LaunchWorkout extends StatelessWidget {
                   context,
                   color: Theme.of(context).colorScheme.onSecondaryContainer,
                 ),
-                onMsTick: ((ms) => lmodel.duration = ms),
+                onMsTick: ((time) => lmodel.duration = time.inSeconds),
               ),
               const Spacer(),
               Text(

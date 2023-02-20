@@ -25,7 +25,8 @@ class LabeledWidget extends StatelessWidget {
           padding: padding,
           child: Text(
             label.toUpperCase(),
-            style: ttLargeLabel(context),
+            style: ttLargeLabel(context,
+                color: Theme.of(context).colorScheme.onBackground),
           ),
         ),
         SizedBox(height: labelSpacing),

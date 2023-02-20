@@ -65,24 +65,41 @@ class _RawReorderableListState<T extends Object>
               sizeFraction: 0.5,
               curve: Curves.easeInOut,
               animation: itemAnimation,
-              child: Slidable(
-                key: ValueKey(index),
-                endActionPane: widget.slideBuilder == null
-                    ? null
-                    : widget.slideBuilder!(item, index),
-                child: widget.builder(
-                  item,
-                  index,
-                  const Handle(
-                    delay: Duration.zero,
-                    child: Icon(
-                      LineIcons.bars,
-                      color: Colors.grey,
+              child: inDrag
+                  ? Scrollable(
+                      viewportBuilder: (context, position) => widget.builder(
+                        item,
+                        index,
+                        const Handle(
+                          delay: Duration.zero,
+                          child: Icon(
+                            LineIcons.bars,
+                            color: Colors.grey,
+                          ),
+                        ),
+                        inDrag,
+                      ),
+                    )
+                  : Scrollable(
+                      viewportBuilder: (context, position) => Slidable(
+                        key: ValueKey(index),
+                        endActionPane: widget.slideBuilder == null
+                            ? null
+                            : widget.slideBuilder!(item, index),
+                        child: widget.builder(
+                          item,
+                          index,
+                          const Handle(
+                            delay: Duration.zero,
+                            child: Icon(
+                              LineIcons.bars,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          inDrag,
+                        ),
+                      ),
                     ),
-                  ),
-                  inDrag,
-                ),
-              ),
             );
           },
         );

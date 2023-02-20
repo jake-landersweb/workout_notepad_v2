@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
+import 'package:workout_notepad_v2/text_themes.dart';
 
 class AppColorScheme extends ThemeExtension<AppColorScheme> {
   final Color primaryColor;
@@ -30,6 +31,33 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
       brightness: brightness,
       colorScheme: colorScheme,
       textTheme: GoogleFonts.openSansTextTheme(),
+      filledButtonTheme: FilledButtonThemeData(
+        style: ButtonStyle(
+          textStyle: MaterialStateProperty.resolveWith(
+            (states) => const TextStyle(fontSize: 18),
+          ),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: ButtonStyle(
+          textStyle: MaterialStateProperty.resolveWith(
+            (states) => const TextStyle(fontSize: 18),
+          ),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: ButtonStyle(
+          textStyle: MaterialStateProperty.resolveWith(
+            (states) => const TextStyle(fontSize: 18),
+          ),
+        ),
+      ),
+      dividerTheme: DividerThemeData(
+        color: colorScheme.outline.withOpacity(0.5),
+        thickness: 0.5,
+        space: 0.5,
+      ),
+      dividerColor: colorScheme.outline.withOpacity(0.5),
       primaryColor: colorScheme.primary,
       scaffoldBackgroundColor: colorScheme.background,
     );

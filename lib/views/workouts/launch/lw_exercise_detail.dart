@@ -122,7 +122,10 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                 children: [
                   Text(
                     lmodel.exerciseChildren[widget.index][i].title,
-                    style: ttSubTitle(context),
+                    style: ttSubTitle(
+                      context,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                   if (lmodel
                       .exerciseChildren[widget.index][i].description.isNotEmpty)
@@ -172,6 +175,13 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                 duration: lmodel.exercises[widget.index].getDuration(),
                 fontSize: 60,
               ),
+            ),
+          ),
+        if (e.type == 2)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: comp.CountupTimer(
+              goalDuration: lmodel.exercises[widget.index].getDuration(),
             ),
           ),
         Container(
@@ -293,6 +303,14 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                     .getDuration(),
                 fontSize: 60,
               ),
+            ),
+          ),
+        if (e.type == 2)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: comp.CountupTimer(
+              goalDuration: lmodel.exerciseChildren[widget.index][childIndex]
+                  .getDuration(),
             ),
           ),
         Container(
@@ -517,7 +535,8 @@ class _Cell extends StatelessWidget {
             Expanded(child: _itemCell(context, "REPS", reps)),
             Text(
               "*",
-              style: ttLabel(context),
+              style: ttLabel(context,
+                  color: Theme.of(context).colorScheme.onBackground),
             ),
             Expanded(
               child: _itemCell(
@@ -625,13 +644,14 @@ class _CellLogState extends State<_CellLog> {
           const SizedBox(height: 16),
           Row(
             children: [
-              Expanded(child: Container()),
+              Expanded(flex: 1, child: Container()),
               Expanded(
+                flex: 2,
                 child: Row(
                   children: [
                     Expanded(
-                      child: sui.Button(
-                        onTap: () {
+                      child: TextButton(
+                        onPressed: () {
                           widget.onDelete();
                           Navigator.of(context).pop();
                         },
@@ -639,17 +659,15 @@ class _CellLogState extends State<_CellLog> {
                           "Delete",
                           style: ttBody(
                             context,
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(context).colorScheme.outline,
                           ),
                         ),
                       ),
                     ),
+                    const SizedBox(width: 16),
                     Expanded(
-                      child: comp.ActionButton(
-                        title: "Save",
-                        minHeight: 40,
-                        onTap: () {
+                      child: FilledButton(
+                        onPressed: () {
                           widget.onRepsChange(_reps);
                           widget.onWeightChange(_weight);
                           widget.onWeightPostChange(_weightPost);
@@ -658,6 +676,7 @@ class _CellLogState extends State<_CellLog> {
                           widget.onSaved(true);
                           Navigator.of(context).pop();
                         },
+                        child: const Text("Save"),
                       ),
                     ),
                   ],

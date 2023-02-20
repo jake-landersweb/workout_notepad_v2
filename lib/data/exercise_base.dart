@@ -94,10 +94,17 @@ abstract class ExerciseBase {
     BuildContext context, {
     TextStyle? style,
   }) {
+    var s = "";
+    if (sets == 1) {
+      s = "";
+    } else {
+      s = "$sets ";
+    }
     switch (type) {
       case 1:
+      case 2:
         return TextSpan(
-          text: "$sets x $time",
+          text: "${s}x $time",
           style: style ?? ttBody(context),
           children: [
             TextSpan(
@@ -113,14 +120,14 @@ abstract class ExerciseBase {
         );
       default:
         return TextSpan(
-          text: "$sets x $reps",
+          text: "${s}x $reps",
           style: style ?? ttBody(context),
         );
     }
   }
 
   Duration getDuration() {
-    if (type == 1) {
+    if (type == 1 || type == 2) {
       switch (timePost) {
         case "sec":
           return Duration(seconds: time);

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/color_schemes.dart';
@@ -40,18 +39,6 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: scheme.getTheme(Brightness.light),
         darkTheme: scheme.getTheme(Brightness.dark),
-        // theme: ThemeData(
-        //   useMaterial3: true,
-        //   primaryColor: dmodel.color.light.primary,
-        //   textTheme: GoogleFonts.openSansTextTheme(),
-        //   colorScheme: dmodel.color.light,
-        // ),
-        // darkTheme: ThemeData(
-        //   useMaterial3: true,
-        //   primaryColor: dmodel.color.dark.primary,
-        //   textTheme: GoogleFonts.openSansTextTheme(),
-        //   colorScheme: dmodel.color.dark,
-        // ),
         onGenerateRoute: (settings) {
           return MaterialWithModalsPageRoute(
             settings: settings,

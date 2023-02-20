@@ -19,57 +19,26 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
     var lmodel = Provider.of<LogicModel>(context);
-    return Stack(
-      alignment: Alignment.bottomCenter,
-      children: [
-        _getView(lmodel, dmodel),
-        comp.TabBar(
-          index: lmodel.tabBarIndex.index,
-          onItemTap: (context, index, item) {
-            lmodel.setTabBarIndex(TabBarPage.values[index]);
-          },
-          builder: (context, index, item) {
-            return Icon(
-              item.child,
-              size: 35,
-              color: index == lmodel.tabBarIndex.index
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.outline,
-            );
-          },
-          items: [
-            comp.TabBarItem(
-              child: LineIcons.running,
-              title: "Workouts",
-            ),
-            comp.TabBarItem(
-              child: LineIcons.dumbbell,
-              title: "Exercises",
-            ),
-            comp.TabBarItem(
-              child: LineIcons.book,
-              title: "Logs",
-            ),
-            comp.TabBarItem(
-              child: LineIcons.cog,
-              title: "Settings",
-            ),
-          ],
-        ),
-      ],
+    return Scaffold(
+      body: [
+        const WorkoutsHome(),
+        const ExerciseHome(),
+        Container(),
+        const Settings(),
+      ][lmodel.tabBarIndex],
+      bottomNavigationBar: NavigationBar(
+        onDestinationSelected: (value) => lmodel.setTabBarIndex(value),
+        labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
+        selectedIndex: lmodel.tabBarIndex,
+        destinations: const [
+          NavigationDestination(
+              icon: Icon(LineIcons.running), label: 'Workouts'),
+          NavigationDestination(
+              icon: Icon(LineIcons.dumbbell), label: 'Exercises'),
+          NavigationDestination(icon: Icon(LineIcons.book), label: 'Logs'),
+          NavigationDestination(icon: Icon(LineIcons.cog), label: 'Settings'),
+        ],
+      ),
     );
-  }
-
-  Widget _getView(LogicModel lmodel, DataModel dmodel) {
-    switch (lmodel.tabBarIndex) {
-      case TabBarPage.workouts:
-        return const WorkoutsHome();
-      case TabBarPage.exercises:
-        return const ExerciseHome();
-      case TabBarPage.logs:
-        return Container();
-      case TabBarPage.settings:
-        return const Settings();
-    }
   }
 }

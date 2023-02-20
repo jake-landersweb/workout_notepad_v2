@@ -83,7 +83,13 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
           if ((_workout.description ?? "") != "")
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(_workout.description!, style: ttLabel(context)),
+              child: Text(
+                _workout.description!,
+                style: ttLabel(
+                  context,
+                  color: Theme.of(context).colorScheme.onBackground,
+                ),
+              ),
             ),
           _actions(context),
           Padding(

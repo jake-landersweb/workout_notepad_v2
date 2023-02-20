@@ -87,8 +87,8 @@ class _CEERootState extends State<CEERoot> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: sui.SegmentedPicker(
-            titles: const ["Weighted", "Timed"],
-            selections: const [0, 1],
+            titles: const ["Weighted", "Timed", "Duration"],
+            selections: const [0, 1, 2],
             style: sui.SegmentedPickerStyle(
               height: 36,
               pickerColor: Theme.of(context).colorScheme.primary,
@@ -270,6 +270,7 @@ class _CEERootState extends State<CEERoot> {
   List<Widget> _setBody(BuildContext context, CreateExerciseModel cemodel) {
     switch (cemodel.exercise.type) {
       case 1:
+      case 2:
         return [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -322,7 +323,7 @@ class _CEERootState extends State<CEERoot> {
 
   Widget _time(BuildContext context, CreateExerciseModel cemodel) {
     return comp.LabeledWidget(
-      label: "Time",
+      label: cemodel.exercise.type == 1 ? "Time" : "Goal Time",
       child: comp.NumberPicker(
         minValue: 0,
         intialValue: cemodel.exercise.time,

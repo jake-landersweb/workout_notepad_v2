@@ -1,4 +1,73 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+class TextTimerController extends ChangeNotifier {
+  late DateTime _initTime;
+  late DateTime _currentTime;
+  Duration? _initDuration;
+  late int msIterate;
+  final void Function(Duration ms)? onMsTick;
+
+  bool _isActive = false;
+
+  TextTimerController({
+    Duration? initialTime,
+    this.msIterate = 1000,
+    bool startOnCreate = true,
+    this.onMsTick,
+  }) {
+    _initTime = DateTime.now();
+    _currentTime = DateTime.now();
+    _initDuration = initialTime;
+    if (startOnCreate) {
+      start();
+    }
+  }
+
+  @override
+  void dispose() {
+    _isActive = false;
+    super.dispose();
+  }
+
+  void _iterate() async {
+    while (_isActive) {
+      // wait for the time duration
+      _currentTime = DateTime.now();
+      if (onMsTick != null) {
+        onMsTick!(time);
+      }
+      notifyListeners();
+      await Future.delayed(Duration(milliseconds: msIterate));
+    }
+  }
+
+  void start() {
+    _isActive = true;
+    _initTime = DateTime.now();
+    _currentTime = DateTime.now();
+    if (_initDuration != null) {
+      _currentTime.add(_initDuration!);
+    }
+    notifyListeners();
+    _iterate();
+  }
+
+  void cancel() {
+    _isActive = false;
+    _initTime = DateTime.now();
+    _currentTime = DateTime.now();
+    notifyListeners();
+  }
+
+  Duration get time {
+    return _currentTime.difference(_initTime);
+  }
+
+  bool get isActive {
+    return _isActive;
+  }
+}
 
 class TextTimer extends StatefulWidget {
   const TextTimer({
@@ -9,7 +78,6 @@ class TextTimer extends StatefulWidget {
     this.style,
     this.onEnd,
     this.timeFormat,
-    this.onTick,
     this.onMsTick,
   });
   final Duration? initialTime;
@@ -18,39 +86,28 @@ class TextTimer extends StatefulWidget {
   final TextStyle? style;
   final VoidCallback? onEnd;
   final String Function(Duration duration)? timeFormat;
-  final void Function(DateTime time)? onTick;
-  final void Function(int ms)? onMsTick;
+  final void Function(Duration ms)? onMsTick;
 
   @override
   State<TextTimer> createState() => _TextTimerState();
 }
 
 class _TextTimerState extends State<TextTimer> {
-  late DateTime _initTime;
-  late DateTime _currentTime;
-  bool _isActive = true;
-
-  @override
-  void initState() {
-    _initTime = DateTime.now();
-    _currentTime = DateTime.now();
-    if (widget.initialTime != null) {
-      _currentTime.add(widget.initialTime!);
-    }
-    _iterate();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _isActive = false;
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => TextTimerController(
+        initialTime: widget.initialTime,
+        msIterate: widget.msIterate,
+        onMsTick: widget.onMsTick,
+      ),
+      builder: (context, child) => _body(context),
+    );
+  }
+
+  Widget _body(BuildContext context) {
     return Text(
-      _getTime(),
+      _getTime(context),
       style: widget.style ??
           const TextStyle(
             fontSize: 18,
@@ -59,39 +116,12 @@ class _TextTimerState extends State<TextTimer> {
     );
   }
 
-  void _iterate() async {
-    while (_isActive) {
-      // wait for the time duration
-      await Future.delayed(Duration(milliseconds: widget.msIterate));
-      setState(() {
-        _currentTime = DateTime.now();
-      });
-      // send observer
-      if (widget.onTick != null) {
-        widget.onTick!(_currentTime);
-      }
-      if (widget.onMsTick != null) {
-        widget.onMsTick!(_currentTime.difference(_initTime).inMilliseconds);
-      }
-      // check if should end
-      if (widget.msEnd != null && _duration().inMilliseconds > widget.msEnd!) {
-        if (widget.onEnd != null) {
-          widget.onEnd!();
-        }
-        _isActive = false;
-      }
-    }
-  }
-
-  String _getTime() {
+  String _getTime(BuildContext context) {
+    var controller = Provider.of<TextTimerController>(context);
     if (widget.timeFormat != null) {
-      return widget.timeFormat!(_duration());
+      return widget.timeFormat!(controller.time);
     }
-    return _formatHHMMSS(_duration().inSeconds);
-  }
-
-  Duration _duration() {
-    return _currentTime.difference(_initTime);
+    return _formatHHMMSS(controller.time.inSeconds);
   }
 }
 

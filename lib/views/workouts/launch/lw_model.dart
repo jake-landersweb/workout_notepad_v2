@@ -191,7 +191,7 @@ class LaunchWorkoutModel extends ChangeNotifier {
     }
 
     // determine duration workout has gone on
-    wl.duration = duration ~/ 1000;
+    wl.duration = duration;
 
     // insert the workout
     await wl.insert();

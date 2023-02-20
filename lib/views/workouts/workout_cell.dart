@@ -80,31 +80,21 @@ class _WorkoutCellState extends State<WorkoutCell> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: sui.Button(
-                          onTap: () {
+                        child: TextButton(
+                          onPressed: () {
                             comp.navigate(
                               context: context,
                               builder: (context) =>
                                   WorkoutDetail(workout: widget.wc),
                             );
                           },
-                          child: Container(
-                            constraints: const BoxConstraints(minHeight: 45),
-                            child: Center(
-                              child: Text(
-                                "View",
-                                style: ttLabel(
-                                  context,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
-                            ),
-                          ),
+                          child: const Text("View"),
                         ),
                       ),
+                      const SizedBox(width: 16),
                       Expanded(
-                        child: sui.Button(
-                          onTap: () {
+                        child: FilledButton(
+                          onPressed: () {
                             showMaterialModalBottomSheet(
                               context: context,
                               enableDrag: false,
@@ -112,23 +102,7 @@ class _WorkoutCellState extends State<WorkoutCell> {
                                   LaunchWorkout(workout: widget.wc.workout),
                             );
                           },
-                          child: Container(
-                            constraints: const BoxConstraints(minHeight: 45),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(100),
-                              color: Theme.of(context).colorScheme.tertiary,
-                            ),
-                            child: Center(
-                              child: Text(
-                                "Start",
-                                style: ttLabel(
-                                  context,
-                                  color:
-                                      Theme.of(context).colorScheme.onTertiary,
-                                ),
-                              ),
-                            ),
-                          ),
+                          child: const Text("Start"),
                         ),
                       ),
                     ],

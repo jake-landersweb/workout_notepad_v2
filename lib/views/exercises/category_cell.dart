@@ -12,7 +12,7 @@ class CategoryCell extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.tertiaryContainer,
+        color: Theme.of(context).colorScheme.secondaryContainer,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Center(
@@ -21,7 +21,7 @@ class CategoryCell extends StatelessWidget {
           child: Text(
             title.uppercase(),
             style: TextStyle(
-              color: Theme.of(context).colorScheme.onTertiaryContainer,
+              color: Theme.of(context).colorScheme.onSecondaryContainer,
             ),
           ),
         ),

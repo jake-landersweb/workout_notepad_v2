@@ -38,6 +38,7 @@ class ExerciseItemGoup extends StatelessWidget {
   Widget _getSecond(BuildContext context) {
     switch (exercise.type) {
       case 1:
+      case 2:
         return ExerciseItemCell(
           label: exercise.timePost.toUpperCase(),
           val: exercise.time,
@@ -75,7 +76,7 @@ class _EditableExerciseItemGroupState extends State<EditableExerciseItemGroup> {
     return Row(
       children: [
         Expanded(
-          flex: widget.exercise.type == 1 ? widget.flex1 : 1,
+          flex: widget.exercise.type == 0 ? 1 : widget.flex1,
           child: EditableExerciseItemCell(
             initialValue: widget.exercise.sets,
             label: "SETS",
@@ -95,7 +96,7 @@ class _EditableExerciseItemGroupState extends State<EditableExerciseItemGroup> {
               style: ttLabel(context, color: Theme.of(context).primaryColor)),
         ),
         Expanded(
-          flex: widget.exercise.type == 1 ? widget.flex2 : 1,
+          flex: widget.exercise.type == 0 ? 1 : widget.flex2,
           child: _getSecond(context),
         ),
       ],
@@ -105,6 +106,7 @@ class _EditableExerciseItemGroupState extends State<EditableExerciseItemGroup> {
   Widget _getSecond(BuildContext context) {
     switch (widget.exercise.type) {
       case 1:
+      case 2:
         return _time(context, widget.exercise);
       default:
         return EditableExerciseItemCell(
@@ -123,39 +125,54 @@ class _EditableExerciseItemGroupState extends State<EditableExerciseItemGroup> {
   }
 
   Widget _time(BuildContext context, ExerciseBase e) {
-    return comp.NumberPicker(
-      minValue: 0,
-      intialValue: e.time,
-      textFontSize: 40,
-      showPicker: true,
-      maxValue: 99999,
-      spacing: 8,
-      onChanged: (val) {
-        setState(() {
-          e.time = val;
-        });
-        if (widget.onChanged != null) {
-          widget.onChanged!();
-        }
-      },
-      picker: SizedBox(
-        width: 50,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Column(
-              children: [
-                _timeCell(context, e, "sec"),
-                _timeCell(context, e, "min"),
-                _timeCell(context, e, "hour"),
-              ],
+    return Stack(
+      alignment: Alignment.topLeft,
+      children: [
+        comp.NumberPicker(
+          minValue: 0,
+          intialValue: e.time,
+          textFontSize: 40,
+          showPicker: true,
+          maxValue: 99999,
+          spacing: 8,
+          onChanged: (val) {
+            setState(() {
+              e.time = val;
+            });
+            if (widget.onChanged != null) {
+              widget.onChanged!();
+            }
+          },
+          picker: SizedBox(
+            width: 50,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Column(
+                  children: [
+                    _timeCell(context, e, "sec"),
+                    _timeCell(context, e, "min"),
+                    _timeCell(context, e, "hour"),
+                  ],
+                ),
+              ),
             ),
           ),
         ),
-      ),
+        Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Text(
+            e.type == 1 ? "TIME" : "GOAL TIME",
+            style: TextStyle(
+              fontSize: 12,
+              color: Theme.of(context).primaryColor,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -166,6 +183,7 @@ class _EditableExerciseItemGroupState extends State<EditableExerciseItemGroup> {
   ) {
     return Expanded(
       child: sui.Button(
+        showTap: false,
         onTap: () {
           setState(() {
             e.timePost = post;

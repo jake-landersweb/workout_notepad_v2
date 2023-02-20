@@ -52,10 +52,16 @@ class _SelectExerciseState extends State<SelectExercise>
               children: [
                 Icon(
                   LineIcons.plusCircle,
-                  color: Theme.of(context).primaryColor,
+                  color: Theme.of(context).colorScheme.onSecondaryContainer,
                 ),
                 const SizedBox(width: 16),
-                Text("Create New", style: ttLabel(context)),
+                Text(
+                  "Create New",
+                  style: ttLabel(
+                    context,
+                    color: Theme.of(context).colorScheme.onSecondaryContainer,
+                  ),
+                ),
               ],
             ),
           ),

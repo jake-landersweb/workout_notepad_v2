@@ -230,8 +230,10 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                   ),
                 ),
                 Expanded(
-                  child: sui.Button(
-                    onTap: () {
+                  child: FilledButton.icon(
+                    icon: Icon(LineIcons.plus),
+                    label: Text("Super-Set"),
+                    onPressed: () {
                       comp.cupertinoSheet(
                         context: context,
                         builder: (context) {
@@ -250,33 +252,6 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                         },
                       );
                     },
-                    child: Container(
-                      constraints: const BoxConstraints(minHeight: 50),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.secondary,
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                      child: Center(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              LineIcons.plus,
-                              color: Theme.of(context).colorScheme.onSecondary,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              "Super-Set",
-                              style: ttLabel(
-                                context,
-                                color:
-                                    Theme.of(context).colorScheme.onSecondary,
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
                   ),
                 ),
               ],

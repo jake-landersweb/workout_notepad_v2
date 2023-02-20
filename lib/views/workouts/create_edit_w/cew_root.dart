@@ -73,7 +73,7 @@ class _CEWState extends State<_CEW> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Divider(height: 0.5),
+                const Divider(),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 48),
                   child: sui.Button(

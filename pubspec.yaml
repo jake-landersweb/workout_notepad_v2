@@ -42,17 +42,17 @@ dependencies:
   provider: ^6.0.5
   sprung: ^3.0.1
   visibility_detector: ^0.3.3
-  animated_list_plus: ^0.4.4
+  animated_list_plus: ^0.5.0
   flutter_slidable: ^2.0.0
   shared_preferences: ^2.0.16
   uuid: ^3.0.7
   line_icons: ^2.0.1
   ionicons: ^0.2.2
-  google_fonts: ^3.0.1
-  modal_bottom_sheet: ^2.1.2
+  google_fonts: ^4.0.3
+  modal_bottom_sheet: ^3.0.0-pre
   expandable_page_view: ^1.0.17
   intl: ^0.18.0
-  material_color_utilities: ^0.1.5
+  material_color_utilities: ^0.2.0
 
 dev_dependencies:
   flutter_test:

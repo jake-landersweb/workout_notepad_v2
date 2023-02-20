@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'dart:math' as math;
 import './root.dart' as comp;
@@ -97,143 +98,149 @@ class _CountdownTimerState extends State<CountdownTimer>
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              _timer(context),
-              const SizedBox(height: 16),
-              // controls
-              Row(
-                children: [
-                  Expanded(
-                    child: Center(
-                      child: sui.Button(
-                        onTap: () {
-                          setState(() {
-                            _controller.reset();
-                          });
-                        },
-                        child: Text(
-                          "Reset",
-                          style: ttBody(
-                            context,
-                            color: Theme.of(context).colorScheme.outline,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                        borderRadius: BorderRadius.circular(100),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(100),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: sui.Button(
-                                onTap: () {
-                                  setState(() {
-                                    _type = CountdownTimerType.clock;
-                                  });
-                                },
-                                child: Container(
-                                  constraints:
-                                      const BoxConstraints(minHeight: 50),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .secondaryContainer,
-                                  ),
-                                  child: Icon(
-                                    Icons.timer_rounded,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSecondaryContainer,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              width: 1,
-                              height: 50,
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 700),
+      curve: Sprung.overDamped,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                _timer(context),
+                const SizedBox(height: 16),
+                // controls
+                Row(
+                  children: [
+                    Expanded(
+                      child: Center(
+                        child: sui.Button(
+                          onTap: () {
+                            setState(() {
+                              _controller.reset();
+                            });
+                          },
+                          child: Text(
+                            "Reset",
+                            style: ttBody(
+                              context,
                               color: Theme.of(context).colorScheme.outline,
                             ),
-                            Expanded(
-                              child: sui.Button(
-                                onTap: () {
-                                  setState(() {
-                                    _type = CountdownTimerType.numbers;
-                                  });
-                                },
-                                child: Container(
-                                  constraints:
-                                      const BoxConstraints(minHeight: 50),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .secondaryContainer,
-                                  ),
-                                  child: Icon(
-                                    Icons.timer_10_rounded,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSecondaryContainer,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: comp.ActionButton(
-                            title: _controller.isAnimating ? "Pause" : "Start",
-                            icon: _controller.isAnimating
-                                ? Icons.pause_rounded
-                                : Icons.play_arrow_rounded,
-                            onTap: () {
-                              if (_controller.isAnimating) {
-                                setState(() {
-                                  _controller.stop();
-                                });
-                              } else {
-                                setState(() {
-                                  _controller.reverse(
-                                    from: _controller.value == 0.0
-                                        ? 1.0
-                                        : _controller.value,
-                                  );
-                                });
-                              }
-                            },
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.outline,
+                          ),
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(100),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: sui.Button(
+                                  onTap: () {
+                                    setState(() {
+                                      _type = CountdownTimerType.clock;
+                                    });
+                                  },
+                                  child: Container(
+                                    constraints:
+                                        const BoxConstraints(minHeight: 35),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondaryContainer,
+                                    ),
+                                    child: Icon(
+                                      Icons.timer_rounded,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSecondaryContainer,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                width: 1,
+                                height: 35,
+                                color: Theme.of(context).colorScheme.outline,
+                              ),
+                              Expanded(
+                                child: sui.Button(
+                                  onTap: () {
+                                    setState(() {
+                                      _type = CountdownTimerType.numbers;
+                                    });
+                                  },
+                                  child: Container(
+                                    constraints:
+                                        const BoxConstraints(minHeight: 35),
+                                    decoration: BoxDecoration(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondaryContainer,
+                                    ),
+                                    child: Icon(
+                                      Icons.timer_10_rounded,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSecondaryContainer,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                  )
-                ],
-              ),
-            ],
-          ),
-        );
-      },
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: comp.ActionButton(
+                              minHeight: 35,
+                              title:
+                                  _controller.isAnimating ? "Pause" : "Start",
+                              icon: _controller.isAnimating
+                                  ? Icons.pause_rounded
+                                  : Icons.play_arrow_rounded,
+                              onTap: () {
+                                if (_controller.isAnimating) {
+                                  setState(() {
+                                    _controller.stop();
+                                  });
+                                } else {
+                                  setState(() {
+                                    _controller.reverse(
+                                      from: _controller.value == 0.0
+                                          ? 1.0
+                                          : _controller.value,
+                                    );
+                                  });
+                                }
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 

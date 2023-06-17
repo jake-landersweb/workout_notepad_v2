@@ -4,11 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
+import 'package:workout_notepad_v2/components/cell_wrapper.dart';
+import 'package:workout_notepad_v2/components/clickable.dart';
+import 'package:workout_notepad_v2/components/contained_list.dart';
+import 'package:workout_notepad_v2/components/field.dart';
+import 'package:workout_notepad_v2/components/floating_sheet.dart';
 import 'package:workout_notepad_v2/data/exercise_set.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/views/root.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 
 class CEWExerciseCell extends StatefulWidget {
@@ -80,11 +85,11 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                 animation: animation,
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                  child: sui.Button(
+                  child: Clickable(
                     onTap: () {
-                      sui.showFloatingSheet(
+                      showFloatingSheet(
                         context: context,
-                        builder: (context) => sui.FloatingSheet(
+                        builder: (context) => FloatingSheet(
                           title: item.title,
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
@@ -102,7 +107,7 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                                     child: Row(
                                       children: [
                                         Expanded(
-                                          child: sui.Button(
+                                          child: Clickable(
                                             onTap: () {
                                               Navigator.of(context).pop();
                                               cmodel.removeExerciseChild(
@@ -122,7 +127,7 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                                           ),
                                         ),
                                         Expanded(
-                                          child: sui.Button(
+                                          child: Clickable(
                                             onTap: () {
                                               Navigator.of(context).pop();
                                               cmodel.removeExerciseChild(
@@ -208,9 +213,9 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                 Expanded(
                   child: Align(
                     alignment: Alignment.centerLeft,
-                    child: sui.Button(
+                    child: Clickable(
                       onTap: () {
-                        sui.showFloatingSheet(
+                        showFloatingSheet(
                           context: context,
                           builder: (context) => _ExerciseNote(
                             note: widget.cewe.exercise.note,
@@ -297,9 +302,9 @@ class __ExerciseNoteState extends State<_ExerciseNote> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            sui.CellWrapper(
+            CellWrapper(
               backgroundColor: Theme.of(context).colorScheme.onSecondary,
-              child: sui.TextField(
+              child: Field(
                 value: _note,
                 maxLines: 4,
                 labelText: "Note",
@@ -318,7 +323,7 @@ class __ExerciseNoteState extends State<_ExerciseNote> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: sui.Button(
+                        child: Clickable(
                           onTap: () {
                             Navigator.of(context).pop();
                           },
@@ -377,9 +382,9 @@ class __SuperSetOrderState extends State<_SuperSetOrder> {
 
   @override
   Widget build(BuildContext context) {
-    return sui.FloatingSheet(
+    return FloatingSheet(
       title: "Super-Set Ordering",
-      child: sui.ListView<int>(
+      child: ContainedList<int>(
         children: const [0, 1, 2],
         allowsSelect: true,
         selected: [_val],

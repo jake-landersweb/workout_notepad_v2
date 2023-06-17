@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/data/exercise_base.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
-import 'package:sapphireui/sapphireui.dart' as sui;
+
 import 'package:workout_notepad_v2/utils/root.dart';
 
 class ExerciseItemGoup extends StatelessWidget {
@@ -182,7 +183,7 @@ class _EditableExerciseItemGroupState extends State<EditableExerciseItemGroup> {
     String post,
   ) {
     return Expanded(
-      child: sui.Button(
+      child: Clickable(
         showTap: false,
         onTap: () {
           setState(() {

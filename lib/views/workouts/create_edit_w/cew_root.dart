@@ -3,8 +3,9 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+
 import 'package:sprung/sprung.dart';
+import 'package:workout_notepad_v2/components/field.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
@@ -174,7 +175,7 @@ class _CEWState extends State<_CEW> {
             ),
           ],
         ),
-        sui.TextField(
+        Field(
           fieldPadding: const EdgeInsets.symmetric(horizontal: 16),
           showBackground: false,
           charLimit: 50,
@@ -187,7 +188,7 @@ class _CEWState extends State<_CEW> {
           labelText: "Title",
           onChanged: (val) => cmodel.setTitle(val),
         ),
-        sui.TextField(
+        Field(
           fieldPadding: const EdgeInsets.symmetric(horizontal: 16),
           showBackground: false,
           value: cmodel.description,

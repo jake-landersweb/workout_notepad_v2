@@ -7,7 +7,6 @@ import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
 
 class CEWModel extends ChangeNotifier {
   CEWModel.create(String uid) {

@@ -3,7 +3,7 @@ import 'package:animated_list_plus/transitions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+import 'package:workout_notepad_v2/components/root.dart';
 
 class ReorderableList<T extends Object> extends StatefulWidget {
   const ReorderableList({
@@ -92,7 +92,7 @@ class _ReorderableListState<T extends Object>
                           if (widget.onChildTap == null)
                             _child(context, item, index, inDrag)
                           else
-                            sui.Button(
+                            Clickable(
                               onTap: () => widget.onChildTap!(item, index),
                               child: _child(context, item, index, inDrag),
                             ),

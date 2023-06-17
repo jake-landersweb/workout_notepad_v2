@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
+import 'package:workout_notepad_v2/components/cell_wrapper.dart';
+import 'package:workout_notepad_v2/components/clickable.dart';
+import 'package:workout_notepad_v2/components/header_bar.dart';
+import 'package:workout_notepad_v2/components/labeled_cell.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -26,7 +30,7 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
-    return sui.AppBar.sheet(
+    return HeaderBar.sheet(
       title: widget.exercise.title,
       crossAxisAlignment: CrossAxisAlignment.center,
       isFluid: true,
@@ -67,12 +71,12 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
             .fadeIn(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: sui.CellWrapper(
+          child: CellWrapper(
             backgroundColor:
                 Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: sui.LabeledCell(
+              child: LabeledCell(
                 label: "Category",
                 child: Text(
                   widget.exercise.category.uppercase(),
@@ -94,12 +98,12 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
         if (widget.exercise.description.isNotEmpty)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: sui.CellWrapper(
+            child: CellWrapper(
               backgroundColor:
                   Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: sui.LabeledCell(
+                child: LabeledCell(
                   label: "Description",
                   child: Text(
                     widget.exercise.description.uppercase(),
@@ -206,7 +210,7 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
   }) {
     final bgColor = Theme.of(context).colorScheme.tertiaryContainer;
     final textColor = Theme.of(context).colorScheme.onTertiaryContainer;
-    return sui.Button(
+    return Clickable(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(

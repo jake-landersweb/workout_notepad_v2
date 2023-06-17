@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sprung/sprung.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+import 'package:workout_notepad_v2/components/clickable.dart';
 
 import 'root.dart' as cv;
 
@@ -144,7 +144,7 @@ class _SectionState extends State<Section> with TickerProviderStateMixin {
               padding: widget.headerPadding,
               child: Row(
                 children: [
-                  sui.Button(
+                  Clickable(
                     onTap: () {
                       _toggleContainer();
                     },

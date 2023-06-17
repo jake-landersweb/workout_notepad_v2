@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 
 class BackButton extends StatelessWidget {
@@ -14,7 +14,7 @@ class BackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return sui.Button(
+    return Clickable(
       onTap: () {
         Navigator.of(context, rootNavigator: useRoot).pop();
       },

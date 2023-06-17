@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+import 'package:workout_notepad_v2/components/root.dart';
 
 class AddButton extends StatelessWidget {
   const AddButton({
@@ -11,7 +11,7 @@ class AddButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return sui.Button(
+    return Clickable(
       onTap: () => onTap(),
       child: Icon(
         LineIcons.plus,

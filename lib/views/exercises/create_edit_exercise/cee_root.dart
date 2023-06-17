@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+import 'package:workout_notepad_v2/components/clickable.dart';
+import 'package:workout_notepad_v2/components/contained_list.dart';
+import 'package:workout_notepad_v2/components/field.dart';
+import 'package:workout_notepad_v2/components/header_bar.dart';
+
 import 'package:workout_notepad_v2/components/root.dart' as comp;
+import 'package:workout_notepad_v2/components/segmented_picker.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
@@ -47,7 +52,7 @@ class _CEERootState extends State<CEERoot> {
   Widget _body(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
     var cemodel = Provider.of<CreateExerciseModel>(context);
-    return sui.AppBar.sheet(
+    return HeaderBar.sheet(
       title: widget.isCreate ? "Create Exercise" : "Update Exercise",
       isFluid: true,
       itemSpacing: 16,
@@ -87,10 +92,10 @@ class _CEERootState extends State<CEERoot> {
         if (widget.isCreate)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: sui.SegmentedPicker(
+            child: SegmentedPicker(
               titles: const ["Weighted", "Timed", "Duration"],
               selections: const [0, 1, 2],
-              style: sui.SegmentedPickerStyle(
+              style: SegmentedPickerStyle(
                 height: 36,
                 pickerColor: Theme.of(context).colorScheme.primary,
                 backgroundColor: Theme.of(context)
@@ -117,7 +122,7 @@ class _CEERootState extends State<CEERoot> {
   }
 
   Widget _icon(BuildContext context, CreateExerciseModel cemodel) {
-    return sui.Button(
+    return Clickable(
       onTap: () => showIconPicker(
           context: context,
           initialIcon: cemodel.exercise.icon,
@@ -144,14 +149,13 @@ class _CEERootState extends State<CEERoot> {
   }
 
   Widget _title(BuildContext context, CreateExerciseModel cemodel) {
-    return sui.ListView<Widget>(
+    return ContainedList<Widget>(
       childPadding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
       leadingPadding: 0,
-      backgroundColor:
-          Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+      backgroundColor: AppColors.cell(context),
       trailingPadding: 0,
       children: [
-        sui.TextField(
+        Field(
           labelText: "Title",
           hintText: "Title (ex. Bicep Curls)",
           charLimit: 40,
@@ -163,7 +167,7 @@ class _CEERootState extends State<CEERoot> {
             });
           },
         ),
-        sui.TextField(
+        Field(
           labelText: "Note",
           charLimit: 100,
           maxLines: 3,
@@ -194,7 +198,7 @@ class _CEERootState extends State<CEERoot> {
         child: Row(
           children: [
             const SizedBox(width: 16),
-            sui.Button(
+            Clickable(
               onTap: () {
                 comp.cupertinoSheet(
                   context: context,
@@ -240,7 +244,7 @@ class _CEERootState extends State<CEERoot> {
 
   Widget _categoryCell(
       BuildContext context, String title, CreateExerciseModel cemodel) {
-    return sui.Button(
+    return Clickable(
       onTap: () {
         setState(() {
           cemodel.exercise.category = title;
@@ -363,7 +367,7 @@ class _CEERootState extends State<CEERoot> {
     String post,
   ) {
     return Expanded(
-      child: sui.Button(
+      child: Clickable(
         onTap: () {
           setState(() {
             cemodel.exercise.timePost = post;

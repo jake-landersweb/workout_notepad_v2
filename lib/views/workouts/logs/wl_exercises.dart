@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:sprung/sprung.dart';
+import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/root.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
@@ -33,7 +34,7 @@ class _WLExercisesState extends State<WLExercises> {
 
   @override
   Widget build(BuildContext context) {
-    return sui.AppBar.sheet(
+    return HeaderBar.sheet(
       title: "Exericse Logs",
       isFluid: true,
       leading: const [comp.CloseButton()],

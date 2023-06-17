@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
 import 'package:material_color_utilities/scheme/scheme.dart';
 import 'package:provider/provider.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+
 import 'package:workout_notepad_v2/color_schemes.dart';
+import 'package:workout_notepad_v2/components/clickable.dart';
+import 'package:workout_notepad_v2/components/dynamicgv.dart';
+import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/color.dart';
@@ -19,7 +22,7 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
-    return sui.AppBar(
+    return HeaderBar(
       title: "Settings",
       isLarge: true,
       children: [const SizedBox(height: 16), _selectColor(context, dmodel)],
@@ -29,7 +32,7 @@ class _SettingsState extends State<Settings> {
   Widget _selectColor(BuildContext context, DataModel dmodel) {
     return comp.LabeledWidget(
       label: "Color",
-      child: sui.DynamicGridView(
+      child: DynamicGridView(
         itemCount: appColors.length,
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -47,7 +50,7 @@ class _SettingsState extends State<Settings> {
     final CorePalette pallete = CorePalette.of(color.value);
     final Scheme lightScheme = Scheme.lightFromCorePalette(pallete);
     final Scheme darkScheme = Scheme.darkFromCorePalette(pallete);
-    return sui.Button(
+    return Clickable(
       onTap: () => dmodel.setColor(color),
       child: Stack(
         alignment: Alignment.center,

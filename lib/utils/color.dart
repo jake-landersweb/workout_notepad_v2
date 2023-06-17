@@ -80,11 +80,27 @@ extension AppColors on Color {
     }
   }
 
+  static Color sheetBackground(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.light) {
+      return ColorUtil.hexToColor("#ffffff");
+    } else {
+      return bgDark;
+    }
+  }
+
   static Color cell(BuildContext context) {
     if (Theme.of(context).brightness == Brightness.light) {
       return ColorUtil.hexToColor("#FAFAFC");
     } else {
       return cellDark;
+    }
+  }
+
+  static Color sheetCell(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.light) {
+      return ColorUtil.hexToColor("#ffffff");
+    } else {
+      return bgDark;
     }
   }
 

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+import 'package:workout_notepad_v2/components/cell_wrapper.dart';
+import 'package:workout_notepad_v2/components/clickable.dart';
+import 'package:workout_notepad_v2/components/header_bar.dart';
+
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/model/root.dart';
@@ -29,13 +32,13 @@ class _SelectExerciseState extends State<SelectExercise>
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
-    return sui.AppBar.sheet(
+    return HeaderBar.sheet(
       title: "Select or Create",
       isFluid: true,
       leading: const [comp.CloseButton()],
       itemSpacing: 8,
       children: [
-        sui.Button(
+        Clickable(
           onTap: () {
             comp.cupertinoSheet(
               context: context,
@@ -47,7 +50,7 @@ class _SelectExerciseState extends State<SelectExercise>
               ),
             );
           },
-          child: sui.CellWrapper(
+          child: CellWrapper(
             child: Row(
               children: [
                 Icon(

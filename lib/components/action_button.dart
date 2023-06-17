@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:workout_notepad_v2/components/loading_indicator.dart';
+import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
 
 class ActionButton extends StatelessWidget {
   const ActionButton({
@@ -21,7 +22,7 @@ class ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return sui.Button(
+    return Clickable(
       onTap: () {
         if (isValid) {
           onTap();
@@ -47,7 +48,7 @@ class ActionButton extends StatelessWidget {
           ),
           child: Center(
             child: isLoading ?? false
-                ? const sui.LoadingIndicator()
+                ? const LoadingIndicator()
                 : Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

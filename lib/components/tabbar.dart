@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+import 'package:workout_notepad_v2/components/root.dart';
 
 class TabBarItem {
   late IconData child;
@@ -43,7 +43,7 @@ class _TabBarState extends State<TabBar> {
           endIndent: 0,
           color: Theme.of(context).colorScheme.onBackground.withOpacity(0.3),
         ),
-        sui.BlurredContainer(
+        BlurredContainer(
           width: double.infinity,
           borderRadius: BorderRadius.circular(0),
           backgroundColor: Theme.of(context).colorScheme.background,
@@ -61,7 +61,7 @@ class _TabBarState extends State<TabBar> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   for (int i = 0; i < widget.items.length; i++)
-                    sui.Button(
+                    Clickable(
                       onTap: () {
                         widget.onItemTap(context, i, widget.items[i]);
                       },

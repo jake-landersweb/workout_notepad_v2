@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+
 import 'package:workout_notepad_v2/text_themes.dart';
 
 class LabeledWidget extends StatelessWidget {

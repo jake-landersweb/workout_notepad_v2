@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/data/workout_cat.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 
 class WorkoutsHome extends StatefulWidget {
@@ -20,7 +21,7 @@ class _WorkoutsHomeState extends State<WorkoutsHome> {
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
-    return sui.AppBar(
+    return HeaderBar(
       title: "Workouts",
       isLarge: true,
       bottomSpacing: 0,

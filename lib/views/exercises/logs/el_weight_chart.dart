@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
+import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
-import 'package:sapphireui/sapphireui.dart' as sui;
+
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/views/root.dart';
@@ -31,14 +32,14 @@ class _ELWeightChartState extends State<ELWeightChart> {
           children: [
             Row(
               children: [
-                sui.Button(
+                Clickable(
                   onTap: () {
                     elmodel.wNextPage();
                   },
                   child: Icon(Icons.chevron_left_rounded),
                 ),
                 const Spacer(),
-                sui.Button(
+                Clickable(
                   onTap: () {
                     elmodel.wPrevPage();
                   },

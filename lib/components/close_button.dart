@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+import 'package:workout_notepad_v2/components/root.dart';
 
 class CloseButton extends StatelessWidget {
   const CloseButton({
@@ -13,7 +13,7 @@ class CloseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return sui.Button(
+    return Clickable(
       onTap: () {
         Navigator.of(context, rootNavigator: useRoot).pop();
       },

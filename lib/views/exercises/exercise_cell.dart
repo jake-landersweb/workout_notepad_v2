@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/exercise_set.dart';
 import 'package:workout_notepad_v2/data/root.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -28,7 +29,7 @@ class ExerciseCell extends StatelessWidget {
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
     if (onTap != null) {
-      return sui.Button(
+      return Clickable(
         onTap: onTap!,
         child: _body(context, dmodel),
       );

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+
 import 'package:workout_notepad_v2/utils/root.dart';
 
 class ELModel extends ChangeNotifier {

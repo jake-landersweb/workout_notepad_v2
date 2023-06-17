@@ -4,7 +4,6 @@ import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
 
 abstract class ExerciseBase {
   late String title;

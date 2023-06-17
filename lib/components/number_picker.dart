@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+
 import 'dart:math' as math;
-import 'package:sapphireui/functions/root.dart';
+
+import 'package:workout_notepad_v2/components/field.dart';
+import 'package:workout_notepad_v2/components/root.dart';
 
 class NumberPicker extends StatefulWidget {
   const NumberPicker({
@@ -65,7 +67,7 @@ class _NumberPickerState extends State<NumberPicker> {
                     color: Theme.of(context).colorScheme.primaryContainer,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: sui.TextField(
+                  child: Field(
                     controller: _controller,
                     labelText: "",
                     showBackground: false,
@@ -168,7 +170,7 @@ class _NumberPickerState extends State<NumberPicker> {
     VoidCallback? onTap,
   }) {
     return Expanded(
-      child: sui.Button(
+      child: Clickable(
         onTap: () {
           if (onTap != null) {
             onTap();

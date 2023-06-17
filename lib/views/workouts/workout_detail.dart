@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:sprung/sprung.dart';
+import 'package:workout_notepad_v2/components/clickable.dart';
+import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/data/root.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -57,7 +59,7 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: sui.AppBar(
+      body: HeaderBar(
         title: _workout.title,
         backgroundColor: AppColors.background(context),
         itemSpacing: 8,
@@ -182,7 +184,7 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
     final bgColor = AppColors.cell(context);
     final textColor = Theme.of(context).colorScheme.onPrimaryContainer;
     final iconColor = Theme.of(context).colorScheme.primary;
-    return sui.Button(
+    return Clickable(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(

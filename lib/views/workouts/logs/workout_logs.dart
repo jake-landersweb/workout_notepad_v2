@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
+import 'package:workout_notepad_v2/components/fluid_scroll_view.dart';
 import 'package:workout_notepad_v2/data/root.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
@@ -75,7 +76,7 @@ class _WorkoutLogsState extends State<WorkoutLogs> {
       builder: (context) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: sui.FluidScrollView(
+          child: FluidScrollView(
             children: [
               const SizedBox(height: 0),
               for (var i in lmodel.logs) WorkoutLogCell(workoutLog: i),

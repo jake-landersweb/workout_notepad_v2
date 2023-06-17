@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icon.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+import 'package:workout_notepad_v2/components/root.dart';
+
 import 'package:workout_notepad_v2/text_themes.dart';
 
 class ModelCreateButton extends StatelessWidget {
@@ -20,14 +21,14 @@ class ModelCreateButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return sui.Button(
+    return Clickable(
       onTap: () {
         if (isValid) {
           onTap();
         }
       },
       child: isLoading ?? false
-          ? const sui.LoadingIndicator()
+          ? const LoadingIndicator()
           : Text(
               title,
               style: ttLabel(context).copyWith(

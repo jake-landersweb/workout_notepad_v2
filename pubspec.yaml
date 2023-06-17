@@ -35,9 +35,6 @@ dependencies:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
-  sapphireui:
-    # git: https://github.com/jake-landersweb/crosscheck_engine
-    path: ../sapphireui
   sqflite: ^2.2.3
   provider: ^6.0.5
   sprung: ^3.0.1

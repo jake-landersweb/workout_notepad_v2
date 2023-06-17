@@ -3,7 +3,6 @@ import 'package:animated_list_plus/transitions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
 
 class RawReorderableList<T extends Object> extends StatefulWidget {
   const RawReorderableList({

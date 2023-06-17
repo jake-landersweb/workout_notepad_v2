@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+import 'package:workout_notepad_v2/components/root.dart';
+
 import 'package:workout_notepad_v2/text_themes.dart';
 
 class EditButton extends StatelessWidget {
@@ -11,7 +12,7 @@ class EditButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return sui.Button(
+    return Clickable(
         onTap: onTap,
         child: Text(
           "Edit",

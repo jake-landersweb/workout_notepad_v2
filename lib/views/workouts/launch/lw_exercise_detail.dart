@@ -4,11 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
+import 'package:workout_notepad_v2/components/cell_wrapper.dart';
+import 'package:workout_notepad_v2/components/clickable.dart';
+import 'package:workout_notepad_v2/components/floating_sheet.dart';
 import 'package:workout_notepad_v2/data/exercise_base.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
-import 'package:sapphireui/sapphireui.dart' as sui;
+
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
 
@@ -40,7 +43,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                 if (lmodel.exercises[widget.index].note.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
-                    child: sui.CellWrapper(
+                    child: CellWrapper(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8.0),
                         child: Row(
@@ -208,7 +211,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                     flex: 3,
                     child: Container(),
                   ),
-                  sui.Button(
+                  Clickable(
                     onTap: () => lmodel.addLogSet(widget.index),
                     child: Container(
                       decoration: BoxDecoration(
@@ -346,7 +349,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                     flex: 3,
                     child: Container(),
                   ),
-                  sui.Button(
+                  Clickable(
                     onTap: () =>
                         lmodel.addLogChildSet(widget.index, childIndex),
                     child: Container(
@@ -486,9 +489,9 @@ class _Cell extends StatelessWidget {
             ),
           ),
         ),
-        sui.Button(
+        Clickable(
           onTap: () {
-            sui.showFloatingSheet(
+            showFloatingSheet(
               context: context,
               builder: (context) => _CellLog(
                 index: index,
@@ -844,7 +847,7 @@ class _CellLogState extends State<_CellLog> {
     String post,
   ) {
     return Expanded(
-      child: sui.Button(
+      child: Clickable(
         onTap: () {
           if (widget.type == 1) {
             setState(() {

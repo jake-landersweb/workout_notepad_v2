@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+import 'package:workout_notepad_v2/components/root.dart';
+
 import 'package:workout_notepad_v2/text_themes.dart';
 
 class CancelButton extends StatelessWidget {
@@ -7,7 +8,7 @@ class CancelButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return sui.Button(
+    return Clickable(
       onTap: () => Navigator.of(context).pop(),
       child: Text(
         "Cancel",

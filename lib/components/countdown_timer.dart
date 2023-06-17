@@ -1,9 +1,9 @@
 import "package:flutter/material.dart";
 import 'package:sprung/sprung.dart';
+import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'dart:math' as math;
 import './root.dart' as comp;
-import 'package:sapphireui/sapphireui.dart' as sui;
 
 enum CountdownTimerType { clock, numbers, adaptive }
 
@@ -116,7 +116,7 @@ class _CountdownTimerState extends State<CountdownTimer>
                   children: [
                     Expanded(
                       child: Center(
-                        child: sui.Button(
+                        child: Clickable(
                           onTap: () {
                             setState(() {
                               _controller.reset();
@@ -145,7 +145,7 @@ class _CountdownTimerState extends State<CountdownTimer>
                           child: Row(
                             children: [
                               Expanded(
-                                child: sui.Button(
+                                child: Clickable(
                                   onTap: () {
                                     setState(() {
                                       _type = CountdownTimerType.clock;
@@ -174,7 +174,7 @@ class _CountdownTimerState extends State<CountdownTimer>
                                 color: Theme.of(context).colorScheme.outline,
                               ),
                               Expanded(
-                                child: sui.Button(
+                                child: Clickable(
                                   onTap: () {
                                     setState(() {
                                       _type = CountdownTimerType.numbers;

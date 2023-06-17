@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:sapphireui/sapphireui.dart' as sui;
+import 'package:workout_notepad_v2/components/clickable.dart';
+import 'package:workout_notepad_v2/components/dynamicgv.dart';
+import 'package:workout_notepad_v2/components/header_bar.dart';
+
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/utils/root.dart';
 
@@ -12,7 +15,7 @@ void showIconPicker({
 }) {
   comp.cupertinoSheet(
     context: context,
-    builder: (context) => sui.AppBar.sheet(
+    builder: (context) => HeaderBar.sheet(
       title: "",
       leading: const [comp.CloseButton()],
       children: [
@@ -53,7 +56,7 @@ class _IconPickerState extends State<_IconPicker> {
 
   @override
   Widget build(BuildContext context) {
-    return sui.DynamicGridView(
+    return DynamicGridView(
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: _icons.length,
@@ -65,7 +68,7 @@ class _IconPickerState extends State<_IconPicker> {
   }
 
   Widget _iconCell(BuildContext context, String name) {
-    return sui.Button(
+    return Clickable(
       onTap: () {
         setState(() {
           _selected = name;

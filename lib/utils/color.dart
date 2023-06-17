@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 
 Map<int, Color> getSwatch(Color color) {
   final hslColor = HSLColor.fromColor(color);
@@ -31,4 +32,75 @@ Map<int, Color> getSwatch(Color color) {
     800: (hslColor.withLightness(lightness - (highStep * 3))).toColor(),
     900: (hslColor.withLightness(lightness - (highStep * 4))).toColor(),
   };
+}
+
+extension ColorUtil on Color {
+  static Color random(String seed) {
+    int num = 0;
+    for (int i = 0; i < seed.length; i++) {
+      num += seed[i].codeUnitAt(0);
+    }
+    // add lightness to make it look better overall
+    Color col = Color((math.Random(num).nextDouble() * 0xFFFFFF).toInt())
+        .withOpacity(1.0);
+    HSLColor hsl = HSLColor.fromColor(col);
+    return hsl.withLightness(0.75).toColor();
+  }
+
+  static Color hexToColor(String hexColor) {
+    // Remove the leading '#' character
+    hexColor = hexColor.replaceAll("#", "");
+
+    // Check if the color code is valid
+    if (hexColor.length != 6) {
+      throw Exception(
+          "Invalid hex color code. The code must be 6 characters long.");
+    }
+
+    // Parse the hex color code
+    int colorValue = int.parse(hexColor, radix: 16);
+
+    // Return the corresponding Color object
+    return Color(colorValue | 0xFF000000);
+  }
+}
+
+extension AppColors on Color {
+  static Color bgLight = ColorUtil.hexToColor("#E2E5ED");
+  static Color cellLight = ColorUtil.hexToColor("#FAFAFC");
+
+  static Color bgDark = ColorUtil.hexToColor("#23282F");
+  static Color cellDark = ColorUtil.hexToColor("#343C46");
+
+  static Color background(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.light) {
+      return bgLight;
+    } else {
+      return bgDark;
+    }
+  }
+
+  static Color cell(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.light) {
+      return ColorUtil.hexToColor("#FAFAFC");
+    } else {
+      return cellDark;
+    }
+  }
+
+  static Color text(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.light) {
+      return Colors.black;
+    } else {
+      return Colors.white;
+    }
+  }
+
+  static Color subText(BuildContext context) {
+    if (Theme.of(context).brightness == Brightness.light) {
+      return Colors.black.withOpacity(0.7);
+    } else {
+      return Colors.white.withOpacity(0.7);
+    }
+  }
 }

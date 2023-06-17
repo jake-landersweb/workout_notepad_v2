@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:line_icons/line_icon.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/text_themes.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
-import 'package:workout_notepad_v2/views/workouts/we_cell.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:workout_notepad_v2/views/workouts/logs/root.dart';
 
 class WorkoutDetail extends StatefulWidget {
   const WorkoutDetail({
@@ -58,8 +59,7 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
     return Scaffold(
       body: sui.AppBar(
         title: _workout.title,
-        isLarge: true,
-        isFluid: true,
+        backgroundColor: AppColors.background(context),
         itemSpacing: 8,
         horizontalSpacing: 0,
         largeTitlePadding: const EdgeInsets.only(left: 16),
@@ -80,6 +80,7 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
           )
         ],
         children: [
+          const SizedBox(height: 16),
           if ((_workout.description ?? "") != "")
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -91,7 +92,9 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
                 ),
               ),
             ),
+          const SizedBox(height: 16),
           _actions(context),
+          const SizedBox(height: 16),
           Padding(
             padding: const EdgeInsets.only(left: 16.0),
             child: comp.LabeledWidget(
@@ -99,11 +102,17 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
               child: Container(),
             ),
           ),
-          for (var item in _exercises)
+          for (int i = 0; i < _exercises.length; i++)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: ExerciseCell(exercise: item),
-            ),
+              child: ExerciseCell(exercise: _exercises[i]),
+            )
+                .animate(delay: (25 * i).ms)
+                .slideX(
+                    begin: 0.25,
+                    curve: Sprung(36),
+                    duration: const Duration(milliseconds: 500))
+                .fadeIn()
         ],
       ),
     );
@@ -129,6 +138,7 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
                       LaunchWorkout(workout: _workout, exercises: _exercises),
                 );
               },
+              index: 1,
             ),
             const SizedBox(width: 16),
             _actionCell(
@@ -137,8 +147,12 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
               title: "Logs",
               description: "View workout logs",
               onTap: () {
-                // TODO -- implement
+                showMaterialModalBottomSheet(
+                  context: context,
+                  builder: (context) => WorkoutLogs(workout: _workout),
+                );
               },
+              index: 2,
             ),
             const SizedBox(width: 16),
             _actionCell(
@@ -149,7 +163,8 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
               onTap: () {
                 // TODO -- implement
               },
-            ),
+              index: 3,
+            )
           ],
         ),
       ),
@@ -162,9 +177,11 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
     required String title,
     required String description,
     required VoidCallback onTap,
+    required int index,
   }) {
-    final bgColor = Theme.of(context).colorScheme.tertiaryContainer;
-    final textColor = Theme.of(context).colorScheme.onTertiaryContainer;
+    final bgColor = AppColors.cell(context);
+    final textColor = Theme.of(context).colorScheme.onPrimaryContainer;
+    final iconColor = Theme.of(context).colorScheme.primary;
     return sui.Button(
       onTap: onTap,
       child: Container(
@@ -182,7 +199,7 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
             children: [
               Icon(
                 icon,
-                color: textColor,
+                color: iconColor,
               ),
               const SizedBox(height: 8),
               Text(
@@ -204,6 +221,12 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
           ),
         ),
       ),
-    );
+    )
+        .animate(delay: (25 * index).ms)
+        .slideX(
+            begin: 0.25,
+            curve: Sprung(36),
+            duration: const Duration(milliseconds: 500))
+        .fadeIn();
   }
 }

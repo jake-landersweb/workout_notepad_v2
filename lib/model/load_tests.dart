@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/services.dart';
 import 'package:sqflite/sql.dart';
+import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/exercise_set.dart';
 import 'package:workout_notepad_v2/data/root.dart';
@@ -96,6 +97,17 @@ Future<void> loadTests() async {
     for (int i = 0; i < workoutExercises.length; i++) {
       workoutExercises[i].exerciseOrder = i;
       await workoutExercises[i].insert(
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+
+    // add all logs
+    for (int i = 0; i < json['logs'].length; i++) {
+      json['logs'][i]['exerciseLogId'] = const Uuid().v4();
+      json['logs'][i]['userId'] = "1";
+      await db.insert(
+        'exercise_log',
+        json['logs'][i],
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     }

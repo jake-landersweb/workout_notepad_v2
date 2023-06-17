@@ -84,30 +84,33 @@ class _CEERootState extends State<CEERoot> {
           child: _title(context, cemodel),
         ),
         _category(context, cemodel, dmodel),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: sui.SegmentedPicker(
-            titles: const ["Weighted", "Timed", "Duration"],
-            selections: const [0, 1, 2],
-            style: sui.SegmentedPickerStyle(
-              height: 36,
-              pickerColor: Theme.of(context).colorScheme.primary,
-              backgroundColor:
-                  Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
-              selectedTextColor: Theme.of(context).colorScheme.onPrimary,
-              selectedWeight: FontWeight.w500,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(50),
+        if (widget.isCreate)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: sui.SegmentedPicker(
+              titles: const ["Weighted", "Timed", "Duration"],
+              selections: const [0, 1, 2],
+              style: sui.SegmentedPickerStyle(
+                height: 36,
+                pickerColor: Theme.of(context).colorScheme.primary,
+                backgroundColor: Theme.of(context)
+                    .colorScheme
+                    .surfaceVariant
+                    .withOpacity(0.5),
+                selectedTextColor: Theme.of(context).colorScheme.onPrimary,
+                selectedWeight: FontWeight.w500,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50),
+                ),
               ),
+              onSelection: (p0) {
+                setState(() {
+                  cemodel.exercise.type = p0;
+                });
+              },
+              selection: cemodel.exercise.type,
             ),
-            onSelection: (p0) {
-              setState(() {
-                cemodel.exercise.type = p0;
-              });
-            },
-            selection: cemodel.exercise.type,
           ),
-        ),
         for (var i in _setBody(context, cemodel)) i
       ],
     );

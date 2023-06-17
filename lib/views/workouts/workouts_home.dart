@@ -3,6 +3,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/data/workout_cat.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
 import 'package:workout_notepad_v2/components/root.dart' as comp;
@@ -21,10 +22,9 @@ class _WorkoutsHomeState extends State<WorkoutsHome> {
     var dmodel = Provider.of<DataModel>(context);
     return sui.AppBar(
       title: "Workouts",
-      isFluid: true,
-      itemSpacing: 16,
       isLarge: true,
-      forceMaxSize: true,
+      bottomSpacing: 0,
+      backgroundColor: AppColors.background(context),
       trailing: [
         comp.AddButton(
           onTap: () {
@@ -38,19 +38,11 @@ class _WorkoutsHomeState extends State<WorkoutsHome> {
                 },
               ),
             );
-            // comp.cupertinoSheet(
-            //   context: context,
-            // builder: (context) => CEWRoot(
-            //   isCreate: true,
-            //   onAction: (w) {
-            //     print(w);
-            //   },
-            // ),
-            // );
           },
         )
       ],
       children: [
+        const SizedBox(height: 16),
         comp.SearchBar(
           onChanged: (val) {
             setState(() {
@@ -61,6 +53,7 @@ class _WorkoutsHomeState extends State<WorkoutsHome> {
           hintText: "Search by title or category",
           initText: _searchText,
         ),
+        const SizedBox(height: 16),
         for (var i in _workouts(context, dmodel)) WorkoutCell(wc: i),
       ],
     );

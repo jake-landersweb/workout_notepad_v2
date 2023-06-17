@@ -9,6 +9,7 @@ class ExerciseLog {
   late String userId;
   late String exerciseId;
   String? workoutLogId;
+  late String title;
   late int type;
   late int sets;
   late String timePost;
@@ -23,6 +24,7 @@ class ExerciseLog {
     required this.userId,
     required this.exerciseId,
     this.workoutLogId,
+    required this.title,
     required this.sets,
     required this.type,
     required this.timePost,
@@ -38,6 +40,7 @@ class ExerciseLog {
     exerciseLogId = uuid.v4();
     userId = uid;
     exerciseId = eid;
+    title = exercise.title;
     sets = exercise.sets;
     type = exercise.type;
     timePost = exercise.timePost;
@@ -69,6 +72,7 @@ class ExerciseLog {
     userId = uid;
     exerciseId = eid;
     workoutLogId = wlid;
+    title = exercise.title;
     sets = exercise.sets;
     type = exercise.type;
     timePost = exercise.timePost;
@@ -94,6 +98,7 @@ class ExerciseLog {
     userId = json['userId'];
     exerciseId = json['exerciseId'];
     workoutLogId = json['workoutLogId'];
+    title = json['title'];
     type = json['type'];
     sets = json['sets'];
     timePost = json['timePost'];
@@ -141,7 +146,7 @@ class ExerciseLog {
     var r = [];
     var t = [];
     var w = [];
-    for (int i = 0; i < sets; i++) {
+    for (int i = 0; i < metadata.length; i++) {
       r.add(metadata[i].reps);
       t.add(metadata[i].time);
       w.add(metadata[i].weight);
@@ -151,8 +156,9 @@ class ExerciseLog {
       "userId": userId,
       "exerciseId": exerciseId,
       "workoutLogId": workoutLogId,
+      "title": title,
       "type": type,
-      "sets": sets,
+      "sets": metadata.length,
       "reps": r.join(","),
       "time": t.join(","),
       "timePost": timePost,

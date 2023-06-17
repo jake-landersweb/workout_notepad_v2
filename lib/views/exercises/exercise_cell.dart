@@ -16,7 +16,7 @@ class ExerciseCell extends StatelessWidget {
     this.trailingIcon,
     this.onTap,
     this.showBackground = true,
-    this.padding = const EdgeInsets.only(bottom: 16),
+    this.padding = const EdgeInsets.only(bottom: 8),
   });
   final ExerciseBase exercise;
   final VoidCallback? onTap;
@@ -40,58 +40,65 @@ class ExerciseCell extends StatelessWidget {
     return Padding(
       padding: padding,
       child: Container(
-        color: Theme.of(context).colorScheme.background,
-        child: Column(
-          children: [
-            Row(
-              children: [
-                if (exercise.icon.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 16),
-                    child: exercise.getIcon(),
-                  )
-                else
-                  const Padding(
-                    padding: EdgeInsets.only(right: 16),
-                    child: SizedBox(height: 50, width: 50),
-                  ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        exercise.title,
-                        style: ttLabel(
-                          context,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                      if (exercise.category.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8),
-                          child: IntrinsicWidth(
-                            child: CategoryCell(title: exercise.category),
+        decoration: BoxDecoration(
+          color: AppColors.cell(context),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  if (exercise.icon.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 16),
+                      child: exercise.getIcon(),
+                    )
+                  else
+                    const Padding(
+                      padding: EdgeInsets.only(right: 16),
+                      child: SizedBox(height: 50, width: 50),
+                    ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          exercise.title,
+                          style: ttLabel(
+                            context,
+                            color:
+                                Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
-                    ],
-                  ),
-                ),
-                if (trailingIcon != null)
-                  Icon(
-                    trailingIcon,
-                    color: Theme.of(context).colorScheme.primary,
-                  )
-                else
-                  exercise.info(
-                    context,
-                    style: ttBody(
-                      context,
-                      color: Theme.of(context).colorScheme.primary,
+                        if (exercise.category.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: IntrinsicWidth(
+                              child: CategoryCell(title: exercise.category),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
-              ],
-            ),
-          ],
+                  if (trailingIcon != null)
+                    Icon(
+                      trailingIcon,
+                      color: Theme.of(context).colorScheme.primary,
+                    )
+                  else
+                    exercise.info(
+                      context,
+                      style: ttBody(
+                        context,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

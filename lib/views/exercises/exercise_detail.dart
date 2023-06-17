@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
 import 'package:workout_notepad_v2/model/root.dart';
@@ -9,6 +9,7 @@ import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
+import 'package:flutter_animate/flutter_animate.dart';
 
 class ExerciseDetail extends StatefulWidget {
   const ExerciseDetail({
@@ -47,11 +48,23 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
               ),
             ),
           ),
-        ),
+        )
+            .animate(delay: (50 * 1).ms)
+            .slideY(
+                begin: 0.25,
+                curve: Sprung(36),
+                duration: const Duration(milliseconds: 500))
+            .fadeIn(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: ExerciseItemGoup(exercise: widget.exercise),
-        ),
+        )
+            .animate(delay: (50 * 2).ms)
+            .slideY(
+                begin: 0.25,
+                curve: Sprung(36),
+                duration: const Duration(milliseconds: 500))
+            .fadeIn(),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: sui.CellWrapper(
@@ -63,12 +76,21 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
                 label: "Category",
                 child: Text(
                   widget.exercise.category.uppercase(),
-                  style: ttLabel(context),
+                  style: ttLabel(
+                    context,
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
                 ),
               ),
             ),
           ),
-        ),
+        )
+            .animate(delay: (50 * 3).ms)
+            .slideY(
+                begin: 0.25,
+                curve: Sprung(36),
+                duration: const Duration(milliseconds: 500))
+            .fadeIn(),
         if (widget.exercise.description.isNotEmpty)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -81,12 +103,21 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
                   label: "Description",
                   child: Text(
                     widget.exercise.description.uppercase(),
-                    style: ttLabel(context),
+                    style: ttLabel(
+                      context,
+                      color: Theme.of(context).colorScheme.onBackground,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
+          )
+              .animate(delay: (50 * 4).ms)
+              .slideY(
+                  begin: 0.25,
+                  curve: Sprung(36),
+                  duration: const Duration(milliseconds: 500))
+              .fadeIn(),
       ],
     );
   }
@@ -120,6 +151,7 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
                   ),
                 );
               },
+              index: 1,
             ),
             const SizedBox(width: 16),
             _actionCell(
@@ -134,6 +166,7 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
                   builder: (context) => ExerciseLogs(exercise: widget.exercise),
                 );
               },
+              index: 2,
             ),
             const SizedBox(width: 16),
             _actionCell(
@@ -144,6 +177,7 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
               onTap: () {
                 // TODO -- implement
               },
+              index: 3,
             ),
             const SizedBox(width: 16),
             _actionCell(
@@ -154,6 +188,7 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
               onTap: () {
                 // TODO -- implement
               },
+              index: 4,
             ),
           ],
         ),
@@ -167,6 +202,7 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
     required String title,
     required String description,
     required VoidCallback onTap,
+    required int index,
   }) {
     final bgColor = Theme.of(context).colorScheme.tertiaryContainer;
     final textColor = Theme.of(context).colorScheme.onTertiaryContainer;
@@ -209,6 +245,12 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
           ),
         ),
       ),
-    );
+    )
+        .animate(delay: (25 * index).ms)
+        .slideX(
+            begin: 0.25,
+            curve: Sprung(36),
+            duration: const Duration(milliseconds: 500))
+        .fadeIn();
   }
 }

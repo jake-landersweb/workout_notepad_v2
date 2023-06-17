@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:sqflite/sql.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
@@ -14,6 +15,9 @@ class WorkoutLog {
   String? note;
   late String created;
   late String updated;
+
+  // private runtime fields
+  List<ExerciseLog>? _exericseLogs;
 
   WorkoutLog({
     required this.workoutLogId,
@@ -73,19 +77,24 @@ class WorkoutLog {
     return response;
   }
 
-  Future<List<ExerciseLog>> getExercises() async {
-    var db = await getDB();
-    String sql = """
+  Future<List<ExerciseLog>> getExercises({bool forceReload = false}) async {
+    if (forceReload || _exericseLogs == null) {
+      var db = await getDB();
+      String sql = """
       SELECT * FROM exercise_log WHERE workoutLogId = '$workoutLogId'
       AND userId = '$userId'
       ORDER BY created DESC
     """;
-    var response = await db.rawQuery(sql);
-    List<ExerciseLog> logs = [];
-    for (var i in response) {
-      logs.add(ExerciseLog.fromJson(i));
+      var response = await db.rawQuery(sql);
+      List<ExerciseLog> logs = [];
+      for (var i in response) {
+        logs.add(ExerciseLog.fromJson(i));
+      }
+      _exericseLogs = logs;
+      return logs;
+    } else {
+      return _exericseLogs!;
     }
-    return logs;
   }
 
   static Future<List<WorkoutLog>> getRecentLogs(String userId) async {
@@ -102,8 +111,48 @@ class WorkoutLog {
     return logs;
   }
 
+  DateTime getCreated() => DateTime.parse(created);
+  String getCreatedFormatted() {
+    var d = getCreated();
+    var f = DateFormat("MMM d, y");
+    return f.format(d);
+  }
+
+  DateTime getUpdated() => DateTime.parse(updated);
+  String getUpdatedFormatted() {
+    var d = getUpdated();
+    var f = DateFormat("MMM d, y");
+    return f.format(d);
+  }
+
+  String getDuration() {
+    return _formatHHMMSS(duration);
+  }
+
   @override
   String toString() {
     return toMap().toString();
   }
+}
+
+String _formatHHMMSS(int seconds) {
+  int hours = (seconds / 3600).truncate();
+  seconds = (seconds % 3600).truncate();
+  int minutes = (seconds / 60).truncate();
+
+  String hoursStr = (hours).toString().padLeft(2, '0');
+  String minutesStr = (minutes).toString().padLeft(2, '0');
+  String secondsStr = (seconds % 60).toString().padLeft(2, '0');
+
+  String out = "$secondsStr sec";
+
+  if (minutes != 0) {
+    out = "$minutesStr min, $out";
+  }
+
+  if (hours != 0) {
+    out = "$hoursStr hr, $out";
+  }
+
+  return out;
 }

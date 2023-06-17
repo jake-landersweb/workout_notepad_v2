@@ -9,9 +9,11 @@ class InteractiveSheet extends StatefulWidget {
     super.key,
     required this.header,
     required this.builder,
+    this.headerPadding = const EdgeInsets.fromLTRB(16, 0, 16, 16),
   });
   final Widget Function(BuildContext context) header;
   final Widget Function(BuildContext context) builder;
+  final EdgeInsets headerPadding;
 
   @override
   State<InteractiveSheet> createState() => _InteractiveSheetState();
@@ -50,18 +52,17 @@ class _InteractiveSheetState extends State<InteractiveSheet> {
   }
 
   Widget _header(BuildContext context) {
-    var dmodel = Provider.of<DataModel>(context);
     return AnimatedSlide(
       offset: Offset(0, _offsetY),
       duration: const Duration(milliseconds: 500),
       curve: Sprung(36),
       child: Container(
-        color: Theme.of(context).colorScheme.secondaryContainer,
+        color: Theme.of(context).colorScheme.onPrimary,
         child: SafeArea(
           top: true,
           bottom: false,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            padding: widget.headerPadding,
             child: widget.header(context),
           ),
         ),

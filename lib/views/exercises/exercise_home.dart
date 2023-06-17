@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
-import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
+import 'package:flutter_animate/flutter_animate.dart';
 
 class ExerciseHome extends StatefulWidget {
   const ExerciseHome({super.key});
@@ -23,8 +22,7 @@ class _ExerciseHomeState extends State<ExerciseHome> {
     return sui.AppBar(
       title: "Exercises",
       isLarge: true,
-      isFluid: true,
-      itemSpacing: 16,
+      backgroundColor: AppColors.background(context),
       trailing: [
         comp.AddButton(onTap: () {
           comp.cupertinoSheet(
@@ -34,6 +32,7 @@ class _ExerciseHomeState extends State<ExerciseHome> {
         })
       ],
       children: [
+        const SizedBox(height: 16),
         comp.SearchBar(
           onChanged: (val) {
             setState(() {
@@ -44,16 +43,18 @@ class _ExerciseHomeState extends State<ExerciseHome> {
           labelText: "Search",
           hintText: "Search by title or category",
         ),
+        const SizedBox(height: 16),
         for (var i in filteredExercises(dmodel.exercises, _searchText))
           ExerciseCell(
             exercise: i,
+            padding: const EdgeInsets.only(bottom: 8),
             onTap: () {
               comp.cupertinoSheet(
                 context: context,
                 builder: (context) => ExerciseDetail(exercise: i),
               );
             },
-          ),
+          )
       ],
     );
   }

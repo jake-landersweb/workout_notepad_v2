@@ -63,87 +63,76 @@ class _CEWState extends State<_CEW> {
     return comp.InteractiveSheet(
       header: ((context) => _header(context, dmodel, cmodel)),
       builder: (context) {
-        return comp.RawReorderableList<CEWExercise>(
-          items: cmodel.exercises,
-          footer: AnimatedOpacity(
-            opacity: cmodel.showExerciseButton ? 1 : 0,
-            curve: Sprung(36),
-            duration: const Duration(milliseconds: 500),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Divider(),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 48),
-                  child: sui.Button(
-                    onTap: () {
-                      comp.cupertinoSheet(
-                        context: context,
-                        builder: (context) => SelectExercise(
-                          onSelect: (e) {
-                            cmodel.addExercise(WorkoutExercise.fromExercise(
-                                cmodel.workout, e));
+        return Stack(
+          alignment: Alignment.bottomRight,
+          children: [
+            comp.RawReorderableList<CEWExercise>(
+              items: cmodel.exercises,
+              areItemsTheSame: (p0, p1) => p0.id == p1.id,
+              footer: const SizedBox(height: 100),
+              onReorderFinished: (item, from, to, newItems) {
+                cmodel.refreshExercises(newItems);
+              },
+              slideBuilder: (item, index) {
+                return ActionPane(
+                  extentRatio: 0.3,
+                  motion: const DrawerMotion(),
+                  children: [
+                    Expanded(
+                      child: Row(children: [
+                        SlidableAction(
+                          onPressed: (context) async {
+                            await Future.delayed(
+                              const Duration(milliseconds: 100),
+                            );
+                            cmodel.removeExercise(index);
                           },
+                          icon: LineIcons.alternateTrash,
+                          label: "Delete",
+                          foregroundColor:
+                              Theme.of(context).colorScheme.onError,
+                          backgroundColor: Theme.of(context).colorScheme.error,
                         ),
-                      );
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.secondaryContainer,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Icon(
-                          Icons.add,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSecondaryContainer,
-                        ),
-                      ),
+                      ]),
                     ),
-                  ),
-                ),
-              ],
+                  ],
+                );
+              },
+              builder: (item, index, handle, inDrag) {
+                return CEWExerciseCell(
+                  cewe: item,
+                  handle: handle,
+                  index: index,
+                  inDrag: inDrag,
+                );
+              },
             ),
-          ),
-          areItemsTheSame: (p0, p1) => p0.id == p1.id,
-          onReorderFinished: (item, from, to, newItems) {
-            cmodel.refreshExercises(newItems);
-          },
-          slideBuilder: (item, index) {
-            return ActionPane(
-              extentRatio: 0.3,
-              motion: const DrawerMotion(),
-              children: [
-                Expanded(
-                  child: Row(children: [
-                    SlidableAction(
-                      onPressed: (context) async {
-                        await Future.delayed(
-                          const Duration(milliseconds: 100),
-                        );
-                        cmodel.removeExercise(index);
-                      },
-                      icon: LineIcons.alternateTrash,
-                      label: "Delete",
-                      foregroundColor: Theme.of(context).colorScheme.onError,
-                      backgroundColor: Theme.of(context).colorScheme.error,
-                    ),
-                  ]),
+            // floating action here bc scaffold effects
+            // touch area
+            SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 10.0),
+                child: FloatingActionButton(
+                  onPressed: () {
+                    comp.cupertinoSheet(
+                      context: context,
+                      builder: (context) => SelectExercise(
+                        onSelect: (e) {
+                          cmodel.addExercise(
+                              WorkoutExercise.fromExercise(cmodel.workout, e));
+                        },
+                      ),
+                    );
+                  },
+                  backgroundColor:
+                      Theme.of(context).colorScheme.tertiaryContainer,
+                  foregroundColor:
+                      Theme.of(context).colorScheme.onTertiaryContainer,
+                  child: const Icon(Icons.add),
                 ),
-              ],
-            );
-          },
-          builder: (item, index, handle, inDrag) {
-            return CEWExerciseCell(
-              cewe: item,
-              handle: handle,
-              index: index,
-              inDrag: inDrag,
-            );
-          },
+              ),
+            ),
+          ],
         );
       },
     );

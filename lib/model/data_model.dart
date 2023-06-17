@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:workout_notepad_v2/color_schemes.dart';
 import 'package:workout_notepad_v2/data/root.dart';
+import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/load_tests.dart';
 import 'package:path/path.dart';
 import 'package:workout_notepad_v2/model/root.dart';
@@ -15,7 +16,7 @@ enum LoadStatus { init, noUser, done }
 
 class DataModel extends ChangeNotifier {
   DataModel() {
-    initTest(delete: false);
+    initTest(delete: true);
   }
 
   LoadStatus loadStatus = LoadStatus.init;
@@ -116,7 +117,6 @@ class DataModel extends ChangeNotifier {
 
     var db = await getDB();
     var response = await db.query('workout_log');
-    print(response);
 
     user = await User.fromId(prefs.getString("userId")!);
     await fetchData(user!.userId);
@@ -130,6 +130,7 @@ class DataModel extends ChangeNotifier {
     _workouts = await getW;
     _exercises = await getE;
     loadStatus = LoadStatus.done;
+
     notifyListeners();
   }
 }

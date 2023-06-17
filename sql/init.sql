@@ -132,6 +132,7 @@ END;
 --
 CREATE TABLE exercise_log(
     exerciseLogId TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
     userId TEXT NOT NULL,
     exerciseId TEXT NOT NULL,
     workoutLogId TEXT,

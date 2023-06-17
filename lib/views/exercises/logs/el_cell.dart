@@ -8,8 +8,10 @@ class ELCell extends StatefulWidget {
   const ELCell({
     super.key,
     required this.log,
+    this.showDate = true,
   });
   final ExerciseLog log;
+  final bool showDate;
 
   @override
   State<ELCell> createState() => _ELCellState();
@@ -28,13 +30,14 @@ class _ELCellState extends State<ELCell> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              widget.log.getCreatedFormatted(),
-              style: ttBody(
-                context,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+            if (widget.showDate)
+              Text(
+                widget.log.getCreatedFormatted(),
+                style: ttBody(
+                  context,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
-            ),
             for (int i = 0; i < widget.log.sets; i++)
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),

@@ -30,7 +30,7 @@ class _WorkoutCellState extends State<WorkoutCell> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+        color: AppColors.cell(context),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),

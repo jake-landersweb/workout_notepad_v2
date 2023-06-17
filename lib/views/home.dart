@@ -6,6 +6,7 @@ import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/settings/settings.dart';
+import 'package:workout_notepad_v2/views/workouts/logs/root.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -23,7 +24,6 @@ class _HomeState extends State<Home> {
       body: [
         const WorkoutsHome(),
         const ExerciseHome(),
-        Container(),
         const Settings(),
       ][lmodel.tabBarIndex],
       bottomNavigationBar: NavigationBar(
@@ -35,7 +35,6 @@ class _HomeState extends State<Home> {
               icon: Icon(LineIcons.running), label: 'Workouts'),
           NavigationDestination(
               icon: Icon(LineIcons.dumbbell), label: 'Exercises'),
-          NavigationDestination(icon: Icon(LineIcons.book), label: 'Logs'),
           NavigationDestination(icon: Icon(LineIcons.cog), label: 'Settings'),
         ],
       ),

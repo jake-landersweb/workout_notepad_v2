@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
 class CategoryCell extends StatelessWidget {
@@ -10,6 +12,7 @@ class CategoryCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    DataModel dmodel = context.read<DataModel>();
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.secondaryContainer,

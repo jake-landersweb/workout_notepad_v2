@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:sapphireui/sapphireui.dart' as sui;
+import 'package:workout_notepad_v2/utils/root.dart';
 
 class SearchBar extends StatelessWidget {
   const SearchBar({
@@ -18,7 +19,7 @@ class SearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return sui.CellWrapper(
-      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+      backgroundColor: AppColors.cell(context),
       child: Row(
         children: [
           Icon(

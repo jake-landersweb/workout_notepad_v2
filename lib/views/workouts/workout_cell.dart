@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/dynamicgv.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout.dart';
@@ -10,6 +11,7 @@ import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/launch_workout.dart';
+import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
 import 'package:workout_notepad_v2/views/workouts/workout_detail.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
@@ -28,10 +30,11 @@ class WorkoutCell extends StatefulWidget {
 class _WorkoutCellState extends State<WorkoutCell> {
   @override
   Widget build(BuildContext context) {
+    var dmodel = context.read<DataModel>();
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: AppColors.cell(context),
+        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -41,29 +44,38 @@ class _WorkoutCellState extends State<WorkoutCell> {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.wc.workout.title,
-                      style: ttTitle(
-                        context,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                    if (widget.wc.workout.description?.isNotEmpty ?? false)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4.0),
-                        child: Text(
-                          widget.wc.workout.description!,
-                          style: ttBody(
-                            context,
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.wc.workout.title,
+                        style: ttTitle(
+                          context,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
-                      )
-                  ],
+                      ),
+                      if (widget.wc.workout.description?.isNotEmpty ?? false)
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 4.0),
+                                child: Text(
+                                  widget.wc.workout.description!,
+                                  style: ttBody(
+                                    context,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -95,15 +107,15 @@ class _WorkoutCellState extends State<WorkoutCell> {
                       const SizedBox(width: 16),
                       Expanded(
                         child: FilledButton(
-                          onPressed: () {
-                            showMaterialModalBottomSheet(
-                              context: context,
-                              enableDrag: false,
-                              builder: (context) =>
-                                  LaunchWorkout(workout: widget.wc.workout),
-                            );
-                          },
-                          child: const Text("Start"),
+                          onPressed: () async => await launchWorkout(
+                            context,
+                            dmodel,
+                            widget.wc.workout,
+                          ),
+                          child: Text(dmodel.workoutState?.workout.workoutId ==
+                                  widget.wc.workout.workoutId
+                              ? "Resume"
+                              : "Start"),
                         ),
                       ),
                     ],

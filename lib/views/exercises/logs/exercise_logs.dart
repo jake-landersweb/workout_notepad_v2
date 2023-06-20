@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
@@ -24,7 +25,16 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: ((context) => ELModel(exercise: widget.exercise)),
-      builder: (context, child) => _body(context),
+      builder: ((context, child) {
+        return Navigator(
+          onGenerateRoute: (settings) {
+            return MaterialWithModalsPageRoute(
+              settings: settings,
+              builder: (context) => _body(context),
+            );
+          },
+        );
+      }),
     );
   }
 
@@ -45,12 +55,41 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const comp.CloseButton(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        comp.CloseButton(
+                          useRoot: true,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onPrimary
+                              .withOpacity(0.7),
+                        ),
+                        Clickable(
+                          onTap: () {
+                            elmodel.toggleWeight();
+                          },
+                          child: Text(
+                            elmodel.isLbs ? "lbs" : "kg",
+                            style: TextStyle(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onPrimary
+                                  .withOpacity(0.7),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     Text(
                       elmodel.exercise.title,
-                      style: ttTitle(context,
-                          size: 32,
-                          color: Theme.of(context).colorScheme.onBackground),
+                      style: ttTitle(
+                        context,
+                        size: 32,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
                     ),
                     const SizedBox(height: 8),
                   ],
@@ -65,22 +104,10 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
         return PageView(
           controller: elmodel.pageController,
           onPageChanged: (value) => elmodel.onPageChange(value),
-          children: [
-            ListView.builder(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 48),
-              physics: const AlwaysScrollableScrollPhysics(
-                parent: BouncingScrollPhysics(),
-              ),
-              itemCount: elmodel.logs.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.only(
-                      bottom: index < elmodel.logs.length - 1 ? 16 : 0),
-                  child: ELCell(log: elmodel.logs[index]),
-                );
-              },
-            ),
-            const ELWeightChart(),
+          children: const [
+            ELOverview(),
+            ELWeightChart(),
+            ELRaw(),
           ],
         );
       },
@@ -109,7 +136,15 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
             elmodel: elmodel,
             index: 1,
             icon: Icons.insights_rounded,
-            title: "Weight Chart",
+            title: "Graph",
+          ),
+          const SizedBox(width: 16),
+          _actionCell(
+            context: context,
+            elmodel: elmodel,
+            index: 2,
+            icon: Icons.list_alt_rounded,
+            title: "Raw Data",
           ),
         ],
       ),
@@ -124,11 +159,11 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
     required String title,
   }) {
     final bgColor = index == elmodel.currentIndex
-        ? Theme.of(context).colorScheme.secondary
+        ? Theme.of(context).colorScheme.onPrimary
         : Colors.transparent;
     final textColor = index == elmodel.currentIndex
-        ? Theme.of(context).colorScheme.onSecondary
-        : Theme.of(context).colorScheme.secondary;
+        ? Theme.of(context).colorScheme.primary
+        : Theme.of(context).colorScheme.onPrimary;
     return Clickable(
       onTap: () => elmodel.navigateTo(index),
       child: Container(
@@ -136,7 +171,7 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
           color: bgColor,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: Theme.of(context).colorScheme.secondary,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
         child: Padding(
@@ -154,7 +189,7 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
                 style: ttLabel(
                   context,
                   color: textColor,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],

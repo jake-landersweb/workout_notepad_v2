@@ -17,9 +17,11 @@ class SelectExercise extends StatefulWidget {
     super.key,
     required this.onSelect,
     this.closeOnSelect = true,
+    this.title,
   });
   final Function(Exercise e) onSelect;
   final bool closeOnSelect;
+  final String? title;
 
   @override
   State<SelectExercise> createState() => _SelectExerciseState();
@@ -33,11 +35,11 @@ class _SelectExerciseState extends State<SelectExercise>
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
     return HeaderBar.sheet(
-      title: "Select or Create",
-      isFluid: true,
+      title: widget.title ?? "Select or Create",
       leading: const [comp.CloseButton()],
       itemSpacing: 8,
       children: [
+        const SizedBox(height: 16),
         Clickable(
           onTap: () {
             comp.cupertinoSheet(
@@ -69,6 +71,7 @@ class _SelectExerciseState extends State<SelectExercise>
             ),
           ),
         ),
+        const SizedBox(height: 8),
         // search bar
         comp.SearchBar(
           onChanged: (val) {
@@ -80,6 +83,7 @@ class _SelectExerciseState extends State<SelectExercise>
           labelText: "Search",
           hintText: "Search by title or category",
         ),
+        const SizedBox(height: 16),
         // exercise list
         for (var i in filteredExercises(dmodel.exercises, _searchText))
           ExerciseCell(

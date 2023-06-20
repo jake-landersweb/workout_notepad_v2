@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:sprung/sprung.dart';
@@ -5,6 +7,8 @@ import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 
 import 'package:workout_notepad_v2/utils/root.dart';
+
+enum AccumulateType { avg, max, min }
 
 class ELModel extends ChangeNotifier {
   late Exercise exercise;
@@ -15,7 +19,9 @@ class ELModel extends ChangeNotifier {
   double wMax = 0;
   double wMin = double.infinity;
   int wPage = 1;
-  int wPageSize = 3;
+  int wPageSize = 5;
+  AccumulateType accumulateType = AccumulateType.avg;
+  bool isLbs = false;
 
   late PageController pageController;
   late int currentIndex;
@@ -61,6 +67,28 @@ class ELModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleAccumulate() {
+    switch (accumulateType) {
+      case AccumulateType.avg:
+        accumulateType = AccumulateType.max;
+        break;
+      case AccumulateType.max:
+        accumulateType = AccumulateType.min;
+        break;
+      case AccumulateType.min:
+        accumulateType = AccumulateType.avg;
+        break;
+    }
+    createWeightData();
+    notifyListeners();
+  }
+
+  void toggleWeight() {
+    isLbs = !isLbs;
+    createWeightData();
+    notifyListeners();
+  }
+
   List<FlSpot> wgetData() {
     if (wData.length <= wPageSize) {
       return wData;
@@ -74,35 +102,79 @@ class ELModel extends ChangeNotifier {
   }
 
   List<String> wgetDates() {
-    if (wData.length <= wPageSize * wPage) {
+    if (wDates.length <= wPageSize) {
       return wDates;
     } else {
-      var start = wDates.length - (wPageSize * wPage);
-      return wDates.sublist(start, wData.length - (wPageSize * (wPage - 1)));
+      var start = wData.length - (wPageSize * wPage);
+      if (start < 0) {
+        start = 0;
+      }
+      return wDates.sublist(start, start + wPageSize);
     }
   }
 
   void createWeightData() {
     List<FlSpot> spots = [];
+    wMax = 0;
+    wMin = double.infinity;
     // get the furthest back date
     DateTime beginDate = logs
         .reduce((a, b) => a.getCreated().isAfter(b.getCreated()) ? b : a)
         .getCreated();
     for (var i in logs) {
-      var w = i.metadata.map((e) => e.weight).toList().reduce((a, b) => a + b) /
-          i.metadata.length;
-      // TODO: -- parse from kg to lbs
-      if (w > wMax) {
-        wMax = w;
+      var w = handleWeightData(i.metadata);
+      double correctedW;
+
+      // convert between lbs and kg
+      if (i.weightPost == "lbs") {
+        if (isLbs) {
+          correctedW = w;
+        } else {
+          correctedW = w / 2.205;
+        }
+      } else {
+        if (isLbs) {
+          correctedW = w * 2.205;
+        } else {
+          correctedW = w;
+        }
       }
-      if (w < wMin) {
-        wMin = w;
+
+      if (correctedW > wMax) {
+        wMax = correctedW;
+      }
+      if (correctedW < wMin) {
+        wMin = correctedW;
       }
       // var r = i.metadata.map((e) => e.reps).toList().reduce((a, b) => a + b);
       var begin = DateTime(beginDate.year);
-      spots.add(FlSpot(i.getCreated().difference(begin).inDays.toDouble(), w));
+      spots.add(FlSpot(
+          i.getCreated().difference(begin).inDays.toDouble(), correctedW));
       wDates.add(i.getCreatedFormatted());
     }
-    wData = spots;
+    wData = spots.reversed.toList();
+    wDates = wDates.reversed.toList();
+  }
+
+  double handleWeightData(
+    List<ExerciseLogMeta> metadata,
+  ) {
+    switch (accumulateType) {
+      case AccumulateType.avg:
+        return metadata.map((e) => e.weight).toList().reduce((a, b) => a + b) /
+            metadata.length;
+      case AccumulateType.max:
+        return metadata
+            .map((e) => e.weight)
+            .toList()
+            .reduce((a, b) => max(a, b))
+            .toDouble();
+      case AccumulateType.min:
+        return metadata
+            .map((e) => e.weight)
+            .toList()
+            .reduce((a, b) => min(a, b))
+            .toDouble();
+    }
   }
 }

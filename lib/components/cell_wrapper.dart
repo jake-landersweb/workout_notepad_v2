@@ -21,8 +21,8 @@ class CellWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color:
-            backgroundColor ?? Theme.of(context).colorScheme.secondaryContainer,
+        color: backgroundColor ??
+            Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
         border: border,
         borderRadius: BorderRadius.circular(borderRadius),
       ),

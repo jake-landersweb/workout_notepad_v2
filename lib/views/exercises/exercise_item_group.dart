@@ -195,16 +195,16 @@ class _EditableExerciseItemGroupState extends State<EditableExerciseItemGroup> {
         },
         child: Container(
           color: e.timePost == post
-              ? Theme.of(context).colorScheme.tertiary
-              : Theme.of(context).colorScheme.tertiaryContainer,
+              ? Theme.of(context).colorScheme.primary
+              : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
           width: double.infinity,
           child: Center(
             child: Text(
               post.toUpperCase(),
               style: TextStyle(
                 color: e.timePost == post
-                    ? Theme.of(context).colorScheme.onTertiary
-                    : Theme.of(context).colorScheme.onTertiaryContainer,
+                    ? Theme.of(context).colorScheme.onPrimary
+                    : Theme.of(context).colorScheme.onSurface,
                 fontWeight:
                     e.timePost == post ? FontWeight.w600 : FontWeight.w400,
                 fontSize: 14,

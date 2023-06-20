@@ -19,32 +19,43 @@ class ELCell extends StatefulWidget {
 class _ELCellState extends State<ELCell> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (widget.showDate)
-              Text(
+    return Column(
+      children: [
+        if (widget.showDate)
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 0, 4),
+              child: Text(
                 widget.log.getCreatedFormatted(),
-                style: ttBody(
-                  context,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                  color: Theme.of(context).colorScheme.outline,
                 ),
               ),
-            for (int i = 0; i < widget.log.sets; i++)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: _cell(context, i, widget.log.metadata[i]),
-              ),
-          ],
+            ),
+          ),
+        Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceVariant,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (int i = 0; i < widget.log.sets; i++)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: _cell(context, i, widget.log.metadata[i]),
+                  ),
+              ],
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 

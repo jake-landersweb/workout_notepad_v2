@@ -20,7 +20,8 @@ class SearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CellWrapper(
-      backgroundColor: AppColors.cell(context),
+      backgroundColor:
+          Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
       child: Row(
         children: [
           Icon(

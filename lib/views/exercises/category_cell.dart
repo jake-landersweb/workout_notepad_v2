@@ -22,7 +22,7 @@ class CategoryCell extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
           child: Text(
-            title.uppercase(),
+            title.capitalize(),
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSecondaryContainer,
             ),

@@ -42,7 +42,7 @@ class ExerciseCell extends StatelessWidget {
       padding: padding,
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.cell(context),
+          color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Padding(

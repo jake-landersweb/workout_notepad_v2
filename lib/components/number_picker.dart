@@ -64,7 +64,10 @@ class _NumberPickerState extends State<NumberPicker> {
               Expanded(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primaryContainer,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .surfaceVariant
+                        .withOpacity(0.5),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Field(
@@ -147,7 +150,7 @@ class _NumberPickerState extends State<NumberPicker> {
 
   Color getColor(bool plus) {
     if (plus) {
-      return Theme.of(context).colorScheme.onTertiaryContainer;
+      return Theme.of(context).colorScheme.onPrimary;
     } else {
       return Theme.of(context).colorScheme.onSurfaceVariant;
     }
@@ -155,9 +158,9 @@ class _NumberPickerState extends State<NumberPicker> {
 
   Color getAccent(bool plus) {
     if (plus) {
-      return Theme.of(context).colorScheme.tertiaryContainer;
+      return Theme.of(context).colorScheme.primary;
     } else {
-      return Theme.of(context).colorScheme.surfaceVariant;
+      return Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5);
     }
   }
 

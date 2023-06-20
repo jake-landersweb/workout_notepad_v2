@@ -5,6 +5,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
 import 'package:sprung/sprung.dart';
+import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/components/field.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/data/root.dart';
@@ -65,7 +66,6 @@ class _CEWState extends State<_CEW> {
       header: ((context) => _header(context, dmodel, cmodel)),
       builder: (context) {
         return Stack(
-          alignment: Alignment.bottomRight,
           children: [
             comp.RawReorderableList<CEWExercise>(
               items: cmodel.exercises,
@@ -110,26 +110,29 @@ class _CEWState extends State<_CEW> {
             ),
             // floating action here bc scaffold effects
             // touch area
-            SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.only(right: 10.0),
-                child: FloatingActionButton(
-                  onPressed: () {
-                    comp.cupertinoSheet(
-                      context: context,
-                      builder: (context) => SelectExercise(
-                        onSelect: (e) {
-                          cmodel.addExercise(
-                              WorkoutExercise.fromExercise(cmodel.workout, e));
-                        },
-                      ),
-                    );
-                  },
-                  backgroundColor:
-                      Theme.of(context).colorScheme.tertiaryContainer,
-                  foregroundColor:
-                      Theme.of(context).colorScheme.onTertiaryContainer,
-                  child: const Icon(Icons.add),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 10, 16),
+                  child: FloatingActionButton(
+                    onPressed: () {
+                      comp.cupertinoSheet(
+                        context: context,
+                        builder: (context) => SelectExercise(
+                          onSelect: (e) {
+                            cmodel.addExercise(WorkoutExercise.fromExercise(
+                                cmodel.workout, e));
+                          },
+                        ),
+                      );
+                    },
+                    backgroundColor:
+                        Theme.of(context).colorScheme.secondaryContainer,
+                    foregroundColor:
+                        Theme.of(context).colorScheme.onSecondaryContainer,
+                    child: const Icon(Icons.add),
+                  ),
                 ),
               ),
             ),
@@ -145,14 +148,9 @@ class _CEWState extends State<_CEW> {
       children: [
         Row(
           children: [
-            comp.CloseButton(color: Theme.of(context).colorScheme.primary),
+            comp.CloseButton(color: Theme.of(context).colorScheme.onPrimary),
             const Spacer(),
-            comp.ModelCreateButton(
-              title: widget.isCreate ? "Create" : "Save",
-              isValid: cmodel.isValid(),
-              textColor: cmodel.isValid()
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.outline,
+            Clickable(
               onTap: () async {
                 if (cmodel.isValid()) {
                   if (widget.isCreate) {
@@ -172,6 +170,14 @@ class _CEWState extends State<_CEW> {
                   }
                 }
               },
+              child: Text(
+                widget.isCreate ? "Create" : "Save",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
             ),
           ],
         ),
@@ -180,10 +186,11 @@ class _CEWState extends State<_CEW> {
           showBackground: false,
           charLimit: 50,
           value: cmodel.title,
+          highlightColor: Theme.of(context).colorScheme.onPrimary,
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
+            color: Theme.of(context).colorScheme.onPrimary,
           ),
           labelText: "Title",
           onChanged: (val) => cmodel.setTitle(val),
@@ -192,8 +199,9 @@ class _CEWState extends State<_CEW> {
           fieldPadding: const EdgeInsets.symmetric(horizontal: 16),
           showBackground: false,
           value: cmodel.description,
+          highlightColor: Theme.of(context).colorScheme.onPrimary,
           charLimit: 150,
-          style: TextStyle(color: Theme.of(context).colorScheme.primary),
+          style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
           labelText: "Description",
           onChanged: (val) => cmodel.setDescription(val),
         ),

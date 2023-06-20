@@ -23,7 +23,7 @@ class _ExerciseHomeState extends State<ExerciseHome> {
     return HeaderBar(
       title: "Exercises",
       isLarge: true,
-      backgroundColor: AppColors.background(context),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       trailing: [
         comp.AddButton(onTap: () {
           comp.cupertinoSheet(
@@ -55,7 +55,8 @@ class _ExerciseHomeState extends State<ExerciseHome> {
                 builder: (context) => ExerciseDetail(exercise: i),
               );
             },
-          )
+          ),
+        SizedBox(height: dmodel.workoutState == null ? 50 : 80),
       ],
     );
   }

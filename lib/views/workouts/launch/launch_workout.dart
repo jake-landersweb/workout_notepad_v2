@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
 import 'package:sprung/sprung.dart';
+import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
+import 'package:workout_notepad_v2/components/timer.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout.dart';
@@ -12,23 +15,92 @@ import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/lw_exercise_detail.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
 
-class LaunchWorkout extends StatelessWidget {
+enum PopupState { minimize, finish, cancel }
+
+Future<void> launchWorkout(
+    BuildContext context, DataModel dmodel, Workout workout) async {
+  if (dmodel.workoutState != null) {
+    if (dmodel.workoutState!.workout.workoutId == workout.workoutId) {
+      var s = dmodel.workoutState!;
+      showMaterialModalBottomSheet(
+        context: context,
+        enableDrag: true,
+        builder: (context) {
+          return LaunchWorkout(state: s);
+        },
+      );
+    } else {
+      showAlert(
+        context: context,
+        title: "Overwrite Workout?",
+        body: const Text(
+          "You currently have a workout in progress, do you want to cancel that workout and start this one?",
+        ),
+        cancelText: "Cancel",
+        cancelBolded: true,
+        onCancel: () {
+          return;
+        },
+        submitText: "Overwrite",
+        onSubmit: () async {
+          var s = await dmodel.createWorkoutState(workout);
+          showMaterialModalBottomSheet(
+            context: context,
+            enableDrag: true,
+            builder: (context) {
+              return LaunchWorkout(state: s!);
+            },
+          );
+        },
+      );
+    }
+  } else {
+    var s = await dmodel.createWorkoutState(workout);
+    showMaterialModalBottomSheet(
+      context: context,
+      enableDrag: true,
+      builder: (context) {
+        return LaunchWorkout(state: s!);
+      },
+    );
+  }
+}
+
+class LaunchWorkout extends StatefulWidget {
   const LaunchWorkout({
     super.key,
-    required this.workout,
-    this.exercises,
+    required this.state,
+    this.dispose,
   });
-  final Workout workout;
-  final List<WorkoutExercise>? exercises;
+  final LaunchWorkoutModelState state;
+  final VoidCallback? dispose;
+
+  @override
+  State<LaunchWorkout> createState() => _LaunchWorkoutState();
+}
+
+class _LaunchWorkoutState extends State<LaunchWorkout> {
+  @override
+  void dispose() {
+    if (widget.dispose != null) {
+      widget.dispose!();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    var dmodel = Provider.of<DataModel>(context);
     return ChangeNotifierProvider(
-      create: (context) =>
-          LaunchWorkoutModel(dmodel.user!.userId, workout, exercises),
+      create: (context) => LaunchWorkoutModel(widget.state),
       builder: ((context, child) {
-        return _body(context);
+        return Navigator(
+          onGenerateRoute: (settings) {
+            return MaterialWithModalsPageRoute(
+              settings: settings,
+              builder: (context) => _body(context),
+            );
+          },
+        );
       }),
     );
   }
@@ -38,14 +110,16 @@ class LaunchWorkout extends StatelessWidget {
     var lmodel = Provider.of<LaunchWorkoutModel>(context);
     return comp.InteractiveSheet(
       header: (context) => _header(context, dmodel, lmodel),
+      headerPadding: const EdgeInsets.fromLTRB(16, 0, 0, 16),
       builder: (context) {
         return PageView(
           onPageChanged: (value) => lmodel.setIndex(value),
-          controller: lmodel.pageController,
+          controller: lmodel.state.pageController,
           children: [
-            if (lmodel.exerciseChildren.isNotEmpty)
-              for (int i = 0; i < lmodel.exercises.length; i++)
+            if (lmodel.state.exerciseChildren.isNotEmpty)
+              for (int i = 0; i < lmodel.state.exercises.length; i++)
                 LWExerciseDetail(index: i),
+            const LWEnd(),
           ],
         );
       },
@@ -57,56 +131,154 @@ class LaunchWorkout extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Row(
+        //   children: [
+        //     comp.CloseButton(
+        //       color: Theme.of(context).colorScheme.onPrimary,
+        //     ),
+        //     const Spacer(),
+        //     FilledButton.tonal(
+        //       onPressed: () async {
+        // await lmodel.finishWorkout(dmodel);
+        // Navigator.of(context).pop();
+        //       },
+        //       child: Text("Finish Workout"),
+        //     ),
+        //   ],
+        // ),
         Row(
           children: [
-            comp.CloseButton(
-              color: Theme.of(context).colorScheme.onSecondaryContainer,
+            Expanded(
+              child: Text(
+                lmodel.state.workout.title,
+                style: ttTitle(
+                  context,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
             ),
-            const Spacer(),
-            FilledButton(
-              onPressed: () async {
-                await lmodel.finishWorkout(dmodel);
-                Navigator.of(context).pop();
+            PopupMenuButton<PopupState>(
+              padding: EdgeInsets.zero,
+              icon: Icon(
+                Icons.more_vert_rounded,
+                color: Theme.of(context).colorScheme.onPrimary,
+              ),
+              // Callback that sets the selected popup menu item.
+              onSelected: (PopupState item) async {
+                switch (item) {
+                  case PopupState.minimize:
+                    // hide the workout launch view
+                    Navigator.of(context, rootNavigator: true).pop();
+                    break;
+                  case PopupState.finish:
+                    showAlert(
+                      context: context,
+                      title: "Are You Sure?",
+                      body: const Text(
+                          "Once you finish a workout, you cannot go back and modify it."),
+                      cancelText: "Go Back",
+                      onCancel: () {},
+                      submitBolded: true,
+                      submitText: "Finish",
+                      onSubmit: () async {
+                        await lmodel.finishWorkout(dmodel);
+                        Navigator.of(context, rootNavigator: true).pop();
+                      },
+                    );
+                    break;
+                  case PopupState.cancel:
+                    showAlert(
+                      context: context,
+                      title: "Are You Sure?",
+                      body: const Text(
+                          "If you cancel your workout, all progress will be lost."),
+                      cancelText: "Go Back",
+                      onCancel: () {},
+                      cancelBolded: true,
+                      submitColor: Colors.red,
+                      submitText: "Yes",
+                      onSubmit: () {
+                        Navigator.of(context, rootNavigator: true).pop();
+                        dmodel.stopWorkout();
+                      },
+                    );
+                    break;
+                }
               },
-              child: Text("Finish Workout"),
+              itemBuilder: (BuildContext context) =>
+                  <PopupMenuEntry<PopupState>>[
+                PopupMenuItem<PopupState>(
+                  value: PopupState.minimize,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.minimize_rounded,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      const Text("Minimize"),
+                    ],
+                  ),
+                ),
+                PopupMenuItem<PopupState>(
+                  value: PopupState.cancel,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.close_rounded,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      const Text("Cancel"),
+                    ],
+                  ),
+                ),
+                PopupMenuItem<PopupState>(
+                  value: PopupState.finish,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.star_rounded,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      const Text("Finish"),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ],
         ),
-        Text(
-          lmodel.workout.title,
-          style: ttTitle(
-            context,
-            color: Theme.of(context).colorScheme.onSecondaryContainer,
-          ),
-        ),
-        if (lmodel.workout.description != null)
-          Text(
-            lmodel.workout.description!,
-            style: ttBody(
-              context,
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSecondaryContainer
-                  .withOpacity(0.5),
+        if (lmodel.state.workout.description != null)
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: Text(
+              lmodel.state.workout.description!,
+              style: ttBody(
+                context,
+                color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.5),
+              ),
             ),
           ),
         Padding(
-          padding: const EdgeInsets.only(top: 8.0),
+          padding: const EdgeInsets.fromLTRB(0, 8, 16, 0),
           child: Row(
             children: [
-              comp.TextTimer(
-                style: ttLabel(
-                  context,
-                  color: Theme.of(context).colorScheme.onSecondaryContainer,
+              LWTime(
+                start: lmodel.state.startTime,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 18,
                 ),
-                onMsTick: ((time) => lmodel.duration = time.inSeconds),
               ),
               const Spacer(),
               Text(
-                "${lmodel.workoutIndex + 1}/${lmodel.exercises.length}",
+                "${lmodel.state.workoutIndex + 1 > lmodel.state.exercises.length ? '-' : lmodel.state.workoutIndex + 1}/${lmodel.state.exercises.length}",
                 style: ttLabel(
                   context,
-                  color: Theme.of(context).colorScheme.onSecondaryContainer,
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
             ],

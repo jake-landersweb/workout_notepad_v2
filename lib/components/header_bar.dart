@@ -336,7 +336,7 @@ class _HeaderBarState extends State<HeaderBar> {
                   widget.title,
                   style: TextStyle(
                     fontSize: 32,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w900,
                     color: widget.titleColor ??
                         Theme.of(context).colorScheme.onBackground,
                   ),

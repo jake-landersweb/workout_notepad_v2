@@ -1,5 +1,5 @@
 extension StringUtils on String {
-  String uppercase() {
+  String capitalize() {
     if (length == 0) {
       return "";
     }

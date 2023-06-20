@@ -18,7 +18,8 @@ class ExerciseItemCell extends StatelessWidget {
         Container(
           width: double.infinity,
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.primaryContainer,
+            color:
+                Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Center(

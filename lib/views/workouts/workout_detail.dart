@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 
 import 'package:workout_notepad_v2/components/root.dart' as comp;
+import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:workout_notepad_v2/views/workouts/logs/root.dart';
+import 'package:workout_notepad_v2/views/workouts/workout_exercise_cell.dart';
 
 class WorkoutDetail extends StatefulWidget {
   const WorkoutDetail({
@@ -58,69 +61,74 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
 
   @override
   Widget build(BuildContext context) {
+    var dmodel = context.read<DataModel>();
     return Scaffold(
       body: HeaderBar(
         title: _workout.title,
-        backgroundColor: AppColors.background(context),
         itemSpacing: 8,
+        isLarge: true,
         horizontalSpacing: 0,
         largeTitlePadding: const EdgeInsets.only(left: 16),
         leading: const [comp.BackButton()],
         trailing: [
-          comp.EditButton(
-            onTap: () {
-              showMaterialModalBottomSheet(
-                context: context,
-                enableDrag: false,
-                builder: (context) => CEWRoot(
-                  isCreate: false,
-                  workout: _workout,
-                  onAction: (workout) async => _postUpdate(workout),
-                ),
-              );
-            },
-          )
+          if (dmodel.workoutState?.workout.workoutId != _workout.workoutId)
+            comp.EditButton(
+              onTap: () {
+                showMaterialModalBottomSheet(
+                  context: context,
+                  enableDrag: false,
+                  builder: (context) => CEWRoot(
+                    isCreate: false,
+                    workout: _workout,
+                    onAction: (workout) async => _postUpdate(workout),
+                  ),
+                );
+              },
+            )
         ],
         children: [
-          const SizedBox(height: 16),
-          if ((_workout.description ?? "") != "")
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Text(
-                _workout.description!,
-                style: ttLabel(
-                  context,
-                  color: Theme.of(context).colorScheme.onBackground,
+          // wrapped container to keep all widgets in memory
+          Column(
+            children: [
+              const SizedBox(height: 8),
+              if ((_workout.description ?? "") != "")
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Text(
+                      _workout.description!,
+                      style: ttLabel(
+                        context,
+                        color: Theme.of(context).colorScheme.onBackground,
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          const SizedBox(height: 16),
-          _actions(context),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.only(left: 16.0),
-            child: comp.LabeledWidget(
-              label: "Exercises",
-              child: Container(),
-            ),
+              const SizedBox(height: 16),
+              _actions(context, dmodel),
+              const SizedBox(height: 16),
+              for (int i = 0; i < _exercises.length; i++)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: WorkoutExerciseCell(
+                      workoutId: widget.workout.workout.workoutId,
+                      exercise: _exercises[i]),
+                )
+                    .animate(delay: (25 * i).ms)
+                    .slideX(
+                        begin: 0.25,
+                        curve: Sprung(36),
+                        duration: const Duration(milliseconds: 500))
+                    .fadeIn()
+            ],
           ),
-          for (int i = 0; i < _exercises.length; i++)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: ExerciseCell(exercise: _exercises[i]),
-            )
-                .animate(delay: (25 * i).ms)
-                .slideX(
-                    begin: 0.25,
-                    curve: Sprung(36),
-                    duration: const Duration(milliseconds: 500))
-                .fadeIn()
         ],
       ),
     );
   }
 
-  Widget _actions(BuildContext context) {
+  Widget _actions(BuildContext context, DataModel dmodel) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Padding(
@@ -130,16 +138,15 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
             _actionCell(
               context: context,
               icon: Icons.play_arrow_rounded,
-              title: "Start",
-              description: "Launch the workout",
-              onTap: () {
-                showMaterialModalBottomSheet(
-                  context: context,
-                  enableDrag: false,
-                  builder: (context) =>
-                      LaunchWorkout(workout: _workout, exercises: _exercises),
-                );
-              },
+              title:
+                  dmodel.workoutState?.workout.workoutId == _workout.workoutId
+                      ? "Resume"
+                      : "Start",
+              description:
+                  dmodel.workoutState?.workout.workoutId == _workout.workoutId
+                      ? "Resume the workout"
+                      : "Launch the workout",
+              onTap: () async => launchWorkout(context, dmodel, _workout),
               index: 1,
             ),
             const SizedBox(width: 16),
@@ -181,7 +188,8 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
     required VoidCallback onTap,
     required int index,
   }) {
-    final bgColor = AppColors.cell(context);
+    final bgColor =
+        Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5);
     final textColor = Theme.of(context).colorScheme.onPrimaryContainer;
     final iconColor = Theme.of(context).colorScheme.primary;
     return Clickable(

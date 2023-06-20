@@ -30,21 +30,27 @@ class MyApp extends StatelessWidget {
   Widget _body(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
     final scheme = AppColorScheme(primaryColor: dmodel.color);
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: ThemeMode.system == Brightness.light
-          ? SystemUiOverlayStyle.dark
-          : SystemUiOverlayStyle.light,
-      child: MaterialApp(
-        title: 'Workout Notepad',
-        debugShowCheckedModeBanner: false,
-        theme: scheme.getTheme(Brightness.light),
-        darkTheme: scheme.getTheme(Brightness.dark),
-        onGenerateRoute: (settings) {
-          return MaterialWithModalsPageRoute(
-            settings: settings,
-            builder: (context) => const Index(),
-          );
-        },
+    return GestureDetector(
+      onTap: () {
+        // for dismissing keybaord when tapping on the screen
+        WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
+      },
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: ThemeMode.system == Brightness.light
+            ? SystemUiOverlayStyle.dark
+            : SystemUiOverlayStyle.light,
+        child: MaterialApp(
+          title: 'Workout Notepad',
+          debugShowCheckedModeBanner: false,
+          theme: scheme.getTheme(Brightness.light),
+          darkTheme: scheme.getTheme(Brightness.dark),
+          onGenerateRoute: (settings) {
+            return MaterialWithModalsPageRoute(
+              settings: settings,
+              builder: (context) => const Index(),
+            );
+          },
+        ),
       ),
     );
   }

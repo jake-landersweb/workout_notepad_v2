@@ -101,7 +101,7 @@ class _FloatingSheetState extends State<FloatingSheet> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          color: Theme.of(context).colorScheme.secondaryContainer,
+          color: Theme.of(context).colorScheme.surface,
           child: Padding(
             padding: widget.padding,
             child: Column(

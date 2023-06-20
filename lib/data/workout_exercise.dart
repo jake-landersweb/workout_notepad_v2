@@ -132,6 +132,23 @@ class WorkoutExercise extends ExerciseBase {
     return e;
   }
 
+  Future<bool> delete(String workoutId) async {
+    try {
+      final db = await getDB();
+      // delete exercise
+      String query = """
+        DELETE FROM workout_exercise
+        WHERE workoutExerciseId = '$workoutExerciseId'
+      """;
+      await db.rawQuery(query.trim());
+
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
   @override
   Future<int> insert({ConflictAlgorithm? conflictAlgorithm}) async {
     final db = await getDB();

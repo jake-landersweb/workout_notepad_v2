@@ -156,7 +156,10 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.secondaryContainer,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceVariant
+                            .withOpacity(0.5),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Padding(
@@ -213,31 +216,43 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                 Expanded(
                   child: Align(
                     alignment: Alignment.centerLeft,
-                    child: Clickable(
-                      onTap: () {
-                        showFloatingSheet(
-                          context: context,
-                          builder: (context) => _ExerciseNote(
-                            note: widget.cewe.exercise.note,
-                            onSave: (val) {
-                              setState(() {
-                                widget.cewe.exercise.note = val;
-                              });
-                            },
+                    child: Row(
+                      children: [
+                        Clickable(
+                          onTap: () {
+                            showFloatingSheet(
+                              context: context,
+                              builder: (context) => _ExerciseNote(
+                                note: widget.cewe.exercise.note,
+                                onSave: (val) {
+                                  setState(() {
+                                    widget.cewe.exercise.note = val;
+                                  });
+                                },
+                              ),
+                            );
+                          },
+                          child: Icon(
+                            Icons.sticky_note_2_rounded,
+                            color: Theme.of(context).colorScheme.tertiary,
                           ),
-                        );
-                      },
-                      child: Icon(
-                        Icons.sticky_note_2_rounded,
-                        color: Theme.of(context).colorScheme.tertiary,
-                      ),
+                        ),
+                        if (widget.cewe.exercise.note != "")
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text(widget.cewe.exercise.note,
+                                  overflow: TextOverflow.ellipsis),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ),
                 Expanded(
                   child: FilledButton.icon(
-                    icon: Icon(LineIcons.plus),
-                    label: Text("Super-Set"),
+                    icon: const Icon(LineIcons.plus),
+                    label: const Text("Super-Set"),
                     onPressed: () {
                       comp.cupertinoSheet(
                         context: context,
@@ -296,14 +311,15 @@ class __ExerciseNoteState extends State<_ExerciseNote> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).colorScheme.secondaryContainer,
+      color: Theme.of(context).colorScheme.surface,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             CellWrapper(
-              backgroundColor: Theme.of(context).colorScheme.onSecondary,
+              backgroundColor:
+                  Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
               child: Field(
                 value: _note,
                 maxLines: 4,

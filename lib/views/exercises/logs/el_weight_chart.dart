@@ -9,6 +9,7 @@ import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:fl_chart/fl_chart.dart';
+import "package:workout_notepad_v2/utils/root.dart";
 
 class ELWeightChart extends StatefulWidget {
   const ELWeightChart({super.key});
@@ -27,26 +28,113 @@ class _ELWeightChartState extends State<ELWeightChart> {
       right: false,
       bottom: true,
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.fromLTRB(8, 8, 8, 20),
         child: Column(
           children: [
             Row(
               children: [
                 Clickable(
                   onTap: () {
-                    elmodel.wNextPage();
+                    switch (elmodel.wPageSize) {
+                      case 5:
+                        setState(() {
+                          elmodel.wPageSize = 10;
+                        });
+                        break;
+                      case 10:
+                        setState(() {
+                          elmodel.wPageSize = elmodel.wData.length;
+                        });
+                        break;
+                      default:
+                        setState(() {
+                          elmodel.wPageSize = 5;
+                        });
+                        break;
+                    }
                   },
-                  child: Icon(Icons.chevron_left_rounded),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .surfaceVariant
+                          .withOpacity(0.5),
+                    ),
+                    height: 40,
+                    width: 60,
+                    child: Center(
+                      child: Text(elmodel.wPageSize.toString()),
+                    ),
+                  ),
                 ),
-                const Spacer(),
+                const SizedBox(width: 8),
                 Clickable(
                   onTap: () {
-                    elmodel.wPrevPage();
+                    elmodel.toggleAccumulate();
                   },
-                  child: Icon(Icons.chevron_right_rounded),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .surfaceVariant
+                          .withOpacity(0.5),
+                    ),
+                    height: 40,
+                    width: 60,
+                    child: Center(
+                      child: Text(elmodel.accumulateType.name.capitalize()),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Clickable(
+                    onTap: () {
+                      elmodel.wNextPage();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceVariant
+                            .withOpacity(0.5),
+                      ),
+                      height: 40,
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Icon(Icons.chevron_left_rounded),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Clickable(
+                    onTap: () {
+                      elmodel.wPrevPage();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .surfaceVariant
+                            .withOpacity(0.5),
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: Icon(Icons.chevron_right_rounded),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
+            const SizedBox(height: 16),
+            Text("${elmodel.wgetDates().first} - ${elmodel.wgetDates().last}"),
             const SizedBox(height: 16),
             Expanded(
               child: LineChart(
@@ -68,7 +156,7 @@ class _ELWeightChartState extends State<ELWeightChart> {
                         for (var i in touchedSpots) {
                           items.add(
                             LineTooltipItem(
-                              "${i.y.round()} lbs\n${dates[i.spotIndex]}",
+                              "${i.y.round()} ${elmodel.isLbs ? 'lbs' : 'kg'}\n${dates[i.spotIndex]}",
                               ttBody(
                                 context,
                                 color: Theme.of(context)
@@ -94,7 +182,7 @@ class _ELWeightChartState extends State<ELWeightChart> {
                         interval: elmodel.wMax / 5,
                         getTitlesWidget: (value, meta) {
                           return Text(
-                            "${value.round()} lbs",
+                            "${value.round()} ${elmodel.isLbs ? 'lbs' : 'kg'}",
                             style: TextStyle(
                               fontSize: 12,
                               color: Theme.of(context)
@@ -115,8 +203,8 @@ class _ELWeightChartState extends State<ELWeightChart> {
                       spots: elmodel.wgetData(),
                       barWidth: 5,
                       gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
                         colors: [
                           Theme.of(context).colorScheme.primary,
                           Theme.of(context).colorScheme.tertiary,

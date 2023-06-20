@@ -57,7 +57,7 @@ class _InteractiveSheetState extends State<InteractiveSheet> {
       duration: const Duration(milliseconds: 500),
       curve: Sprung(36),
       child: Container(
-        color: Theme.of(context).colorScheme.onPrimary,
+        color: Theme.of(context).colorScheme.primary,
         child: SafeArea(
           top: true,
           bottom: false,

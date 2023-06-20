@@ -31,6 +31,7 @@ class Field extends StatefulWidget {
   final TextInputAction textInputAction;
   final bool autocorrect;
   final TextAlign textAlign;
+  final Color? highlightColor;
 
   const Field({
     Key? key,
@@ -55,6 +56,7 @@ class Field extends StatefulWidget {
     this.textInputAction = TextInputAction.done,
     this.autocorrect = false,
     this.textAlign = TextAlign.start,
+    this.highlightColor,
   }) : super(key: key);
 
   @override
@@ -77,10 +79,9 @@ class _FieldState extends State<Field> {
     return Theme(
       key: widget.key,
       data: Theme.of(context).copyWith(
-        primaryColor: Theme.of(context).primaryColor,
-        colorScheme: Theme.of(context)
-            .colorScheme
-            .copyWith(primary: Theme.of(context).primaryColor),
+        primaryColor: widget.highlightColor ?? Theme.of(context).primaryColor,
+        colorScheme: Theme.of(context).colorScheme.copyWith(
+            primary: widget.highlightColor ?? Theme.of(context).primaryColor),
         inputDecorationTheme: const InputDecorationTheme(
           focusedBorder: UnderlineInputBorder(
             borderSide: BorderSide(
@@ -147,7 +148,7 @@ class _FieldState extends State<Field> {
       textCapitalization: widget.textCapitalization,
       keyboardType: widget.keyboardType,
       keyboardAppearance: Theme.of(context).brightness,
-      cursorColor: Theme.of(context).primaryColor,
+      cursorColor: widget.highlightColor ?? Theme.of(context).primaryColor,
       obscureText: widget.obscureText,
       maxLength: widget.charLimit,
       minLines: widget.minLines ?? 1,

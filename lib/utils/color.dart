@@ -98,9 +98,9 @@ extension AppColors on Color {
 
   static Color sheetCell(BuildContext context) {
     if (Theme.of(context).brightness == Brightness.light) {
-      return ColorUtil.hexToColor("#ffffff");
+      return ColorUtil.hexToColor("#eeeff5");
     } else {
-      return bgDark;
+      return cellDark;
     }
   }
 

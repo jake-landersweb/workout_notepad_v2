@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/components/cell_wrapper.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
+import 'package:workout_notepad_v2/components/contained_list.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/components/labeled_cell.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
@@ -69,25 +70,31 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
                 curve: Sprung(36),
                 duration: const Duration(milliseconds: 500))
             .fadeIn(),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: CellWrapper(
-            backgroundColor:
-                Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: LabeledCell(
-                label: "Category",
+        ContainedList<Widget>(
+          childPadding: const EdgeInsets.symmetric(horizontal: 16),
+          children: [
+            LabeledCell(
+              label: "Category",
+              child: Text(
+                widget.exercise.category.capitalize(),
+                style: ttLabel(
+                  context,
+                  color: Theme.of(context).colorScheme.onBackground,
+                ),
+              ),
+            ),
+            if (widget.exercise.description.isNotEmpty)
+              LabeledCell(
+                label: "Description",
                 child: Text(
-                  widget.exercise.category.uppercase(),
+                  widget.exercise.description.capitalize(),
                   style: ttLabel(
                     context,
                     color: Theme.of(context).colorScheme.onBackground,
                   ),
                 ),
               ),
-            ),
-          ),
+          ],
         )
             .animate(delay: (50 * 3).ms)
             .slideY(
@@ -95,33 +102,6 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
                 curve: Sprung(36),
                 duration: const Duration(milliseconds: 500))
             .fadeIn(),
-        if (widget.exercise.description.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: CellWrapper(
-              backgroundColor:
-                  Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: LabeledCell(
-                  label: "Description",
-                  child: Text(
-                    widget.exercise.description.uppercase(),
-                    style: ttLabel(
-                      context,
-                      color: Theme.of(context).colorScheme.onBackground,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          )
-              .animate(delay: (50 * 4).ms)
-              .slideY(
-                  begin: 0.25,
-                  curve: Sprung(36),
-                  duration: const Duration(milliseconds: 500))
-              .fadeIn(),
       ],
     );
   }
@@ -166,7 +146,7 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
               onTap: () {
                 showMaterialModalBottomSheet(
                   context: context,
-                  enableDrag: false,
+                  enableDrag: true,
                   builder: (context) => ExerciseLogs(exercise: widget.exercise),
                 );
               },
@@ -208,7 +188,8 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
     required VoidCallback onTap,
     required int index,
   }) {
-    final bgColor = Theme.of(context).colorScheme.tertiaryContainer;
+    final bgColor =
+        Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5);
     final textColor = Theme.of(context).colorScheme.onTertiaryContainer;
     return Clickable(
       onTap: onTap,

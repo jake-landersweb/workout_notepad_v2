@@ -6,22 +6,78 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:workout_notepad_v2/color_schemes.dart';
+import 'package:workout_notepad_v2/components/root.dart';
+import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/load_tests.dart';
 import 'package:path/path.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
 
 enum LoadStatus { init, noUser, done }
 
 class DataModel extends ChangeNotifier {
   DataModel() {
-    initTest(delete: true);
+    initTest(delete: false);
+    // init();
   }
 
   LoadStatus loadStatus = LoadStatus.init;
 
   Color color = appColors.first;
+
+  LaunchWorkoutModelState? workoutState;
+
+  Future<LaunchWorkoutModelState> createWorkoutState(Workout workout) async {
+    workoutState = null;
+    notifyListeners();
+    workoutState = LaunchWorkoutModelState(
+      userId: user!.userId,
+      workout: workout,
+      exercises: [],
+      pageController: PageController(initialPage: 0),
+      wl: WorkoutLog.init(user!.userId, workout),
+      startTime: DateTime.now(),
+    );
+    if (workoutState!.exercises.isEmpty) {
+      // get the exercise children
+      workoutState!.exercises = await workoutState!.workout.getChildren();
+    }
+    for (int i = 0; i < workoutState!.exercises.length; i++) {
+      var tmp = await workoutState!.exercises[i]
+          .getChildren(workoutState!.workout.workoutId);
+      workoutState!.exerciseChildren.add(tmp);
+      // create the log group for each exercise
+      workoutState!.exerciseLogs.add(
+        ExerciseLog.workoutInit(
+          workoutState!.userId,
+          workoutState!.exercises[i].exerciseId,
+          workoutState!.wl.workoutLogId,
+          workoutState!.exercises[i],
+        ),
+      );
+
+      // create the logs for the children as well
+      workoutState!.exerciseChildLogs.add([]);
+      for (var j in tmp) {
+        workoutState!.exerciseChildLogs[i].add(
+          ExerciseLog.workoutInit(
+            workoutState!.userId,
+            j.childId,
+            workoutState!.wl.workoutLogId,
+            j,
+          ),
+        );
+      }
+    }
+    return workoutState!;
+  }
+
+  void stopWorkout() {
+    workoutState = null;
+    notifyListeners();
+  }
 
   Future<void> setColor(Color c) async {
     var prefs = await SharedPreferences.getInstance();
@@ -103,7 +159,7 @@ class DataModel extends ChangeNotifier {
       User u = User.init();
       u.userId = "1";
       await u.insert();
-      await loadTests();
+      // await loadTests();
     }
 
     // get the color

@@ -52,6 +52,7 @@ dependencies:
   material_color_utilities: ^0.2.0
   flutter_animate: ^4.1.0
   fl_chart: ^0.61.0
+  graphic: ^2.2.0
 
 dev_dependencies:
   flutter_test:

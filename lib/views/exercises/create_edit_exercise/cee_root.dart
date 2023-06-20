@@ -152,7 +152,6 @@ class _CEERootState extends State<CEERoot> {
     return ContainedList<Widget>(
       childPadding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
       leadingPadding: 0,
-      backgroundColor: AppColors.cell(context),
       trailingPadding: 0,
       children: [
         Field(
@@ -260,7 +259,7 @@ class _CEERootState extends State<CEERoot> {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
           child: Text(
-            title.uppercase(),
+            title.capitalize(),
             style: TextStyle(
               color: title == cemodel.exercise.category
                   ? Theme.of(context).colorScheme.onPrimary
@@ -375,7 +374,7 @@ class _CEERootState extends State<CEERoot> {
         },
         child: Container(
           color: cemodel.exercise.timePost == post
-              ? Theme.of(context).colorScheme.tertiaryContainer
+              ? Theme.of(context).colorScheme.primary
               : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
           width: double.infinity,
           child: Center(
@@ -383,7 +382,7 @@ class _CEERootState extends State<CEERoot> {
               post.toUpperCase(),
               style: TextStyle(
                 color: cemodel.exercise.timePost == post
-                    ? Theme.of(context).colorScheme.onTertiaryContainer
+                    ? Theme.of(context).colorScheme.onPrimary
                     : Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: cemodel.exercise.timePost == post
                     ? FontWeight.w600

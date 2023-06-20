@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/components/cell_wrapper.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
+import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
 import 'package:workout_notepad_v2/components/floating_sheet.dart';
 import 'package:workout_notepad_v2/data/exercise_base.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
@@ -40,7 +41,56 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (lmodel.exercises[widget.index].note.isNotEmpty)
+                // for exchanging or adding new workouts
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Row(
+                    children: [
+                      Clickable(
+                        onTap: () {
+                          cupertinoSheet(
+                            context: context,
+                            builder: (context) => SelectExercise(
+                              title: "Exchange Exercise",
+                              onSelect: (exercise) {
+                                lmodel.addExercise(exercise, widget.index);
+                              },
+                            ),
+                          );
+                        },
+                        child: const Icon(LineIcons.syncIcon),
+                      ),
+                      const Spacer(),
+                      Clickable(
+                        onTap: () {
+                          cupertinoSheet(
+                            context: context,
+                            builder: (context) => SelectExercise(
+                              title: "Add Exercise Next",
+                              onSelect: (exercise) async {
+                                lmodel.addExercise(
+                                  exercise,
+                                  widget.index + 1,
+                                  push: true,
+                                );
+                                await Future.delayed(
+                                  const Duration(milliseconds: 700),
+                                );
+                                lmodel.state.pageController.animateToPage(
+                                  widget.index + 1,
+                                  duration: const Duration(milliseconds: 500),
+                                  curve: Sprung.overDamped,
+                                );
+                              },
+                            ),
+                          );
+                        },
+                        child: const Icon(Icons.new_label_outlined),
+                      ),
+                    ],
+                  ),
+                ),
+                if (lmodel.state.exercises[widget.index].note.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: CellWrapper(
@@ -52,7 +102,8 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                             const Icon(LineIcons.infoCircle),
                             const SizedBox(width: 16),
                             Expanded(
-                              child: Text(lmodel.exercises[widget.index].note,
+                              child: Text(
+                                  lmodel.state.exercises[widget.index].note,
                                   style: ttLabel(context)),
                             )
                           ],
@@ -61,13 +112,13 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                     ),
                   ),
                 Text(
-                  lmodel.exercises[widget.index].title,
+                  lmodel.state.exercises[widget.index].title,
                   style: ttSubTitle(context,
                       color: Theme.of(context).colorScheme.onSurfaceVariant),
                 ),
-                if (lmodel.exercises[widget.index].description.isNotEmpty)
+                if (lmodel.state.exercises[widget.index].description.isNotEmpty)
                   Text(
-                    lmodel.exercises[widget.index].description,
+                    lmodel.state.exercises[widget.index].description,
                     style: ttBody(
                       context,
                       color: Theme.of(context).colorScheme.outline,
@@ -76,14 +127,14 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                 const SizedBox(height: 8),
                 _getCell(
                   context,
-                  lmodel.exercises[widget.index],
-                  lmodel.exerciseLogs[widget.index],
+                  lmodel.state.exercises[widget.index],
+                  lmodel.state.exerciseLogs[widget.index],
                   lmodel,
                 ),
               ],
             ),
           ),
-          if (lmodel.exerciseChildLogs[widget.index].isNotEmpty)
+          if (lmodel.state.exerciseChildLogs[widget.index].isNotEmpty)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
               child: Row(
@@ -116,7 +167,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
               ),
             ),
           for (int i = 0;
-              i < lmodel.exerciseChildLogs[widget.index].length;
+              i < lmodel.state.exerciseChildLogs[widget.index].length;
               i++)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
@@ -124,16 +175,17 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    lmodel.exerciseChildren[widget.index][i].title,
+                    lmodel.state.exerciseChildren[widget.index][i].title,
                     style: ttSubTitle(
                       context,
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
-                  if (lmodel
-                      .exerciseChildren[widget.index][i].description.isNotEmpty)
+                  if (lmodel.state.exerciseChildren[widget.index][i].description
+                      .isNotEmpty)
                     Text(
-                      lmodel.exerciseChildren[widget.index][i].description,
+                      lmodel
+                          .state.exerciseChildren[widget.index][i].description,
                       style: ttBody(
                         context,
                         color: Theme.of(context).colorScheme.outline,
@@ -147,7 +199,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                     child: _getChildCell(
                       context,
                       i,
-                      lmodel.exerciseChildLogs[widget.index][i],
+                      lmodel.state.exerciseChildLogs[widget.index][i],
                       lmodel,
                     ),
                   ),
@@ -175,7 +227,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxHeight: 300),
               child: comp.CountdownTimer(
-                duration: lmodel.exercises[widget.index].getDuration(),
+                duration: lmodel.state.exercises[widget.index].getDuration(),
                 fontSize: 60,
               ),
             ),
@@ -184,12 +236,13 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
           Padding(
             padding: const EdgeInsets.only(bottom: 16.0),
             child: comp.CountupTimer(
-              goalDuration: lmodel.exercises[widget.index].getDuration(),
+              goalDuration: lmodel.state.exercises[widget.index].getDuration(),
               onFinish: (duration) {
-                int idx = lmodel.exerciseLogs[widget.index].metadata
+                int idx = lmodel.state.exerciseLogs[widget.index].metadata
                     .indexWhere((element) => !element.saved);
                 if (idx == -1) return;
-                lmodel.exerciseLogs[widget.index].setDuration(idx, duration);
+                lmodel.state.exerciseLogs[widget.index]
+                    .setDuration(idx, duration);
                 lmodel.setLogSaved(widget.index, idx, true);
               },
             ),
@@ -309,7 +362,8 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxHeight: 300),
               child: comp.CountdownTimer(
-                duration: lmodel.exerciseChildren[widget.index][childIndex]
+                duration: lmodel
+                    .state.exerciseChildren[widget.index][childIndex]
                     .getDuration(),
                 fontSize: 60,
               ),
@@ -319,14 +373,15 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
           Padding(
             padding: const EdgeInsets.only(bottom: 16.0),
             child: comp.CountupTimer(
-              goalDuration: lmodel.exerciseChildren[widget.index][childIndex]
+              goalDuration: lmodel
+                  .state.exerciseChildren[widget.index][childIndex]
                   .getDuration(),
               onFinish: (duration) {
                 int idx = lmodel
-                    .exerciseChildLogs[widget.index][childIndex].metadata
+                    .state.exerciseChildLogs[widget.index][childIndex].metadata
                     .indexWhere((element) => !element.saved);
                 if (idx == -1) return;
-                lmodel.exerciseChildLogs[widget.index][childIndex]
+                lmodel.state.exerciseChildLogs[widget.index][childIndex]
                     .setDuration(idx, duration);
                 lmodel.setLogChildSaved(widget.index, childIndex, idx, true);
               },
@@ -861,7 +916,7 @@ class _CellLogState extends State<_CellLog> {
         },
         child: Container(
           color: _timePost == post || _weightPost == post
-              ? Theme.of(context).colorScheme.tertiary
+              ? Theme.of(context).colorScheme.primary
               : Theme.of(context).colorScheme.surfaceVariant,
           width: double.infinity,
           child: Center(
@@ -869,7 +924,7 @@ class _CellLogState extends State<_CellLog> {
               post.toUpperCase(),
               style: TextStyle(
                 color: _timePost == post || _weightPost == post
-                    ? Theme.of(context).colorScheme.onTertiary
+                    ? Theme.of(context).colorScheme.onPrimary
                     : Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: _timePost == post || _weightPost == post
                     ? FontWeight.w600

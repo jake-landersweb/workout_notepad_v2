@@ -31,6 +31,17 @@ class WorkoutLog {
     required this.updated,
   });
 
+  WorkoutLog copy() => WorkoutLog(
+        workoutLogId: workoutLogId,
+        userId: userId,
+        workoutId: workoutId,
+        title: title,
+        description: description,
+        duration: duration,
+        created: created,
+        updated: updated,
+      );
+
   WorkoutLog.init(String uid, Workout w) {
     var uuid = const Uuid();
     workoutLogId = uuid.v4();

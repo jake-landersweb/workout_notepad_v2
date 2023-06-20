@@ -25,7 +25,6 @@ class _WorkoutsHomeState extends State<WorkoutsHome> {
       title: "Workouts",
       isLarge: true,
       bottomSpacing: 0,
-      backgroundColor: AppColors.background(context),
       trailing: [
         comp.AddButton(
           onTap: () {
@@ -55,7 +54,12 @@ class _WorkoutsHomeState extends State<WorkoutsHome> {
           initText: _searchText,
         ),
         const SizedBox(height: 16),
-        for (var i in _workouts(context, dmodel)) WorkoutCell(wc: i),
+        for (var i in _workouts(context, dmodel))
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: WorkoutCell(wc: i),
+          ),
+        SizedBox(height: dmodel.workoutState == null ? 50 : 80),
       ],
     );
   }

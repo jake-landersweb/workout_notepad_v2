@@ -121,12 +121,12 @@ class _TextTimerState extends State<TextTimer> {
     if (widget.timeFormat != null) {
       return widget.timeFormat!(controller.time);
     }
-    return _formatHHMMSS(controller.time.inSeconds);
+    return formatHHMMSS(controller.time.inSeconds);
   }
 }
 
 /// format string as HH:MM:SS
-String _formatHHMMSS(int seconds) {
+String formatHHMMSS(int seconds) {
   int hours = (seconds / 3600).truncate();
   seconds = (seconds % 3600).truncate();
   int minutes = (seconds / 60).truncate();

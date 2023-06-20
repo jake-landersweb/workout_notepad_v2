@@ -158,7 +158,8 @@ class _ContainedListState<T> extends State<ContainedList<T>> {
                                 color: widget.backgroundColor ??
                                     Theme.of(context)
                                         .colorScheme
-                                        .secondaryContainer,
+                                        .surfaceVariant
+                                        .withOpacity(0.5),
                               ),
                               Divider(
                                 indent:
@@ -185,7 +186,7 @@ class _ContainedListState<T> extends State<ContainedList<T>> {
       isAnimated: widget.isAnimated,
       allowsDelete: widget.allowsDelete,
       backgroundColor: widget.backgroundColor ??
-          Theme.of(context).colorScheme.secondaryContainer,
+          Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
       showStyling: widget.showStyling,
       leadingPadding: widget.leadingPadding,
       trailingPadding: widget.trailingPadding,

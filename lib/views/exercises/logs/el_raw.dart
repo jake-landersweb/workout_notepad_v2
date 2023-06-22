@@ -9,10 +9,9 @@ class ELRaw extends StatelessWidget {
   Widget build(BuildContext context) {
     var elmodel = Provider.of<ELModel>(context);
     return ListView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 48),
-      physics: const AlwaysScrollableScrollPhysics(
-        parent: BouncingScrollPhysics(),
-      ),
+      padding: const EdgeInsets.fromLTRB(0, 16, 0, 48),
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
       itemCount: elmodel.logs.length,
       itemBuilder: (context, index) {
         return Padding(

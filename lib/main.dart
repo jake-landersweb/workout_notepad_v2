@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
       },
       child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: ThemeMode.system == Brightness.light
+        value: Theme.of(context).brightness == Brightness.light
             ? SystemUiOverlayStyle.dark
             : SystemUiOverlayStyle.light,
         child: MaterialApp(

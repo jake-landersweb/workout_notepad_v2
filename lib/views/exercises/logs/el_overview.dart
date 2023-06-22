@@ -31,7 +31,7 @@ class _ELOverviewState extends State<ELOverview> {
                   context,
                   _basicBody(
                     context,
-                    elmodel.wData.length.toString(),
+                    elmodel.lineData?.spots.length.toString() ?? "-",
                     "Total Logs",
                   ),
                 ),
@@ -44,7 +44,7 @@ class _ELOverviewState extends State<ELOverview> {
                   context,
                   _basicBody(
                     context,
-                    "${elmodel.wMax.toStringAsFixed(2)} ${elmodel.isLbs ? 'lbs' : 'kg'}",
+                    "${elmodel.lineData?.setHighFormatted() ?? '-'} ${elmodel.getPost()}",
                     "Max Weight",
                   ),
                 ),
@@ -53,14 +53,13 @@ class _ELOverviewState extends State<ELOverview> {
                   context,
                   _basicBody(
                     context,
-                    elmodel.wMin == double.infinity
-                        ? "-"
-                        : "${elmodel.wMin.toStringAsFixed(2)} ${elmodel.isLbs ? 'lbs' : 'kg'}",
+                    "${elmodel.lineData?.setLowFormatted() ?? '-'} ${elmodel.getPost()}",
                     "Min Weight",
                   ),
                 ),
               ],
             ),
+            const ELRaw(),
           ],
         ),
       ),

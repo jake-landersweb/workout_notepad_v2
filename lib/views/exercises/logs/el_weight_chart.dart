@@ -33,23 +33,28 @@ class _ELWeightChartState extends State<ELWeightChart> {
           children: [
             Row(
               children: [
+                Expanded(
+                  child: Text(
+                    "Set ${elmodel.lineData!.accumulateType.name.capitalize()} By Date",
+                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
                 Clickable(
                   onTap: () {
-                    switch (elmodel.wPageSize) {
+                    switch (elmodel.pageSize) {
                       case 5:
-                        setState(() {
-                          elmodel.wPageSize = 10;
-                        });
+                        elmodel.setPageSize(10);
                         break;
                       case 10:
-                        setState(() {
-                          elmodel.wPageSize = elmodel.wData.length;
-                        });
+                        elmodel.setPageSize(elmodel.lineData!.spots.length);
                         break;
                       default:
-                        setState(() {
-                          elmodel.wPageSize = 5;
-                        });
+                        elmodel.setPageSize(5);
                         break;
                     }
                   },
@@ -64,14 +69,19 @@ class _ELWeightChartState extends State<ELWeightChart> {
                     height: 40,
                     width: 60,
                     child: Center(
-                      child: Text(elmodel.wPageSize.toString()),
+                      child: Text(elmodel.pageSize.toString()),
                     ),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Clickable(
                   onTap: () {
-                    elmodel.toggleAccumulate();
+                    if (elmodel.lineData != null) {
+                      setState(() {
+                        elmodel.lineData!.toggleAccumulate(
+                            elmodel.logs, elmodel.isLbs, elmodel.timeType);
+                      });
+                    }
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -84,7 +94,9 @@ class _ELWeightChartState extends State<ELWeightChart> {
                     height: 40,
                     width: 60,
                     child: Center(
-                      child: Text(elmodel.accumulateType.name.capitalize()),
+                      child: Text(
+                          elmodel.lineData?.accumulateType.name.capitalize() ??
+                              ""),
                     ),
                   ),
                 ),
@@ -92,7 +104,7 @@ class _ELWeightChartState extends State<ELWeightChart> {
                 Expanded(
                   child: Clickable(
                     onTap: () {
-                      elmodel.wNextPage();
+                      elmodel.nextPage();
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -134,13 +146,17 @@ class _ELWeightChartState extends State<ELWeightChart> {
               ],
             ),
             const SizedBox(height: 16),
-            Text("${elmodel.wgetDates().first} - ${elmodel.wgetDates().last}"),
+            if (elmodel.lineData != null)
+              Text(
+                  "${elmodel.getLineDates().first} - ${elmodel.getLineDates().last}"),
             const SizedBox(height: 16),
             Expanded(
               child: LineChart(
                 LineChartData(
-                  maxY: elmodel.wMax + (elmodel.wMax * 0.15),
-                  minY: elmodel.wMin - (elmodel.wMin * 0.15),
+                  maxY: (elmodel.lineData?.setHigh ?? 0) +
+                      ((elmodel.lineData?.setHigh ?? 0) * 0.15),
+                  minY: (elmodel.lineData?.setLow ?? 0) +
+                      ((elmodel.lineData?.setLow ?? 0) * -0.15),
                   gridData: FlGridData(show: false),
                   borderData: FlBorderData(show: false),
                   lineTouchData: LineTouchData(
@@ -152,11 +168,11 @@ class _ELWeightChartState extends State<ELWeightChart> {
                           .withOpacity(0.7),
                       getTooltipItems: (touchedSpots) {
                         List<LineTooltipItem> items = [];
-                        List<String> dates = elmodel.wgetDates();
+                        List<String> dates = elmodel.getLineDates();
                         for (var i in touchedSpots) {
                           items.add(
                             LineTooltipItem(
-                              "${i.y.round()} ${elmodel.isLbs ? 'lbs' : 'kg'}\n${dates[i.spotIndex]}",
+                              "${i.y.toStringAsFixed(2)} ${elmodel.isLbs ? 'lbs' : 'kg'}\n${dates[i.spotIndex]}",
                               ttBody(
                                 context,
                                 color: Theme.of(context)
@@ -179,7 +195,13 @@ class _ELWeightChartState extends State<ELWeightChart> {
                       sideTitles: SideTitles(
                         showTitles: true,
                         reservedSize: 50,
-                        interval: elmodel.wMax / 5,
+                        interval: elmodel.lineData == null
+                            ? 1
+                            : elmodel.lineData!.spots.length == 1
+                                ? elmodel.lineData!.graphHigh
+                                : (elmodel.lineData!.graphHigh -
+                                        elmodel.lineData!.graphLow) /
+                                    3,
                         getTitlesWidget: (value, meta) {
                           return Text(
                             "${value.round()} ${elmodel.isLbs ? 'lbs' : 'kg'}",
@@ -200,7 +222,7 @@ class _ELWeightChartState extends State<ELWeightChart> {
                   ),
                   lineBarsData: [
                     LineChartBarData(
-                      spots: elmodel.wgetData(),
+                      spots: elmodel.getLineData(),
                       barWidth: 5,
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,

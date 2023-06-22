@@ -38,7 +38,8 @@ class _ELCellState extends State<ELCell> {
           ),
         Container(
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceVariant,
+            color:
+                Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Padding(

@@ -65,22 +65,25 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
                               .onPrimary
                               .withOpacity(0.7),
                         ),
-                        Clickable(
-                          onTap: () {
-                            elmodel.toggleWeight();
-                          },
-                          child: Text(
-                            elmodel.isLbs ? "lbs" : "kg",
-                            style: TextStyle(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onPrimary
-                                  .withOpacity(0.7),
-                              fontWeight: FontWeight.w500,
-                              fontSize: 18,
+                        if (elmodel.exercise.type == 0)
+                          Clickable(
+                            onTap: () {
+                              elmodel.toggleIsLbs();
+                            },
+                            child: Text(
+                              elmodel.isLbs ? "lbs" : "kg",
+                              style: TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimary
+                                    .withOpacity(0.7),
+                                fontWeight: FontWeight.w500,
+                                fontSize: 18,
+                              ),
                             ),
-                          ),
-                        ),
+                          )
+                        else
+                          Container(),
                       ],
                     ),
                     Text(
@@ -107,7 +110,7 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
           children: const [
             ELOverview(),
             ELWeightChart(),
-            ELRaw(),
+            ELBarChart(),
           ],
         );
       },
@@ -127,25 +130,29 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
             context: context,
             elmodel: elmodel,
             index: 0,
-            icon: Icons.receipt_long_outlined,
-            title: "Overview",
+            icon: Icons.view_stream_rounded,
           ),
           const SizedBox(width: 16),
           _actionCell(
             context: context,
             elmodel: elmodel,
             index: 1,
-            icon: Icons.insights_rounded,
-            title: "Graph",
+            icon: Icons.show_chart_rounded,
           ),
           const SizedBox(width: 16),
           _actionCell(
             context: context,
             elmodel: elmodel,
             index: 2,
-            icon: Icons.list_alt_rounded,
-            title: "Raw Data",
+            icon: Icons.bar_chart_rounded,
           ),
+          // const SizedBox(width: 16),
+          // _actionCell(
+          //   context: context,
+          //   elmodel: elmodel,
+          //   index: 3,
+          //   icon: Icons.scatter_plot_rounded,
+          // ),
         ],
       ),
     );
@@ -156,7 +163,6 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
     required ELModel elmodel,
     required int index,
     required IconData icon,
-    required String title,
   }) {
     final bgColor = index == elmodel.currentIndex
         ? Theme.of(context).colorScheme.onPrimary
@@ -171,6 +177,7 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
           color: bgColor,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
+            width: 2,
             color: Theme.of(context).colorScheme.onPrimary,
           ),
         ),
@@ -182,15 +189,6 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
               Icon(
                 icon,
                 color: textColor,
-              ),
-              const SizedBox(width: 10),
-              Text(
-                title,
-                style: ttLabel(
-                  context,
-                  color: textColor,
-                  fontWeight: FontWeight.w500,
-                ),
               ),
             ],
           ),

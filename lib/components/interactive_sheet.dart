@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
 
@@ -26,6 +27,11 @@ class _InteractiveSheetState extends State<InteractiveSheet> {
   void initState() {
     super.initState();
     init();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   Future<void> init() async {

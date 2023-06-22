@@ -27,6 +27,13 @@ class DataModel extends ChangeNotifier {
 
   Color color = appColors.first;
 
+  bool? _lightStatus;
+  bool? get lightStatus => _lightStatus;
+  void toggleLightStatus(bool? status) {
+    _lightStatus = status;
+    notifyListeners();
+  }
+
   LaunchWorkoutModelState? workoutState;
 
   Future<LaunchWorkoutModelState> createWorkoutState(Workout workout) async {
@@ -159,7 +166,7 @@ class DataModel extends ChangeNotifier {
       User u = User.init();
       u.userId = "1";
       await u.insert();
-      // await loadTests();
+      await loadTests();
     }
 
     // get the color

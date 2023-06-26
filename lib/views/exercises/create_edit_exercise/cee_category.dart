@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/components/cell_wrapper.dart';
 import 'package:workout_notepad_v2/components/field.dart';
 
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/text_themes.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/icon_picker.dart';
 
 class CreateCategory extends StatefulWidget {
   const CreateCategory({
@@ -14,7 +17,7 @@ class CreateCategory extends StatefulWidget {
     this.onCancel,
   });
   final List<String> categories;
-  final void Function(String val) onCompletion;
+  final void Function(String val, String icon) onCompletion;
   final VoidCallback? onCancel;
 
   @override
@@ -23,6 +26,7 @@ class CreateCategory extends StatefulWidget {
 
 class ECreateCategoryState extends State<CreateCategory> {
   String _category = "";
+  String _icon = "";
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +34,31 @@ class ECreateCategoryState extends State<CreateCategory> {
       title: "Create Category",
       leading: const [comp.CancelButton()],
       children: [
+        const SizedBox(height: 16),
+        Clickable(
+          onTap: () => showIconPicker(
+              context: context,
+              initialIcon: "none",
+              closeOnSelection: true,
+              onSelection: (icon) {
+                setState(() {
+                  _icon = icon;
+                });
+              }),
+          child: Column(
+            children: [
+              getImageIcon(_icon, size: 100),
+              Text(
+                "Edit",
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(context).colorScheme.secondary,
+                  fontWeight: FontWeight.w300,
+                ),
+              ),
+            ],
+          ),
+        ),
         const SizedBox(height: 16),
         CellWrapper(
           child: Field(
@@ -39,7 +68,7 @@ class ECreateCategoryState extends State<CreateCategory> {
             showCharacters: true,
             onChanged: (val) {
               setState(() {
-                _category = val;
+                _category = val.toLowerCase();
               });
             },
           ),
@@ -48,11 +77,14 @@ class ECreateCategoryState extends State<CreateCategory> {
         FilledButton(
           onPressed: _isValid()
               ? () {
-                  widget.onCompletion(_category.toLowerCase());
+                  widget.onCompletion(
+                    _category.toLowerCase(),
+                    _icon,
+                  );
                   Navigator.of(context).pop();
                 }
               : null,
-          child: Text("Add"),
+          child: const Text("Add"),
         ),
       ],
     );

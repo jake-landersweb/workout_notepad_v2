@@ -4,13 +4,12 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
+import 'package:workout_notepad_v2/data/exercise_base.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 
 import 'package:workout_notepad_v2/utils/root.dart';
 
 enum AccumulateType { avg, max, min }
-
-enum TimeType { sec, min, hour }
 
 enum DistributionBarType { weight, reps }
 
@@ -27,23 +26,6 @@ class ELModel extends ChangeNotifier {
   void toggleIsLbs() {
     _isLbs = !_isLbs;
     setData(logs);
-    notifyListeners();
-  }
-
-  late TimeType _timeType;
-  TimeType get timeType => _timeType;
-  void toggleTimeType() {
-    switch (_timeType) {
-      case TimeType.sec:
-        _timeType = TimeType.min;
-        break;
-      case TimeType.min:
-        _timeType = TimeType.hour;
-        break;
-      case TimeType.hour:
-        _timeType = TimeType.min;
-        break;
-    }
     notifyListeners();
   }
 
@@ -74,17 +56,6 @@ class ELModel extends ChangeNotifier {
   }) {
     currentIndex = 0;
     pageController = PageController(initialPage: currentIndex);
-    switch (exercise.timePost) {
-      case "sec":
-        _timeType = TimeType.sec;
-        break;
-      case "min":
-        _timeType = TimeType.min;
-        break;
-      default:
-        _timeType = TimeType.hour;
-        break;
-    }
     init();
   }
 
@@ -97,14 +68,14 @@ class ELModel extends ChangeNotifier {
     lineData = LineData.init(exercise.type);
     barData = BarData();
     switch (exercise.type) {
-      case 1:
-      case 2:
-        lineData!.createTimedData(logs, timeType);
-        barData.createTimeData(logs, timeType);
-        break;
-      default:
+      case ExerciseType.weight:
         lineData!.createWeightData(l, isLbs);
         barData.createWeightData(logs, isLbs);
+        break;
+      case ExerciseType.timed:
+      case ExerciseType.duration:
+        lineData!.createTimedData(logs);
+        barData.createTimeData(logs);
         break;
     }
     notifyListeners();
@@ -169,41 +140,41 @@ class ELModel extends ChangeNotifier {
 
   String getPost() {
     switch (exercise.type) {
-      case 1:
-      case 2:
-        return _timeType.name;
-      default:
+      case ExerciseType.weight:
         return isLbs ? "lbs" : "kg";
+      case ExerciseType.timed:
+      case ExerciseType.duration:
+        return "";
     }
   }
 
   String getBarTitle() {
     switch (exercise.type) {
-      case 1:
-      case 2:
-        return "Time";
-      default:
+      case ExerciseType.weight:
         switch (distributionBarType) {
           case DistributionBarType.weight:
             return "Weight";
           case DistributionBarType.reps:
             return "Reps";
         }
+      case ExerciseType.timed:
+      case ExerciseType.duration:
+        return "Time";
     }
   }
 
   String getDistributionPost() {
     switch (exercise.type) {
-      case 1:
-      case 2:
-        return _timeType.name;
-      default:
+      case ExerciseType.weight:
         switch (distributionBarType) {
           case DistributionBarType.weight:
             return getPost();
           case DistributionBarType.reps:
             return "Reps";
         }
+      case ExerciseType.timed:
+      case ExerciseType.duration:
+        return "";
     }
   }
 }
@@ -284,7 +255,7 @@ class BarData {
     }
   }
 
-  void createTimeData(List<ExerciseLog> logs, TimeType timeType) {
+  void createTimeData(List<ExerciseLog> logs) {
     items = [];
     // create the weight items
     for (var log in logs) {
@@ -354,7 +325,7 @@ class LineData {
   late double setLow;
   late double setHigh;
   late AccumulateType accumulateType;
-  late int type;
+  late ExerciseType type;
 
   LineData({
     required this.spots,
@@ -393,13 +364,15 @@ class LineData {
     }
   }
 
-  void init(List<ExerciseLog> logs, bool isLbs, TimeType timeType) {
+  void init(List<ExerciseLog> logs, bool isLbs) {
     switch (type) {
-      case 1:
-      case 2:
-        break;
-      default:
+      case ExerciseType.weight:
         createWeightData(logs, isLbs);
+        break;
+      case ExerciseType.timed:
+        break;
+      case ExerciseType.duration:
+        break;
     }
   }
 
@@ -450,7 +423,7 @@ class LineData {
     dates = dates.reversed.toList();
   }
 
-  void createTimedData(List<ExerciseLog> logs, TimeType timeType) {
+  void createTimedData(List<ExerciseLog> logs) {
     spots = [];
     dates = [];
     graphLow = double.infinity;
@@ -464,10 +437,8 @@ class LineData {
         .getCreated();
     for (var i in logs) {
       // handle max and min over all sets
-      var tmpMax = _getAdjustedTime(
-          i, handleTimeData(i.metadata, AccumulateType.max), timeType);
-      var tmpMin = _getAdjustedTime(
-          i, handleTimeData(i.metadata, AccumulateType.min), timeType);
+      var tmpMax = handleTimeData(i.metadata, AccumulateType.max);
+      var tmpMin = handleTimeData(i.metadata, AccumulateType.min);
       if (tmpMax > setHigh) {
         setHigh = tmpMax;
       }
@@ -476,8 +447,7 @@ class LineData {
       }
 
       // compose log data
-      double t = _getAdjustedTime(
-          i, handleTimeData(i.metadata, accumulateType), timeType);
+      double t = handleTimeData(i.metadata, accumulateType);
 
       if (t > graphHigh) {
         graphHigh = t;
@@ -544,7 +514,7 @@ class LineData {
     }
   }
 
-  void toggleAccumulate(List<ExerciseLog> logs, bool isLbs, TimeType timeType) {
+  void toggleAccumulate(List<ExerciseLog> logs, bool isLbs) {
     switch (accumulateType) {
       case AccumulateType.avg:
         accumulateType = AccumulateType.max;
@@ -556,7 +526,7 @@ class LineData {
         accumulateType = AccumulateType.avg;
         break;
     }
-    init(logs, isLbs, timeType);
+    init(logs, isLbs);
   }
 }
 
@@ -574,37 +544,5 @@ double _getAdjustedWeight(ExerciseLog log, double val, bool isLbs) {
     } else {
       return val;
     }
-  }
-}
-
-double _getAdjustedTime(ExerciseLog log, double val, TimeType timeType) {
-  switch (timeType) {
-    case TimeType.sec:
-      switch (log.timePost) {
-        case "sec":
-          return val;
-        case "min":
-          return val / 60;
-        default:
-          return val / 60 / 60;
-      }
-    case TimeType.min:
-      switch (log.timePost) {
-        case "sec":
-          return val * 60;
-        case "min":
-          return val;
-        default:
-          return val / 60;
-      }
-    case TimeType.hour:
-      switch (log.timePost) {
-        case "sec":
-          return val * 60 * 60;
-        case "min":
-          return val * 60;
-        default:
-          return val;
-      }
   }
 }

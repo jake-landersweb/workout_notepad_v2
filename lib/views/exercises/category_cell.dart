@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
@@ -21,14 +22,34 @@ class CategoryCell extends StatelessWidget {
       child: Center(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
-          child: Text(
-            title.capitalize(),
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSecondaryContainer,
-            ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              getIcon(dmodel),
+              Text(
+                title.capitalize(),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSecondaryContainer,
+                ),
+              ),
+            ],
           ),
         ),
       ),
+    );
+  }
+
+  Widget getIcon(DataModel dmodel) {
+    var match = dmodel.categories.firstWhere(
+      (element) => element.title == title,
+      orElse: () => Category(title: "", userId: "", icon: ""),
+    );
+    if (match.icon.isEmpty) {
+      return Container();
+    }
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: getImageIcon(match.icon, size: 20),
     );
   }
 }

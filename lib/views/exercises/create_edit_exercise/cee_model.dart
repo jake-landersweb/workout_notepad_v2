@@ -5,16 +5,13 @@ import 'package:workout_notepad_v2/model/root.dart';
 
 class CreateExerciseModel extends ChangeNotifier {
   late Exercise exercise;
-  late List<String> categories;
 
   CreateExerciseModel.create(DataModel dmodel, String uid) {
     exercise = Exercise.empty(uid);
-    categories = List.of(dmodel.categories.map((e) => e.title).toList());
   }
 
   CreateExerciseModel.update(DataModel dmodel, Exercise exercise) {
     this.exercise = exercise.copy();
-    categories = List.of(dmodel.categories.map((e) => e.title).toList());
   }
 
   bool isValid() {
@@ -36,14 +33,6 @@ class CreateExerciseModel extends ChangeNotifier {
     }
     if (response == 0) {
       return null;
-    }
-    if (exercise.category.isNotEmpty &&
-        !dmodel.categories.map((e) => e.title).contains(exercise.category)) {
-      // insert category
-      var c = Category(
-          title: exercise.category.toLowerCase(), userId: dmodel.user!.userId);
-      await c.insert();
-      await dmodel.refreshCategories();
     }
     return exercise;
   }

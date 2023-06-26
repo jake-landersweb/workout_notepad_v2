@@ -234,7 +234,7 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                           },
                           child: Icon(
                             Icons.sticky_note_2_rounded,
-                            color: Theme.of(context).colorScheme.tertiary,
+                            color: Theme.of(context).colorScheme.outline,
                           ),
                         ),
                         if (widget.cewe.exercise.note != "")

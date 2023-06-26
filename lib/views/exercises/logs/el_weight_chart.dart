@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
@@ -78,8 +80,8 @@ class _ELWeightChartState extends State<ELWeightChart> {
                   onTap: () {
                     if (elmodel.lineData != null) {
                       setState(() {
-                        elmodel.lineData!.toggleAccumulate(
-                            elmodel.logs, elmodel.isLbs, elmodel.timeType);
+                        elmodel.lineData!
+                            .toggleAccumulate(elmodel.logs, elmodel.isLbs);
                       });
                     }
                   },
@@ -195,13 +197,15 @@ class _ELWeightChartState extends State<ELWeightChart> {
                       sideTitles: SideTitles(
                         showTitles: true,
                         reservedSize: 50,
-                        interval: elmodel.lineData == null
+                        interval: (elmodel.lineData == null)
                             ? 1
-                            : elmodel.lineData!.spots.length == 1
-                                ? elmodel.lineData!.graphHigh
-                                : (elmodel.lineData!.graphHigh -
-                                        elmodel.lineData!.graphLow) /
-                                    3,
+                            : max(
+                                elmodel.lineData!.spots.length == 1
+                                    ? elmodel.lineData!.graphHigh
+                                    : (elmodel.lineData!.graphHigh -
+                                            elmodel.lineData!.graphLow) /
+                                        3,
+                                1),
                         getTitlesWidget: (value, meta) {
                           return Text(
                             "${value.round()} ${elmodel.isLbs ? 'lbs' : 'kg'}",

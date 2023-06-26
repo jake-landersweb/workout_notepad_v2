@@ -87,11 +87,6 @@ class LaunchWorkoutModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setLogTimePost(int index, String val) {
-    state.exerciseLogs[index].timePost = val;
-    notifyListeners();
-  }
-
   void setLogSaved(int index, int row, bool val) {
     state.exerciseLogs[index].metadata[row].saved = val;
     notifyListeners();
@@ -124,11 +119,6 @@ class LaunchWorkoutModel extends ChangeNotifier {
 
   void setLogChildTime(int i, int j, int row, int val) {
     state.exerciseChildLogs[i][j].metadata[row].time = val;
-    notifyListeners();
-  }
-
-  void setLogChildTimePost(int i, int j, String val) {
-    state.exerciseChildLogs[i][j].timePost = val;
     notifyListeners();
   }
 

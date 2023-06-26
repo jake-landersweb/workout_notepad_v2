@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -48,7 +50,7 @@ Future<void> launchWorkout(
             context: context,
             enableDrag: true,
             builder: (context) {
-              return LaunchWorkout(state: s!);
+              return LaunchWorkout(state: s);
             },
           );
         },
@@ -60,7 +62,7 @@ Future<void> launchWorkout(
       context: context,
       enableDrag: true,
       builder: (context) {
-        return LaunchWorkout(state: s!);
+        return LaunchWorkout(state: s);
       },
     );
   }

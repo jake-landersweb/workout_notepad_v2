@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/components/contained_list.dart';
 import 'package:workout_notepad_v2/components/field.dart';
@@ -9,6 +10,8 @@ import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/components/segmented_picker.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
+import 'package:workout_notepad_v2/data/exercise_base.dart';
+import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/views/exercises/create_edit_exercise/root.dart';
@@ -83,18 +86,27 @@ class _CEERootState extends State<CEERoot> {
       ],
       horizontalSpacing: 0,
       children: [
-        _icon(context, cemodel),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: _title(context, cemodel),
         ),
-        _category(context, cemodel, dmodel),
+        comp.Section(
+          "Category",
+          initOpen: true,
+          allowsCollapse: true,
+          headerPadding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+          child: _category(context, cemodel, dmodel),
+        ),
         if (widget.isCreate)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: SegmentedPicker(
               titles: const ["Weighted", "Timed", "Duration"],
-              selections: const [0, 1, 2],
+              selections: const [
+                ExerciseType.weight,
+                ExerciseType.timed,
+                ExerciseType.duration
+              ],
               style: SegmentedPickerStyle(
                 height: 36,
                 pickerColor: Theme.of(context).colorScheme.primary,
@@ -184,89 +196,97 @@ class _CEERootState extends State<CEERoot> {
 
   Widget _category(
       BuildContext context, CreateExerciseModel cemodel, DataModel dmodel) {
-    return SingleChildScrollView(
-      key: const ValueKey("Category Key"),
-      scrollDirection: Axis.horizontal,
-      controller: ScrollController(),
-      physics: const AlwaysScrollableScrollPhysics()
-          .applyTo(const BouncingScrollPhysics()),
-      padding: EdgeInsets.zero,
-      child: ConstrainedBox(
-        constraints:
-            BoxConstraints(minWidth: MediaQuery.of(context).size.width),
-        child: Row(
-          children: [
-            const SizedBox(width: 16),
-            Clickable(
-              onTap: () {
-                comp.cupertinoSheet(
-                  context: context,
-                  builder: (context) => CreateCategory(
-                      categories: cemodel.categories,
-                      onCompletion: (val) {
-                        setState(() {
-                          cemodel.categories.insert(0, val);
-                          cemodel.exercise.category = val;
-                        });
-                      }),
-                );
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context)
-                      .colorScheme
-                      .surfaceVariant
-                      .withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                  child: Icon(LineIcons.plus,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      size: 20),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          Clickable(
+            onTap: () {
+              comp.cupertinoSheet(
+                context: context,
+                builder: (context) => CreateCategory(
+                    categories: dmodel.categories.map((e) => e.title).toList(),
+                    onCompletion: (val, icon) async {
+                      var c = Category(
+                        userId: dmodel.user!.userId,
+                        title: val,
+                        icon: icon,
+                      );
+                      await c.insert(
+                        conflictAlgorithm: ConflictAlgorithm.replace,
+                      );
+                      await dmodel.refreshCategories();
+                      setState(() {
+                        cemodel.exercise.category = c.title;
+                      });
+                    }),
+              );
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context)
+                    .colorScheme
+                    .surfaceVariant
+                    .withOpacity(0.5),
+                borderRadius: BorderRadius.circular(100),
+              ),
+              height: 40,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                child: Icon(
+                  LineIcons.plus,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  size: 20,
                 ),
               ),
             ),
-            const SizedBox(width: 8),
-            for (int i = 0; i < cemodel.categories.length; i++)
-              Padding(
-                padding: EdgeInsets.only(
-                    right: i < cemodel.categories.length ? 8 : 0),
-                child: _categoryCell(context, cemodel.categories[i], cemodel),
-              ),
-            const SizedBox(width: 16),
-          ],
-        ),
+          ),
+          for (int i = 0; i < dmodel.categories.length; i++)
+            _categoryCell(context, dmodel.categories[i], cemodel),
+        ],
       ),
     );
   }
 
   Widget _categoryCell(
-      BuildContext context, String title, CreateExerciseModel cemodel) {
+      BuildContext context, Category category, CreateExerciseModel cemodel) {
     return Clickable(
       onTap: () {
         setState(() {
-          cemodel.exercise.category = title;
+          cemodel.exercise.category = category.title;
         });
       },
       child: Container(
         decoration: BoxDecoration(
-          color: title == cemodel.exercise.category
+          color: category.title == cemodel.exercise.category
               ? Theme.of(context).colorScheme.primary
               : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
           borderRadius: BorderRadius.circular(100),
         ),
+        height: 40,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-          child: Text(
-            title.capitalize(),
-            style: TextStyle(
-              color: title == cemodel.exercise.category
-                  ? Theme.of(context).colorScheme.onPrimary
-                  : Theme.of(context).colorScheme.onSurfaceVariant,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (category.icon != "")
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: getImageIcon(category.icon, size: 25),
+                ),
+              Text(
+                category.title.capitalize(),
+                style: TextStyle(
+                  color: category.title == cemodel.exercise.category
+                      ? Theme.of(context).colorScheme.onPrimary
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -275,8 +295,8 @@ class _CEERootState extends State<CEERoot> {
 
   List<Widget> _setBody(BuildContext context, CreateExerciseModel cemodel) {
     switch (cemodel.exercise.type) {
-      case 1:
-      case 2:
+      case ExerciseType.timed:
+      case ExerciseType.duration:
         return [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -316,7 +336,7 @@ class _CEERootState extends State<CEERoot> {
 
   Widget _reps(BuildContext context, CreateExerciseModel cemodel) {
     return comp.LabeledWidget(
-      label: "Reps",
+      label: "Rep Goal",
       child: comp.NumberPicker(
         minValue: 0,
         intialValue: cemodel.exercise.reps,
@@ -329,69 +349,109 @@ class _CEERootState extends State<CEERoot> {
 
   Widget _time(BuildContext context, CreateExerciseModel cemodel) {
     return comp.LabeledWidget(
-      label: cemodel.exercise.type == 1 ? "Time" : "Goal Time",
-      child: comp.NumberPicker(
-        minValue: 0,
-        intialValue: cemodel.exercise.time,
-        showPicker: true,
-        maxValue: 99999,
-        onChanged: (val) {
-          cemodel.exercise.time = val;
-        },
-        picker: SizedBox(
-          width: 60,
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Column(
-                children: [
-                  _timeCell(context, cemodel, "sec"),
-                  _timeCell(context, cemodel, "min"),
-                  _timeCell(context, cemodel, "hour"),
-                ],
-              ),
+      label: cemodel.exercise.type == ExerciseType.timed ? "Time" : "Goal Time",
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: comp.NumberPicker(
+                        minValue: 0,
+                        intialValue: cemodel.exercise.getHours(),
+                        showPicker: false,
+                        textFontSize: 50,
+                        backgroundColor:
+                            Theme.of(context).colorScheme.primaryContainer,
+                        maxValue: 99,
+                        onChanged: (val) {
+                          cemodel.exercise.setHours(val);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                const Text("Hours"),
+              ],
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _timeCell(
-    BuildContext context,
-    CreateExerciseModel cemodel,
-    String post,
-  ) {
-    return Expanded(
-      child: Clickable(
-        onTap: () {
-          setState(() {
-            cemodel.exercise.timePost = post;
-          });
-        },
-        child: Container(
-          color: cemodel.exercise.timePost == post
-              ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
-          width: double.infinity,
-          child: Center(
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2.0),
             child: Text(
-              post.toUpperCase(),
+              ":",
               style: TextStyle(
-                color: cemodel.exercise.timePost == post
-                    ? Theme.of(context).colorScheme.onPrimary
-                    : Theme.of(context).colorScheme.onSurfaceVariant,
-                fontWeight: cemodel.exercise.timePost == post
-                    ? FontWeight.w600
-                    : FontWeight.w400,
-                fontSize: 14,
+                color: Theme.of(context).colorScheme.onBackground,
+                fontSize: 60,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
-        ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: comp.NumberPicker(
+                        minValue: 0,
+                        intialValue: cemodel.exercise.getMinutes(),
+                        showPicker: false,
+                        textFontSize: 50,
+                        maxValue: 59,
+                        onChanged: (val) {
+                          cemodel.exercise.setMinutes(val);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                const Text("Minutes"),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 2.0),
+            child: Text(
+              ":",
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onBackground,
+                fontSize: 60,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: comp.NumberPicker(
+                        minValue: 0,
+                        intialValue: cemodel.exercise.getSeconds(),
+                        showPicker: false,
+                        textFontSize: 50,
+                        maxValue: 59,
+                        onChanged: (val) {
+                          cemodel.exercise.setSeconds(val);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                const Text("Seconds"),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

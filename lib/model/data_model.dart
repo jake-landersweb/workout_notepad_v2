@@ -1,19 +1,22 @@
 // ignore_for_file: depend_on_referenced_packages
 
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/color_schemes.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
-import 'package:workout_notepad_v2/model/load_tests.dart';
 import 'package:path/path.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
+import 'package:http/http.dart' as http;
 
 enum LoadStatus { init, noUser, done }
 
@@ -166,7 +169,7 @@ class DataModel extends ChangeNotifier {
       User u = User.init();
       u.userId = "1";
       await u.insert();
-      await loadTests();
+      await importData();
     }
 
     // get the color
@@ -195,5 +198,74 @@ class DataModel extends ChangeNotifier {
     loadStatus = LoadStatus.done;
 
     notifyListeners();
+  }
+
+  Future<void> exportToJSON() async {
+    // get the database
+    var db = await getDB();
+
+    // get data
+    var users = await db.query("user");
+    var categories = await db.query("category");
+    var exercises = await db.query("exercise");
+    var exerciseSets = await db.query("exercise_set");
+    var workouts = await db.query("workout");
+    var workoutExercises = await db.query("workout_exercise");
+    var exerciseLogs = await db.query("exercise_log");
+    var workoutLogs = await db.query("workout_log");
+
+    // create structured data
+    Map<String, dynamic> data = {
+      "users": users,
+      "categories": categories,
+      "exercises": exercises,
+      "exerciseSets": exerciseSets,
+      "workouts": workouts,
+      "workoutExercises": workoutExercises,
+      "exerciseLogs": exerciseLogs,
+      "workoutLogs": workoutLogs,
+    };
+
+    // encode to json
+    String encoded = jsonEncode(data);
+
+    // send to url
+    var response = await http.Client().post(
+      Uri.parse(
+          "https://4q849d280b.execute-api.us-west-2.amazonaws.com/api/v2/export"),
+      headers: {"Content-type": "application/json"},
+      body: encoded,
+    );
+
+    print(response.statusCode);
+  }
+
+  Future<void> importData({bool delete = true}) async {
+    if (delete) {
+      String path = join(await getDatabasesPath(), 'workout_notepad.db');
+      await databaseFactory.deleteDatabase(path);
+    }
+    // load / create database
+    var db = await getDB();
+
+    // read file
+    String json = await rootBundle.loadString("sql/init.json");
+    Map<String, dynamic> data = const JsonDecoder().convert(json);
+
+    Future<void> load(String table, List<dynamic> objects) async {
+      for (var i in objects) {
+        await db.insert(table, i, conflictAlgorithm: ConflictAlgorithm.replace);
+      }
+    }
+
+    // load all data
+    await load("user", data['users']);
+    await load("category", data['categories']);
+    await load("exercise", data['exercises']);
+    await load("exercise_set", data['exerciseSets']);
+    await load("workout", data['workouts']);
+    await load("workout_exercise", data['workoutExercises']);
+    await load("exercise_log", data['exerciseLogs']);
+    await load("workout_log", data['workoutLogs']);
   }
 }

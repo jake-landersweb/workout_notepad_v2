@@ -39,7 +39,6 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
       horizontalSpacing: 0,
       leading: const [comp.CloseButton()],
       children: [
-        if (widget.exercise.icon.isNotEmpty) _icon(context),
         _actions(context, dmodel),
         Padding(
           padding: const EdgeInsets.only(left: 32.0),

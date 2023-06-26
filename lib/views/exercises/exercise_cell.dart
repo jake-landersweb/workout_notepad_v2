@@ -47,57 +47,42 @@ class ExerciseCell extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-          child: Column(
+          child: Row(
             children: [
-              Row(
-                children: [
-                  if (exercise.icon.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 16),
-                      child: exercise.getIcon(),
-                    )
-                  else
-                    const Padding(
-                      padding: EdgeInsets.only(right: 16),
-                      child: SizedBox(height: 50, width: 50),
-                    ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          exercise.title,
-                          style: ttLabel(
-                            context,
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                        if (exercise.category.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: IntrinsicWidth(
-                              child: CategoryCell(title: exercise.category),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  if (trailingIcon != null)
-                    Icon(
-                      trailingIcon,
-                      color: Theme.of(context).colorScheme.primary,
-                    )
-                  else
-                    exercise.info(
-                      context,
-                      style: ttBody(
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      exercise.title,
+                      style: ttLabel(
                         context,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
-                ],
+                    if (exercise.category.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: IntrinsicWidth(
+                          child: CategoryCell(title: exercise.category),
+                        ),
+                      ),
+                  ],
+                ),
               ),
+              if (trailingIcon != null)
+                Icon(
+                  trailingIcon,
+                  color: Theme.of(context).colorScheme.primary,
+                )
+              else
+                exercise.info(
+                  context,
+                  style: ttBody(
+                    context,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                ),
             ],
           ),
         ),

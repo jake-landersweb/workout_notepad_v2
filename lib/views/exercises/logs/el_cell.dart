@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:workout_notepad_v2/data/exercise_base.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
@@ -85,19 +86,7 @@ class _ELCellState extends State<ELCell> {
 
   Widget _post(BuildContext context, ExerciseLogMeta meta) {
     switch (widget.log.type) {
-      case 1:
-        return Row(
-          children: [
-            Expanded(
-              child: _itemCell(
-                context,
-                widget.log.timePost.toUpperCase(),
-                meta.time,
-              ),
-            ),
-          ],
-        );
-      default:
+      case ExerciseType.weight:
         return Row(
           children: [
             Expanded(child: _itemCell(context, "REPS", meta.reps)),
@@ -113,6 +102,19 @@ class _ELCellState extends State<ELCell> {
                 context,
                 widget.log.weightPost.toUpperCase(),
                 meta.weight,
+              ),
+            ),
+          ],
+        );
+      case ExerciseType.timed:
+      case ExerciseType.duration:
+        return Row(
+          children: [
+            Expanded(
+              child: _itemCell(
+                context,
+                "",
+                meta.time,
               ),
             ),
           ],

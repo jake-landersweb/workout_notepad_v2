@@ -10,9 +10,8 @@ class ExerciseLog {
   late String exerciseId;
   String? workoutLogId;
   late String title;
-  late int type;
+  late ExerciseType type;
   late int sets;
-  late String timePost;
   late String weightPost;
   String? note;
   late List<ExerciseLogMeta> metadata;
@@ -27,7 +26,6 @@ class ExerciseLog {
     required this.title,
     required this.sets,
     required this.type,
-    required this.timePost,
     required this.weightPost,
     this.note,
     required this.metadata,
@@ -43,7 +41,6 @@ class ExerciseLog {
     title = exercise.title;
     sets = exercise.sets;
     type = exercise.type;
-    timePost = exercise.timePost;
     weightPost = "lbs";
     metadata = [];
     note = "";
@@ -75,7 +72,6 @@ class ExerciseLog {
     title = exercise.title;
     sets = exercise.sets;
     type = exercise.type;
-    timePost = exercise.timePost;
     weightPost = "lbs";
     metadata = [];
     note = "";
@@ -99,9 +95,8 @@ class ExerciseLog {
     exerciseId = json['exerciseId'];
     workoutLogId = json['workoutLogId'];
     title = json['title'];
-    type = json['type'];
+    type = exerciseTypeFromJson(json['type']);
     sets = json['sets'];
-    timePost = json['timePost'];
     weightPost = json['weightPost'];
     note = json['note'];
     metadata = [];
@@ -139,7 +134,7 @@ class ExerciseLog {
 
   void setDuration(int index, Duration duration) {
     if (index == -1) return;
-    metadata[index].setDuration(timePost, duration);
+    metadata[index].setDuration(duration);
   }
 
   Map<String, dynamic> toMap() {
@@ -157,11 +152,10 @@ class ExerciseLog {
       "exerciseId": exerciseId,
       "workoutLogId": workoutLogId,
       "title": title,
-      "type": type,
+      "type": exerciseTypeToJson(type),
       "sets": metadata.length,
       "reps": r.join(","),
       "time": t.join(","),
-      "timePost": timePost,
       "weight": w.join(","),
       "weightPost": weightPost,
       "note": note,
@@ -224,19 +218,7 @@ class ExerciseLogMeta {
     saved = false;
   }
 
-  void setDuration(String timePost, Duration duration) {
-    switch (timePost) {
-      case "sec":
-        time = duration.inSeconds;
-        break;
-      case "min":
-        time = duration.inMinutes;
-        break;
-      case "hour":
-        time = duration.inHours;
-        break;
-      default:
-        time = 0;
-    }
+  void setDuration(Duration duration) {
+    time = duration.inSeconds;
   }
 }

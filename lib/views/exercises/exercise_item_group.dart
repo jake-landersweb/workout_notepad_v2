@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
+import 'package:workout_notepad_v2/components/time_picker.dart';
 import 'package:workout_notepad_v2/data/exercise_base.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/views/root.dart';
@@ -38,16 +39,16 @@ class ExerciseItemGoup extends StatelessWidget {
 
   Widget _getSecond(BuildContext context) {
     switch (exercise.type) {
-      case 1:
-      case 2:
-        return ExerciseItemCell(
-          label: exercise.timePost.toUpperCase(),
-          val: exercise.time,
-        );
-      default:
+      case ExerciseType.weight:
         return ExerciseItemCell(
           label: "REPS",
           val: exercise.reps,
+        );
+      case ExerciseType.timed:
+      case ExerciseType.duration:
+        return ExerciseItemCell(
+          label: "TODO", // TODO
+          val: exercise.getTime(),
         );
     }
   }
@@ -106,10 +107,7 @@ class _EditableExerciseItemGroupState extends State<EditableExerciseItemGroup> {
 
   Widget _getSecond(BuildContext context) {
     switch (widget.exercise.type) {
-      case 1:
-      case 2:
-        return _time(context, widget.exercise);
-      default:
+      case ExerciseType.weight:
         return EditableExerciseItemCell(
           initialValue: widget.exercise.reps,
           label: "REPS",
@@ -122,97 +120,71 @@ class _EditableExerciseItemGroupState extends State<EditableExerciseItemGroup> {
             }
           },
         );
+      case ExerciseType.timed:
+      case ExerciseType.duration:
+        return _time(context, widget.exercise);
     }
   }
 
   Widget _time(BuildContext context, ExerciseBase e) {
-    return Stack(
-      alignment: Alignment.topLeft,
-      children: [
-        comp.NumberPicker(
-          minValue: 0,
-          intialValue: e.time,
-          textFontSize: 40,
-          showPicker: true,
-          maxValue: 99999,
-          spacing: 8,
-          onChanged: (val) {
-            setState(() {
-              e.time = val;
-            });
-            if (widget.onChanged != null) {
-              widget.onChanged!();
-            }
-          },
-          picker: SizedBox(
-            width: 50,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Column(
-                  children: [
-                    _timeCell(context, e, "sec"),
-                    _timeCell(context, e, "min"),
-                    _timeCell(context, e, "hour"),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: Text(
-            e.type == 1 ? "TIME" : "GOAL TIME",
-            style: TextStyle(
-              fontSize: 12,
-              color: Theme.of(context).primaryColor,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _timeCell(
-    BuildContext context,
-    ExerciseBase e,
-    String post,
-  ) {
-    return Expanded(
-      child: Clickable(
-        showTap: false,
-        onTap: () {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: TimePicker(
+        hours: e.getHours(),
+        minutes: e.getMinutes(),
+        seconds: e.getSeconds(),
+        label: e.type == ExerciseType.timed ? "TIME" : "GOAL TIME",
+        onChanged: (val) {
           setState(() {
-            e.timePost = post;
+            e.time = val;
           });
           if (widget.onChanged != null) {
             widget.onChanged!();
           }
         },
-        child: Container(
-          color: e.timePost == post
-              ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
-          width: double.infinity,
-          child: Center(
-            child: Text(
-              post.toUpperCase(),
-              style: TextStyle(
-                color: e.timePost == post
-                    ? Theme.of(context).colorScheme.onPrimary
-                    : Theme.of(context).colorScheme.onSurface,
-                fontWeight:
-                    e.timePost == post ? FontWeight.w600 : FontWeight.w400,
-                fontSize: 14,
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }
+
+  // Widget _timeCell(
+  //   BuildContext context,
+  //   ExerciseBase e,
+  //   String post,
+  // ) {
+  //   return Expanded(
+  //     child: Clickable(
+  //       showTap: false,
+  //       onTap: () {
+  //         setState(() {
+  //           e.timePost = post;
+  //         });
+  //         if (widget.onChanged != null) {
+  //           widget.onChanged!();
+  //         }
+  //       },
+  //       child: Container(
+  //         color: e.timePost == post
+  //             ? Theme.of(context).colorScheme.primary
+  //             : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+  //         width: double.infinity,
+  //         child: Center(
+  //           child: Text(
+  //             post.toUpperCase(),
+  //             style: TextStyle(
+  //               color: e.timePost == post
+  //                   ? Theme.of(context).colorScheme.onPrimary
+  //                   : Theme.of(context).colorScheme.onSurface,
+  //               fontWeight:
+  //                   e.timePost == post ? FontWeight.w600 : FontWeight.w400,
+  //               fontSize: 14,
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 }

@@ -30,7 +30,6 @@ class ExerciseSet extends ExerciseBase {
     required super.sets,
     required super.reps,
     required super.time,
-    required super.timePost,
   });
 
   ExerciseSet copy() => ExerciseSet(
@@ -50,7 +49,6 @@ class ExerciseSet extends ExerciseBase {
         sets: sets,
         reps: reps,
         time: time,
-        timePost: timePost,
       );
 
   ExerciseSet.init(Workout workout, WorkoutExercise parent, Exercise child,
@@ -64,7 +62,6 @@ class ExerciseSet extends ExerciseBase {
           sets: args.sets ?? child.sets,
           reps: args.reps ?? child.reps,
           time: args.time ?? child.time,
-          timePost: args.timePost ?? child.timePost,
         ) {
     var uuid = const Uuid();
     exerciseSetId = uuid.v4();
@@ -113,7 +110,6 @@ class ExerciseSet extends ExerciseBase {
       "sets": sets,
       "reps": reps,
       "time": time,
-      "timePost": timePost,
       "created": created,
       "updated": updated,
     };

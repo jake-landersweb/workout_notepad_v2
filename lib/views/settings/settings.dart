@@ -25,7 +25,20 @@ class _SettingsState extends State<Settings> {
     return HeaderBar(
       title: "Settings",
       isLarge: true,
-      children: [const SizedBox(height: 16), _selectColor(context, dmodel)],
+      children: [
+        const SizedBox(height: 16),
+        _selectColor(context, dmodel),
+        const SizedBox(height: 16),
+        comp.LabeledWidget(
+          label: "",
+          child: Clickable(
+            onTap: () {
+              dmodel.exportToJSON();
+            },
+            child: Text("Export"),
+          ),
+        ),
+      ],
     );
   }
 

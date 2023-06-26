@@ -126,7 +126,7 @@ class _TextTimerState extends State<TextTimer> {
 }
 
 /// format string as HH:MM:SS
-String formatHHMMSS(int seconds) {
+String formatHHMMSS(int seconds, {bool truncate = true}) {
   int hours = (seconds / 3600).truncate();
   seconds = (seconds % 3600).truncate();
   int minutes = (seconds / 60).truncate();
@@ -135,7 +135,7 @@ String formatHHMMSS(int seconds) {
   String minutesStr = (minutes).toString().padLeft(2, '0');
   String secondsStr = (seconds % 60).toString().padLeft(2, '0');
 
-  if (hours == 0) {
+  if (hours == 0 && truncate) {
     return "$minutesStr:$secondsStr";
   }
 

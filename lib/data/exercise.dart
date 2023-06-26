@@ -27,7 +27,6 @@ class Exercise extends ExerciseBase {
     required super.sets,
     required super.reps,
     required super.time,
-    required super.timePost,
   });
 
   Exercise.empty(String uid) : super.empty() {
@@ -52,7 +51,6 @@ class Exercise extends ExerciseBase {
         reps: reps,
         sets: sets,
         time: time,
-        timePost: timePost,
       );
 
   Exercise.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
@@ -72,7 +70,6 @@ class Exercise extends ExerciseBase {
           sets: json['sets'],
           reps: json['reps'],
           time: json['time'],
-          timePost: json['timePost'] ?? "",
         ) {
     exerciseId = json['exerciseId'];
     userId = "1";
@@ -94,7 +91,6 @@ class Exercise extends ExerciseBase {
       "reps": reps,
       "sets": sets,
       "time": time,
-      "timePost": timePost,
     };
   }
 

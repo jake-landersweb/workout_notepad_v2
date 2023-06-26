@@ -24,6 +24,11 @@ class NumberPicker extends StatefulWidget {
     this.onBottomClick,
     this.picker,
     this.spacing = 16,
+    this.backgroundColor,
+    this.clearOnNewAdd = true,
+    this.contain = true,
+    this.customFormatter,
+    this.initialValueStr,
   });
   final Function(int val) onChanged;
   final int? intialValue;
@@ -39,6 +44,11 @@ class NumberPicker extends StatefulWidget {
   final VoidCallback? onBottomClick;
   final Widget? picker;
   final double spacing;
+  final Color? backgroundColor;
+  final bool clearOnNewAdd;
+  final bool contain;
+  final TextInputFormatter? customFormatter;
+  final String? initialValueStr;
 
   @override
   State<NumberPicker> createState() => _NumberPickerState();
@@ -46,11 +56,12 @@ class NumberPicker extends StatefulWidget {
 
 class _NumberPickerState extends State<NumberPicker> {
   late TextEditingController _controller;
+  bool clear = true;
 
   @override
   void initState() {
-    _controller =
-        TextEditingController(text: widget.intialValue?.toString() ?? "0");
+    _controller = TextEditingController(
+        text: widget.initialValueStr ?? widget.intialValue?.toString() ?? "0");
     super.initState();
   }
 
@@ -62,43 +73,19 @@ class _NumberPickerState extends State<NumberPicker> {
           child: Row(
             children: [
               Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .surfaceVariant
-                        .withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Field(
-                    controller: _controller,
-                    labelText: "",
-                    showBackground: false,
-                    fieldPadding: EdgeInsets.zero,
-                    textAlign: TextAlign.center,
-                    isLabeled: false,
-                    keyboardType: TextInputType.number,
-                    charLimit: getNumChars(),
-                    formatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                      _TextInputFormatter(
-                          maxValue: widget.maxValue, minValue: widget.minValue),
-                    ],
-                    style: TextStyle(
-                      fontSize: widget.textFontSize,
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                      fontWeight: widget.fontWeight,
-                    ),
-                    onChanged: (val) {
-                      if (val != "") {
-                        int? tmp = int.tryParse(val);
-                        if (tmp != null) {
-                          widget.onChanged(tmp);
-                        }
-                      }
-                    },
-                  ),
-                ),
+                child: widget.contain
+                    ? Container(
+                        decoration: BoxDecoration(
+                          color: widget.backgroundColor ??
+                              Theme.of(context)
+                                  .colorScheme
+                                  .surfaceVariant
+                                  .withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: _content(context),
+                      )
+                    : _content(context),
               ),
               if (widget.showPicker)
                 Padding(
@@ -215,6 +202,50 @@ class _NumberPickerState extends State<NumberPicker> {
                   color: textColor,
                 ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _content(BuildContext context) {
+    return FocusScope(
+      child: Focus(
+        onFocusChange: (focus) {
+          if (focus) {
+            clear = true;
+          }
+        },
+        child: Field(
+          controller: _controller,
+          labelText: "",
+          showBackground: false,
+          fieldPadding: EdgeInsets.zero,
+          textAlign: TextAlign.center,
+          isLabeled: false,
+          keyboardType: TextInputType.number,
+          charLimit: getNumChars(),
+          formatters: [
+            FilteringTextInputFormatter.digitsOnly,
+            widget.customFormatter ??
+                _TextInputFormatter(
+                  maxValue: widget.maxValue,
+                  minValue: widget.minValue,
+                ),
+          ],
+          style: TextStyle(
+            fontSize: widget.textFontSize,
+            color: Theme.of(context).colorScheme.onPrimaryContainer,
+            fontWeight: widget.fontWeight,
+          ),
+          onChanged: (val) {
+            if (val != "") {
+              int? tmp = int.tryParse(val);
+              if (tmp != null) {
+                clear = false;
+                widget.onChanged(tmp);
+              }
+            }
+          },
         ),
       ),
     );

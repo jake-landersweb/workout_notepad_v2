@@ -8,6 +8,8 @@ import 'package:workout_notepad_v2/components/cell_wrapper.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
 import 'package:workout_notepad_v2/components/floating_sheet.dart';
+import 'package:workout_notepad_v2/components/time_picker.dart';
+import 'package:workout_notepad_v2/components/timer.dart';
 import 'package:workout_notepad_v2/data/exercise_base.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
@@ -221,7 +223,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (e.type == 1)
+        if (e.type == ExerciseType.timed)
           Padding(
             padding: const EdgeInsets.only(bottom: 16.0),
             child: ConstrainedBox(
@@ -232,7 +234,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
               ),
             ),
           ),
-        if (e.type == 2)
+        if (e.type == ExerciseType.duration)
           Padding(
             padding: const EdgeInsets.only(bottom: 16.0),
             child: comp.CountupTimer(
@@ -322,7 +324,6 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                   weight: item.weight,
                   weightPost: e.weightPost,
                   time: item.time,
-                  timePost: e.timePost,
                   type: e.type,
                   saved: item.saved,
                   onRepsChange: (val) =>
@@ -333,8 +334,6 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                       lmodel.setLogWeightPost(widget.index, val),
                   onTimeChange: (val) =>
                       lmodel.setLogTime(widget.index, i, val),
-                  onTimePostChange: (val) =>
-                      lmodel.setLogTimePost(widget.index, val),
                   onSaved: (val) => lmodel.setLogSaved(widget.index, i, val),
                   onDelete: () => lmodel.removeLogSet(widget.index, i),
                 ),
@@ -356,7 +355,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (e.type == 1)
+        if (e.type == ExerciseType.timed)
           Padding(
             padding: const EdgeInsets.only(bottom: 16.0),
             child: ConstrainedBox(
@@ -369,7 +368,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
               ),
             ),
           ),
-        if (e.type == 2)
+        if (e.type == ExerciseType.duration)
           Padding(
             padding: const EdgeInsets.only(bottom: 16.0),
             child: comp.CountupTimer(
@@ -464,19 +463,16 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                   weight: item.weight,
                   weightPost: e.weightPost,
                   time: item.time,
-                  timePost: e.timePost,
                   type: e.type,
                   saved: item.saved,
                   onRepsChange: (val) =>
                       lmodel.setLogChildReps(widget.index, childIndex, i, val),
                   onWeightChange: (val) => lmodel.setLogChildWeight(
                       widget.index, childIndex, i, val),
-                  onWeightPostChange: (val) =>
-                      lmodel.setLogChildTimePost(widget.index, childIndex, val),
+                  onWeightPostChange: (val) => lmodel.setLogChildWeightPost(
+                      widget.index, childIndex, val),
                   onTimeChange: (val) =>
                       lmodel.setLogChildTime(widget.index, childIndex, i, val),
-                  onTimePostChange: (val) =>
-                      lmodel.setLogChildTimePost(widget.index, childIndex, val),
                   onSaved: (val) =>
                       lmodel.setLogChildSaved(widget.index, childIndex, i, val),
                   onDelete: () =>
@@ -501,14 +497,12 @@ class _Cell extends StatelessWidget {
     required this.weight,
     required this.weightPost,
     required this.time,
-    required this.timePost,
     required this.type,
     required this.saved,
     required this.onRepsChange,
     required this.onWeightChange,
     required this.onWeightPostChange,
     required this.onTimeChange,
-    required this.onTimePostChange,
     required this.onSaved,
     required this.onDelete,
   });
@@ -518,14 +512,12 @@ class _Cell extends StatelessWidget {
   final int weight;
   final String weightPost;
   final int time;
-  final String timePost;
-  final int type;
+  final ExerciseType type;
   final bool saved;
   final Function(int val) onRepsChange;
   final Function(int val) onWeightChange;
   final Function(String val) onWeightPostChange;
   final Function(int val) onTimeChange;
-  final Function(String val) onTimePostChange;
   final Function(bool val) onSaved;
   final VoidCallback onDelete;
 
@@ -554,13 +546,11 @@ class _Cell extends StatelessWidget {
                 weight: weight,
                 weightPost: weightPost,
                 time: time,
-                timePost: timePost,
                 type: type,
                 onRepsChange: onRepsChange,
                 onWeightChange: onWeightChange,
                 onWeightPostChange: onWeightPostChange,
                 onTimeChange: onTimeChange,
-                onTimePostChange: onTimePostChange,
                 onSaved: onSaved,
                 onDelete: onDelete,
               ),
@@ -597,17 +587,10 @@ class _Cell extends StatelessWidget {
 
   Widget _post(BuildContext context) {
     switch (type) {
-      case 1:
-      case 2:
+      case ExerciseType.weight:
         return Row(
           children: [
-            Expanded(child: _itemCell(context, timePost.toUpperCase(), time)),
-          ],
-        );
-      default:
-        return Row(
-          children: [
-            Expanded(child: _itemCell(context, "REPS", reps)),
+            Expanded(child: _itemCell(context, "REPS", reps.toString())),
             Text(
               "*",
               style: ttLabel(context,
@@ -617,20 +600,27 @@ class _Cell extends StatelessWidget {
               child: _itemCell(
                 context,
                 weightPost.toUpperCase(),
-                weight,
+                weight.toString(),
               ),
             ),
+          ],
+        );
+      case ExerciseType.timed:
+      case ExerciseType.duration:
+        return Row(
+          children: [
+            Expanded(child: _itemCell(context, "", formatHHMMSS(time))),
           ],
         );
     }
   }
 
-  Widget _itemCell(BuildContext context, String title, int item) {
+  Widget _itemCell(BuildContext context, String title, String item) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          item.toString(),
+          item,
           style: ttTitle(context,
               color: Theme.of(context).colorScheme.onSurfaceVariant),
         ),
@@ -655,13 +645,11 @@ class _CellLog extends StatefulWidget {
     required this.weight,
     required this.weightPost,
     required this.time,
-    required this.timePost,
     required this.type,
     required this.onRepsChange,
     required this.onWeightChange,
     required this.onWeightPostChange,
     required this.onTimeChange,
-    required this.onTimePostChange,
     required this.onSaved,
     required this.onDelete,
   });
@@ -670,13 +658,11 @@ class _CellLog extends StatefulWidget {
   final int weight;
   final String weightPost;
   final int time;
-  final String timePost;
-  final int type;
+  final ExerciseType type;
   final Function(int val) onRepsChange;
   final Function(int val) onWeightChange;
   final Function(String val) onWeightPostChange;
   final Function(int val) onTimeChange;
-  final Function(String val) onTimePostChange;
   final Function(bool val) onSaved;
   final VoidCallback onDelete;
 
@@ -689,7 +675,7 @@ class _CellLogState extends State<_CellLog> {
   late int _weight;
   late String _weightPost;
   late int _time;
-  late String _timePost;
+  late List<int> _timeItems;
 
   @override
   void initState() {
@@ -697,7 +683,10 @@ class _CellLogState extends State<_CellLog> {
     _weight = widget.weight;
     _weightPost = widget.weightPost;
     _time = widget.time;
-    _timePost = widget.timePost;
+    _timeItems = formatHHMMSS(_time, truncate: false)
+        .split(":")
+        .map((e) => int.parse(e))
+        .toList();
     super.initState();
   }
 
@@ -747,7 +736,6 @@ class _CellLogState extends State<_CellLog> {
                           widget.onWeightChange(_weight);
                           widget.onWeightPostChange(_weightPost);
                           widget.onTimeChange(_time);
-                          widget.onTimePostChange(_timePost);
                           widget.onSaved(true);
                           Navigator.of(context).pop();
                         },
@@ -766,16 +754,7 @@ class _CellLogState extends State<_CellLog> {
 
   Widget _getContent(BuildContext context) {
     switch (widget.type) {
-      case 1:
-      case 2:
-        return Row(
-          children: [
-            Expanded(
-              child: _timedCell(context),
-            ),
-          ],
-        );
-      default:
+      case ExerciseType.weight:
         return Row(
           children: [
             Expanded(
@@ -797,55 +776,35 @@ class _CellLogState extends State<_CellLog> {
             ),
           ],
         );
+      case ExerciseType.timed:
+      case ExerciseType.duration:
+        return Row(
+          children: [
+            Expanded(
+              child: _timedCell(context),
+            ),
+          ],
+        );
     }
   }
 
   Widget _timedCell(BuildContext context) {
-    return Stack(
-      alignment: Alignment.topLeft,
-      children: [
-        comp.NumberPicker(
-          minValue: 0,
-          intialValue: _time,
-          textFontSize: 40,
-          showPicker: true,
-          maxValue: 99999,
-          spacing: 8,
-          onChanged: (val) {
-            setState(() {
-              _time = val;
-            });
-          },
-          picker: SizedBox(
-            width: 50,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Column(
-                  children: [
-                    _buttonCell(context, "sec"),
-                    _buttonCell(context, "min"),
-                    _buttonCell(context, "hour"),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: Text(
-            "TIME",
-            style: TextStyle(
-              fontSize: 12,
-              color: Theme.of(context).primaryColor,
-            ),
-          ),
-        ),
-      ],
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: TimePicker(
+        hours: _timeItems[0],
+        minutes: _timeItems[1],
+        seconds: _timeItems[2],
+        label: "TIME",
+        onChanged: (val) {
+          setState(() {
+            _time = val;
+          });
+        },
+      ),
     );
   }
 
@@ -904,18 +863,12 @@ class _CellLogState extends State<_CellLog> {
     return Expanded(
       child: Clickable(
         onTap: () {
-          if (widget.type == 1) {
-            setState(() {
-              _timePost = post;
-            });
-          } else {
-            setState(() {
-              _weightPost = post;
-            });
-          }
+          setState(() {
+            _weightPost = post;
+          });
         },
         child: Container(
-          color: _timePost == post || _weightPost == post
+          color: _weightPost == post
               ? Theme.of(context).colorScheme.primary
               : Theme.of(context).colorScheme.surfaceVariant,
           width: double.infinity,
@@ -923,12 +876,11 @@ class _CellLogState extends State<_CellLog> {
             child: Text(
               post.toUpperCase(),
               style: TextStyle(
-                color: _timePost == post || _weightPost == post
+                color: _weightPost == post
                     ? Theme.of(context).colorScheme.onPrimary
                     : Theme.of(context).colorScheme.onSurfaceVariant,
-                fontWeight: _timePost == post || _weightPost == post
-                    ? FontWeight.w600
-                    : FontWeight.w400,
+                fontWeight:
+                    _weightPost == post ? FontWeight.w600 : FontWeight.w400,
                 fontSize: 14,
               ),
             ),

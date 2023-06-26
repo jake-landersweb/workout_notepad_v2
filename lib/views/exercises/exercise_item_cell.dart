@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
+import 'package:auto_size_text/auto_size_text.dart';
 
 class ExerciseItemCell extends StatelessWidget {
   const ExerciseItemCell({
@@ -8,7 +9,7 @@ class ExerciseItemCell extends StatelessWidget {
     required this.val,
   });
   final String label;
-  final int val;
+  final dynamic val;
 
   @override
   Widget build(BuildContext context) {
@@ -17,14 +18,17 @@ class ExerciseItemCell extends StatelessWidget {
       children: [
         Container(
           width: double.infinity,
+          height: 90,
           decoration: BoxDecoration(
             color:
                 Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Center(
-            child: Text(
+            child: AutoSizeText(
               val.toString(),
+              maxFontSize: 60,
+              maxLines: 1,
               style: TextStyle(
                 fontSize: 60,
                 color: Theme.of(context).colorScheme.onPrimaryContainer,

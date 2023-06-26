@@ -1,20 +1,57 @@
 import 'package:flutter/material.dart';
+import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
+import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+
+enum ExerciseType { weight, timed, duration }
+
+ExerciseType exerciseTypeFromJson(int type) {
+  switch (type) {
+    case 0:
+      return ExerciseType.weight;
+    case 1:
+      return ExerciseType.timed;
+    case 2:
+      return ExerciseType.duration;
+    // case 3:
+    //   return ExerciseType.body;
+    // case 4:
+    //   return ExerciseType.distance;
+    default:
+      print(
+          "Error, there was a default value in de-serializing exercise type $type");
+      return ExerciseType.weight;
+  }
+}
+
+int exerciseTypeToJson(ExerciseType type) {
+  switch (type) {
+    case ExerciseType.weight:
+      return 0;
+    case ExerciseType.timed:
+      return 1;
+    case ExerciseType.duration:
+      return 2;
+    // case ExerciseType.body:
+    //   return 3;
+    // case ExerciseType.distance:
+    //   return 4;
+  }
+}
 
 abstract class ExerciseBase {
   late String title;
   late String category;
   late String description;
   late String icon;
-  late int type;
+  late ExerciseType type;
   late int sets;
   late int reps;
   late int time;
-  late String timePost;
 
   ExerciseBase({
     required this.title,
@@ -25,7 +62,6 @@ abstract class ExerciseBase {
     required this.sets,
     required this.reps,
     required this.time,
-    required this.timePost,
   });
 
   // create a copy of sorts, mostly helpful for implementations
@@ -39,7 +75,6 @@ abstract class ExerciseBase {
     sets = e.sets;
     reps = e.reps;
     time = e.time;
-    timePost = e.timePost;
   }
 
   // for converting to json
@@ -48,11 +83,10 @@ abstract class ExerciseBase {
     category = json['category'];
     description = json['description'];
     icon = json['icon'];
-    type = json['type'];
+    type = exerciseTypeFromJson(json['type']);
     sets = json['sets'];
     reps = json['reps'];
     time = json['time'];
-    timePost = json['timePost'];
   }
 
   ExerciseBase.empty() {
@@ -60,15 +94,21 @@ abstract class ExerciseBase {
     category = "";
     description = "";
     icon = "";
-    type = 0;
+    type = ExerciseType.weight;
     sets = 1;
     reps = 1;
     time = 0;
-    timePost = "sec";
   }
 
-  Image getIcon({double? size}) {
-    return getImageIcon(icon, size: size);
+  Widget getIcon(List<Category> categories, {double? size}) {
+    Category match = categories.firstWhere(
+      (element) => element.title.toLowerCase() == category.toLowerCase(),
+      orElse: () => Category(title: "", icon: "", userId: ""),
+    );
+    if (match.icon.isEmpty) {
+      return const SizedBox(height: 50, width: 50);
+    }
+    return getImageIcon(match.icon, size: size);
   }
 
   // method implementations
@@ -100,23 +140,13 @@ abstract class ExerciseBase {
       s = "$sets ";
     }
     switch (type) {
-      case 1:
-      case 2:
+      case ExerciseType.timed:
+      case ExerciseType.duration:
         return TextSpan(
-          text: "${s}x $time",
+          text: "${s}x ${getTime()}",
           style: style ?? ttBody(context),
-          children: [
-            TextSpan(
-              text: timePost,
-              style: TextStyle(
-                fontWeight: style?.fontWeight ?? FontWeight.w500,
-                fontSize: style?.fontSize ?? 16,
-                color: style?.color?.withOpacity(0.5) ??
-                    Theme.of(context).colorScheme.outline,
-              ),
-            ),
-          ],
         );
+
       default:
         return TextSpan(
           text: "${s}x $reps",
@@ -125,39 +155,71 @@ abstract class ExerciseBase {
     }
   }
 
-  Duration getDuration() {
-    if (type == 1 || type == 2) {
-      switch (timePost) {
-        case "sec":
-          return Duration(seconds: time);
-        case "min":
-          return Duration(minutes: time);
-        case "hour":
-          return Duration(hours: time);
-        default:
-          return Duration.zero;
-      }
-    } else {
-      return Duration.zero;
+  // get as hh:mm:ss
+  String getTime() {
+    return formatHHMMSS(time);
+  }
+
+  /// Convert 00:00:00 to time
+  void setTime(String hhmmss) {
+    var items = hhmmss.split(":").reversed.toList();
+    var secs = int.parse(items[0]);
+    var mins = int.parse(items[1]);
+    var hours = 0;
+    if (items.length > 2) {
+      hours = int.parse(items[2]);
     }
+    time = Duration(hours: hours, minutes: mins, seconds: secs).inSeconds;
+  }
+
+  int getHours() {
+    var items = formatHHMMSS(time, truncate: false).split(":");
+    return int.parse(items[0]);
+  }
+
+  int getMinutes() {
+    var items = formatHHMMSS(time, truncate: false).split(":");
+    return int.parse(items[1]);
+  }
+
+  int getSeconds() {
+    var items = formatHHMMSS(time, truncate: false).split(":");
+    return int.parse(items[2]);
+  }
+
+  void setHours(int hours) {
+    var items = formatHHMMSS(time, truncate: false).split(":");
+    time = Duration(
+      hours: hours,
+      minutes: int.parse(items[1]),
+      seconds: int.parse(items[2]),
+    ).inSeconds;
+  }
+
+  void setMinutes(int min) {
+    var items = formatHHMMSS(time, truncate: false).split(":");
+    time = Duration(
+      hours: int.parse(items[0]),
+      minutes: min,
+      seconds: int.parse(items[2]),
+    ).inSeconds;
+  }
+
+  void setSeconds(int sec) {
+    var items = formatHHMMSS(time, truncate: false).split(":");
+    time = Duration(
+      hours: int.parse(items[0]),
+      minutes: int.parse(items[1]),
+      seconds: sec,
+    ).inSeconds;
+  }
+
+  Duration getDuration() {
+    return Duration(seconds: time);
   }
 
   void setDuration(Duration duration) {
-    if (type == 1 || type == 2) {
-      switch (timePost) {
-        case "sec":
-          time = duration.inSeconds;
-          break;
-        case "min":
-          time = duration.inMinutes;
-          break;
-        case "hour":
-          time = duration.inHours;
-          break;
-        default:
-          time = 0;
-      }
-    }
+    time = duration.inSeconds;
   }
 
   Future<List<ExerciseLog>> getLogs(String exerciseId) async {

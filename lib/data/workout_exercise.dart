@@ -31,7 +31,6 @@ class WorkoutExercise extends ExerciseBase {
     required super.sets,
     required super.reps,
     required super.time,
-    required super.timePost,
   });
 
   WorkoutExercise.init(Workout w, Exercise e, ExerciseChildArgs args)
@@ -44,7 +43,6 @@ class WorkoutExercise extends ExerciseBase {
           sets: args.sets ?? e.sets,
           reps: args.reps ?? e.reps,
           time: args.time ?? e.time,
-          timePost: args.timePost ?? e.timePost,
         ) {
     var uuid = const Uuid();
     workoutExerciseId = uuid.v4();
@@ -86,7 +84,6 @@ class WorkoutExercise extends ExerciseBase {
         reps: reps,
         sets: sets,
         time: time,
-        timePost: timePost,
       );
 
   WorkoutExercise.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
@@ -110,7 +107,6 @@ class WorkoutExercise extends ExerciseBase {
       "sets": sets,
       "reps": reps,
       "time": time,
-      "timePost": timePost,
       "note": note,
       "superSetOrdering": superSetOrdering,
     };

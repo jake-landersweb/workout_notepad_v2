@@ -112,7 +112,10 @@ class _SectionState extends State<Section> with TickerProviderStateMixin {
                     opacity: 0,
                     child: Icon(
                       Icons.chevron_left,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .outline
+                          .withOpacity(0.5),
                     ),
                   )
                 ],
@@ -137,8 +140,9 @@ class _SectionState extends State<Section> with TickerProviderStateMixin {
             ),
             Expanded(
               child: Divider(
-                  height: 0.5,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant),
+                height: 0.5,
+                color: Theme.of(context).colorScheme.outline.withOpacity(0.5),
+              ),
             ),
             Padding(
               padding: widget.headerPadding,
@@ -154,9 +158,13 @@ class _SectionState extends State<Section> with TickerProviderStateMixin {
                         duration: const Duration(milliseconds: 550),
                         curve: Sprung.overDamped,
                         turns: _isOpen ? 0.25 : -0.25,
-                        child: Icon(Icons.chevron_left,
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant),
+                        child: Icon(
+                          Icons.chevron_left,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .outline
+                              .withOpacity(0.7),
+                        ),
                       ),
                     ),
                   ),

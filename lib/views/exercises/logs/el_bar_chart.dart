@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -120,11 +122,13 @@ class _ELBarChartState extends State<ELBarChart> {
                         reservedSize: 50,
                         interval: elmodel.lineData == null
                             ? 1
-                            : elmodel.lineData!.spots.length == 1
-                                ? elmodel.lineData!.graphHigh
-                                : (elmodel.lineData!.graphHigh -
-                                        elmodel.lineData!.graphLow) /
-                                    3,
+                            : max(
+                                elmodel.lineData!.spots.length == 1
+                                    ? elmodel.lineData!.graphHigh
+                                    : (elmodel.lineData!.graphHigh -
+                                            elmodel.lineData!.graphLow) /
+                                        3,
+                                1),
                         getTitlesWidget: (value, meta) {
                           return Text(
                             "${value.round()} ${elmodel.getDistributionPost()}",

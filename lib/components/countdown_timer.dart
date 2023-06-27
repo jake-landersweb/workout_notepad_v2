@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import 'package:line_icons/line_icons.dart';
 import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
@@ -12,11 +13,17 @@ class CountdownTimer extends StatefulWidget {
     super.key,
     this.type = CountdownTimerType.adaptive,
     required this.duration,
+    this.beginTime,
     this.fontSize = 100,
+    this.onStart,
+    this.onEnd,
   });
   final CountdownTimerType type;
   final Duration duration;
+  final DateTime? beginTime;
   final double fontSize;
+  final VoidCallback? onStart;
+  final VoidCallback? onEnd;
 
   @override
   State<CountdownTimer> createState() => _CountdownTimerState();
@@ -44,6 +51,22 @@ class _CountdownTimerState extends State<CountdownTimer>
       }
     } else {
       _type = widget.type;
+    }
+
+    if (widget.beginTime != null) {
+      var diff = DateTime.now().difference(widget.beginTime!);
+      _controller.reverse(
+        from: (widget.duration.inMilliseconds - diff.inMilliseconds) /
+            widget.duration.inMilliseconds,
+      );
+    }
+
+    if (widget.onEnd != null) {
+      _controller.addListener(() {
+        if (_controller.value == 0) {
+          widget.onEnd!();
+        }
+      });
     }
 
     // get resting digits to show when timer is off
@@ -114,24 +137,6 @@ class _CountdownTimerState extends State<CountdownTimer>
                 // controls
                 Row(
                   children: [
-                    Expanded(
-                      child: Center(
-                        child: Clickable(
-                          onTap: () {
-                            setState(() {
-                              _controller.reset();
-                            });
-                          },
-                          child: Text(
-                            "Reset",
-                            style: ttBody(
-                              context,
-                              color: Theme.of(context).colorScheme.outline,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
@@ -210,14 +215,14 @@ class _CountdownTimerState extends State<CountdownTimer>
                             child: comp.ActionButton(
                               minHeight: 35,
                               title:
-                                  _controller.isAnimating ? "Pause" : "Start",
+                                  _controller.isAnimating ? "Reset" : "Start",
                               icon: _controller.isAnimating
-                                  ? Icons.pause_rounded
+                                  ? Icons.restart_alt_rounded
                                   : Icons.play_arrow_rounded,
                               onTap: () {
                                 if (_controller.isAnimating) {
                                   setState(() {
-                                    _controller.stop();
+                                    _controller.reset();
                                   });
                                 } else {
                                   setState(() {
@@ -227,6 +232,9 @@ class _CountdownTimerState extends State<CountdownTimer>
                                           : _controller.value,
                                     );
                                   });
+                                  if (widget.onStart != null) {
+                                    widget.onStart!();
+                                  }
                                 }
                               },
                             ),

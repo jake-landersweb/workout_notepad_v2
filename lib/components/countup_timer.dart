@@ -10,9 +10,15 @@ class CountupTimer extends StatefulWidget {
     super.key,
     this.goalDuration,
     this.onFinish,
+    this.startOnInit = false,
+    this.startTime,
+    this.onStart,
   });
   final Duration? goalDuration;
   final void Function(Duration duration)? onFinish;
+  final bool startOnInit;
+  final DateTime? startTime;
+  final VoidCallback? onStart;
 
   @override
   State<CountupTimer> createState() => _CountupTimerState();
@@ -22,7 +28,10 @@ class _CountupTimerState extends State<CountupTimer> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => comp.TextTimerController(startOnCreate: false),
+      create: (context) => comp.TextTimerController(
+        startOnCreate: widget.startOnInit,
+        startTime: widget.startTime,
+      ),
       builder: (context, child) => _body(context),
     );
   }
@@ -129,6 +138,9 @@ class _CountupTimerState extends State<CountupTimer> {
                   : FilledButton.icon(
                       onPressed: () {
                         controller.start();
+                        if (widget.onStart != null) {
+                          widget.onStart!();
+                        }
                       },
                       icon: const Icon(Icons.play_arrow_rounded),
                       label: const Text("Start"),

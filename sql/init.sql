@@ -133,6 +133,7 @@ CREATE TABLE exercise_log(
     title TEXT NOT NULL,
     userId TEXT NOT NULL,
     exerciseId TEXT NOT NULL,
+    parentId TEXT,
     workoutLogId TEXT,
     type INTEGER DEFAULT 0 NOT NULL,
     sets INTEGER NOT NULL,

@@ -43,52 +43,64 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // for exchanging or adding new workouts
+                // exercise utils
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: Row(
                     children: [
-                      Clickable(
-                        onTap: () {
+                      _actionCell(
+                        context,
+                        "Configure",
+                        Icons.settings_outlined,
+                        () {
                           cupertinoSheet(
                             context: context,
-                            builder: (context) => SelectExercise(
-                              title: "Exchange Exercise",
-                              onSelect: (exercise) {
-                                lmodel.addExercise(exercise, widget.index);
+                            builder: (context) => LWConfigureExercise(
+                              index: widget.index,
+                              onCompletion: (sets) {
+                                lmodel.handleSuperSets(widget.index, sets);
                               },
                             ),
                           );
                         },
-                        child: const Icon(LineIcons.syncIcon),
                       ),
-                      const Spacer(),
-                      Clickable(
-                        onTap: () {
-                          cupertinoSheet(
-                            context: context,
-                            builder: (context) => SelectExercise(
-                              title: "Add Exercise Next",
-                              onSelect: (exercise) async {
-                                lmodel.addExercise(
-                                  exercise,
-                                  widget.index + 1,
-                                  push: true,
-                                );
-                                await Future.delayed(
-                                  const Duration(milliseconds: 700),
-                                );
-                                lmodel.state.pageController.animateToPage(
-                                  widget.index + 1,
-                                  duration: const Duration(milliseconds: 500),
-                                  curve: Sprung.overDamped,
-                                );
-                              },
-                            ),
-                          );
-                        },
-                        child: const Icon(Icons.new_label_outlined),
-                      ),
+                      const SizedBox(width: 8),
+                      _actionCell(context, "Swap", LineIcons.syncIcon, () {
+                        cupertinoSheet(
+                          context: context,
+                          builder: (context) => SelectExercise(
+                            title: "Swap Exercise",
+                            onSelect: (exercise) {
+                              lmodel.addExercise(exercise, widget.index);
+                            },
+                          ),
+                        );
+                      }),
+                      const SizedBox(width: 8),
+                      _actionCell(context, "Add Next", Icons.new_label_outlined,
+                          () {
+                        cupertinoSheet(
+                          context: context,
+                          builder: (context) => SelectExercise(
+                            title: "Add Exercise Next",
+                            onSelect: (exercise) async {
+                              lmodel.addExercise(
+                                exercise,
+                                widget.index + 1,
+                                push: true,
+                              );
+                              await Future.delayed(
+                                const Duration(milliseconds: 700),
+                              );
+                              lmodel.state.pageController.animateToPage(
+                                widget.index + 1,
+                                duration: const Duration(milliseconds: 500),
+                                curve: Sprung.overDamped,
+                              );
+                            },
+                          ),
+                        );
+                      }),
                     ],
                   ),
                 ),
@@ -230,6 +242,26 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
               constraints: const BoxConstraints(maxHeight: 300),
               child: comp.CountdownTimer(
                 duration: lmodel.state.exercises[widget.index].getDuration(),
+                beginTime: _getTimerInstance(lmodel)?.startTime,
+                onStart: () {
+                  setState(() {
+                    lmodel.state.timerInstances.add(
+                      TimerInstance(
+                        index: widget.index,
+                        startTime: DateTime.now(),
+                      ),
+                    );
+                  });
+                },
+                onEnd: () {
+                  setState(() {
+                    lmodel.state.timerInstances.removeWhere(
+                      (element) =>
+                          element.index == widget.index &&
+                          element.childIndex == null,
+                    );
+                  });
+                },
                 fontSize: 60,
               ),
             ),
@@ -239,7 +271,28 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
             padding: const EdgeInsets.only(bottom: 16.0),
             child: comp.CountupTimer(
               goalDuration: lmodel.state.exercises[widget.index].getDuration(),
+              startTime: _getTimerInstance(lmodel)?.startTime,
+              startOnInit: _getTimerInstance(lmodel) != null,
+              onStart: () {
+                setState(() {
+                  lmodel.state.timerInstances.add(
+                    TimerInstance(
+                      index: widget.index,
+                      startTime: DateTime.now(),
+                    ),
+                  );
+                });
+              },
               onFinish: (duration) {
+                // remove timer object
+                setState(() {
+                  lmodel.state.timerInstances.removeWhere(
+                    (element) =>
+                        element.index == widget.index &&
+                        element.childIndex == null,
+                  );
+                });
+
                 int idx = lmodel.state.exerciseLogs[widget.index].metadata
                     .indexWhere((element) => !element.saved);
                 if (idx == -1) return;
@@ -364,6 +417,28 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                 duration: lmodel
                     .state.exerciseChildren[widget.index][childIndex]
                     .getDuration(),
+                beginTime:
+                    _getChildTimerInstance(lmodel, childIndex)?.startTime,
+                onStart: () {
+                  setState(() {
+                    lmodel.state.timerInstances.add(
+                      TimerInstance(
+                        index: widget.index,
+                        childIndex: childIndex,
+                        startTime: DateTime.now(),
+                      ),
+                    );
+                  });
+                },
+                onEnd: () {
+                  setState(() {
+                    lmodel.state.timerInstances.removeWhere(
+                      (element) =>
+                          element.index == widget.index &&
+                          element.childIndex == childIndex,
+                    );
+                  });
+                },
                 fontSize: 60,
               ),
             ),
@@ -375,7 +450,29 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
               goalDuration: lmodel
                   .state.exerciseChildren[widget.index][childIndex]
                   .getDuration(),
+              startTime: _getChildTimerInstance(lmodel, childIndex)?.startTime,
+              startOnInit: _getChildTimerInstance(lmodel, childIndex) != null,
+              onStart: () {
+                setState(() {
+                  lmodel.state.timerInstances.add(
+                    TimerInstance(
+                      index: widget.index,
+                      childIndex: childIndex,
+                      startTime: DateTime.now(),
+                    ),
+                  );
+                });
+              },
               onFinish: (duration) {
+                // remove timer object
+                setState(() {
+                  lmodel.state.timerInstances.removeWhere(
+                    (element) =>
+                        element.index == widget.index &&
+                        element.childIndex == childIndex,
+                  );
+                });
+
                 int idx = lmodel
                     .state.exerciseChildLogs[widget.index][childIndex].metadata
                     .indexWhere((element) => !element.saved);
@@ -485,6 +582,67 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
         ),
       ],
     );
+  }
+
+  Widget _actionCell(
+      BuildContext context, String title, IconData icon, VoidCallback onTap) {
+    return Expanded(
+      child: Clickable(
+        onTap: onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            color:
+                Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          height: 60,
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onBackground
+                        .withOpacity(0.5),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  TimerInstance? _getTimerInstance(LaunchWorkoutModel lmodel) {
+    try {
+      var m = lmodel.state.timerInstances.firstWhere(
+        (element) =>
+            element.index == widget.index && element.childIndex == null,
+      );
+      return m;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  TimerInstance? _getChildTimerInstance(
+      LaunchWorkoutModel lmodel, int childIndex) {
+    try {
+      var m = lmodel.state.timerInstances.firstWhere(
+        (element) =>
+            element.index == widget.index && element.childIndex == childIndex,
+      );
+      return m;
+    } catch (_) {
+      return null;
+    }
   }
 }
 

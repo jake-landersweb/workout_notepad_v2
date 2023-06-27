@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:sprung/sprung.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/exercise_set.dart';
@@ -9,6 +10,18 @@ import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
+
+class TimerInstance {
+  late int index;
+  int? childIndex;
+  late DateTime startTime;
+
+  TimerInstance({
+    required this.index,
+    this.childIndex,
+    required this.startTime,
+  });
+}
 
 class LaunchWorkoutModelState {
   late String userId;
@@ -22,6 +35,7 @@ class LaunchWorkoutModelState {
   List<ExerciseLog> exerciseLogs = [];
   List<List<ExerciseLog>> exerciseChildLogs = [];
   late double offsetY;
+  List<TimerInstance> timerInstances = [];
 
   LaunchWorkoutModelState({
     required this.userId,
@@ -50,7 +64,11 @@ class LaunchWorkoutModel extends ChangeNotifier {
   Future<void> init() async {
     await Future.delayed(const Duration(milliseconds: 100));
     state.offsetY = 0;
-    state.pageController.jumpToPage(state.workoutIndex);
+    state.pageController.animateToPage(
+      state.workoutIndex,
+      duration: const Duration(milliseconds: 700),
+      curve: Sprung.overDamped,
+    );
     notifyListeners();
   }
 
@@ -170,11 +188,15 @@ class LaunchWorkoutModel extends ChangeNotifier {
     dmodel.stopWorkout();
   }
 
-  Future<void> addExercise(Exercise exercise, int index,
-      {bool push = false}) async {
+  Future<void> addExercise(
+    Exercise exercise,
+    int index, {
+    bool push = false,
+  }) async {
     // exercise is not part of workout, need to add it.
     WorkoutExercise we = WorkoutExercise.fromExercise(state.workout, exercise);
-    we.exerciseOrder = index - 1;
+    we.exerciseOrder =
+        index - 1; // TODO -- may need to remap all exercise index orders
     await we.insert();
 
     var log = ExerciseLog.workoutInit(
@@ -213,6 +235,39 @@ class LaunchWorkoutModel extends ChangeNotifier {
         state.exerciseChildLogs[index] = [];
       }
     }
+    notifyListeners();
+  }
+
+  Future<void> handleSuperSets(
+    int index,
+    List<ExerciseSet> sets,
+  ) async {
+    // delete all old exercise sets
+    for (var i in state.exerciseChildren[index]) {
+      await i.delete(state.workout.workoutId);
+    }
+
+    // new log list
+    List<ExerciseLog> logs = [];
+
+    // add to exercises
+    for (int i = 0; i < sets.length; i++) {
+      sets[i].exerciseOrder = i + 1;
+      await sets[i].insert(
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      var log = ExerciseLog.exerciseSetInit(
+        state.userId,
+        sets[i].childId,
+        sets[i].parentId,
+        state.wl.workoutLogId,
+        sets[i],
+      );
+      logs.add(log);
+    }
+    // add to current workout session state
+    state.exerciseChildren[index] = sets;
+    state.exerciseChildLogs[index] = logs;
     notifyListeners();
   }
 }

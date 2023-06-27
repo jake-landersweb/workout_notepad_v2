@@ -1,5 +1,5 @@
 {
-    "id": "1687799151732-5151dbd2684b4c169dd74e798001359a",
+    "id": "1687841018644-906b53dad8144dbcaed8dd7cfeb26aa8",
     "categories": [
      {
       "created": "2023-06-20 00:40:51",
@@ -65,7 +65,7 @@
       "userId": "1"
      }
     ],
-    "created": "2023-06-26 17:05:51.732240",
+    "created": "2023-06-27 04:43:38.644646",
     "exerciseLogs": [
      {
       "created": "2023-06-20 00:45:05",
@@ -962,6 +962,166 @@
       "weight": "130,115,115",
       "weightPost": "lbs",
       "workoutLogId": "1655609c-68d3-415b-86ca-fde68a865e48"
+     },
+     {
+      "created": "2023-06-26 18:47:25",
+      "exerciseId": "882d1763-6e5f-4bf1-b567-4a98c7dd812d",
+      "exerciseLogId": "fb140af8-ef24-4569-9a60-1907f18f5dfc",
+      "note": "",
+      "reps": "1",
+      "sets": 1,
+      "time": "270",
+      "title": "Bike",
+      "type": 1,
+      "updated": "2023-06-26 18:47:25",
+      "userId": "1",
+      "weight": "0",
+      "weightPost": "lbs",
+      "workoutLogId": "eb3f4e4f-55c6-4b8a-b637-287aac3598ea"
+     },
+     {
+      "created": "2023-06-26 18:47:25",
+      "exerciseId": "31dc5800-930f-40b3-9607-0e832dd966bf",
+      "exerciseLogId": "51ae7d12-d1b0-4268-87d9-a9af4ac643a9",
+      "note": "",
+      "reps": "10,8,7,2,1,4",
+      "sets": 6,
+      "time": "0,0,0,0,0,0",
+      "title": "Barbell back squat",
+      "type": 0,
+      "updated": "2023-06-26 18:47:25",
+      "userId": "1",
+      "weight": "145,225,315,365,405,315",
+      "weightPost": "lbs",
+      "workoutLogId": "eb3f4e4f-55c6-4b8a-b637-287aac3598ea"
+     },
+     {
+      "created": "2023-06-26 18:47:25",
+      "exerciseId": "1a9c4034-2230-4496-bc4a-ec991ced107a",
+      "exerciseLogId": "9995ac3b-8b12-4db3-ae15-076bc7946d45",
+      "note": "",
+      "reps": "12,10,10",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "Smith Deadlifts",
+      "type": 0,
+      "updated": "2023-06-26 18:47:25",
+      "userId": "1",
+      "weight": "135,155,155",
+      "weightPost": "lbs",
+      "workoutLogId": "eb3f4e4f-55c6-4b8a-b637-287aac3598ea"
+     },
+     {
+      "created": "2023-06-26 18:47:25",
+      "exerciseId": "54ae501f-c066-458d-bbc3-2b5885865166",
+      "exerciseLogId": "3400ca3c-713a-467b-8695-4b593bcf3038",
+      "note": "",
+      "reps": "8,8",
+      "sets": 2,
+      "time": "0,0",
+      "title": "Goblin Squat",
+      "type": 0,
+      "updated": "2023-06-26 18:47:25",
+      "userId": "1",
+      "weight": "90,90",
+      "weightPost": "lbs",
+      "workoutLogId": "eb3f4e4f-55c6-4b8a-b637-287aac3598ea"
+     },
+     {
+      "created": "2023-06-26 18:47:25",
+      "exerciseId": "2bf680dc-7fad-45c4-b732-abd171cd7e46",
+      "exerciseLogId": "a91f0edd-87e9-4d0b-bd94-1c2378b63055",
+      "note": "",
+      "reps": "12,8,11",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "Hamstring curls",
+      "type": 0,
+      "updated": "2023-06-26 18:47:25",
+      "userId": "1",
+      "weight": "183,214,199",
+      "weightPost": "lbs",
+      "workoutLogId": "eb3f4e4f-55c6-4b8a-b637-287aac3598ea"
+     },
+     {
+      "created": "2023-06-26 18:47:25",
+      "exerciseId": "4f7e1ba4-da78-4d82-ba30-8901d51fcf82",
+      "exerciseLogId": "d59eb516-f98e-4454-930d-f7997de06c97",
+      "note": "",
+      "reps": "12,12,12",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "Calf Raises",
+      "type": 0,
+      "updated": "2023-06-26 18:47:25",
+      "userId": "1",
+      "weight": "90,90,90",
+      "weightPost": "lbs",
+      "workoutLogId": "eb3f4e4f-55c6-4b8a-b637-287aac3598ea"
+     },
+     {
+      "created": "2023-06-26 18:47:25",
+      "exerciseId": "669cbf95-07f9-4310-ae8b-1a3adeb97be2",
+      "exerciseLogId": "7890fc86-1200-4909-a175-cd713612f6c0",
+      "note": "",
+      "reps": "12,12,12",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "Hanging leg raises",
+      "type": 0,
+      "updated": "2023-06-26 18:47:25",
+      "userId": "1",
+      "weight": "0,0,0",
+      "weightPost": "lbs",
+      "workoutLogId": "eb3f4e4f-55c6-4b8a-b637-287aac3598ea"
+     },
+     {
+      "created": "2023-06-26 18:47:25",
+      "exerciseId": "9fa6f500-ed47-4bd3-97c2-ef22a81b9601",
+      "exerciseLogId": "b7acaeaa-3d67-46af-be5f-1e100d3d929d",
+      "note": "",
+      "reps": "20,20,20",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "V-ups",
+      "type": 0,
+      "updated": "2023-06-26 18:47:25",
+      "userId": "1",
+      "weight": "0,0,0",
+      "weightPost": "lbs",
+      "workoutLogId": "eb3f4e4f-55c6-4b8a-b637-287aac3598ea"
+     },
+     {
+      "created": "2023-06-26 18:47:25",
+      "exerciseId": "cd5e37be-cd34-43b5-a43e-5aaa78f20551",
+      "exerciseLogId": "e0f4bf51-f0bd-4c4b-9830-c3ac76564520",
+      "note": "",
+      "reps": "15,12",
+      "sets": 2,
+      "time": "0,0",
+      "title": "Leg Raises",
+      "type": 0,
+      "updated": "2023-06-26 18:47:25",
+      "userId": "1",
+      "weight": "0,0",
+      "weightPost": "lbs",
+      "workoutLogId": "eb3f4e4f-55c6-4b8a-b637-287aac3598ea"
+     },
+     {
+      "created": "2023-06-26 18:47:25",
+      "exerciseId": "dae86f24-29f5-4d94-be20-7f9ebdde0e8b",
+      "exerciseLogId": "d069b912-fc91-447d-afc1-5e0087c4514f",
+      "note": "",
+      "reps": "5,5",
+      "sets": 2,
+      "time": "0,0",
+      "title": "Bulgarian Split Squats",
+      "type": 0,
+      "updated": "2023-06-26 18:47:25",
+      "userId": "1",
+      "weight": "50,50",
+      "weightPost": "lbs",
+      "workoutLogId": "eb3f4e4f-55c6-4b8a-b637-287aac3598ea"
      }
     ],
     "exercises": [
@@ -2350,6 +2510,19 @@
       "updated": "2023-06-26 17:05:43",
       "workoutExerciseId": "6d990814-62de-415a-a3d7-1dc3f046cbc9",
       "workoutId": "1be11282-d077-4af4-b7bf-336085c71013"
+     },
+     {
+      "created": "2023-06-26 18:42:55",
+      "exerciseId": "669cbf95-07f9-4310-ae8b-1a3adeb97be2",
+      "exerciseOrder": 5,
+      "note": "",
+      "reps": 12,
+      "sets": 3,
+      "superSetOrdering": 0,
+      "time": 0,
+      "updated": "2023-06-26 18:42:55",
+      "workoutExerciseId": "bd31ded3-b495-450a-96dc-a866c8a5fc88",
+      "workoutId": "1be11282-d077-4af4-b7bf-336085c71013"
      }
     ],
     "workoutLogs": [
@@ -2440,6 +2613,17 @@
       "userId": "1",
       "workoutId": "9eda5ff8-e50c-42cc-b71c-58acbf30ab09",
       "workoutLogId": "1655609c-68d3-415b-86ca-fde68a865e48"
+     },
+     {
+      "created": "2023-06-26 18:47:25",
+      "description": "Get those juicy quads",
+      "duration": 4519,
+      "note": null,
+      "title": "Leg day",
+      "updated": "2023-06-26 18:47:25",
+      "userId": "1",
+      "workoutId": "1be11282-d077-4af4-b7bf-336085c71013",
+      "workoutLogId": "eb3f4e4f-55c6-4b8a-b637-287aac3598ea"
      }
     ],
     "workouts": [

@@ -8,6 +8,7 @@ class ExerciseLog {
   late String exerciseLogId;
   late String userId;
   late String exerciseId;
+  String? parentId;
   String? workoutLogId;
   late String title;
   late ExerciseType type;
@@ -22,6 +23,7 @@ class ExerciseLog {
     required this.exerciseLogId,
     required this.userId,
     required this.exerciseId,
+    this.parentId,
     this.workoutLogId,
     required this.title,
     required this.sets,
@@ -89,10 +91,44 @@ class ExerciseLog {
     updated = "";
   }
 
+  ExerciseLog.exerciseSetInit(
+    String uid,
+    String eid,
+    String parentEid,
+    String wlid,
+    ExerciseBase exercise,
+  ) {
+    var uuid = const Uuid();
+    exerciseLogId = uuid.v4();
+    userId = uid;
+    exerciseId = eid;
+    parentId = parentEid;
+    workoutLogId = wlid;
+    title = exercise.title;
+    sets = exercise.sets;
+    type = exercise.type;
+    weightPost = "lbs";
+    metadata = [];
+    note = "";
+    for (int i = 0; i < exercise.sets; i++) {
+      metadata.add(
+        ExerciseLogMeta(
+          reps: exercise.reps,
+          time: exercise.time,
+          weight: 0,
+          saved: false,
+        ),
+      );
+    }
+    created = "";
+    updated = "";
+  }
+
   ExerciseLog.fromJson(Map<String, dynamic> json) {
     exerciseLogId = json['exerciseLogId'];
     userId = json['userId'];
     exerciseId = json['exerciseId'];
+    parentId = json['parentId'];
     workoutLogId = json['workoutLogId'];
     title = json['title'];
     type = exerciseTypeFromJson(json['type']);
@@ -150,6 +186,7 @@ class ExerciseLog {
       "exerciseLogId": exerciseLogId,
       "userId": userId,
       "exerciseId": exerciseId,
+      "parentId": parentId,
       "workoutLogId": workoutLogId,
       "title": title,
       "type": exerciseTypeToJson(type),

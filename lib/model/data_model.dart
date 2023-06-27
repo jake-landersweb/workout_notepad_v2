@@ -72,9 +72,10 @@ class DataModel extends ChangeNotifier {
       workoutState!.exerciseChildLogs.add([]);
       for (var j in tmp) {
         workoutState!.exerciseChildLogs[i].add(
-          ExerciseLog.workoutInit(
+          ExerciseLog.exerciseSetInit(
             workoutState!.userId,
             j.childId,
+            j.parentId,
             workoutState!.wl.workoutLogId,
             j,
           ),

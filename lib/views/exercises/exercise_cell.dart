@@ -15,6 +15,7 @@ class ExerciseCell extends StatelessWidget {
     super.key,
     required this.exercise,
     this.trailingIcon,
+    this.trailingWidget,
     this.onTap,
     this.showBackground = true,
     this.padding = const EdgeInsets.only(bottom: 8),
@@ -22,6 +23,7 @@ class ExerciseCell extends StatelessWidget {
   final ExerciseBase exercise;
   final VoidCallback? onTap;
   final IconData? trailingIcon;
+  final Widget? trailingWidget;
   final bool showBackground;
   final EdgeInsets padding;
 
@@ -40,52 +42,62 @@ class ExerciseCell extends StatelessWidget {
   Widget _body(BuildContext context, DataModel dmodel) {
     return Padding(
       padding: padding,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      exercise.title,
-                      style: ttLabel(
-                        context,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                    if (exercise.category.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: IntrinsicWidth(
-                          child: CategoryCell(title: exercise.category),
-                        ),
-                      ),
-                  ],
-                ),
+      child: showBackground
+          ? Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context)
+                    .colorScheme
+                    .surfaceVariant
+                    .withOpacity(0.5),
+                borderRadius: BorderRadius.circular(10),
               ),
-              if (trailingIcon != null)
-                Icon(
-                  trailingIcon,
-                  color: Theme.of(context).colorScheme.primary,
-                )
-              else
-                exercise.info(
-                  context,
-                  style: ttBody(
+              child: _content(context),
+            )
+          : _content(context),
+    );
+  }
+
+  Widget _content(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  exercise.title,
+                  style: ttLabel(
                     context,
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
-            ],
+                if (exercise.category.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: IntrinsicWidth(
+                      child: CategoryCell(title: exercise.category),
+                    ),
+                  ),
+              ],
+            ),
           ),
-        ),
+          if (trailingIcon != null)
+            Icon(
+              trailingIcon,
+              color: Theme.of(context).colorScheme.primary,
+            )
+          else
+            exercise.info(
+              context,
+              style: ttBody(
+                context,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+          if (trailingWidget != null) trailingWidget!,
+        ],
       ),
     );
   }

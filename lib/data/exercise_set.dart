@@ -126,6 +126,26 @@ class ExerciseSet extends ExerciseBase {
     return response;
   }
 
+  Future<bool> delete(String workoutId) async {
+    try {
+      final db = await getDB();
+      // delete exercise
+      String query = """
+        DELETE FROM exercise_set
+        WHERE workoutId = '$workoutId'
+        AND workoutExerciseId = '$workoutExerciseId'
+        AND parentId = '$parentId'
+        AND childId = '$childId'
+      """;
+      await db.rawQuery(query.trim());
+
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
   @override
   Future<int> update() {
     // TODO: implement update

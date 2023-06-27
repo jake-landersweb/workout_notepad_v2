@@ -3,3 +3,4 @@ export 'lw_model.dart';
 export 'lw_exercise_detail.dart';
 export 'lw_end.dart';
 export 'lw_time.dart';
+export 'configure_exercise.dart';

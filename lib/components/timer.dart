@@ -4,21 +4,25 @@ import 'package:provider/provider.dart';
 class TextTimerController extends ChangeNotifier {
   late DateTime _initTime;
   late DateTime _currentTime;
-  Duration? _initDuration;
+  DateTime? _startTime;
   late int msIterate;
   final void Function(Duration ms)? onMsTick;
 
   bool _isActive = false;
 
   TextTimerController({
-    Duration? initialTime,
+    DateTime? startTime,
     this.msIterate = 1000,
     bool startOnCreate = true,
     this.onMsTick,
   }) {
-    _initTime = DateTime.now();
+    if (startTime != null) {
+      _initTime = startTime;
+    } else {
+      _initTime = DateTime.now();
+    }
     _currentTime = DateTime.now();
-    _initDuration = initialTime;
+    _startTime = startTime;
     if (startOnCreate) {
       start();
     }
@@ -44,10 +48,9 @@ class TextTimerController extends ChangeNotifier {
 
   void start() {
     _isActive = true;
-    _initTime = DateTime.now();
     _currentTime = DateTime.now();
-    if (_initDuration != null) {
-      _currentTime.add(_initDuration!);
+    if (_startTime == null) {
+      _initTime = DateTime.now();
     }
     notifyListeners();
     _iterate();
@@ -97,7 +100,6 @@ class _TextTimerState extends State<TextTimer> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (context) => TextTimerController(
-        initialTime: widget.initialTime,
         msIterate: widget.msIterate,
         onMsTick: widget.onMsTick,
       ),

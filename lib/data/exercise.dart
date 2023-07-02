@@ -87,7 +87,7 @@ class Exercise extends ExerciseBase {
       "title": title,
       "description": description,
       "icon": icon,
-      "type": type,
+      "type": exerciseTypeToJson(type),
       "reps": reps,
       "sets": sets,
       "time": time,

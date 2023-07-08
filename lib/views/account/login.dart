@@ -88,53 +88,7 @@ class _LoginState extends State<Login> {
             setState(() {
               _isLoading = true;
             });
-            print("Attempting to login ...");
-            try {
-              final credential =
-                  await FirebaseAuth.instance.signInWithEmailAndPassword(
-                email: _email.text,
-                password: _pass.text,
-              );
-              if (credential.user == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    backgroundColor: Colors.red[200],
-                    content: const Text(
-                      "There was an issue getting your credentials",
-                    ),
-                  ),
-                );
-                return;
-              }
-              await dmodel.loginUser(context, credential);
-              Navigator.of(context).pop();
-            } on FirebaseAuthException catch (e) {
-              if (e.code == 'user-not-found' || e.code == 'wrong-password') {
-                print('Your username or password was incorrect.');
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    backgroundColor: Colors.red[300],
-                    content:
-                        const Text("Your username or password was incorrect."),
-                  ),
-                );
-              } else {
-                print(e.code);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    backgroundColor: Colors.red[300],
-                    content: Text("There was an unknown error: ${e.code}"),
-                  ),
-                );
-              }
-            } catch (e) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  backgroundColor: Colors.red[300],
-                  content: const Text("There was an unknown error."),
-                ),
-              );
-            }
+            await _logIn(context, dmodel);
             setState(() {
               _isLoading = false;
             });
@@ -148,5 +102,56 @@ class _LoginState extends State<Login> {
         ),
       ],
     );
+  }
+
+  Future<void> _logIn(BuildContext context, DataModel dmodel) async {
+    print("Attempting to login ...");
+    try {
+      final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: _email.text,
+        password: _pass.text,
+      );
+      if (credential.user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red[200],
+            content: const Text(
+              "There was an issue getting your credentials",
+            ),
+          ),
+        );
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+      await dmodel.loginUser(context, credential);
+      Navigator.of(context).pop();
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found' || e.code == 'wrong-password') {
+        print('Your username or password was incorrect.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red[300],
+            content: const Text("Your username or password was incorrect."),
+          ),
+        );
+      } else {
+        print(e.code);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red[300],
+            content: Text("There was an unknown error: ${e.code}"),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red[300],
+          content: const Text("There was an unknown error."),
+        ),
+      );
+    }
   }
 }

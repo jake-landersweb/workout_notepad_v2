@@ -27,18 +27,7 @@ class _SigninAppleState extends State<SigninApple> {
         setState(() {
           _isLoading = true;
         });
-        try {
-          final appleProvider = AppleAuthProvider();
-          var credential =
-              await FirebaseAuth.instance.signInWithProvider(appleProvider);
-          if (credential.user == null) {
-            print("There was an error signing in with apple");
-            return;
-          }
-          widget.onSignIn(credential);
-        } catch (error) {
-          print(error);
-        }
+        await _signIn();
         setState(() {
           _isLoading = false;
         });
@@ -71,5 +60,21 @@ class _SigninAppleState extends State<SigninApple> {
         ),
       ),
     );
+  }
+
+  Future<void> _signIn() async {
+    try {
+      final appleProvider = AppleAuthProvider();
+      var credential =
+          await FirebaseAuth.instance.signInWithProvider(appleProvider);
+      if (credential.user == null) {
+        print("There was an error signing in with apple");
+
+        return;
+      }
+      widget.onSignIn(credential);
+    } catch (error) {
+      print(error);
+    }
   }
 }

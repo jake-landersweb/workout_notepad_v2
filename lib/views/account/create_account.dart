@@ -85,63 +85,7 @@ class _CreateAccountState extends State<CreateAccount> {
               setState(() {
                 _isLoading = true;
               });
-              print("Attempting to create account ...");
-              try {
-                final credential =
-                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                  email: _email.text,
-                  password: _pass.text,
-                );
-                if (credential.user == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Colors.red[200],
-                      content: const Text(
-                        "There was an issue getting your credentials",
-                      ),
-                    ),
-                  );
-                  return;
-                }
-                await dmodel.loginUser(context, credential);
-                Navigator.of(context).pop();
-              } on FirebaseAuthException catch (e) {
-                if (e.code == 'weak-password') {
-                  print('The password provided is too weak.');
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Colors.red[300],
-                      content: const Text("Your password is too weak."),
-                    ),
-                  );
-                } else if (e.code == 'email-already-in-use') {
-                  print('The account already exists for that email.');
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Colors.red[200],
-                      content: const Text(
-                          "An account already exists for that email."),
-                    ),
-                  );
-                } else if (e.code == "invalid-email") {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Colors.red[200],
-                      content: const Text("Invalid email."),
-                    ),
-                  );
-                } else {
-                  print(e.code);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Colors.red[300],
-                      content: Text("There was an unknown error: ${e.code}"),
-                    ),
-                  );
-                }
-              } catch (e) {
-                print(e);
-              }
+              await _action(context, dmodel);
               setState(() {
                 _isLoading = false;
               });
@@ -156,5 +100,64 @@ class _CreateAccountState extends State<CreateAccount> {
         ),
       ],
     );
+  }
+
+  Future<void> _action(BuildContext context, DataModel dmodel) async {
+    print("Attempting to create account ...");
+    try {
+      final credential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: _email.text,
+        password: _pass.text,
+      );
+      if (credential.user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red[200],
+            content: const Text(
+              "There was an issue getting your credentials",
+            ),
+          ),
+        );
+        return;
+      }
+      await dmodel.loginUser(context, credential);
+      Navigator.of(context).pop();
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('The password provided is too weak.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red[300],
+            content: const Text("Your password is too weak."),
+          ),
+        );
+      } else if (e.code == 'email-already-in-use') {
+        print('The account already exists for that email.');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red[200],
+            content: const Text("An account already exists for that email."),
+          ),
+        );
+      } else if (e.code == "invalid-email") {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red[200],
+            content: const Text("Invalid email."),
+          ),
+        );
+      } else {
+        print(e.code);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.red[300],
+            content: Text("There was an unknown error: ${e.code}"),
+          ),
+        );
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 }

@@ -152,7 +152,6 @@ class DataModel extends ChangeNotifier {
     // get all user data
     await fetchData();
     loadStatus = LoadStatus.done;
-    notifyListeners();
   }
 
   Future<void> initTest({bool? delete}) async {
@@ -287,6 +286,7 @@ class DataModel extends ChangeNotifier {
   }
 
   Future<void> importData({bool delete = true}) async {
+    print("IMPORTING DATA");
     if (delete) {
       String path = join(await getDatabasesPath(), 'workout_notepad.db');
       await databaseFactory.deleteDatabase(path);
@@ -313,6 +313,7 @@ class DataModel extends ChangeNotifier {
     await load("exercise_log", data['exerciseLogs']);
     await load("workout_log", data['workoutLogs']);
     await load("tag", data['tags']);
+    notifyListeners();
   }
 
   Future<void> deleteDB() async {

@@ -21,6 +21,8 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   bool _logoutLoading = false;
+  bool _exportLoading = false;
+  bool _importLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -37,9 +39,9 @@ class _ProfileState extends State<Profile> {
         Padding(
             padding: const EdgeInsets.only(bottom: 16.0),
             child: dmodel.user!.avatar(context, size: 125)),
-        if (dmodel.user!.name != null)
+        if (dmodel.user!.displayName != null)
           Text(
-            dmodel.user!.name!,
+            dmodel.user!.displayName!,
             style: ttSubTitle(context),
             textAlign: TextAlign.center,
           ),
@@ -112,14 +114,51 @@ class _ProfileState extends State<Profile> {
             }
           },
         ),
-        comp.LabeledWidget(
-          label: "",
-          child: Clickable(
-            onTap: () {
-              dmodel.exportToJSON();
-            },
-            child: const Text("Export"),
-          ),
+        const SizedBox(height: 32),
+        // TODO!! -- remove
+        Text("DEV"),
+        const SizedBox(height: 8),
+        WrappedButton(
+          title: "Export Data",
+          icon: Icons.download_rounded,
+          iconBg: Colors.purple,
+          onTap: () async {
+            setState(() {
+              _exportLoading = true;
+            });
+            await dmodel.exportToJSON();
+            setState(() {
+              _exportLoading = false;
+            });
+          },
+        ),
+        const SizedBox(height: 8),
+        WrappedButton(
+          title: "Import Data",
+          icon: Icons.upload_rounded,
+          iconBg: Colors.blue,
+          onTap: () async {
+            setState(() {
+              _importLoading = true;
+            });
+            await showAlert(
+              context: context,
+              title: "Caution",
+              body: const Text(
+                  "Importing a file will overwrite your current workouts, exercises, and logs. Are you sure you want to continue?"),
+              cancelText: "Cancel",
+              onCancel: () {},
+              cancelBolded: true,
+              submitText: "Overwrite",
+              submitColor: Colors.red,
+              onSubmit: () async {
+                await dmodel.importData();
+              },
+            );
+            setState(() {
+              _importLoading = false;
+            });
+          },
         ),
       ],
     );

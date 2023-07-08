@@ -12,7 +12,7 @@ import 'package:http/http.dart' as http;
 class User {
   late String userId;
   String? email;
-  String? name;
+  String? displayName;
   String? phone;
   String? imgUrl;
   late int sync;
@@ -24,7 +24,7 @@ class User {
   User({
     required this.userId,
     this.email,
-    this.name,
+    this.displayName,
     this.phone,
     this.imgUrl,
     required this.sync,
@@ -37,7 +37,7 @@ class User {
   User copy() => User(
         userId: userId,
         email: email,
-        name: name,
+        displayName: displayName,
         phone: phone,
         imgUrl: imgUrl,
         sync: sync,
@@ -57,7 +57,7 @@ class User {
   User.fromJson(Map<String, dynamic> json) {
     userId = json['userId'];
     email = json['email'];
-    name = json['name'];
+    displayName = json['displayName'];
     phone = json['phone'];
     imgUrl = json['imgUrl'];
     sync = json['sync'].round();
@@ -71,7 +71,7 @@ class User {
     return {
       "userId": userId,
       "email": email,
-      "name": name,
+      "displayName": displayName,
       "phone": phone,
       "imgUrl": imgUrl,
       "sync": sync,
@@ -96,14 +96,14 @@ class User {
         jsonEncode({
           "userId": credential.user!.uid,
           "email": credential.user!.email,
-          "name": credential.user!.displayName,
+          "displayName": credential.user!.displayName,
           "phone": credential.user!.phoneNumber,
           "imgUrl": credential.user!.photoURL,
           "convertFromAnon": convertFromAnon,
         }),
       );
       if (response.statusCode != 200) {
-        print("ERROR - There was an error with the request $response");
+        print("ERROR - There was an error with the request ${response.body}");
         return null;
       }
       Map<String, dynamic> body = jsonDecode(response.body);

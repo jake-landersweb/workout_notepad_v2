@@ -15,7 +15,7 @@ class WrappedButton extends StatelessWidget {
     this.iconFg,
     this.isLoading = false,
     this.height = 45,
-    this.textAlign,
+    this.center = false,
     this.padding = const EdgeInsets.symmetric(horizontal: 16),
   });
   final String title;
@@ -27,7 +27,7 @@ class WrappedButton extends StatelessWidget {
   final Color? iconFg;
   final bool isLoading;
   final double? height;
-  final TextAlign? textAlign;
+  final bool center;
   final EdgeInsets padding;
 
   @override
@@ -47,35 +47,43 @@ class WrappedButton extends StatelessWidget {
       height: height,
       child: Padding(
         padding: padding,
-        child: Row(
-          children: [
-            if (icon != null)
-              Padding(
-                padding: const EdgeInsets.only(right: 12.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: iconBg ?? Theme.of(context).colorScheme.primary,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: Icon(
-                      icon!,
-                      color: iconFg ?? Colors.white,
-                    ),
-                  ),
+        child: center
+            ? Center(
+                child: _content(context),
+              )
+            : _content(context),
+      ),
+    );
+  }
+
+  Widget _content(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (icon != null)
+          Padding(
+            padding: const EdgeInsets.only(right: 12.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: iconBg ?? Theme.of(context).colorScheme.primary,
+                borderRadius: BorderRadius.circular(5),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Icon(
+                  icon!,
+                  color: iconFg ?? Colors.white,
                 ),
               ),
-            isLoading
-                ? LoadingIndicator(color: fg)
-                : Text(
-                    title,
-                    textAlign: textAlign,
-                    style: ttLabel(context, color: fg),
-                  ),
-          ],
-        ),
-      ),
+            ),
+          ),
+        isLoading
+            ? LoadingIndicator(color: fg)
+            : Text(
+                title,
+                style: ttLabel(context, color: fg),
+              ),
+      ],
     );
   }
 }

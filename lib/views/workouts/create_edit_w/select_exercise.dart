@@ -58,7 +58,7 @@ class _SelectExerciseState extends State<SelectExercise>
     var dmodel = Provider.of<DataModel>(context);
     return HeaderBar.sheet(
       title: widget.title ?? "Select or Create",
-      leading: const [comp.CloseButton()],
+      trailing: const [comp.CancelButton(title: "Done")],
       itemSpacing: 8,
       children: [
         const SizedBox(height: 16),

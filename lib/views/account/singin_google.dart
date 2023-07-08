@@ -37,29 +37,7 @@ class _SigninGoogleState extends State<SigninGoogle> {
         setState(() {
           _isLoading = true;
         });
-        try {
-          var googleUser = await _googleSignIn.signIn();
-          if (googleUser == null) {
-            print("Unable to sign in");
-            return;
-          }
-          final GoogleSignInAuthentication googleAuth =
-              await googleUser.authentication;
-          final oauthCredential = GoogleAuthProvider.credential(
-            accessToken: googleAuth.accessToken,
-            idToken: googleAuth.idToken,
-          );
-          var credential =
-              await FirebaseAuth.instance.signInWithCredential(oauthCredential);
-          widget.onSignIn(credential);
-        } catch (error) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Colors.red[300],
-              content: const Text("There was an unknown error."),
-            ),
-          );
-        }
+        await _signIn();
         setState(() {
           _isLoading = false;
         });
@@ -92,5 +70,31 @@ class _SigninGoogleState extends State<SigninGoogle> {
         ),
       ),
     );
+  }
+
+  Future<void> _signIn() async {
+    try {
+      var googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        print("Unable to sign in");
+        return;
+      }
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final oauthCredential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      var credential =
+          await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+      widget.onSignIn(credential);
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.red[300],
+          content: const Text("There was an unknown error."),
+        ),
+      );
+    }
   }
 }

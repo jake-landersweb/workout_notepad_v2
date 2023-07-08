@@ -134,9 +134,10 @@ class _CEWState extends State<_CEW> {
                   ),
                   Row(
                     children: [
-                      _bottomItem(context, "Re-Order", () {
+                      _bottomItem(context, "Configure", () {
                         comp.cupertinoSheet(
                           context: context,
+                          enableDrag: false,
                           builder: (context) => CEWReorder(cmodel: cmodel),
                         );
                       }),

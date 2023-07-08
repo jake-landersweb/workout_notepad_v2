@@ -86,6 +86,25 @@ class WorkoutExercise extends ExerciseBase {
         time: time,
       );
 
+  WorkoutExercise clone(Workout workout) => WorkoutExercise(
+        workoutExerciseId: const Uuid().v4(),
+        workoutId: workout.workoutId,
+        exerciseId: exerciseId,
+        exerciseOrder: exerciseOrder,
+        note: note,
+        superSetOrdering: superSetOrdering,
+        created: created,
+        updated: updated,
+        title: title,
+        category: category,
+        description: description,
+        icon: icon,
+        type: type,
+        reps: reps,
+        sets: sets,
+        time: time,
+      );
+
   WorkoutExercise.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
     workoutExerciseId = json['workoutExerciseId'];
     workoutId = json['workoutId'];

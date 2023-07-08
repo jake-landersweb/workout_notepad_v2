@@ -59,6 +59,7 @@ class ExerciseCell extends StatelessWidget {
         children: [
           Expanded(
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -71,9 +72,7 @@ class ExerciseCell extends StatelessWidget {
                 if (exercise.category.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
-                    child: IntrinsicWidth(
-                      child: CategoryCell(title: exercise.category),
-                    ),
+                    child: CategoryCell(title: exercise.category),
                   ),
               ],
             ),

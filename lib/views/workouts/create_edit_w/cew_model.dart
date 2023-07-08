@@ -6,7 +6,7 @@ import 'package:workout_notepad_v2/views/root.dart';
 
 class CEWModel extends ChangeNotifier {
   CEWModel.create(String uid) {
-    workout = Workout.init(uid);
+    workout = Workout.init();
     title = "";
     description = "";
     icon = "";

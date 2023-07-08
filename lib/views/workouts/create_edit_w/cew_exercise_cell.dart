@@ -66,7 +66,7 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                               color: Theme.of(context).primaryColor),
                         ),
                       ),
-                      widget.handle,
+                      // widget.handle,
                     ],
                   ),
                 ),
@@ -269,26 +269,13 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                         },
                       );
                     },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border:
-                              Border.all(color: AppColors.subtext(context))),
-                      height: 40,
-                      child: Center(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.settings_rounded,
-                              color: AppColors.subtext(context),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              "Super-Sets",
-                              style: TextStyle(color: AppColors.text(context)),
-                            ),
-                          ],
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        "Add Super-Sets",
+                        style: TextStyle(
+                          color: AppColors.subtext(context),
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),

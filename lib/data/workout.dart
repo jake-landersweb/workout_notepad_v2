@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sql.dart';
 import 'package:uuid/uuid.dart';
+import 'package:workout_notepad_v2/data/exercise_set.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/icons.dart';
+import 'package:workout_notepad_v2/utils/tuple.dart';
+
+class WorkoutCloneObject {
+  final Workout workout;
+  final List<Tuple2<WorkoutExercise, List<ExerciseSet>>> exercises;
+
+  WorkoutCloneObject({
+    required this.workout,
+    required this.exercises,
+  });
+}
 
 class Workout {
   late String workoutId;
@@ -25,7 +37,7 @@ class Workout {
     required this.updated,
   });
 
-  Workout.init(String uid) {
+  Workout.init() {
     var uuid = const Uuid();
     workoutId = uuid.v4();
     title = "";
@@ -137,6 +149,32 @@ class Workout {
       logs.add(WorkoutLog.fromJson(i));
     }
     return logs;
+  }
+
+  /// Creates a clone of a workout and its exercises and its exercise sets
+  /// all with new ids for a new object
+  Future<WorkoutCloneObject> clone(String newTitle) async {
+    var clonedWorkout = copy();
+    clonedWorkout.workoutId = const Uuid().v4();
+    clonedWorkout.title = newTitle;
+    var origChildren = await getChildren();
+    List<Tuple2<WorkoutExercise, List<ExerciseSet>>> clonedChildren = [];
+
+    for (var i in origChildren) {
+      var tmpChildren = await i.getChildren(workoutId);
+      List<ExerciseSet> clonedSets = [];
+      var clonedWorkoutExercise = i.clone(clonedWorkout);
+      for (var j in tmpChildren) {
+        var clonedSet = j.clone(clonedWorkout, clonedWorkoutExercise);
+        clonedSets.add(clonedSet);
+      }
+      clonedChildren.add(Tuple2(clonedWorkoutExercise, clonedSets));
+    }
+
+    return WorkoutCloneObject(
+      workout: clonedWorkout,
+      exercises: clonedChildren,
+    );
   }
 
   @override

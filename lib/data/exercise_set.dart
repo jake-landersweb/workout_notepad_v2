@@ -51,6 +51,25 @@ class ExerciseSet extends ExerciseBase {
         time: time,
       );
 
+  ExerciseSet clone(Workout workout, WorkoutExercise parent) => ExerciseSet(
+        exerciseSetId: const Uuid().v4(),
+        workoutId: workout.workoutId,
+        workoutExerciseId: parent.workoutExerciseId,
+        parentId: parent.exerciseId,
+        childId: childId,
+        exerciseOrder: exerciseOrder,
+        created: created,
+        updated: updated,
+        title: title,
+        category: category,
+        description: description,
+        icon: icon,
+        type: type,
+        sets: sets,
+        reps: reps,
+        time: time,
+      );
+
   ExerciseSet.init(Workout workout, WorkoutExercise parent, Exercise child,
       ExerciseChildArgs args)
       : super(

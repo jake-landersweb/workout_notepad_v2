@@ -3,6 +3,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
+import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 
@@ -11,6 +12,7 @@ import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
+import 'package:workout_notepad_v2/views/workouts/clone_workout.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:workout_notepad_v2/views/workouts/logs/root.dart';
@@ -159,6 +161,20 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
                 showMaterialModalBottomSheet(
                   context: context,
                   builder: (context) => WorkoutLogs(workout: _workout),
+                );
+              },
+              index: 2,
+            ),
+            const SizedBox(width: 16),
+            _actionCell(
+              context: context,
+              icon: Icons.content_copy_rounded,
+              title: "Clone",
+              description: "Clone this workout",
+              onTap: () {
+                cupertinoSheet(
+                  context: context,
+                  builder: (context) => CloneWorkout(workout: _workout),
                 );
               },
               index: 2,

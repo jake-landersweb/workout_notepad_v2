@@ -68,7 +68,7 @@ class _TimePickerState extends State<TimePicker> {
                   minValue: 0,
                   intialValue: _hours,
                   initialValueStr: _hours < 10 ? "0$_hours" : _hours.toString(),
-                  textFontSize: 40,
+                  textFontSize: 30,
                   showPicker: false,
                   maxValue: 99,
                   contain: false,
@@ -89,7 +89,7 @@ class _TimePickerState extends State<TimePicker> {
                   ":",
                   style: TextStyle(
                     color: AppColors.subtext(context),
-                    fontSize: 40,
+                    fontSize: 30,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -100,7 +100,7 @@ class _TimePickerState extends State<TimePicker> {
                   intialValue: _minutes,
                   initialValueStr:
                       _minutes < 10 ? "0$_minutes" : _minutes.toString(),
-                  textFontSize: 40,
+                  textFontSize: 30,
                   showPicker: false,
                   customFormatter:
                       TimeInputFormatter(maxValue: 59, minValue: 0),
@@ -121,7 +121,7 @@ class _TimePickerState extends State<TimePicker> {
                   ":",
                   style: TextStyle(
                     color: AppColors.subtext(context),
-                    fontSize: 40,
+                    fontSize: 30,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -132,7 +132,7 @@ class _TimePickerState extends State<TimePicker> {
                   intialValue: _seconds,
                   initialValueStr:
                       _seconds < 10 ? "0$_seconds" : _seconds.toString(),
-                  textFontSize: 40,
+                  textFontSize: 30,
                   contain: false,
                   customFormatter:
                       TimeInputFormatter(maxValue: 59, minValue: 0),

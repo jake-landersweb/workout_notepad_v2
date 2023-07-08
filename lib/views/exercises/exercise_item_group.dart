@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/components/time_picker.dart';
 import 'package:workout_notepad_v2/data/exercise_base.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/views/root.dart';
-import 'package:workout_notepad_v2/components/root.dart' as comp;
 
 import 'package:workout_notepad_v2/utils/root.dart';
 
@@ -27,8 +25,7 @@ class ExerciseItemGoup extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Text("x",
-              style: ttLabel(context, color: Theme.of(context).primaryColor)),
+          child: Text("x", style: ttLabel(context)),
         ),
         Expanded(
           child: _getSecond(context),
@@ -39,6 +36,7 @@ class ExerciseItemGoup extends StatelessWidget {
 
   Widget _getSecond(BuildContext context) {
     switch (exercise.type) {
+      case ExerciseType.bw:
       case ExerciseType.weight:
         return ExerciseItemCell(
           label: "REPS",
@@ -47,7 +45,7 @@ class ExerciseItemGoup extends StatelessWidget {
       case ExerciseType.timed:
       case ExerciseType.duration:
         return ExerciseItemCell(
-          label: "TODO", // TODO
+          label: "TIME", // TODO
           val: exercise.getTime(),
         );
     }
@@ -78,7 +76,7 @@ class _EditableExerciseItemGroupState extends State<EditableExerciseItemGroup> {
     return Row(
       children: [
         Expanded(
-          flex: widget.exercise.type == 0 ? 1 : widget.flex1,
+          flex: widget.exercise.type == ExerciseType.weight ? 1 : widget.flex1,
           child: EditableExerciseItemCell(
             initialValue: widget.exercise.sets,
             label: "SETS",
@@ -98,7 +96,7 @@ class _EditableExerciseItemGroupState extends State<EditableExerciseItemGroup> {
               style: ttLabel(context, color: Theme.of(context).primaryColor)),
         ),
         Expanded(
-          flex: widget.exercise.type == 0 ? 1 : widget.flex2,
+          flex: widget.exercise.type == ExerciseType.weight ? 1 : widget.flex2,
           child: _getSecond(context),
         ),
       ],
@@ -107,6 +105,7 @@ class _EditableExerciseItemGroupState extends State<EditableExerciseItemGroup> {
 
   Widget _getSecond(BuildContext context) {
     switch (widget.exercise.type) {
+      case ExerciseType.bw:
       case ExerciseType.weight:
         return EditableExerciseItemCell(
           initialValue: widget.exercise.reps,
@@ -129,7 +128,7 @@ class _EditableExerciseItemGroupState extends State<EditableExerciseItemGroup> {
   Widget _time(BuildContext context, ExerciseBase e) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+        color: AppColors.cell(context),
         borderRadius: BorderRadius.circular(10),
       ),
       child: TimePicker(
@@ -168,7 +167,7 @@ class _EditableExerciseItemGroupState extends State<EditableExerciseItemGroup> {
   //       child: Container(
   //         color: e.timePost == post
   //             ? Theme.of(context).colorScheme.primary
-  //             : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+  //             : AppColors.cell(context),
   //         width: double.infinity,
   //         child: Center(
   //           child: Text(

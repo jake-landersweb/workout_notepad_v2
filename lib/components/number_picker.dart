@@ -4,8 +4,8 @@ import 'package:line_icons/line_icons.dart';
 
 import 'dart:math' as math;
 
-import 'package:workout_notepad_v2/components/field.dart';
 import 'package:workout_notepad_v2/components/root.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 
 class NumberPicker extends StatefulWidget {
   const NumberPicker({
@@ -76,11 +76,8 @@ class _NumberPickerState extends State<NumberPicker> {
                 child: widget.contain
                     ? Container(
                         decoration: BoxDecoration(
-                          color: widget.backgroundColor ??
-                              Theme.of(context)
-                                  .colorScheme
-                                  .surfaceVariant
-                                  .withOpacity(0.5),
+                          color:
+                              widget.backgroundColor ?? AppColors.cell(context),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: _content(context),
@@ -147,7 +144,7 @@ class _NumberPickerState extends State<NumberPicker> {
     if (plus) {
       return Theme.of(context).colorScheme.primary;
     } else {
-      return Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5);
+      return AppColors.cell(context);
     }
   }
 
@@ -234,7 +231,7 @@ class _NumberPickerState extends State<NumberPicker> {
           ],
           style: TextStyle(
             fontSize: widget.textFontSize,
-            color: Theme.of(context).colorScheme.onPrimaryContainer,
+            color: AppColors.text(context),
             fontWeight: widget.fontWeight,
           ),
           onChanged: (val) {

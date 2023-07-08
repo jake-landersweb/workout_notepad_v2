@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sqflite/sql.dart';
 import 'package:uuid/uuid.dart';
-import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
@@ -9,7 +8,6 @@ import 'package:workout_notepad_v2/utils/icons.dart';
 
 class Workout {
   late String workoutId;
-  late String userId;
   late String title;
   String? description;
   late String icon;
@@ -20,7 +18,6 @@ class Workout {
 
   Workout({
     required this.workoutId,
-    required this.userId,
     required this.title,
     this.description,
     required this.icon,
@@ -31,7 +28,6 @@ class Workout {
   Workout.init(String uid) {
     var uuid = const Uuid();
     workoutId = uuid.v4();
-    userId = uid;
     title = "";
     description = "";
     icon = "";
@@ -41,7 +37,6 @@ class Workout {
 
   Workout copy() => Workout(
         workoutId: workoutId,
-        userId: userId,
         title: title,
         description: description,
         icon: icon,
@@ -51,7 +46,6 @@ class Workout {
 
   Workout.fromJson(Map<String, dynamic> json) {
     workoutId = json['workoutId'];
-    userId = json['userId'];
     title = json['title'];
     description = json['description'];
     icon = json['icon'];
@@ -61,7 +55,6 @@ class Workout {
 
   Workout.fromTest(Map<String, dynamic> json) {
     workoutId = json['workoutId'];
-    userId = "1";
     title = json['title'];
     description = json['description'];
     icon = json['icon'] ?? "";
@@ -74,7 +67,6 @@ class Workout {
   Map<String, dynamic> toMap() {
     return {
       "workoutId": workoutId,
-      "userId": userId,
       "title": title,
       "icon": icon,
       "description": description,
@@ -123,10 +115,9 @@ class Workout {
     return c.toSet().toList();
   }
 
-  static Future<List<Workout>> getList(String userId) async {
+  static Future<List<Workout>> getList() async {
     final db = await getDB();
-    final List<Map<String, dynamic>> response =
-        await db.query('workout', where: "userId = ?", whereArgs: [userId]);
+    final List<Map<String, dynamic>> response = await db.query('workout');
     List<Workout> w = [];
     for (var i in response) {
       w.add(Workout.fromJson(i));
@@ -138,7 +129,6 @@ class Workout {
     var db = await getDB();
     String sql = """
       SELECT * FROM workout_log WHERE workoutId = '$workoutId'
-      AND userId = '$userId'
       ORDER BY created DESC
     """;
     var response = await db.rawQuery(sql);

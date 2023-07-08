@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 
 class LabeledCell extends StatelessWidget {
   const LabeledCell({
@@ -26,7 +27,7 @@ class LabeledCell extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.outline,
+                color: AppColors.subtext(context),
               ),
             ),
           ],

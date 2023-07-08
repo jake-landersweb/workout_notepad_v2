@@ -1,4 +1,3 @@
-import 'package:animated_list_plus/animated_list_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:line_icons/line_icons.dart';
@@ -6,8 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
-import 'package:workout_notepad_v2/components/section.dart';
 import 'package:workout_notepad_v2/data/exercise_set.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
 
@@ -117,10 +116,9 @@ class _LWConfigureExerciseState extends State<LWConfigureExercise> {
                         padding: const EdgeInsets.only(left: 16),
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .surfaceVariant
-                                .withOpacity(0.5),
+                            color: inDrag
+                                ? AppColors.cell(context)[100]
+                                : AppColors.cell(context),
                             borderRadius: BorderRadius.only(
                                 topLeft: index == 0
                                     ? const Radius.circular(10)

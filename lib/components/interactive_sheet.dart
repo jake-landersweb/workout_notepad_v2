@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
 
-import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 
 class InteractiveSheet extends StatefulWidget {
   const InteractiveSheet({
@@ -44,7 +42,7 @@ class _InteractiveSheetState extends State<InteractiveSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).colorScheme.background,
+      color: AppColors.background(context),
       height: double.infinity,
       child: Column(
         children: [
@@ -63,7 +61,7 @@ class _InteractiveSheetState extends State<InteractiveSheet> {
       duration: const Duration(milliseconds: 500),
       curve: Sprung(36),
       child: Container(
-        color: Theme.of(context).colorScheme.primary,
+        color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
         child: SafeArea(
           top: true,
           bottom: false,

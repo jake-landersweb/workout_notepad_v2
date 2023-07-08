@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 /// for conventinely showing an alert that is styled for the current platform.
-void showAlert({
+Future<void> showAlert({
   required BuildContext context,
   required String title,
   required Widget body,
@@ -16,9 +16,9 @@ void showAlert({
   required VoidCallback onSubmit,
   Color? cancelColor,
   Color? submitColor,
-}) {
+}) async {
   if (kIsWeb) {
-    showDialog(
+    await showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -41,7 +41,7 @@ void showAlert({
     );
   } else {
     if (Platform.isIOS || Platform.isMacOS) {
-      showCupertinoDialog(
+      await showCupertinoDialog(
         context: context,
         builder: (BuildContext context) {
           return CupertinoAlertDialog(
@@ -63,7 +63,7 @@ void showAlert({
         },
       );
     } else {
-      showDialog(
+      await showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(

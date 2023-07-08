@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 
-import 'root.dart' as cv;
 
 class Section extends StatefulWidget {
   const Section(
@@ -80,9 +80,7 @@ class _SectionState extends State<Section> with TickerProviderStateMixin {
     if (widget.allowsCollapse ?? false) {
       return Theme(
         data: Theme.of(context).copyWith(
-          dividerColor: Theme.of(context).brightness == Brightness.light
-              ? Colors.black.withOpacity(0.1)
-              : Colors.white.withOpacity(0.2),
+          dividerColor: AppColors.divider(context),
           dividerTheme: const DividerThemeData(
             thickness: 0.5,
             indent: 16,
@@ -112,10 +110,7 @@ class _SectionState extends State<Section> with TickerProviderStateMixin {
                     opacity: 0,
                     child: Icon(
                       Icons.chevron_left,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .outline
-                          .withOpacity(0.5),
+                      color: AppColors.subtext(context),
                     ),
                   )
                 ],
@@ -141,7 +136,7 @@ class _SectionState extends State<Section> with TickerProviderStateMixin {
             Expanded(
               child: Divider(
                 height: 0.5,
-                color: Theme.of(context).colorScheme.outline.withOpacity(0.5),
+                color: AppColors.divider(context),
               ),
             ),
             Padding(
@@ -160,10 +155,7 @@ class _SectionState extends State<Section> with TickerProviderStateMixin {
                         turns: _isOpen ? 0.25 : -0.25,
                         child: Icon(
                           Icons.chevron_left,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .outline
-                              .withOpacity(0.7),
+                          color: AppColors.subtext(context),
                         ),
                       ),
                     ),

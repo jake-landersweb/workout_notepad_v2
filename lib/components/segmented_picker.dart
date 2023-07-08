@@ -43,8 +43,6 @@ class SegmentedPicker<T> extends StatefulWidget {
 }
 
 class _SegmentedPickerState extends State<SegmentedPicker> {
-  bool _showSelector = true;
-
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -147,7 +145,6 @@ class _SegmentedPickerState extends State<SegmentedPicker> {
           return AlignmentDirectional.center;
         }
       } else {
-        _showSelector = false;
         return AlignmentDirectional.center;
       }
     } else {
@@ -170,7 +167,6 @@ class _SegmentedPickerState extends State<SegmentedPicker> {
           }
         }
       } else {
-        _showSelector = false;
         return AlignmentDirectional.center;
       }
     }

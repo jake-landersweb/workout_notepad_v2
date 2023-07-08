@@ -10,12 +10,12 @@ Map<int, Color> getSwatch(Color color) {
   /// divisor of 5 would mean [50] is a lightness of 1.0 or
   /// a color of #ffffff. A value of six would be near white
   /// but not quite.
-  final lowDivisor = 6;
+  const lowDivisor = 6;
 
   /// if [500] is the default color, there are at LEAST four
   /// steps above [500]. A divisor of 4 would mean [900] is
   /// a lightness of 0.0 or color of #000000
-  final highDivisor = 5;
+  const highDivisor = 5;
 
   final lowStep = (1.0 - lightness) / lowDivisor;
   final highStep = lightness / highDivisor;
@@ -66,57 +66,35 @@ extension ColorUtil on Color {
 }
 
 extension AppColors on Color {
-  static Color bgLight = ColorUtil.hexToColor("#E2E5ED");
-  static Color cellLight = ColorUtil.hexToColor("#FAFAFC");
-
-  static Color bgDark = ColorUtil.hexToColor("#23282F");
-  static Color cellDark = ColorUtil.hexToColor("#343C46");
-
   static Color background(BuildContext context) {
-    if (Theme.of(context).brightness == Brightness.light) {
-      return bgLight;
-    } else {
-      return bgDark;
-    }
+    return ColorUtil.hexToColor("#e1dcd2");
   }
 
-  static Color sheetBackground(BuildContext context) {
-    if (Theme.of(context).brightness == Brightness.light) {
-      return ColorUtil.hexToColor("#ffffff");
-    } else {
-      return bgDark;
-    }
-  }
-
-  static Color cell(BuildContext context) {
-    if (Theme.of(context).brightness == Brightness.light) {
-      return ColorUtil.hexToColor("#FAFAFC");
-    } else {
-      return cellDark;
-    }
-  }
-
-  static Color sheetCell(BuildContext context) {
-    if (Theme.of(context).brightness == Brightness.light) {
-      return ColorUtil.hexToColor("#eeeff5");
-    } else {
-      return cellDark;
-    }
+  static MaterialColor cell(BuildContext context) {
+    return const MaterialColor(0xFFF5F0E6, {
+      50: Color(0xFFFCFAF6),
+      100: Color(0xFFF9F7F1),
+      200: Color(0xFFF5F0E6),
+      300: Color(0xFFF1E9DB),
+      400: Color(0xFFECE3D0),
+      500: Color(0xFFE8DCC5),
+      600: Color(0xFFE4D6BA),
+      700: Color(0xFFDFCFAF),
+      800: Color(0xFFDBC9A4),
+      900: Color(0xFFD6C29A),
+      950: Color(0xFFD4BF94),
+    });
   }
 
   static Color text(BuildContext context) {
-    if (Theme.of(context).brightness == Brightness.light) {
-      return Colors.black;
-    } else {
-      return Colors.white;
-    }
+    return ColorUtil.hexToColor("#231f20");
   }
 
-  static Color subText(BuildContext context) {
-    if (Theme.of(context).brightness == Brightness.light) {
-      return Colors.black.withOpacity(0.7);
-    } else {
-      return Colors.white.withOpacity(0.7);
-    }
+  static Color subtext(BuildContext context) {
+    return text(context).withOpacity(0.63);
+  }
+
+  static Color divider(BuildContext context) {
+    return text(context).withOpacity(0.065);
   }
 }

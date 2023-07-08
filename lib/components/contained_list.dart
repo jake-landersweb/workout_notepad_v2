@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
-import 'root.dart' as cv;
-import 'root.dart' as sui;
+import 'package:workout_notepad_v2/utils/root.dart';
 
 /// ``` dart
 /// Key? key,
@@ -156,18 +155,13 @@ class _ContainedListState<T> extends State<ContainedList<T>> {
                                 width: double.infinity,
                                 height: 0.5,
                                 color: widget.backgroundColor ??
-                                    Theme.of(context)
-                                        .colorScheme
-                                        .surfaceVariant
-                                        .withOpacity(0.5),
+                                    AppColors.cell(context),
                               ),
                               Divider(
                                 indent:
                                     widget.allowsSelect ? (16 + 20 + 16) : 16,
                                 height: 0.5,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .surfaceVariant,
+                                color: AppColors.divider(context),
                               ),
                             ],
                           ),
@@ -185,8 +179,7 @@ class _ContainedListState<T> extends State<ContainedList<T>> {
       padding: widget.childPadding,
       isAnimated: widget.isAnimated,
       allowsDelete: widget.allowsDelete,
-      backgroundColor: widget.backgroundColor ??
-          Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+      backgroundColor: widget.backgroundColor ?? AppColors.cell(context),
       showStyling: widget.showStyling,
       leadingPadding: widget.leadingPadding,
       trailingPadding: widget.trailingPadding,

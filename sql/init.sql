@@ -1,31 +1,8 @@
-CREATE TABLE user(
-    userId TEXT PRIMARY KEY,
-    email TEXT,
-    firstName TEXT,
-    lastName TEXT,
-    phone TEXT,
-    sync INTEGER DEFAULT false,
-    password BLOB,
-    salt BLOB,
-    created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
---
-CREATE UNIQUE INDEX user_email on user(email);
---
-CREATE TRIGGER user_update AFTER UPDATE ON user
-BEGIN
-    UPDATE user SET updated = CURRENT_TIMESTAMP;
-END;
---
 CREATE TABLE category(
     title TEXT PRIMARY KEY,
-    userId TEXT NOT NULL,
     icon TEXT NOT NULL,
     created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-
-    FOREIGN KEY (userId) REFERENCES user(userId) ON DELETE CASCADE
+    updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 --
 CREATE TRIGGER category_update AFTER UPDATE ON category
@@ -35,7 +12,6 @@ END;
 --
 CREATE TABLE exercise(
     exerciseId TEXT PRIMARY KEY,
-    userId TEXT NOT NULL,
     category TEXT DEFAULT "" NOT NULL,
     title TEXT NOT NULL,
     description TEXT,
@@ -45,9 +21,7 @@ CREATE TABLE exercise(
     reps INTEGER DEFAULT 0 NOT NULL,
     time INTEGER DEFAULT 0 NOT NULL,
     created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-
-    FOREIGN KEY (userId) REFERENCES user(userId) ON DELETE CASCADE
+    updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 --
 CREATE INDEX exercise_category ON exercise(category);
@@ -89,14 +63,11 @@ END;
 --
 CREATE TABLE workout(
     workoutId TEXT PRIMARY KEY,
-    userId TEXT NOT NULL,
     title TEXT NOT NULL,
     description TEXT,
     icon TEXT NOT NULL DEFAULT "",
     created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-
-    FOREIGN KEY (userId) REFERENCES user(userId) ON DELETE CASCADE
+    updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 --
 CREATE TRIGGER workout_update AFTER UPDATE ON workout
@@ -131,7 +102,6 @@ END;
 CREATE TABLE exercise_log(
     exerciseLogId TEXT PRIMARY KEY,
     title TEXT NOT NULL,
-    userId TEXT NOT NULL,
     exerciseId TEXT NOT NULL,
     parentId TEXT,
     workoutLogId TEXT,
@@ -145,15 +115,12 @@ CREATE TABLE exercise_log(
     created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
-    FOREIGN KEY (userId) REFERENCES user(userId) ON DELETE CASCADE,
     FOREIGN KEY (exerciseId) REFERENCES exercise(exerciseId) ON DELETE CASCADE,
     FOREIGN KEY (workoutLogId) REFERENCES workout_log(workoutLogId)
 );
 
 --
 CREATE INDEX exercise_log_exerciseid ON exercise_log(exerciseId);
---
-CREATE INDEX exercise_log_userid ON exercise_log(userId);
 --
 CREATE INDEX exercise_log_workoutlogid ON exercise_log(workoutLogId);
 --
@@ -164,7 +131,6 @@ END;
 --
 CREATE TABLE workout_log(
     workoutLogId TEXT PRIMARY KEY,
-    userId TEXT NOT NULL,
     workoutId TEXT NOT NULL,
     title TEXT NOT NULL,
     description TEXT,
@@ -173,11 +139,8 @@ CREATE TABLE workout_log(
     created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
-    FOREIGN KEY (userId) REFERENCES user(userId) ON DELETE CASCADE,
     FOREIGN KEY (workoutId) REFERENCES workout(workoutId) ON DELETE CASCADE
 );
---
-CREATE INDEX workout_log_userid ON workout_log(userId);
 --
 CREATE INDEX workout_log_workoutid ON workout_log(workoutId);
 --
@@ -185,3 +148,30 @@ CREATE TRIGGER workout_log_update AFTER UPDATE ON workout_log
 BEGIN
     UPDATE workout_log SET updated = CURRENT_TIMESTAMP;
 END;
+--
+CREATE TABLE tag(
+    tagId TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+--
+CREATE INDEX tag_tagid ON tag(tagId);
+--
+CREATE TRIGGER tag_update AFTER UPDATE ON tag
+BEGIN
+    UPDATE tag SET updated = CURRENT_TIMESTAMP;
+END;
+--
+CREATE TABLE exercise_log_tag(
+    exerciseLogTagId TEXT PRIMARY KEY,
+    exerciseLogId TEXT NOT NULL,
+    tagId TEXT NOT NULL,
+    setIndex INTEGER NOT NULL,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+
+    FOREIGN KEY (exerciseLogId) REFERENCES exercise_log(exerciseLogId),
+    FOREIGN KEY (tagId) REFERENCES tag(tagId) ON DELETE CASCADE
+);
+--
+CREATE INDEX exercise_log_tag_tagid ON exercise_log_tag(tagId);

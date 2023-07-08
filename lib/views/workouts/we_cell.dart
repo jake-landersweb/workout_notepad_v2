@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:line_icons/line_icons.dart';
-import 'package:provider/provider.dart';
-import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/exercise_set.dart';
 import 'package:workout_notepad_v2/data/root.dart';
-import 'package:workout_notepad_v2/data/workout.dart';
-import 'package:workout_notepad_v2/model/root.dart';
 
 import 'package:workout_notepad_v2/text_themes.dart';
 
@@ -38,7 +33,6 @@ class _WECellState extends State<WECell> {
 
   @override
   Widget build(BuildContext context) {
-    var dmodel = Provider.of<DataModel>(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

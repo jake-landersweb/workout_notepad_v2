@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
-import 'package:workout_notepad_v2/components/cell_wrapper.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/components/contained_list.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
@@ -46,10 +45,7 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
             alignment: Alignment.centerLeft,
             child: Text(
               "About",
-              style: ttLargeLabel(
-                context,
-                color: Theme.of(context).colorScheme.onBackground,
-              ),
+              style: ttLargeLabel(context),
             ),
           ),
         )
@@ -76,10 +72,7 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
               label: "Category",
               child: Text(
                 widget.exercise.category.capitalize(),
-                style: ttLabel(
-                  context,
-                  color: Theme.of(context).colorScheme.onBackground,
-                ),
+                style: ttLabel(context),
               ),
             ),
             if (widget.exercise.description.isNotEmpty)
@@ -87,10 +80,7 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
                 label: "Description",
                 child: Text(
                   widget.exercise.description.capitalize(),
-                  style: ttLabel(
-                    context,
-                    color: Theme.of(context).colorScheme.onBackground,
-                  ),
+                  style: ttLabel(context),
                 ),
               ),
           ],
@@ -118,6 +108,7 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
           children: [
             _actionCell(
               context: context,
+              dmodel: dmodel,
               icon: Icons.edit_rounded,
               title: "Edit",
               description: "Change the attributes",
@@ -139,6 +130,7 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
             const SizedBox(width: 16),
             _actionCell(
               context: context,
+              dmodel: dmodel,
               icon: Icons.sticky_note_2_rounded,
               title: "Logs",
               description: "View exercise logs",
@@ -146,7 +138,8 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
                 showMaterialModalBottomSheet(
                   context: context,
                   enableDrag: true,
-                  builder: (context) => ExerciseLogs(exercise: widget.exercise),
+                  builder: (context) =>
+                      ExerciseLogs(exerciseId: widget.exercise.exerciseId),
                 );
               },
               index: 2,
@@ -154,6 +147,7 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
             const SizedBox(width: 16),
             _actionCell(
               context: context,
+              dmodel: dmodel,
               icon: Icons.add_rounded,
               title: "Add",
               description: "Exercise to workout",
@@ -165,6 +159,7 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
             const SizedBox(width: 16),
             _actionCell(
               context: context,
+              dmodel: dmodel,
               icon: Icons.delete_rounded,
               title: "Delete",
               description: "Delete this exercise",
@@ -181,15 +176,15 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
 
   Widget _actionCell({
     required BuildContext context,
+    required DataModel dmodel,
     required IconData icon,
     required String title,
     required String description,
     required VoidCallback onTap,
     required int index,
   }) {
-    final bgColor =
-        Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5);
-    final textColor = Theme.of(context).colorScheme.onTertiaryContainer;
+    final bgColor = AppColors.cell(context);
+    final textColor = AppColors.text(context);
     return Clickable(
       onTap: onTap,
       child: Container(
@@ -199,6 +194,7 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
         ),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width / 2.5,
+          minHeight: MediaQuery.of(context).size.width / 3,
         ),
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -207,7 +203,7 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
             children: [
               Icon(
                 icon,
-                color: textColor,
+                color: dmodel.color,
               ),
               const SizedBox(height: 8),
               Text(

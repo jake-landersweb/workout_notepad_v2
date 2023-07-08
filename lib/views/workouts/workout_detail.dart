@@ -188,9 +188,8 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
     required VoidCallback onTap,
     required int index,
   }) {
-    final bgColor =
-        Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5);
-    final textColor = Theme.of(context).colorScheme.onPrimaryContainer;
+    final bgColor = AppColors.cell(context);
+    final textColor = AppColors.text(context);
     final iconColor = Theme.of(context).colorScheme.primary;
     return Clickable(
       onTap: onTap,
@@ -201,6 +200,7 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
         ),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width / 2.5,
+          minHeight: MediaQuery.of(context).size.width / 3,
         ),
         child: Padding(
           padding: const EdgeInsets.all(16),

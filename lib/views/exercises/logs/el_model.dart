@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:sprung/sprung.dart';
+import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/exercise_base.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
@@ -14,177 +15,133 @@ enum AccumulateType { avg, max, min }
 enum DistributionBarType { weight, reps }
 
 class ELModel extends ChangeNotifier {
+  late PageController pageController;
+  int index = 0;
+
   late Exercise exercise;
   List<ExerciseLog> logs = [];
-  late PageController pageController;
-  late int currentIndex;
-  LineData? lineData;
-  BarData barData = BarData();
+  bool isLoading = true;
+  bool isLbs = true;
+  double _max = double.negativeInfinity;
+  final List<num> _all = [];
+  double _min = double.infinity;
+  double maxReps = double.negativeInfinity;
+  final List<num> _allReps = [];
+  double minReps = double.infinity;
 
-  bool _isLbs = true;
-  bool get isLbs => _isLbs;
-  void toggleIsLbs() {
-    _isLbs = !_isLbs;
-    setData(logs);
-    notifyListeners();
-  }
-
-  int _page = 1;
-  int get page => _page;
-  int _pageSize = 5;
-  int get pageSize => _pageSize;
-  void setPageSize(int s) {
-    _pageSize = s;
-    notifyListeners();
-  }
-
-  DistributionBarType _distributionBarType = DistributionBarType.weight;
-  DistributionBarType get distributionBarType => _distributionBarType;
-  void toggleDistributionBarType() {
-    if (_distributionBarType == DistributionBarType.weight) {
-      _distributionBarType = DistributionBarType.reps;
-      barData.createRepsData(logs);
-    } else {
-      _distributionBarType = DistributionBarType.weight;
-      barData.createWeightData(logs, isLbs);
-    }
-    notifyListeners();
-  }
-
-  ELModel({
-    required this.exercise,
-  }) {
-    currentIndex = 0;
-    pageController = PageController(initialPage: currentIndex);
+  ELModel({required this.exercise}) {
+    pageController = PageController();
     init();
   }
 
   Future<void> init() async {
+    isLoading = true;
+    notifyListeners();
+    // get logs
     logs = await exercise.getLogs(exercise.exerciseId);
-    setData(logs);
+    // create dashboard data from these logs
+    await compose();
+    isLoading = false;
+    notifyListeners();
+    // wait a small bit for log tags to finish fetching
+    await Future.delayed(const Duration(milliseconds: 200));
+    notifyListeners();
   }
 
-  void setData(List<ExerciseLog> l) {
-    lineData = LineData.init(exercise.type);
-    barData = BarData();
+  Future<void> compose() async {
+    // create the data needed for the dashboard
+    for (var l in logs) {
+      for (var m in l.metadata) {
+        switch (exercise.type) {
+          case ExerciseType.weight:
+            var adjustedWeight = _getAdjustedWeight(l, m.weight, isLbs);
+            _max = max(_max, adjustedWeight);
+            _min = min(_min, adjustedWeight);
+            _all.add(adjustedWeight);
+            break;
+          case ExerciseType.timed:
+          case ExerciseType.duration:
+            _max = max(_max, m.time.toDouble());
+            _min = min(_min, m.time.toDouble());
+            _all.add(m.time);
+            break;
+          case ExerciseType.bw:
+            break;
+        }
+        maxReps = max(maxReps, m.reps.toDouble());
+        minReps = min(minReps, m.reps.toDouble());
+        _allReps.add(m.reps);
+      }
+    }
+  }
+
+  String get weightPost {
+    return isLbs ? "lbs" : "kg";
+  }
+
+  String get maxVal {
     switch (exercise.type) {
       case ExerciseType.weight:
-        lineData!.createWeightData(l, isLbs);
-        barData.createWeightData(logs, isLbs);
-        break;
+        return "${_max.toStringAsFixed(2)} $weightPost";
       case ExerciseType.timed:
       case ExerciseType.duration:
-        lineData!.createTimedData(logs);
-        barData.createTimeData(logs);
-        break;
+        return formatHHMMSS(_max.round());
+      case ExerciseType.bw:
+        throw "unimplemented";
     }
+  }
+
+  String get minVal {
+    switch (exercise.type) {
+      case ExerciseType.weight:
+        return "${_min.toStringAsFixed(2)} $weightPost";
+      case ExerciseType.timed:
+      case ExerciseType.duration:
+        return formatHHMMSS(_min.round());
+      case ExerciseType.bw:
+        throw "unimplemented";
+    }
+  }
+
+  String get avgVal {
+    var a = _all.reduce((a, b) => a + b) / _all.length;
+    switch (exercise.type) {
+      case ExerciseType.weight:
+        return "${a.toStringAsFixed(2)} $weightPost";
+      case ExerciseType.timed:
+      case ExerciseType.duration:
+        return formatHHMMSS(a.round());
+      case ExerciseType.bw:
+        throw "unimplemented";
+    }
+  }
+
+  double get avgReps {
+    return _allReps.reduce((a, b) => a + b) / _allReps.length;
+  }
+
+  void setIndex(int i) {
+    index = i;
     notifyListeners();
   }
 
-  void onPageChange(int index) {
-    currentIndex = index;
-    notifyListeners();
-  }
-
-  void navigateTo(int index) {
+  void setPage(int i) {
     pageController.animateToPage(
-      index,
+      i,
       duration: const Duration(milliseconds: 500),
       curve: Sprung(36),
     );
   }
-
-  void nextPage() {
-    if (lineData == null) {
-      return;
-    }
-    if (lineData!.spots.length - (pageSize * page) > 0) {
-      _page += 1;
-    }
-    notifyListeners();
-  }
-
-  void wPrevPage() {
-    if (page > 1) {
-      _page -= 1;
-    }
-    notifyListeners();
-  }
-
-  List<FlSpot> getLineData() {
-    if (lineData == null) {
-      return [];
-    }
-    return paginate(lineData!.spots) as List<FlSpot>;
-  }
-
-  List<String> getLineDates() {
-    if (lineData == null) {
-      return [];
-    }
-    return paginate(lineData!.dates) as List<String>;
-  }
-
-  /// paginate the log data for the graph view
-  List<dynamic> paginate(List<dynamic> input) {
-    if (input.length <= pageSize) {
-      return input;
-    } else {
-      var start = input.length - (pageSize * page);
-      if (start < 0) {
-        start = 0;
-      }
-      return input.sublist(start, start + pageSize);
-    }
-  }
-
-  String getPost() {
-    switch (exercise.type) {
-      case ExerciseType.weight:
-        return isLbs ? "lbs" : "kg";
-      case ExerciseType.timed:
-      case ExerciseType.duration:
-        return "";
-    }
-  }
-
-  String getBarTitle() {
-    switch (exercise.type) {
-      case ExerciseType.weight:
-        switch (distributionBarType) {
-          case DistributionBarType.weight:
-            return "Weight";
-          case DistributionBarType.reps:
-            return "Reps";
-        }
-      case ExerciseType.timed:
-      case ExerciseType.duration:
-        return "Time";
-    }
-  }
-
-  String getDistributionPost() {
-    switch (exercise.type) {
-      case ExerciseType.weight:
-        switch (distributionBarType) {
-          case DistributionBarType.weight:
-            return getPost();
-          case DistributionBarType.reps:
-            return "Reps";
-        }
-      case ExerciseType.timed:
-      case ExerciseType.duration:
-        return "";
-    }
-  }
 }
 
-class BarDataItem {
+enum BarDataType { weight, reps }
+
+class GraphDataItem {
   late double low;
   late List<double> items;
   late double high;
 
-  BarDataItem({
+  GraphDataItem({
     required this.low,
     required this.items,
     required this.high,
@@ -193,80 +150,186 @@ class BarDataItem {
   double get avg => items.reduce((a, b) => a + b) / items.length;
 }
 
-class BarData {
-  List<BarDataItem> items = [];
+class BarDataModel extends ChangeNotifier {
+  // List<GraphDataItem> items = [];
+  double low = double.infinity;
+  double high = double.negativeInfinity;
+  BarDataType type = BarDataType.weight;
 
-  void createWeightData(List<ExerciseLog> logs, bool isLbs) {
-    items = [];
+  BarDataModel({required ELModel elmodel});
+
+  void toggleType(ELModel elmodel) {
+    switch (type) {
+      case BarDataType.weight:
+        type = BarDataType.reps;
+        break;
+      case BarDataType.reps:
+        type = BarDataType.weight;
+        break;
+      default:
+    }
+    notifyListeners();
+  }
+
+  String get titleButton {
+    switch (type) {
+      case BarDataType.weight:
+        return "Weight";
+      case BarDataType.reps:
+        return "Reps";
+    }
+  }
+
+  String titleType(ELModel elmodel) {
+    switch (elmodel.exercise.type) {
+      case ExerciseType.weight:
+        return "";
+      case ExerciseType.timed:
+      case ExerciseType.duration:
+        return "Time";
+      case ExerciseType.bw:
+        return "Reps";
+    }
+  }
+
+  String barY(ELModel elmodel, double val) {
+    switch (elmodel.exercise.type) {
+      case ExerciseType.weight:
+        switch (type) {
+          case BarDataType.weight:
+            return "${val.toStringAsFixed(2)} ${elmodel.weightPost}";
+          case BarDataType.reps:
+            return "${val.round()} Reps";
+        }
+      case ExerciseType.timed:
+      case ExerciseType.duration:
+        return formatHHMMSS(val.round());
+      case ExerciseType.bw:
+        return "${val.toStringAsFixed(2)} Reps";
+    }
+  }
+
+  String tooltip(ELModel elmodel, double val, int set, int group) {
+    String g = "";
+    switch (group) {
+      case 0:
+        g = "Low";
+        break;
+      case 1:
+        g = "Avg";
+        break;
+      case 2:
+        g = "High";
+        break;
+    }
+    switch (elmodel.exercise.type) {
+      case ExerciseType.weight:
+        switch (type) {
+          case BarDataType.weight:
+            return "${val.toStringAsFixed(2)} ${elmodel.weightPost}\n#${set + 1} $g";
+          case BarDataType.reps:
+            return "${val.toStringAsFixed(2)} Reps\n#${set + 1} $g";
+        }
+      case ExerciseType.timed:
+      case ExerciseType.duration:
+        return "${formatHHMMSS(val.round())}\n#${set + 1} $g";
+      case ExerciseType.bw:
+        return "${val.toStringAsFixed(2)} Reps\n#${set + 1} $g";
+    }
+  }
+
+  List<GraphDataItem> getItems(ELModel elmodel) {
+    switch (elmodel.exercise.type) {
+      case ExerciseType.weight:
+        switch (type) {
+          case BarDataType.weight:
+            return createWeightData(elmodel.logs, elmodel.isLbs);
+          case BarDataType.reps:
+            return createRepsData(elmodel.logs);
+        }
+      case ExerciseType.timed:
+      case ExerciseType.duration:
+        return createTimeData(elmodel.logs);
+      case ExerciseType.bw:
+        return createRepsData(elmodel.logs);
+    }
+  }
+
+  List<GraphDataItem> createWeightData(List<ExerciseLog> logs, bool isLbs) {
+    List<GraphDataItem> items = [];
+    high = double.negativeInfinity;
+    low = double.infinity;
     // create the weight items
     for (var log in logs) {
       for (int i = 0; i < log.metadata.length; i++) {
         // add the item
         if (i >= items.length) {
           items.add(
-            BarDataItem(
-              low: 9999999,
+            GraphDataItem(
+              low: double.infinity,
               items: [],
-              high: -9999999,
+              high: double.negativeInfinity,
             ),
           );
         }
         var adjustedWeight =
-            _getAdjustedWeight(log, log.metadata[i].weight.toDouble(), isLbs);
+            _getAdjustedWeight(log, log.metadata[i].weight, isLbs);
         // set min and max
-        if (adjustedWeight > items[i].high) {
-          items[i].high = adjustedWeight;
-        }
-        if (adjustedWeight < items[i].low) {
-          items[i].low = adjustedWeight;
-        }
+        items[i].high = max(items[i].high, adjustedWeight);
+        items[i].low = min(items[i].low, adjustedWeight);
+        high = max(high, adjustedWeight);
+        low = min(low, adjustedWeight);
         // add to running count
         items[i].items.add(adjustedWeight);
       }
     }
+    return items;
   }
 
-  void createRepsData(List<ExerciseLog> logs) {
-    items = [];
+  List<GraphDataItem> createRepsData(List<ExerciseLog> logs) {
+    List<GraphDataItem> items = [];
+    high = double.negativeInfinity;
+    low = double.infinity;
     // create the weight items
     for (var log in logs) {
       for (int i = 0; i < log.metadata.length; i++) {
         // add the item
         if (i >= items.length) {
           items.add(
-            BarDataItem(
-              low: 9999999,
+            GraphDataItem(
+              low: double.infinity,
               items: [],
-              high: -9999999,
+              high: double.negativeInfinity,
             ),
           );
         }
 
         // set min and max
-        if (log.metadata[i].reps > items[i].high) {
-          items[i].high = log.metadata[i].reps.toDouble();
-        }
-        if (log.metadata[i].reps < items[i].low) {
-          items[i].low = log.metadata[i].reps.toDouble();
-        }
+        items[i].high = max(items[i].high, log.metadata[i].reps.toDouble());
+        items[i].low = min(items[i].low, log.metadata[i].reps.toDouble());
+        high = max(high, items[i].high);
+        low = min(low, items[i].low);
         // add to running count
         items[i].items.add(log.metadata[i].reps.toDouble());
       }
     }
+    return items;
   }
 
-  void createTimeData(List<ExerciseLog> logs) {
-    items = [];
+  List<GraphDataItem> createTimeData(List<ExerciseLog> logs) {
+    List<GraphDataItem> items = [];
+    high = double.negativeInfinity;
+    low - double.infinity;
     // create the weight items
     for (var log in logs) {
       for (int i = 0; i < log.metadata.length; i++) {
         // add the item
         if (i >= items.length) {
           items.add(
-            BarDataItem(
-              low: 9999999,
+            GraphDataItem(
+              low: double.infinity,
               items: [],
-              high: -9999999,
+              high: double.negativeInfinity,
             ),
           );
         }
@@ -282,10 +345,12 @@ class BarData {
         items[i].items.add(log.metadata[i].time.toDouble());
       }
     }
+    return items;
   }
 
-  List<BarChartGroupData> getBarData(BuildContext context) {
+  List<BarChartGroupData> getBarData(BuildContext context, ELModel elmodel) {
     List<BarChartGroupData> data = [];
+    List<GraphDataItem> items = getItems(elmodel);
     for (int i = 0; i < items.length; i++) {
       data.add(
         BarChartGroupData(
@@ -293,19 +358,25 @@ class BarData {
           barRods: [
             BarChartRodData(
               toY: items[i].low.toDouble(),
-              color: Theme.of(context).colorScheme.secondary,
+              color: i % 2 == 0
+                  ? Theme.of(context).colorScheme.primary.withOpacity(0.15)
+                  : AppColors.cell(context),
               width: ((MediaQuery.of(context).size.width / items.length) / 3) -
                   (36 / items.length),
             ),
             BarChartRodData(
               toY: items[i].avg,
-              color: Theme.of(context).colorScheme.primary,
+              color: i % 2 == 0
+                  ? Theme.of(context).colorScheme.primary.withOpacity(0.15)
+                  : AppColors.cell(context),
               width: ((MediaQuery.of(context).size.width / items.length) / 3) -
                   (36 / items.length),
             ),
             BarChartRodData(
               toY: items[i].high.toDouble(),
-              color: Theme.of(context).colorScheme.tertiary,
+              color: i % 2 == 0
+                  ? Theme.of(context).colorScheme.primary.withOpacity(0.15)
+                  : AppColors.cell(context),
               width: ((MediaQuery.of(context).size.width / items.length) / 3) -
                   (36 / items.length),
             ),
@@ -317,204 +388,148 @@ class BarData {
   }
 }
 
-class LineData {
-  late List<FlSpot> spots;
+class LineDataModel extends ChangeNotifier {
   late List<String> dates;
-  late double graphLow;
-  late double graphHigh;
-  late double setLow;
-  late double setHigh;
-  late AccumulateType accumulateType;
-  late ExerciseType type;
+  double low = double.infinity;
+  double high = double.negativeInfinity;
+  AccumulateType accumulateType = AccumulateType.avg;
 
-  LineData({
-    required this.spots,
-    required this.dates,
-    required this.graphLow,
-    required this.graphHigh,
-    required this.setLow,
-    required this.setHigh,
-    required this.accumulateType,
-    required this.type,
-  });
+  LineDataModel({required ELModel elmodel}) {
+    // create date vector
+    dates = elmodel.logs.map((e) => e.getCreatedFormatted()).toList();
 
-  LineData.init(this.type) {
-    spots = [];
-    dates = [];
-    graphLow = double.infinity;
-    graphHigh = double.negativeInfinity;
-    setLow = double.infinity;
-    setHigh = double.negativeInfinity;
-    accumulateType = AccumulateType.avg;
-  }
-
-  String setLowFormatted() {
-    if (setLow == double.infinity) {
-      return "-";
-    } else {
-      return setLow.toStringAsFixed(2);
+    // create low and high
+    for (var i in elmodel.logs) {
+      for (var m in i.metadata) {
+        switch (elmodel.exercise.type) {
+          case ExerciseType.weight:
+            var adjustedWeight = _getAdjustedWeight(i, m.weight, elmodel.isLbs);
+            high = max(high, adjustedWeight);
+            low = min(low, adjustedWeight);
+            break;
+          case ExerciseType.timed:
+          case ExerciseType.duration:
+            high = max(high, m.time.toDouble());
+            low = min(low, m.time.toDouble());
+            break;
+          case ExerciseType.bw:
+            high = max(high, m.reps.toDouble());
+            low = min(low, m.reps.toDouble());
+        }
+      }
     }
   }
 
-  String setHighFormatted() {
-    if (setHigh == double.negativeInfinity) {
-      return "-";
-    } else {
-      return setHigh.toStringAsFixed(2);
-    }
-  }
-
-  void init(List<ExerciseLog> logs, bool isLbs) {
-    switch (type) {
+  List<FlSpot> getItems(ELModel elmodel) {
+    switch (elmodel.exercise.type) {
       case ExerciseType.weight:
-        createWeightData(logs, isLbs);
-        break;
+        return createWeightData(elmodel);
       case ExerciseType.timed:
-        break;
       case ExerciseType.duration:
-        break;
+        return createTimeData(elmodel);
+      case ExerciseType.bw:
+        return createRepsData(elmodel);
     }
   }
 
-  void createWeightData(List<ExerciseLog> logs, bool isLbs) {
-    spots = [];
-    dates = [];
-    graphLow = double.infinity;
-    graphHigh = double.negativeInfinity;
-    setLow = double.infinity;
-    setHigh = double.negativeInfinity;
-
-    // get the furthest back date
-    DateTime beginDate = logs
-        .reduce((a, b) => a.getCreated().isAfter(b.getCreated()) ? b : a)
-        .getCreated();
-    for (var i in logs) {
-      // handle max and min over all sets
-      var tmpMax = _getAdjustedWeight(
-          i, handleWeightData(i.metadata, AccumulateType.max), isLbs);
-      var tmpMin = _getAdjustedWeight(
-          i, handleWeightData(i.metadata, AccumulateType.min), isLbs);
-      if (tmpMax > setHigh) {
-        setHigh = tmpMax;
-      }
-      if (tmpMin < setLow) {
-        setLow = tmpMin;
-      }
-
-      // compose log data
-      var w = handleWeightData(i.metadata, accumulateType);
-      double correctedW = _getAdjustedWeight(i, w, isLbs);
-
-      if (correctedW > graphHigh) {
-        graphHigh = correctedW;
-      }
-      if (correctedW < graphLow) {
-        graphLow = correctedW;
-      }
-      // var r = i.metadata.map((e) => e.reps).toList().reduce((a, b) => a + b);
-      var begin = DateTime(beginDate.year);
-      spots.add(FlSpot(
-          i.getCreated().difference(begin).inDays.toDouble(), correctedW));
-      dates.add(i.getCreatedFormatted());
+  String barY(ELModel elmodel, double val) {
+    switch (elmodel.exercise.type) {
+      case ExerciseType.weight:
+        return "${val.toStringAsFixed(2)} ${elmodel.weightPost}";
+      case ExerciseType.timed:
+      case ExerciseType.duration:
+        return formatHHMMSS(val.round());
+      case ExerciseType.bw:
+        return "${val.toStringAsFixed(2)} Reps";
     }
-
-    // reverse to maintain order
-    spots = spots.reversed.toList();
-    dates = dates.reversed.toList();
   }
 
-  void createTimedData(List<ExerciseLog> logs) {
-    spots = [];
-    dates = [];
-    graphLow = double.infinity;
-    graphHigh = double.negativeInfinity;
-    setLow = double.infinity;
-    setHigh = double.negativeInfinity;
+  String tooltip(ELModel elmodel, double val, int index) {
+    switch (elmodel.exercise.type) {
+      case ExerciseType.weight:
+        return "${val.toStringAsFixed(2)} ${elmodel.weightPost}\n${dates[index]}";
+      case ExerciseType.timed:
+      case ExerciseType.duration:
+        return "${formatHHMMSS(val.round())}\n${dates[index]}";
+      case ExerciseType.bw:
+        return "${val.toStringAsFixed(2)} Reps\n${dates[index]}";
+    }
+  }
 
+  List<FlSpot> createWeightData(ELModel elmodel) {
+    List<FlSpot> items = [];
     // get the furthest back date
-    DateTime beginDate = logs
+    DateTime beginDate = elmodel.logs
         .reduce((a, b) => a.getCreated().isAfter(b.getCreated()) ? b : a)
         .getCreated();
-    for (var i in logs) {
-      // handle max and min over all sets
-      var tmpMax = handleTimeData(i.metadata, AccumulateType.max);
-      var tmpMin = handleTimeData(i.metadata, AccumulateType.min);
-      if (tmpMax > setHigh) {
-        setHigh = tmpMax;
-      }
-      if (tmpMin < setLow) {
-        setLow = tmpMin;
-      }
 
-      // compose log data
-      double t = handleTimeData(i.metadata, accumulateType);
+    for (var i in elmodel.logs) {
+      // handle max and min
+      var scaledWeight = accumulateData(
+          i.metadata.map((e) => e.weight.toDouble()).toList(), accumulateType);
+      var adjustedWeight = _getAdjustedWeight(i, scaledWeight, elmodel.isLbs);
 
-      if (t > graphHigh) {
-        graphHigh = t;
-      }
-      if (t < graphLow) {
-        graphLow = t;
-      }
-      // var r = i.metadata.map((e) => e.reps).toList().reduce((a, b) => a + b);
       var begin = DateTime(beginDate.year);
-      spots.add(FlSpot(i.getCreated().difference(begin).inDays.toDouble(), t));
-      dates.add(i.getCreatedFormatted());
+      items.add(FlSpot(
+          i.getCreated().difference(begin).inDays.toDouble(), adjustedWeight));
     }
+    return items;
+  }
 
-    // reverse to maintain order
-    spots = spots.reversed.toList();
-    dates = dates.reversed.toList();
+  List<FlSpot> createRepsData(ELModel elmodel) {
+    List<FlSpot> items = [];
+    // get the furthest back date
+    DateTime beginDate = elmodel.logs
+        .reduce((a, b) => a.getCreated().isAfter(b.getCreated()) ? b : a)
+        .getCreated();
+
+    for (var i in elmodel.logs) {
+      // handle max and min
+      var scaledReps = accumulateData(
+          i.metadata.map((e) => e.reps.toDouble()).toList(), accumulateType);
+
+      var begin = DateTime(beginDate.year);
+      items.add(FlSpot(
+          i.getCreated().difference(begin).inDays.toDouble(), scaledReps));
+    }
+    return items;
+  }
+
+  List<FlSpot> createTimeData(ELModel elmodel) {
+    List<FlSpot> items = [];
+    // get the furthest back date
+    DateTime beginDate = elmodel.logs
+        .reduce((a, b) => a.getCreated().isAfter(b.getCreated()) ? b : a)
+        .getCreated();
+
+    for (var i in elmodel.logs) {
+      // handle max and min
+      var scaledTime = accumulateData(
+          i.metadata.map((e) => e.time.toDouble()).toList(), accumulateType);
+
+      var begin = DateTime(beginDate.year);
+      items.add(FlSpot(
+          i.getCreated().difference(begin).inDays.toDouble(), scaledTime));
+    }
+    return items;
   }
 
   /// composes the datapoint for the specified day using an accumulate method
-  double handleWeightData(
-    List<ExerciseLogMeta> metadata,
+  double accumulateData(
+    List<double> list,
     AccumulateType type,
   ) {
     switch (type) {
       case AccumulateType.avg:
-        return metadata.map((e) => e.weight).toList().reduce((a, b) => a + b) /
-            metadata.length;
+        return list.reduce((a, b) => a + b) / list.length;
       case AccumulateType.max:
-        return metadata
-            .map((e) => e.weight)
-            .toList()
-            .reduce((a, b) => max(a, b))
-            .toDouble();
+        return list.reduce((a, b) => max(a, b)).toDouble();
       case AccumulateType.min:
-        return metadata
-            .map((e) => e.weight)
-            .toList()
-            .reduce((a, b) => min(a, b))
-            .toDouble();
+        return list.reduce((a, b) => min(a, b)).toDouble();
     }
   }
 
-  /// composes the datapoint for the specified day using an accumulate method
-  double handleTimeData(
-    List<ExerciseLogMeta> metadata,
-    AccumulateType type,
-  ) {
-    switch (type) {
-      case AccumulateType.avg:
-        return metadata.map((e) => e.time).toList().reduce((a, b) => a + b) /
-            metadata.length;
-      case AccumulateType.max:
-        return metadata
-            .map((e) => e.time)
-            .toList()
-            .reduce((a, b) => max(a, b))
-            .toDouble();
-      case AccumulateType.min:
-        return metadata
-            .map((e) => e.time)
-            .toList()
-            .reduce((a, b) => min(a, b))
-            .toDouble();
-    }
-  }
-
-  void toggleAccumulate(List<ExerciseLog> logs, bool isLbs) {
+  void toggleAccumulate() {
     switch (accumulateType) {
       case AccumulateType.avg:
         accumulateType = AccumulateType.max;
@@ -526,15 +541,15 @@ class LineData {
         accumulateType = AccumulateType.avg;
         break;
     }
-    init(logs, isLbs);
+    notifyListeners();
   }
 }
 
 /// Account for logs being represented in kg or lbs
-double _getAdjustedWeight(ExerciseLog log, double val, bool isLbs) {
+double _getAdjustedWeight(ExerciseLog log, num val, bool isLbs) {
   if (log.weightPost == "lbs") {
     if (isLbs) {
-      return val;
+      return val.toDouble();
     } else {
       return val / 2.205;
     }
@@ -542,7 +557,7 @@ double _getAdjustedWeight(ExerciseLog log, double val, bool isLbs) {
     if (isLbs) {
       return val * 2.205;
     } else {
-      return val;
+      return val.toDouble();
     }
   }
 }

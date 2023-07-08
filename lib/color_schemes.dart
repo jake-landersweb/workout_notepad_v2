@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
-import 'package:workout_notepad_v2/text_themes.dart';
+import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 
 class AppColorScheme extends ThemeExtension<AppColorScheme> {
   final Color primaryColor;
@@ -23,16 +24,24 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
     );
   }
 
-  ThemeData getTheme(Brightness brightness) {
+  ThemeData getTheme(
+      BuildContext context, Brightness brightness, DataModel dmodel) {
     var colorScheme = _scheme(brightness).toColorScheme(brightness);
     return ThemeData(
       useMaterial3: true,
       extensions: [this],
       brightness: brightness,
-      colorScheme: colorScheme,
-      textTheme: GoogleFonts.openSansTextTheme(),
+      colorScheme: Theme.of(context).colorScheme.copyWith(
+            primary: dmodel.color,
+            background: AppColors.background(context),
+          ),
+      // textTheme: GoogleFonts.poppinsTextTheme(),
+      textTheme: GoogleFonts.soraTextTheme(),
       filledButtonTheme: FilledButtonThemeData(
         style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.resolveWith(
+            (states) => dmodel.color,
+          ),
           textStyle: MaterialStateProperty.resolveWith(
             (states) => const TextStyle(fontSize: 18),
           ),
@@ -58,8 +67,8 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
         space: 0.5,
       ),
       dividerColor: colorScheme.outline.withOpacity(0.5),
-      primaryColor: colorScheme.primary,
-      scaffoldBackgroundColor: colorScheme.background,
+      primaryColor: dmodel.color,
+      scaffoldBackgroundColor: AppColors.background(context),
     );
   }
 

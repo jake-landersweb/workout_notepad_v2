@@ -1,5 +1,4 @@
 import 'package:uuid/uuid.dart';
-import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/exercise_set.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 

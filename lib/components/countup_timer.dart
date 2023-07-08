@@ -1,8 +1,10 @@
 import "package:flutter/material.dart";
 import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
+import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/components/timer.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 import './root.dart' as comp;
 
 class CountupTimer extends StatefulWidget {
@@ -48,7 +50,7 @@ class _CountupTimerState extends State<CountupTimer> {
                 child: _numberCell(
                   context,
                   isOK(controller)
-                      ? Theme.of(context).colorScheme.tertiaryContainer
+                      ? Theme.of(context).colorScheme.primary.withOpacity(0.15)
                       : Theme.of(context).colorScheme.errorContainer,
                   isOK(controller)
                       ? Theme.of(context).colorScheme.onTertiaryContainer
@@ -72,7 +74,7 @@ class _CountupTimerState extends State<CountupTimer> {
               child: _numberCell(
                 context,
                 isOK(controller)
-                    ? Theme.of(context).colorScheme.primaryContainer
+                    ? Theme.of(context).primaryColor.withOpacity(0.15)
                     : Theme.of(context).colorScheme.errorContainer,
                 isOK(controller)
                     ? Theme.of(context).colorScheme.onPrimaryContainer
@@ -95,11 +97,8 @@ class _CountupTimerState extends State<CountupTimer> {
               child: _numberCell(
                 context,
                 isOK(controller)
-                    ? Theme.of(context)
-                        .colorScheme
-                        .surfaceVariant
-                        .withOpacity(0.5)
-                    : Theme.of(context).colorScheme.error,
+                    ? AppColors.cell(context)
+                    : Theme.of(context).colorScheme.error.withOpacity(0.3),
                 isOK(controller)
                     ? Theme.of(context).colorScheme.onSurfaceVariant
                     : Theme.of(context).colorScheme.onError,
@@ -119,32 +118,55 @@ class _CountupTimerState extends State<CountupTimer> {
                         "Goal: ${_formatHHMMSS(widget.goalDuration!.inSeconds)}",
                         style: ttBody(
                           context,
-                          color: Theme.of(context).colorScheme.outline,
+                          color: AppColors.subtext(context),
                         ),
                       ),
                     ),
             ),
             Expanded(
-              child: controller.isActive
-                  ? OutlinedButton(
-                      onPressed: () {
-                        if (widget.onFinish != null) {
-                          widget.onFinish!(controller.time);
-                        }
-                        controller.cancel();
-                      },
-                      child: const Text("Finish"),
-                    )
-                  : FilledButton.icon(
-                      onPressed: () {
-                        controller.start();
-                        if (widget.onStart != null) {
-                          widget.onStart!();
-                        }
-                      },
-                      icon: const Icon(Icons.play_arrow_rounded),
-                      label: const Text("Start"),
+              child: Clickable(
+                onTap: () {
+                  if (controller.isActive) {
+                    if (widget.onFinish != null) {
+                      widget.onFinish!(controller.time);
+                    }
+                    controller.cancel();
+                  } else {
+                    controller.start();
+                    if (widget.onStart != null) {
+                      widget.onStart!();
+                    }
+                  }
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.cell(context)[800],
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  height: 40,
+                  child: Center(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          controller.isActive
+                              ? Icons.stop_rounded
+                              : Icons.play_arrow_rounded,
+                          color: AppColors.cell(context),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          controller.isActive ? "Finish" : "Start",
+                          style: TextStyle(
+                            color: AppColors.cell(context)[50],
+                            fontSize: 16,
+                          ),
+                        )
+                      ],
                     ),
+                  ),
+                ),
+              ),
             ),
           ],
         ),

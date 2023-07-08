@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 
 class ExerciseLog {
   late String exerciseLogId;
-  late String userId;
   late String exerciseId;
   String? parentId;
   String? workoutLogId;
@@ -21,7 +20,6 @@ class ExerciseLog {
 
   ExerciseLog({
     required this.exerciseLogId,
-    required this.userId,
     required this.exerciseId,
     this.parentId,
     this.workoutLogId,
@@ -35,10 +33,9 @@ class ExerciseLog {
     required this.updated,
   });
 
-  ExerciseLog.init(String uid, String eid, ExerciseBase exercise) {
+  ExerciseLog.init(String eid, ExerciseBase exercise) {
     var uuid = const Uuid();
     exerciseLogId = uuid.v4();
-    userId = uid;
     exerciseId = eid;
     title = exercise.title;
     sets = exercise.sets;
@@ -53,6 +50,7 @@ class ExerciseLog {
           time: exercise.time,
           weight: 0,
           saved: false,
+          tags: [],
         ),
       );
     }
@@ -61,14 +59,12 @@ class ExerciseLog {
   }
 
   ExerciseLog.workoutInit(
-    String uid,
     String eid,
     String wlid,
     ExerciseBase exercise,
   ) {
     var uuid = const Uuid();
     exerciseLogId = uuid.v4();
-    userId = uid;
     exerciseId = eid;
     workoutLogId = wlid;
     title = exercise.title;
@@ -84,6 +80,7 @@ class ExerciseLog {
           time: exercise.time,
           weight: 0,
           saved: false,
+          tags: [],
         ),
       );
     }
@@ -92,7 +89,6 @@ class ExerciseLog {
   }
 
   ExerciseLog.exerciseSetInit(
-    String uid,
     String eid,
     String parentEid,
     String wlid,
@@ -100,7 +96,6 @@ class ExerciseLog {
   ) {
     var uuid = const Uuid();
     exerciseLogId = uuid.v4();
-    userId = uid;
     exerciseId = eid;
     parentId = parentEid;
     workoutLogId = wlid;
@@ -117,6 +112,7 @@ class ExerciseLog {
           time: exercise.time,
           weight: 0,
           saved: false,
+          tags: [],
         ),
       );
     }
@@ -126,7 +122,6 @@ class ExerciseLog {
 
   ExerciseLog.fromJson(Map<String, dynamic> json) {
     exerciseLogId = json['exerciseLogId'];
-    userId = json['userId'];
     exerciseId = json['exerciseId'];
     parentId = json['parentId'];
     workoutLogId = json['workoutLogId'];
@@ -146,11 +141,13 @@ class ExerciseLog {
           time: int.parse(t[i]),
           weight: int.parse(w[i]),
           saved: true,
+          tags: [],
         ),
       );
     }
     created = json['created'];
     updated = json['updated'];
+    setTags();
   }
 
   bool removeSet(int index) {
@@ -184,7 +181,6 @@ class ExerciseLog {
     }
     return {
       "exerciseLogId": exerciseLogId,
-      "userId": userId,
       "exerciseId": exerciseId,
       "parentId": parentId,
       "workoutLogId": workoutLogId,
@@ -199,6 +195,24 @@ class ExerciseLog {
     };
   }
 
+  Future<void> setTags() async {
+    var db = await getDB();
+    var resp = await db.rawQuery("""
+      SELECT * from exercise_log_tag elt
+      JOIN tag t ON t.tagId = elt.tagId
+      WHERE elt.exerciseLogId = '$exerciseLogId'
+    """);
+    for (var i in resp) {
+      var elt = ExerciseLogTag.fromJson(i);
+      metadata[elt.setIndex].tags.add(elt);
+    }
+  }
+
+  bool addSetTag(Tag tag, int index) {
+    metadata[index].insertTag(exerciseLogId, tag, index);
+    return true;
+  }
+
   Future<int> insert({ConflictAlgorithm? conflictAlgorithm}) async {
     final db = await getDB();
     var response = await db.insert(
@@ -206,6 +220,23 @@ class ExerciseLog {
       toMap(),
       conflictAlgorithm: conflictAlgorithm ?? ConflictAlgorithm.abort,
     );
+    if (response != 0) {
+      // delete all tags
+      var _ = await db.rawDelete(
+          "DELETE FROM exercise_log_tag WHERE exerciseLogId = '$exerciseLogId'");
+      // insert all tags from metadata
+      for (int i = 0; i < metadata.length; i++) {
+        for (int j = 0; j < metadata[i].tags.length; j++) {
+          // make sure set index is okay
+          metadata[i].tags[j].setIndex = i;
+          var resp = await metadata[i].tags[j].insert();
+          if (resp == 0) {
+            throw "THERE WAS AN ERROR";
+            // TODO!! -- HANDLE ERROR
+          }
+        }
+      }
+    }
     return response;
   }
 
@@ -235,12 +266,14 @@ class ExerciseLogMeta {
   late int time;
   late int weight;
   late bool saved;
+  late List<ExerciseLogTag> tags;
 
   ExerciseLogMeta({
     required this.reps,
     required this.time,
     required this.weight,
     required this.saved,
+    required this.tags,
   }) {
     var uuid = const Uuid();
     id = uuid.v4();
@@ -253,9 +286,128 @@ class ExerciseLogMeta {
     time = m.time;
     weight = m.weight;
     saved = false;
+    tags = [for (var i in m.tags) i.clone()];
   }
 
   void setDuration(Duration duration) {
     time = duration.inSeconds;
+  }
+
+  bool insertTag(String exerciseLogId, Tag tag, int index) {
+    if (tags.any((element) => element.tagId == tag.tagId)) {
+      return false;
+    }
+    tags.add(
+      ExerciseLogTag.init(
+          exerciseLogId: exerciseLogId, tag: tag, setIndex: index),
+    );
+    return true;
+  }
+}
+
+class Tag {
+  late String tagId;
+  late String title;
+
+  Tag({
+    required this.tagId,
+    required this.title,
+  });
+
+  Tag.init({required this.title}) {
+    tagId = const Uuid().v4();
+  }
+
+  Tag.fromJson(dynamic json) {
+    tagId = json['tagId'];
+    title = json['title'];
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      "tagId": tagId,
+      "title": title,
+    };
+  }
+
+  Future<int> insert({ConflictAlgorithm? conflictAlgorithm}) async {
+    final db = await getDB();
+    var response = await db.insert(
+      'tag',
+      toMap(),
+      conflictAlgorithm: conflictAlgorithm ?? ConflictAlgorithm.replace,
+    );
+    return response;
+  }
+
+  static Future<List<Tag>> getList() async {
+    final db = await getDB();
+    var response = await db.rawQuery("SELECT * FROM tag");
+    List<Tag> t = [];
+    for (var i in response) {
+      t.add(Tag.fromJson(i));
+    }
+    return t;
+  }
+}
+
+class ExerciseLogTag {
+  late String exerciseLogTagId;
+  late String exerciseLogId;
+  late String tagId;
+  late String title;
+  late int setIndex;
+
+  ExerciseLogTag({
+    required this.exerciseLogTagId,
+    required this.exerciseLogId,
+    required this.tagId,
+    required this.title,
+    required this.setIndex,
+  });
+
+  ExerciseLogTag.init({
+    required this.exerciseLogId,
+    required Tag tag,
+    required this.setIndex,
+  }) {
+    exerciseLogTagId = const Uuid().v4();
+    tagId = tag.tagId;
+    title = tag.title;
+  }
+
+  ExerciseLogTag clone() => ExerciseLogTag(
+        exerciseLogTagId: exerciseLogTagId,
+        exerciseLogId: exerciseLogId,
+        tagId: tagId,
+        title: title,
+        setIndex: setIndex,
+      );
+
+  ExerciseLogTag.fromJson(dynamic json) {
+    exerciseLogTagId = json['exerciseLogTagId'];
+    exerciseLogId = json['exerciseLogId'];
+    tagId = json['tagId'];
+    title = json['title'];
+    setIndex = json['setIndex'];
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      "exerciseLogTagId": exerciseLogTagId,
+      "exerciseLogId": exerciseLogId,
+      "tagId": tagId,
+      "setIndex": setIndex,
+    };
+  }
+
+  Future<int> insert({ConflictAlgorithm? conflictAlgorithm}) async {
+    final db = await getDB();
+    var response = await db.insert(
+      'exercise_log_tag',
+      toMap(),
+      conflictAlgorithm: conflictAlgorithm ?? ConflictAlgorithm.replace,
+    );
+    return response;
   }
 }

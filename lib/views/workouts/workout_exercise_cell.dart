@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:workout_notepad_v2/data/exercise_set.dart';
 import 'package:workout_notepad_v2/data/root.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 
 class WorkoutExerciseCell extends StatefulWidget {
@@ -61,10 +62,7 @@ class _WorkoutExerciseCellState extends State<WorkoutExerciseCell> {
                     padding: const EdgeInsets.fromLTRB(0, 4, 0, 0),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .surfaceVariant
-                            .withOpacity(0.5),
+                        color: AppColors.cell(context),
                         borderRadius: BorderRadius.circular(5),
                       ),
                       child: Padding(

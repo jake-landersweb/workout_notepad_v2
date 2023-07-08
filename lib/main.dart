@@ -4,9 +4,20 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/color_schemes.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/views/account/root.dart';
 import 'package:workout_notepad_v2/views/home.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  var _ = FirebaseAnalytics.instance;
+
   runApp(const MyApp());
 }
 
@@ -42,8 +53,7 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           title: 'Workout Notepad',
           debugShowCheckedModeBanner: false,
-          theme: scheme.getTheme(Brightness.light),
-          darkTheme: scheme.getTheme(Brightness.dark),
+          theme: scheme.getTheme(context, Brightness.light, dmodel),
           onGenerateRoute: (settings) {
             return MaterialWithModalsPageRoute(
               settings: settings,
@@ -67,6 +77,7 @@ class _IndexState extends State<Index> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Center(
         child: _body(context),
       ),
@@ -79,9 +90,11 @@ class _IndexState extends State<Index> {
       case LoadStatus.init:
         return const CircularProgressIndicator();
       case LoadStatus.noUser:
-        return const Text("NO USER");
+        return const AccountInit();
       case LoadStatus.done:
         return const Home();
+      case LoadStatus.expired:
+        return const Placeholder();
     }
   }
 }

@@ -3,27 +3,23 @@ import 'package:workout_notepad_v2/model/root.dart';
 
 class Category {
   late String title;
-  late String userId;
   late String icon;
 
   Category({
     required this.title,
-    required this.userId,
     required this.icon,
   });
 
-  Category copy() => Category(title: title, userId: userId, icon: icon);
+  Category copy() => Category(title: title, icon: icon);
 
   Category.fromJson(Map<String, dynamic> json) {
     title = json['title'];
-    userId = json['userId'];
     icon = json['icon'] ?? "";
   }
 
   Map<String, dynamic> toMap() {
     return {
       "title": title,
-      "userId": userId,
       "icon": icon,
     };
   }
@@ -37,10 +33,9 @@ class Category {
     );
   }
 
-  static Future<List<Category>> getList(String userId) async {
+  static Future<List<Category>> getList() async {
     final db = await getDB();
-    final List<Map<String, dynamic>> response =
-        await db.query('category', where: "userId = ?", whereArgs: [userId]);
+    final List<Map<String, dynamic>> response = await db.query('category');
     List<Category> w = [];
     for (var i in response) {
       w.add(Category.fromJson(i));

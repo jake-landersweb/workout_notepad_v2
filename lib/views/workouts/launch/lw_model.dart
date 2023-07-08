@@ -3,13 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sprung/sprung.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/exercise_set.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
-import 'package:workout_notepad_v2/text_themes.dart';
 
 class TimerInstance {
   late int index;
@@ -24,7 +22,6 @@ class TimerInstance {
 }
 
 class LaunchWorkoutModelState {
-  late String userId;
   late int workoutIndex;
   late Workout workout;
   late List<WorkoutExercise> exercises;
@@ -38,7 +35,6 @@ class LaunchWorkoutModelState {
   List<TimerInstance> timerInstances = [];
 
   LaunchWorkoutModelState({
-    required this.userId,
     this.workoutIndex = 0,
     required this.workout,
     required this.exercises,
@@ -120,6 +116,22 @@ class LaunchWorkoutModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  void onTagClick(int index, int setIndex, Tag tag) {
+    if (state.exerciseLogs[index].metadata[setIndex].tags
+        .any((element) => element.tagId == tag.tagId)) {
+      state.exerciseLogs[index].metadata[setIndex].tags.removeWhere(
+        (element) => element.tagId == tag.tagId,
+      );
+      return;
+    }
+    // remove all tags for now to support only single tags on sets
+    // TODO -- implement multiple tags
+    state.exerciseLogs[index].metadata[setIndex].tags
+        .removeWhere((element) => true);
+    state.exerciseLogs[index].addSetTag(tag, setIndex);
+    notifyListeners();
+  }
+
   void setLogChildReps(int i, int j, int row, int val) {
     state.exerciseChildLogs[i][j].metadata[row].reps = val;
     notifyListeners();
@@ -152,6 +164,23 @@ class LaunchWorkoutModel extends ChangeNotifier {
 
   void addLogChildSet(int i, int j) {
     state.exerciseChildLogs[i][j].addSet();
+    notifyListeners();
+  }
+
+  void onTagClickChild(int index, int childIndex, int setIndex, Tag tag) {
+    if (state.exerciseChildLogs[index][childIndex].metadata[setIndex].tags
+        .any((element) => element.tagId == tag.tagId)) {
+      state.exerciseChildLogs[index][childIndex].metadata[setIndex].tags
+          .removeWhere(
+        (element) => element.tagId == tag.tagId,
+      );
+      return;
+    }
+    // remove all tags for now to support only single tags on sets
+    // TODO -- implement multiple tags
+    state.exerciseChildLogs[index][childIndex].metadata[setIndex].tags
+        .removeWhere((element) => true);
+    state.exerciseChildLogs[index][childIndex].addSetTag(tag, setIndex);
     notifyListeners();
   }
 
@@ -200,7 +229,6 @@ class LaunchWorkoutModel extends ChangeNotifier {
     await we.insert();
 
     var log = ExerciseLog.workoutInit(
-      state.userId,
       we.exerciseId,
       state.wl.workoutLogId,
       we,
@@ -257,7 +285,6 @@ class LaunchWorkoutModel extends ChangeNotifier {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
       var log = ExerciseLog.exerciseSetInit(
-        state.userId,
         sets[i].childId,
         sets[i].parentId,
         state.wl.workoutLogId,

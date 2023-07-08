@@ -53,6 +53,11 @@ dependencies:
   flutter_animate: ^4.1.0
   fl_chart: ^0.61.0
   auto_size_text: ^3.0.0
+  flutter_svg: ^2.0.5
+  firebase_core: ^2.14.0
+  firebase_analytics: ^10.4.3
+  firebase_auth: ^4.6.3
+  google_sign_in: ^6.1.4
 
 dev_dependencies:
   flutter_test:
@@ -110,6 +115,11 @@ flutter:
     - assets/icons/trekking-96.png
     - assets/icons/weightlifting-96.png
     - assets/icons/workout-96.png
+
+    - assets/svg/workout.svg
+
+    - assets/images/apple.png
+    - assets/images/google.png
 
   # fonts:
   #   - family: Schyler

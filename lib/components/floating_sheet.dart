@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/components/root.dart';
+import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 
 /// Shows a floating sheet with padding based on the platform
 class _FloatingSheet extends StatelessWidget {
@@ -97,11 +100,12 @@ class FloatingSheet extends StatefulWidget {
 class _FloatingSheetState extends State<FloatingSheet> {
   @override
   Widget build(BuildContext context) {
+    var dmodel = context.read<DataModel>();
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          color: Theme.of(context).colorScheme.surface,
+          color: AppColors.background(context),
           child: Padding(
             padding: widget.padding,
             child: Column(
@@ -125,7 +129,7 @@ class _FloatingSheetState extends State<FloatingSheet> {
                               .pop(),
                       child: Icon(
                         widget.icon ?? Icons.close,
-                        color: Theme.of(context).colorScheme.tertiary,
+                        color: dmodel.color,
                       ),
                     ),
                   ],

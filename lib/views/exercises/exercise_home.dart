@@ -6,7 +6,6 @@ import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
-import 'package:flutter_animate/flutter_animate.dart';
 
 class ExerciseHome extends StatefulWidget {
   const ExerciseHome({super.key});
@@ -23,7 +22,6 @@ class _ExerciseHomeState extends State<ExerciseHome> {
     return HeaderBar(
       title: "Exercises",
       isLarge: true,
-      backgroundColor: Theme.of(context).colorScheme.surface,
       trailing: [
         comp.AddButton(onTap: () {
           comp.cupertinoSheet(

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
-import 'package:workout_notepad_v2/data/exercise_set.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 
 import 'package:workout_notepad_v2/model/root.dart';
@@ -45,10 +43,7 @@ class ExerciseCell extends StatelessWidget {
       child: showBackground
           ? Container(
               decoration: BoxDecoration(
-                color: Theme.of(context)
-                    .colorScheme
-                    .surfaceVariant
-                    .withOpacity(0.5),
+                color: AppColors.cell(context),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: _content(context),

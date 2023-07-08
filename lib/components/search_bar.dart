@@ -20,21 +20,17 @@ class SearchBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CellWrapper(
-      backgroundColor:
-          Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+      backgroundColor: AppColors.cell(context),
       child: Row(
         children: [
           Icon(
             LineIcons.search,
-            color: Theme.of(context).colorScheme.onSecondaryContainer,
+            color: AppColors.subtext(context),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Field(
               labelText: labelText,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSecondaryContainer,
-              ),
               hintText: hintText ?? labelText,
               value: initText,
               onChanged: onChanged,

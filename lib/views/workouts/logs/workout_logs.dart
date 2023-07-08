@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
-import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/components/fluid_scroll_view.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
-import 'package:workout_notepad_v2/views/root.dart';
-import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:workout_notepad_v2/views/workouts/logs/root.dart';
 import 'package:workout_notepad_v2/views/workouts/logs/wl_model.dart';
 

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:line_icons/line_icon.dart';
+import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
+import 'package:workout_notepad_v2/model/root.dart';
 
 import 'package:workout_notepad_v2/text_themes.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 
 class ModelCreateButton extends StatelessWidget {
   const ModelCreateButton({
@@ -21,6 +23,7 @@ class ModelCreateButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var dmodel = context.read<DataModel>();
     return Clickable(
       onTap: () {
         if (isValid) {
@@ -33,9 +36,7 @@ class ModelCreateButton extends StatelessWidget {
               title,
               style: ttLabel(context).copyWith(
                 color: textColor ??
-                    (isValid
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context).colorScheme.outline),
+                    (isValid ? dmodel.color : AppColors.subtext(context)),
               ),
             ),
     );

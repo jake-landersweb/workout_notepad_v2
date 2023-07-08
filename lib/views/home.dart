@@ -6,11 +6,10 @@ import 'package:workout_notepad_v2/components/blurred_container.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
 
 import 'package:workout_notepad_v2/model/root.dart';
-import 'package:workout_notepad_v2/components/root.dart' as comp;
+import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
-import 'package:workout_notepad_v2/views/settings/settings.dart';
+import 'package:workout_notepad_v2/views/profile/profile.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
-import 'package:workout_notepad_v2/views/workouts/logs/root.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -40,7 +39,7 @@ class _HomeState extends State<Home> {
       case 1:
         return const ExerciseHome();
       case 2:
-        return const Settings();
+        return const Profile();
       default:
         return Container();
     }
@@ -53,10 +52,10 @@ class _HomeState extends State<Home> {
         Container(
           height: 0.5,
           width: double.infinity,
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.5),
+          color: AppColors.divider(context),
         ),
         BlurredContainer(
-          backgroundColor: Theme.of(context).colorScheme.background,
+          backgroundColor: AppColors.background(context),
           opacity: 0.5,
           blur: 5,
           borderRadius: BorderRadius.circular(0),
@@ -71,15 +70,21 @@ class _HomeState extends State<Home> {
                           context: context,
                           enableDrag: true,
                           builder: (context) {
-                            return LaunchWorkout(state: dmodel.workoutState!);
+                            if (dmodel.workoutState == null) {
+                              return Container();
+                            } else {
+                              return LaunchWorkout(state: dmodel.workoutState!);
+                            }
                           });
                     },
-                    child: BlurredContainer(
-                      opacity: 0.5,
-                      blur: 5,
-                      borderRadius: BorderRadius.circular(0),
-                      backgroundColor:
-                          Theme.of(context).colorScheme.primaryContainer,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.symmetric(
+                          horizontal: BorderSide(
+                            color: AppColors.divider(context),
+                          ),
+                        ),
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
                         child: Row(
@@ -92,10 +97,7 @@ class _HomeState extends State<Home> {
                                   Text(
                                     "Current Workout",
                                     style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSecondaryContainer
-                                          .withOpacity(0.5),
+                                      color: AppColors.subtext(context),
                                       fontSize: 10,
                                       fontWeight: FontWeight.w500,
                                     ),
@@ -106,9 +108,7 @@ class _HomeState extends State<Home> {
                                         child: Text(
                                           dmodel.workoutState!.workout.title,
                                           style: TextStyle(
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onSecondaryContainer,
+                                            color: AppColors.text(context),
                                             fontSize: 18,
                                             fontWeight: FontWeight.w700,
                                           ),
@@ -119,7 +119,14 @@ class _HomeState extends State<Home> {
                                 ],
                               ),
                             ),
-                            LWTime(start: dmodel.workoutState!.startTime)
+                            LWTime(
+                              start: dmodel.workoutState!.startTime,
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.subtext(context),
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -130,11 +137,12 @@ class _HomeState extends State<Home> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _barRow(
-                          context, lmodel, LineIcons.running, "Workouts", 0),
-                      _barRow(
-                          context, lmodel, LineIcons.dumbbell, "Exercises", 1),
-                      _barRow(context, lmodel, LineIcons.cog, "Settings", 2),
+                      _barRow(context, dmodel, lmodel, LineIcons.running,
+                          "Workouts", 0),
+                      _barRow(context, dmodel, lmodel, LineIcons.dumbbell,
+                          "Exercises", 1),
+                      _barRow(context, dmodel, lmodel, LineIcons.userCircle,
+                          "Settings", 2),
                     ],
                   ),
                 ),
@@ -148,12 +156,13 @@ class _HomeState extends State<Home> {
 
   Widget _barRow(
     BuildContext context,
+    DataModel dmodel,
     LogicModel lmodel,
     IconData icon,
     String label,
     int index,
   ) {
-    return Clickable(
+    return GestureDetector(
       onTap: () {
         lmodel.setTabBarIndex(index);
       },
@@ -164,7 +173,9 @@ class _HomeState extends State<Home> {
               : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: Theme.of(context).colorScheme.outline.withOpacity(0.5),
+            color: lmodel.tabBarIndex == index
+                ? dmodel.color
+                : AppColors.subtext(context),
           ),
         ),
         child: Padding(

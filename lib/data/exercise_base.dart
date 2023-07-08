@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:workout_notepad_v2/components/root.dart';
-import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
-enum ExerciseType { weight, timed, duration }
+enum ExerciseType { weight, timed, duration, bw }
 
 ExerciseType exerciseTypeFromJson(int type) {
   switch (type) {
@@ -17,14 +16,25 @@ ExerciseType exerciseTypeFromJson(int type) {
       return ExerciseType.timed;
     case 2:
       return ExerciseType.duration;
-    // case 3:
-    //   return ExerciseType.body;
-    // case 4:
-    //   return ExerciseType.distance;
+    case 3:
+      return ExerciseType.bw;
     default:
       print(
           "Error, there was a default value in de-serializing exercise type $type");
       return ExerciseType.weight;
+  }
+}
+
+String exerciseTypeTitle(ExerciseType type) {
+  switch (type) {
+    case ExerciseType.weight:
+      return "Weighted";
+    case ExerciseType.timed:
+      return "Count-up";
+    case ExerciseType.duration:
+      return "Count-down";
+    case ExerciseType.bw:
+      return "Body-weight";
   }
 }
 
@@ -36,10 +46,8 @@ int exerciseTypeToJson(ExerciseType type) {
       return 1;
     case ExerciseType.duration:
       return 2;
-    // case ExerciseType.body:
-    //   return 3;
-    // case ExerciseType.distance:
-    //   return 4;
+    case ExerciseType.bw:
+      return 3;
   }
 }
 
@@ -103,7 +111,7 @@ abstract class ExerciseBase {
   Widget getIcon(List<Category> categories, {double? size}) {
     Category match = categories.firstWhere(
       (element) => element.title.toLowerCase() == category.toLowerCase(),
-      orElse: () => Category(title: "", icon: "", userId: ""),
+      orElse: () => Category(title: "", icon: ""),
     );
     if (match.icon.isEmpty) {
       return const SizedBox(height: 50, width: 50);

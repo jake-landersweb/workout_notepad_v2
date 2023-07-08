@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:workout_notepad_v2/components/timer.dart';
 import 'package:workout_notepad_v2/data/exercise_base.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
-import 'package:workout_notepad_v2/components/root.dart' as comp;
+import 'package:workout_notepad_v2/utils/root.dart';
 
 class ELCell extends StatefulWidget {
   const ELCell({
@@ -32,15 +33,14 @@ class _ELCellState extends State<ELCell> {
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 12,
-                  color: Theme.of(context).colorScheme.outline,
+                  color: AppColors.subtext(context),
                 ),
               ),
             ),
           ),
         Container(
           decoration: BoxDecoration(
-            color:
-                Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+            color: AppColors.cell(context),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Padding(
@@ -66,14 +66,37 @@ class _ELCellState extends State<ELCell> {
       children: [
         Expanded(
           flex: 1,
-          child: Center(
-            child: Text(
-              "SET ${index + 1}",
-              style: ttBody(
-                context,
-                color: Theme.of(context).colorScheme.outline,
+          child: Column(
+            children: [
+              Center(
+                child: Text(
+                  "SET ${index + 1}",
+                  style: ttBody(
+                    context,
+                    color: AppColors.subtext(context),
+                  ),
+                ),
               ),
-            ),
+              // assume single tag for now
+              for (var i in meta.tags)
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.cell(context)[600],
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
+                    child: Text(
+                      i.title,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.subtext(context),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
         Expanded(
@@ -89,7 +112,7 @@ class _ELCellState extends State<ELCell> {
       case ExerciseType.weight:
         return Row(
           children: [
-            Expanded(child: _itemCell(context, "REPS", meta.reps)),
+            Expanded(child: _itemCell(context, "REPS", meta.reps.toString())),
             Text(
               "*",
               style: ttLabel(
@@ -101,7 +124,7 @@ class _ELCellState extends State<ELCell> {
               child: _itemCell(
                 context,
                 widget.log.weightPost.toUpperCase(),
-                meta.weight,
+                meta.weight.toString(),
               ),
             ),
           ],
@@ -114,15 +137,21 @@ class _ELCellState extends State<ELCell> {
               child: _itemCell(
                 context,
                 "",
-                meta.time,
+                formatHHMMSS(meta.time),
               ),
             ),
+          ],
+        );
+      case ExerciseType.bw:
+        return Row(
+          children: [
+            Expanded(child: _itemCell(context, "REPS", meta.reps.toString())),
           ],
         );
     }
   }
 
-  Widget _itemCell(BuildContext context, String title, int item) {
+  Widget _itemCell(BuildContext context, String title, String item) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -133,14 +162,15 @@ class _ELCellState extends State<ELCell> {
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: Theme.of(context).colorScheme.outline,
+        if (title != "")
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: AppColors.subtext(context),
+            ),
           ),
-        ),
       ],
     );
   }

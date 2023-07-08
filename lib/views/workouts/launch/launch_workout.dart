@@ -1,20 +1,16 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
-import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
-import 'package:workout_notepad_v2/components/timer.dart';
-import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
-import 'package:workout_notepad_v2/views/workouts/launch/lw_exercise_detail.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
 
 enum PopupState { minimize, finish, cancel }
@@ -133,37 +129,19 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Row(
-        //   children: [
-        //     comp.CloseButton(
-        //       color: Theme.of(context).colorScheme.onPrimary,
-        //     ),
-        //     const Spacer(),
-        //     FilledButton.tonal(
-        //       onPressed: () async {
-        // await lmodel.finishWorkout(dmodel);
-        // Navigator.of(context).pop();
-        //       },
-        //       child: Text("Finish Workout"),
-        //     ),
-        //   ],
-        // ),
         Row(
           children: [
             Expanded(
               child: Text(
                 lmodel.state.workout.title,
-                style: ttTitle(
-                  context,
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
+                style: ttTitle(context),
               ),
             ),
             PopupMenuButton<PopupState>(
               padding: EdgeInsets.zero,
               icon: Icon(
                 Icons.more_vert_rounded,
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: AppColors.subtext(context),
               ),
               // Callback that sets the selected popup menu item.
               onSelected: (PopupState item) async {
@@ -259,7 +237,7 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
               lmodel.state.workout.description!,
               style: ttBody(
                 context,
-                color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.5),
+                color: AppColors.subtext(context),
               ),
             ),
           ),
@@ -270,7 +248,7 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
               LWTime(
                 start: lmodel.state.startTime,
                 style: TextStyle(
-                  color: Theme.of(context).colorScheme.onPrimary,
+                  color: AppColors.text(context),
                   fontWeight: FontWeight.w500,
                   fontSize: 18,
                 ),
@@ -280,7 +258,7 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
                 "${lmodel.state.workoutIndex + 1 > lmodel.state.exercises.length ? '-' : lmodel.state.workoutIndex + 1}/${lmodel.state.exercises.length}",
                 style: ttLabel(
                   context,
-                  color: Theme.of(context).colorScheme.onPrimary,
+                  color: AppColors.text(context),
                 ),
               ),
             ],

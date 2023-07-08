@@ -4,6 +4,9 @@ import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'dart:math' as math;
 
+import 'package:workout_notepad_v2/utils/root.dart';
+
+// ignore: must_be_immutable
 class TimePicker extends StatefulWidget {
   TimePicker({
     super.key,
@@ -52,7 +55,7 @@ class _TimePickerState extends State<TimePicker> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+        color: AppColors.cell(context),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Stack(
@@ -71,7 +74,7 @@ class _TimePickerState extends State<TimePicker> {
                   contain: false,
                   spacing: 8,
                   customFormatter:
-                      _TextInputFormatter(maxValue: 99, minValue: 0),
+                      TimeInputFormatter(maxValue: 99, minValue: 0),
                   onChanged: (val) {
                     setState(() {
                       _hours = val;
@@ -85,7 +88,7 @@ class _TimePickerState extends State<TimePicker> {
                 child: Text(
                   ":",
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onBackground,
+                    color: AppColors.subtext(context),
                     fontSize: 40,
                     fontWeight: FontWeight.w600,
                   ),
@@ -100,7 +103,7 @@ class _TimePickerState extends State<TimePicker> {
                   textFontSize: 40,
                   showPicker: false,
                   customFormatter:
-                      _TextInputFormatter(maxValue: 59, minValue: 0),
+                      TimeInputFormatter(maxValue: 59, minValue: 0),
                   maxValue: 59,
                   contain: false,
                   spacing: 8,
@@ -117,7 +120,7 @@ class _TimePickerState extends State<TimePicker> {
                 child: Text(
                   ":",
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onBackground,
+                    color: AppColors.subtext(context),
                     fontSize: 40,
                     fontWeight: FontWeight.w600,
                   ),
@@ -132,7 +135,7 @@ class _TimePickerState extends State<TimePicker> {
                   textFontSize: 40,
                   contain: false,
                   customFormatter:
-                      _TextInputFormatter(maxValue: 59, minValue: 0),
+                      TimeInputFormatter(maxValue: 59, minValue: 0),
                   showPicker: false,
                   maxValue: 59,
                   spacing: 8,
@@ -171,11 +174,11 @@ class _TimePickerState extends State<TimePicker> {
   }
 }
 
-class _TextInputFormatter extends TextInputFormatter {
+class TimeInputFormatter extends TextInputFormatter {
   late int maxValue;
   late int minValue;
 
-  _TextInputFormatter({
+  TimeInputFormatter({
     required this.maxValue,
     required this.minValue,
   });

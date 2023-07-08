@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_use_of_visible_for_testing_member
+
 import 'package:animated_list_plus/animated_list_plus.dart';
 import 'package:animated_list_plus/transitions.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +14,7 @@ import 'package:workout_notepad_v2/components/floating_sheet.dart';
 import 'package:workout_notepad_v2/data/exercise_set.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 
 import 'package:workout_notepad_v2/components/root.dart' as comp;
@@ -41,8 +44,8 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
       curve: Sprung(36),
       duration: const Duration(milliseconds: 700),
       color: widget.inDrag
-          ? Theme.of(context).colorScheme.surfaceVariant
-          : Theme.of(context).colorScheme.background,
+          ? AppColors.cell(context).withOpacity(0.5)
+          : AppColors.background(context),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -119,9 +122,8 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                                               "Remove",
                                               style: ttBody(
                                                 context,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .outline,
+                                                color:
+                                                    AppColors.subtext(context),
                                               ),
                                             ),
                                           ),
@@ -156,10 +158,7 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                     },
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .surfaceVariant
-                            .withOpacity(0.5),
+                        color: AppColors.cell(context),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Padding(
@@ -175,23 +174,13 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                                       Expanded(
                                           child: Text(
                                         item.title,
-                                        style: ttLabel(
-                                          context,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .onSecondaryContainer,
-                                        ),
+                                        style: ttLabel(context),
                                       )),
                                     ],
                                   ),
                                   item.info(
                                     context,
-                                    style: ttLabel(
-                                      context,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSecondaryContainer,
-                                    ),
+                                    style: ttLabel(context),
                                   ),
                                 ],
                               ),
@@ -234,7 +223,7 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                           },
                           child: Icon(
                             Icons.sticky_note_2_rounded,
-                            color: Theme.of(context).colorScheme.outline,
+                            color: AppColors.subtext(context),
                           ),
                         ),
                         if (widget.cewe.exercise.note != "")
@@ -250,14 +239,22 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                   ),
                 ),
                 Expanded(
-                  child: FilledButton.icon(
-                    icon: const Icon(LineIcons.plus),
-                    label: const Text("Super-Set"),
-                    onPressed: () {
+                  child: Clickable(
+                    onTap: () {
                       comp.cupertinoSheet(
                         context: context,
                         builder: (context) {
                           return SelectExercise(
+                            selectedIds: cmodel.exercises[widget.index].children
+                                .map((e) => e.childId)
+                                .toList(),
+                            onDeselect: (e) {
+                              cmodel.exercises[widget.index].children
+                                  .removeWhere((element) =>
+                                      element.childId == e.exerciseId);
+                              // ignore: invalid_use_of_protected_member
+                              cmodel.notifyListeners();
+                            },
                             onSelect: (e) {
                               cmodel.addExerciseChild(
                                 widget.index,
@@ -272,6 +269,29 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
                         },
                       );
                     },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border:
+                              Border.all(color: AppColors.subtext(context))),
+                      height: 40,
+                      child: Center(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.settings_rounded,
+                              color: AppColors.subtext(context),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              "Super-Sets",
+                              style: TextStyle(color: AppColors.text(context)),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -288,7 +308,6 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
 
 class _ExerciseNote extends StatefulWidget {
   const _ExerciseNote({
-    super.key,
     required this.note,
     required this.onSave,
   });
@@ -311,15 +330,14 @@ class __ExerciseNoteState extends State<_ExerciseNote> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).colorScheme.surface,
+      color: AppColors.background(context),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             CellWrapper(
-              backgroundColor:
-                  Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+              backgroundColor: AppColors.cell(context),
               child: Field(
                 value: _note,
                 maxLines: 4,
@@ -347,7 +365,7 @@ class __ExerciseNoteState extends State<_ExerciseNote> {
                             "Cancel",
                             style: ttBody(
                               context,
-                              color: Theme.of(context).colorScheme.outline,
+                              color: AppColors.subtext(context),
                             ),
                           ),
                         ),
@@ -376,7 +394,6 @@ class __ExerciseNoteState extends State<_ExerciseNote> {
 
 class _SuperSetOrder extends StatefulWidget {
   const _SuperSetOrder({
-    super.key,
     required this.exercise,
     required this.onSelect,
   });

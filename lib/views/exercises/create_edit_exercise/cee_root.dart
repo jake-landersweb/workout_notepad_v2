@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/components/contained_list.dart';
+import 'package:workout_notepad_v2/components/sheet_selector.dart';
 import 'package:workout_notepad_v2/components/field.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
 
 import 'package:workout_notepad_v2/components/root.dart' as comp;
-import 'package:workout_notepad_v2/components/segmented_picker.dart';
-import 'package:workout_notepad_v2/data/exercise.dart';
-import 'package:workout_notepad_v2/data/exercise_base.dart';
+import 'package:workout_notepad_v2/components/time_picker.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
-import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/views/exercises/create_edit_exercise/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/icon_picker.dart';
@@ -44,11 +43,18 @@ class _CEERootState extends State<CEERoot> {
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
-    return ChangeNotifierProvider(
-      create: (context) => widget.isCreate
-          ? CreateExerciseModel.create(dmodel, dmodel.user!.userId)
-          : CreateExerciseModel.update(dmodel, widget.exercise!),
-      builder: (context, child) => _body(context),
+    return Navigator(
+      onGenerateRoute: (settings) {
+        return MaterialWithModalsPageRoute(
+          settings: settings,
+          builder: (context) => ChangeNotifierProvider(
+            create: (context) => widget.isCreate
+                ? CreateExerciseModel.create(dmodel, dmodel.user!.userId)
+                : CreateExerciseModel.update(dmodel, widget.exercise!),
+            builder: (context, child) => _body(context),
+          ),
+        );
+      },
     );
   }
 
@@ -60,7 +66,11 @@ class _CEERootState extends State<CEERoot> {
       isFluid: true,
       itemSpacing: 16,
       crossAxisAlignment: CrossAxisAlignment.center,
-      leading: const [comp.CancelButton()],
+      leading: const [
+        comp.CancelButton(
+          useRoot: true,
+        )
+      ],
       trailing: [
         comp.ModelCreateButton(
           title: widget.isCreate ? "Create" : "Save",
@@ -77,7 +87,7 @@ class _CEERootState extends State<CEERoot> {
                   widget.onAction!(cemodel.exercise);
                 }
               }
-              Navigator.of(context).pop();
+              Navigator.of(context, rootNavigator: true).pop();
             } else {
               widget.onAction!(cemodel.exercise);
             }
@@ -100,32 +110,54 @@ class _CEERootState extends State<CEERoot> {
         if (widget.isCreate)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: SegmentedPicker(
-              titles: const ["Weighted", "Timed", "Duration"],
-              selections: const [
-                ExerciseType.weight,
-                ExerciseType.timed,
-                ExerciseType.duration
-              ],
-              style: SegmentedPickerStyle(
-                height: 36,
-                pickerColor: Theme.of(context).colorScheme.primary,
-                backgroundColor: Theme.of(context)
-                    .colorScheme
-                    .surfaceVariant
-                    .withOpacity(0.5),
-                selectedTextColor: Theme.of(context).colorScheme.onPrimary,
-                selectedWeight: FontWeight.w500,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(50),
+            child: Clickable(
+              onTap: () {
+                showSheetSelector<ExerciseType>(
+                  context: context,
+                  title: "Exercise Type",
+                  items: [
+                    ExerciseType.weight,
+                    ExerciseType.timed,
+                    ExerciseType.duration,
+                    ExerciseType.bw,
+                  ],
+                  initialItem: cemodel.exercise.type,
+                  titleBuilder: (context, item) => exerciseTypeTitle(item),
+                  onSelect: (context, index, item) {
+                    setState(() {
+                      cemodel.exercise.type = item;
+                    });
+                  },
+                );
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.cell(context),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                height: 50,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.category_rounded,
+                        color: AppColors.cell(context)[700],
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: comp.LabeledCell(
+                          label: "Type",
+                          child: Text(
+                            exerciseTypeTitle(cemodel.exercise.type),
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              onSelection: (p0) {
-                setState(() {
-                  cemodel.exercise.type = p0;
-                });
-              },
-              selection: cemodel.exercise.type,
             ),
           ),
         for (var i in _setBody(context, cemodel)) i
@@ -204,13 +236,12 @@ class _CEERootState extends State<CEERoot> {
         children: [
           Clickable(
             onTap: () {
-              comp.cupertinoSheet(
+              comp.showFloatingSheet(
                 context: context,
                 builder: (context) => CreateCategory(
                     categories: dmodel.categories.map((e) => e.title).toList(),
                     onCompletion: (val, icon) async {
                       var c = Category(
-                        userId: dmodel.user!.userId,
                         title: val,
                         icon: icon,
                       );
@@ -226,10 +257,7 @@ class _CEERootState extends State<CEERoot> {
             },
             child: Container(
               decoration: BoxDecoration(
-                color: Theme.of(context)
-                    .colorScheme
-                    .surfaceVariant
-                    .withOpacity(0.5),
+                color: AppColors.cell(context),
                 borderRadius: BorderRadius.circular(100),
               ),
               height: 40,
@@ -252,7 +280,7 @@ class _CEERootState extends State<CEERoot> {
 
   Widget _categoryCell(
       BuildContext context, Category category, CreateExerciseModel cemodel) {
-    return Clickable(
+    return GestureDetector(
       onTap: () {
         setState(() {
           cemodel.exercise.category = category.title;
@@ -262,7 +290,7 @@ class _CEERootState extends State<CEERoot> {
         decoration: BoxDecoration(
           color: category.title == cemodel.exercise.category
               ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+              : AppColors.cell(context),
           borderRadius: BorderRadius.circular(100),
         ),
         height: 40,
@@ -362,10 +390,13 @@ class _CEERootState extends State<CEERoot> {
                       child: comp.NumberPicker(
                         minValue: 0,
                         intialValue: cemodel.exercise.getHours(),
+                        initialValueStr: cemodel.exercise.getHours() < 10
+                            ? "0${cemodel.exercise.getHours()}"
+                            : cemodel.exercise.getHours().toString(),
                         showPicker: false,
+                        customFormatter:
+                            TimeInputFormatter(maxValue: 99, minValue: 0),
                         textFontSize: 50,
-                        backgroundColor:
-                            Theme.of(context).colorScheme.primaryContainer,
                         maxValue: 99,
                         onChanged: (val) {
                           cemodel.exercise.setHours(val);
@@ -380,12 +411,12 @@ class _CEERootState extends State<CEERoot> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 2.0),
+            padding: const EdgeInsets.fromLTRB(2, 0, 2, 20),
             child: Text(
               ":",
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onBackground,
                 fontSize: 60,
+                color: AppColors.subtext(context),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -400,7 +431,12 @@ class _CEERootState extends State<CEERoot> {
                       child: comp.NumberPicker(
                         minValue: 0,
                         intialValue: cemodel.exercise.getMinutes(),
+                        initialValueStr: cemodel.exercise.getMinutes() < 10
+                            ? "0${cemodel.exercise.getMinutes()}"
+                            : cemodel.exercise.getMinutes().toString(),
                         showPicker: false,
+                        customFormatter:
+                            TimeInputFormatter(maxValue: 59, minValue: 0),
                         textFontSize: 50,
                         maxValue: 59,
                         onChanged: (val) {
@@ -416,12 +452,12 @@ class _CEERootState extends State<CEERoot> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 2.0),
+            padding: const EdgeInsets.fromLTRB(2, 0, 2, 20),
             child: Text(
               ":",
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onBackground,
                 fontSize: 60,
+                color: AppColors.subtext(context),
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -436,7 +472,12 @@ class _CEERootState extends State<CEERoot> {
                       child: comp.NumberPicker(
                         minValue: 0,
                         intialValue: cemodel.exercise.getSeconds(),
+                        initialValueStr: cemodel.exercise.getSeconds() < 10
+                            ? "0${cemodel.exercise.getSeconds()}"
+                            : cemodel.exercise.getSeconds().toString(),
                         showPicker: false,
+                        customFormatter:
+                            TimeInputFormatter(maxValue: 59, minValue: 0),
                         textFontSize: 50,
                         maxValue: 59,
                         onChanged: (val) {

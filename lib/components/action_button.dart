@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:workout_notepad_v2/components/loading_indicator.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 
@@ -12,6 +11,7 @@ class ActionButton extends StatelessWidget {
     this.isLoading,
     this.minHeight = 50,
     this.icon,
+    this.color,
   });
   final String title;
   final VoidCallback onTap;
@@ -19,6 +19,7 @@ class ActionButton extends StatelessWidget {
   final bool? isLoading;
   final double minHeight;
   final IconData? icon;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -31,12 +32,12 @@ class ActionButton extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: isValid
-              ? Theme.of(context).colorScheme.primary
+              ? color ?? Theme.of(context).colorScheme.primary
               : Colors.transparent,
           borderRadius: BorderRadius.circular(100),
           border: Border.all(
             color: isValid
-                ? Theme.of(context).colorScheme.primary
+                ? color ?? Theme.of(context).colorScheme.primary
                 : Theme.of(context).colorScheme.outline,
             width: 1,
           ),

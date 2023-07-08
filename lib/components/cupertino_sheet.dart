@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -18,7 +17,7 @@ void cupertinoSheet({
       body: builder(context),
     ),
     expand: expand,
-    backgroundColor: Theme.of(context).backgroundColor,
+    backgroundColor: Theme.of(context).colorScheme.background,
     animationCurve: Sprung(36),
     previousRouteAnimationCurve: Sprung(36),
     duration: const Duration(milliseconds: 500),

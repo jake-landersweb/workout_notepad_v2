@@ -16,6 +16,7 @@ class RawReorderableList<T extends Object> extends StatefulWidget {
     this.padding,
     this.header,
     this.footer,
+    this.controller,
   });
   final List<T> items;
   final bool Function(T item1, T item2) areItemsTheSame;
@@ -27,6 +28,7 @@ class RawReorderableList<T extends Object> extends StatefulWidget {
   final EdgeInsets? padding;
   final Widget? header;
   final Widget? footer;
+  final ScrollController? controller;
 
   @override
   State<RawReorderableList<T>> createState() => _RawReorderableListState<T>();
@@ -39,6 +41,7 @@ class _RawReorderableListState<T extends Object>
     return ImplicitlyAnimatedReorderableList<T>(
       items: widget.items,
       padding: widget.padding,
+      controller: widget.controller,
       areItemsTheSame: widget.areItemsTheSame,
       removeDuration: const Duration(milliseconds: 500),
       liftDuration: const Duration(milliseconds: 500),

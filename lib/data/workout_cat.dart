@@ -10,10 +10,10 @@ class WorkoutCategories {
     required this.categories,
   });
 
-  static Future<List<WorkoutCategories>> getList(String userId) async {
+  static Future<List<WorkoutCategories>> getList() async {
     final db = await getDB();
     String sql = """
-      SELECT * FROM workout WHERE userId = '$userId'
+      SELECT * FROM workout
       ORDER BY created DESC
     """;
     final List<Map<String, dynamic>> response = await db.rawQuery(sql);

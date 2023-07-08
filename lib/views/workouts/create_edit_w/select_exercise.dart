@@ -18,8 +18,12 @@ class SelectExercise extends StatefulWidget {
     required this.onSelect,
     this.closeOnSelect = true,
     this.title,
+    this.onDeselect,
+    this.selectedIds,
   });
   final Function(Exercise e) onSelect;
+  final Function(Exercise e)? onDeselect;
+  final List<String>? selectedIds;
   final bool closeOnSelect;
   final String? title;
 
@@ -30,6 +34,24 @@ class SelectExercise extends StatefulWidget {
 class _SelectExerciseState extends State<SelectExercise>
     with TickerProviderStateMixin {
   String _searchText = "";
+  late List<String> _selected;
+  late bool _closeOnSelect;
+
+  @override
+  void initState() {
+    if (widget.onDeselect != null || widget.selectedIds != null) {
+      assert(widget.onDeselect != null && widget.selectedIds != null,
+          "BOTH ARE REQURED TO WORK TOGETHER");
+    }
+    _selected = widget.selectedIds ?? [];
+    if (widget.onDeselect != null) {
+      _closeOnSelect = false;
+    } else {
+      _closeOnSelect = widget.closeOnSelect;
+    }
+    super.initState();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,15 +79,12 @@ class _SelectExerciseState extends State<SelectExercise>
               children: [
                 Icon(
                   LineIcons.plusCircle,
-                  color: Theme.of(context).colorScheme.onSecondaryContainer,
+                  color: AppColors.subtext(context),
                 ),
                 const SizedBox(width: 16),
                 Text(
                   "Create New",
-                  style: ttLabel(
-                    context,
-                    color: Theme.of(context).colorScheme.onSecondaryContainer,
-                  ),
+                  style: ttLabel(context),
                 ),
               ],
             ),
@@ -88,7 +107,34 @@ class _SelectExerciseState extends State<SelectExercise>
         for (var i in filteredExercises(dmodel.exercises, _searchText))
           ExerciseCell(
             exercise: i,
-            onTap: () => _select(i),
+            trailingWidget: widget.onDeselect == null
+                ? null
+                : Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Icon(
+                      _selected.any((element) => element == i.exerciseId)
+                          ? Icons.check_circle_rounded
+                          : Icons.circle_outlined,
+                      color: AppColors.cell(context)[700],
+                    ),
+                  ),
+            onTap: () {
+              if (widget.onDeselect != null) {
+                if (_selected.any((element) => element == i.exerciseId)) {
+                  widget.onDeselect!(i);
+                  setState(() {
+                    _selected.removeWhere((element) => element == i.exerciseId);
+                  });
+                } else {
+                  _select(i);
+                  setState(() {
+                    _selected.add(i.exerciseId);
+                  });
+                }
+              } else {
+                _select(i);
+              }
+            },
           ),
       ],
     );
@@ -96,7 +142,7 @@ class _SelectExerciseState extends State<SelectExercise>
 
   void _select(Exercise e) {
     widget.onSelect(e);
-    if (widget.closeOnSelect) {
+    if (_closeOnSelect) {
       Navigator.of(context).pop();
     }
   }

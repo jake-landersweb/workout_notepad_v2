@@ -7,7 +7,6 @@ import 'package:workout_notepad_v2/model/root.dart';
 
 class WorkoutLog {
   late String workoutLogId;
-  late String userId;
   late String workoutId;
   late String title;
   String? description;
@@ -21,7 +20,6 @@ class WorkoutLog {
 
   WorkoutLog({
     required this.workoutLogId,
-    required this.userId,
     required this.workoutId,
     required this.title,
     required this.description,
@@ -33,7 +31,6 @@ class WorkoutLog {
 
   WorkoutLog copy() => WorkoutLog(
         workoutLogId: workoutLogId,
-        userId: userId,
         workoutId: workoutId,
         title: title,
         description: description,
@@ -42,10 +39,9 @@ class WorkoutLog {
         updated: updated,
       );
 
-  WorkoutLog.init(String uid, Workout w) {
+  WorkoutLog.init(Workout w) {
     var uuid = const Uuid();
     workoutLogId = uuid.v4();
-    userId = uid;
     workoutId = w.workoutId;
     title = w.title;
     description = w.description;
@@ -56,7 +52,6 @@ class WorkoutLog {
 
   WorkoutLog.fromJson(Map<String, dynamic> json) {
     workoutLogId = json['workoutLogId'];
-    userId = json['userId'];
     workoutId = json['workoutId'];
     title = json['title'];
     description = json['description'];
@@ -69,7 +64,6 @@ class WorkoutLog {
   Map<String, dynamic> toMap() {
     return {
       "workoutLogId": workoutLogId,
-      "userId": userId,
       "workoutId": workoutId,
       "title": title,
       "description": description,
@@ -93,7 +87,6 @@ class WorkoutLog {
       var db = await getDB();
       String sql = """
       SELECT * FROM exercise_log WHERE workoutLogId = '$workoutLogId'
-      AND userId = '$userId'
       ORDER BY created DESC
     """;
       var response = await db.rawQuery(sql);
@@ -108,10 +101,10 @@ class WorkoutLog {
     }
   }
 
-  static Future<List<WorkoutLog>> getRecentLogs(String userId) async {
+  static Future<List<WorkoutLog>> getRecentLogs() async {
     var db = await getDB();
     String sql = """
-      SELECT * FROM workout_log WHERE userId = '$userId'
+      SELECT * FROM workout_log
       ORDER BY CREATED DESC
     """;
     var response = await db.rawQuery(sql);

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:sprung/sprung.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 import 'root.dart' as sui;
 
 class HeaderBar extends StatefulWidget {
@@ -231,8 +232,7 @@ class _HeaderBarState extends State<HeaderBar> {
         }
       },
       child: Container(
-        color:
-            widget.backgroundColor ?? Theme.of(context).colorScheme.background,
+        color: widget.backgroundColor ?? AppColors.background(context),
         child: SafeArea(
           top: false,
           bottom: false,
@@ -337,8 +337,7 @@ class _HeaderBarState extends State<HeaderBar> {
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
-                    color: widget.titleColor ??
-                        Theme.of(context).colorScheme.onBackground,
+                    color: widget.titleColor ?? AppColors.text(context),
                   ),
                 ),
               ),
@@ -357,10 +356,10 @@ class _HeaderBarState extends State<HeaderBar> {
         sui.BlurredContainer(
           width: double.infinity,
           borderRadius: BorderRadius.circular(0),
-          backgroundColor: widget.backgroundColor ??
-              Theme.of(context).colorScheme.background,
-          opacity: _showElevation ? 0.7 : 0,
-          blur: _showElevation ? 10 : 0,
+          backgroundColor:
+              widget.backgroundColor ?? AppColors.background(context),
+          opacity: _showElevation || !widget.canScroll ? 0.7 : 0,
+          blur: _showElevation || !widget.canScroll ? 10 : 0,
           child: Column(
             children: [
               if (widget.hasSafeArea)
@@ -404,9 +403,7 @@ class _HeaderBarState extends State<HeaderBar> {
                                         fontSize: 20,
                                         fontWeight: FontWeight.w600,
                                         color: widget.titleColor ??
-                                            Theme.of(context)
-                                                .colorScheme
-                                                .onBackground,
+                                            AppColors.text(context),
                                       ),
                                     ),
                                   ),
@@ -421,10 +418,10 @@ class _HeaderBarState extends State<HeaderBar> {
         ),
         // for showing divider between bar and view
         AnimatedOpacity(
-          opacity: _showElevation ? 1 : 0,
+          opacity: _showElevation || !widget.canScroll ? 1 : 0,
           duration: const Duration(milliseconds: 300),
           child: Divider(
-            color: Theme.of(context).colorScheme.outline.withOpacity(0.1),
+            color: AppColors.divider(context),
             height: 0.5,
             indent: 0,
             endIndent: 0,
@@ -437,7 +434,6 @@ class _HeaderBarState extends State<HeaderBar> {
 
 class _AppBarAnimatedCell extends StatefulWidget {
   const _AppBarAnimatedCell({
-    super.key,
     required this.child,
   });
   final Widget child;

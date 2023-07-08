@@ -4,196 +4,203 @@ import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
+import 'package:workout_notepad_v2/data/root.dart';
 
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 
 class ExerciseLogs extends StatefulWidget {
   const ExerciseLogs({
     super.key,
-    required this.exercise,
+    required this.exerciseId,
+    this.isInteractive = true,
   });
-  final Exercise exercise;
+  final String exerciseId;
+  final bool isInteractive;
 
   @override
   State<ExerciseLogs> createState() => _ExerciseLogsState();
 }
 
 class _ExerciseLogsState extends State<ExerciseLogs> {
+  Exercise? _exercise;
+  bool _error = false;
+
+  @override
+  void initState() {
+    _init();
+    super.initState();
+  }
+
+  Future<void> _init() async {
+    try {
+      var db = await getDB();
+      var resp = await db.rawQuery(
+          "SELECT * FROM exercise WHERE exerciseId = '${widget.exerciseId}'");
+      if (resp.isEmpty) {
+        setState(() {
+          _error = true;
+        });
+        return;
+      }
+      setState(() {
+        _exercise = Exercise.fromJson(resp[0]);
+      });
+    } catch (e) {
+      print(e);
+      setState(() {
+        _error = true;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: ((context) => ELModel(exercise: widget.exercise)),
-      builder: ((context, child) {
-        return Navigator(
-          onGenerateRoute: (settings) {
-            return MaterialWithModalsPageRoute(
-              settings: settings,
-              builder: (context) => _body(context),
-            );
-          },
-        );
-      }),
-    );
+    if (_error) {
+      return const Center(
+        child: Text("There was an error"),
+      );
+    }
+    if (_exercise == null) {
+      return const Center(
+        child: comp.LoadingIndicator(),
+      );
+    }
+    if (widget.isInteractive) {
+      return ChangeNotifierProvider(
+        create: ((context) => ELModel(exercise: _exercise!)),
+        builder: ((context, child) {
+          return Navigator(
+            onGenerateRoute: (settings) {
+              return MaterialWithModalsPageRoute(
+                settings: settings,
+                builder: (context) => _body(context),
+              );
+            },
+          );
+        }),
+      );
+    } else {
+      return ChangeNotifierProvider(
+        create: ((context) => ELModel(exercise: _exercise!)),
+        builder: ((context, child) {
+          return _body(context);
+        }),
+      );
+    }
   }
 
   Widget _body(BuildContext context) {
     var elmodel = Provider.of<ELModel>(context);
-    var dmodel = Provider.of<DataModel>(context);
-    return comp.InteractiveSheet(
-      headerPadding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
-      header: (context) {
-        return SizedBox(
-          width: double.infinity,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        comp.CloseButton(
-                          useRoot: true,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onPrimary
-                              .withOpacity(0.7),
-                        ),
-                        if (elmodel.exercise.type == 0)
-                          Clickable(
-                            onTap: () {
-                              elmodel.toggleIsLbs();
-                            },
-                            child: Text(
-                              elmodel.isLbs ? "lbs" : "kg",
-                              style: TextStyle(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onPrimary
-                                    .withOpacity(0.7),
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18,
-                              ),
-                            ),
-                          )
-                        else
-                          Container(),
-                      ],
-                    ),
-                    Text(
-                      elmodel.exercise.title,
-                      style: ttTitle(
-                        context,
-                        size: 32,
-                        color: Theme.of(context).colorScheme.onPrimary,
+    if (widget.isInteractive) {
+      return comp.InteractiveSheet(
+        headerPadding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+        header: (context) {
+          return SizedBox(
+            width: double.infinity,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          comp.CloseButton(
+                            useRoot: true,
+                            color: AppColors.subtext(context),
+                          ),
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                  ],
+                      Text(
+                        elmodel.exercise.title,
+                        style: ttTitle(context, size: 24),
+                      ),
+                      const SizedBox(height: 8),
+                      _navigation(context, elmodel),
+                    ],
+                  ),
                 ),
-              ),
-              _actions(context, elmodel),
-            ],
-          ),
-        );
-      },
-      builder: (context) {
-        return PageView(
-          controller: elmodel.pageController,
-          onPageChanged: (value) => elmodel.onPageChange(value),
-          children: const [
-            ELOverview(),
-            ELWeightChart(),
-            ELBarChart(),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _actions(BuildContext context, ELModel elmodel) {
-    return SizedBox(
-      height: 45,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        physics: const AlwaysScrollableScrollPhysics(
-            parent: BouncingScrollPhysics()),
+              ],
+            ),
+          );
+        },
+        builder: (context) => _content(context, elmodel),
+      );
+    } else {
+      return comp.HeaderBar.sheet(
+        title: elmodel.exercise.title,
+        canScroll: false,
+        horizontalSpacing: 0,
+        leading: const [comp.CloseButton()],
         children: [
-          const SizedBox(width: 16),
-          _actionCell(
-            context: context,
-            elmodel: elmodel,
-            index: 0,
-            icon: Icons.view_stream_rounded,
+          const SizedBox(
+            height: 60,
           ),
-          const SizedBox(width: 16),
-          _actionCell(
-            context: context,
-            elmodel: elmodel,
-            index: 1,
-            icon: Icons.show_chart_rounded,
-          ),
-          const SizedBox(width: 16),
-          _actionCell(
-            context: context,
-            elmodel: elmodel,
-            index: 2,
-            icon: Icons.bar_chart_rounded,
-          ),
-          // const SizedBox(width: 16),
-          // _actionCell(
-          //   context: context,
-          //   elmodel: elmodel,
-          //   index: 3,
-          //   icon: Icons.scatter_plot_rounded,
-          // ),
+          Expanded(child: _content(context, elmodel)),
         ],
+      );
+    }
+  }
+
+  List<IconData> navItems = [
+    Icons.dashboard_rounded,
+    Icons.stacked_line_chart_rounded,
+    Icons.bar_chart_rounded,
+  ];
+
+  Widget _navigation(BuildContext context, ELModel elmodel) {
+    return Row(
+      children: [
+        for (int i = 0; i < navItems.length; i++)
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: _navCell(context, i, navItems[i], elmodel),
+          )
+      ],
+    );
+  }
+
+  Widget _navCell(
+      BuildContext context, int index, IconData icon, ELModel elmodel) {
+    return Clickable(
+      onTap: () {
+        elmodel.setPage(index);
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: Icon(
+          icon,
+          color: index == elmodel.index
+              ? AppColors.cell(context)
+              : AppColors.subtext(context),
+        ),
       ),
     );
   }
 
-  Widget _actionCell({
-    required BuildContext context,
-    required ELModel elmodel,
-    required int index,
-    required IconData icon,
-  }) {
-    final bgColor = index == elmodel.currentIndex
-        ? Theme.of(context).colorScheme.onPrimary
-        : Colors.transparent;
-    final textColor = index == elmodel.currentIndex
-        ? Theme.of(context).colorScheme.primary
-        : Theme.of(context).colorScheme.onPrimary;
-    return Clickable(
-      onTap: () => elmodel.navigateTo(index),
-      child: Container(
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            width: 2,
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                icon,
-                color: textColor,
-              ),
+  Widget _content(BuildContext context, ELModel elmodel) {
+    return PageView(
+      controller: elmodel.pageController,
+      onPageChanged: (value) => elmodel.setIndex(value),
+      children: elmodel.logs.isEmpty
+          ? [
+              // TODO!! MAKE BETTER
+              const Center(
+                child: Text("No Logs!"),
+              )
+            ]
+          : const [
+              ELOverview(),
+              ELWeightChart(),
+              ELBarChart(),
             ],
-          ),
-        ),
-      ),
     );
   }
 }

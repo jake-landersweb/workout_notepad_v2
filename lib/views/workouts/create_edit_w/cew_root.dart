@@ -4,16 +4,14 @@ import 'package:line_icons/line_icons.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
-import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/components/field.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
-import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:workout_notepad_v2/views/icon_picker.dart';
 import 'package:workout_notepad_v2/views/root.dart';
+import 'package:workout_notepad_v2/views/workouts/create_edit_w/cew_reorder.dart';
 
 class CEWRoot extends StatelessWidget {
   const CEWRoot({
@@ -44,7 +42,6 @@ class CEWRoot extends StatelessWidget {
 
 class _CEW extends StatefulWidget {
   const _CEW({
-    super.key,
     required this.isCreate,
     required this.onAction,
     this.workout,
@@ -60,6 +57,17 @@ class _CEW extends StatefulWidget {
 class _CEWState extends State<_CEW> {
   @override
   Widget build(BuildContext context) {
+    return Navigator(
+      onGenerateRoute: (settings) {
+        return MaterialWithModalsPageRoute(
+          settings: settings,
+          builder: (context) => _body(context),
+        );
+      },
+    );
+  }
+
+  Widget _body(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
     var cmodel = Provider.of<CEWModel>(context);
     return comp.InteractiveSheet(
@@ -67,73 +75,99 @@ class _CEWState extends State<_CEW> {
       builder: (context) {
         return Stack(
           children: [
-            comp.RawReorderableList<CEWExercise>(
-              items: cmodel.exercises,
-              areItemsTheSame: (p0, p1) => p0.id == p1.id,
-              footer: const SizedBox(height: 100),
-              onReorderFinished: (item, from, to, newItems) {
-                cmodel.refreshExercises(newItems);
-              },
-              slideBuilder: (item, index) {
-                return ActionPane(
-                  extentRatio: 0.3,
-                  motion: const DrawerMotion(),
-                  children: [
-                    Expanded(
-                      child: Row(children: [
-                        SlidableAction(
-                          onPressed: (context) async {
-                            await Future.delayed(
-                              const Duration(milliseconds: 100),
-                            );
-                            cmodel.removeExercise(index);
-                          },
-                          icon: LineIcons.alternateTrash,
-                          label: "Delete",
-                          foregroundColor:
-                              Theme.of(context).colorScheme.onError,
-                          backgroundColor: Theme.of(context).colorScheme.error,
-                        ),
-                      ]),
-                    ),
-                  ],
-                );
-              },
-              builder: (item, index, handle, inDrag) {
-                return CEWExerciseCell(
-                  cewe: item,
-                  handle: handle,
-                  index: index,
-                  inDrag: inDrag,
-                );
-              },
+            Scaffold(
+              resizeToAvoidBottomInset: true,
+              body: comp.RawReorderableList<CEWExercise>(
+                items: cmodel.exercises,
+                areItemsTheSame: (p0, p1) => p0.id == p1.id,
+                footer: const SizedBox(height: 100),
+                onReorderFinished: (item, from, to, newItems) {
+                  cmodel.refreshExercises(newItems);
+                },
+                slideBuilder: (item, index) {
+                  return ActionPane(
+                    extentRatio: 0.3,
+                    motion: const DrawerMotion(),
+                    children: [
+                      Expanded(
+                        child: Row(children: [
+                          SlidableAction(
+                            onPressed: (context) async {
+                              await Future.delayed(
+                                const Duration(milliseconds: 100),
+                              );
+                              cmodel.removeExercise(index);
+                            },
+                            icon: LineIcons.alternateTrash,
+                            label: "Delete",
+                            foregroundColor:
+                                Theme.of(context).colorScheme.onError,
+                            backgroundColor:
+                                Theme.of(context).colorScheme.error,
+                          ),
+                        ]),
+                      ),
+                    ],
+                  );
+                },
+                builder: (item, index, handle, inDrag) {
+                  return CEWExerciseCell(
+                    cewe: item,
+                    handle: handle,
+                    index: index,
+                    inDrag: inDrag,
+                  );
+                },
+              ),
             ),
             // floating action here bc scaffold effects
             // touch area
             Align(
-              alignment: Alignment.bottomRight,
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 10, 16),
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      comp.cupertinoSheet(
-                        context: context,
-                        builder: (context) => SelectExercise(
-                          onSelect: (e) {
-                            cmodel.addExercise(WorkoutExercise.fromExercise(
-                                cmodel.workout, e));
-                          },
-                        ),
-                      );
-                    },
-                    backgroundColor:
-                        Theme.of(context).colorScheme.secondaryContainer,
-                    foregroundColor:
-                        Theme.of(context).colorScheme.onSecondaryContainer,
-                    child: const Icon(Icons.add),
+              alignment: Alignment.bottomCenter,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    color: AppColors.divider(context),
+                    height: 0.5,
+                    width: double.infinity,
                   ),
-                ),
+                  Row(
+                    children: [
+                      _bottomItem(context, "Re-Order", () {
+                        comp.cupertinoSheet(
+                          context: context,
+                          builder: (context) => CEWReorder(cmodel: cmodel),
+                        );
+                      }),
+                      Container(
+                        width: 0.75,
+                      ),
+                      _bottomItem(context, "Add Exercise", () {
+                        comp.cupertinoSheet(
+                          context: context,
+                          builder: (context) => SelectExercise(
+                            selectedIds: cmodel.exercises
+                                .map((e) => e.exercise.exerciseId)
+                                .toList(),
+                            onDeselect: (e) {
+                              cmodel.exercises.removeWhere(
+                                (element) =>
+                                    element.exercise.exerciseId == e.exerciseId,
+                              );
+                              // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+                              cmodel.notifyListeners();
+                            },
+                            onSelect: (e) {
+                              cmodel.addExercise(WorkoutExercise.fromExercise(
+                                  cmodel.workout, e));
+                            },
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                ],
               ),
             ),
           ],
@@ -148,7 +182,7 @@ class _CEWState extends State<_CEW> {
       children: [
         Row(
           children: [
-            comp.CloseButton(color: Theme.of(context).colorScheme.onPrimary),
+            comp.CloseButton(color: AppColors.subtext(context), useRoot: true),
             const Spacer(),
             Clickable(
               onTap: () async {
@@ -159,14 +193,14 @@ class _CEWState extends State<_CEW> {
                       return;
                     }
                     widget.onAction(w);
-                    Navigator.of(context).pop();
+                    Navigator.of(context, rootNavigator: true).pop();
                   } else {
                     var w = await cmodel.updateWorkout(dmodel);
                     if (w == null) {
                       return;
                     }
                     widget.onAction(w);
-                    Navigator.of(context).pop();
+                    Navigator.of(context, rootNavigator: true).pop();
                   }
                 }
               },
@@ -175,7 +209,9 @@ class _CEWState extends State<_CEW> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
-                  color: Theme.of(context).colorScheme.onPrimary,
+                  color: cmodel.isValid()
+                      ? AppColors.text(context)
+                      : Colors.black.withOpacity(0.3),
                 ),
               ),
             ),
@@ -190,7 +226,7 @@ class _CEWState extends State<_CEW> {
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w600,
-            color: Theme.of(context).colorScheme.onPrimary,
+            color: AppColors.text(context),
           ),
           labelText: "Title",
           onChanged: (val) => cmodel.setTitle(val),
@@ -201,11 +237,36 @@ class _CEWState extends State<_CEW> {
           value: cmodel.description,
           highlightColor: Theme.of(context).colorScheme.onPrimary,
           charLimit: 150,
-          style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+          style: TextStyle(color: AppColors.subtext(context)),
           labelText: "Description",
           onChanged: (val) => cmodel.setDescription(val),
         ),
       ],
+    );
+  }
+
+  Widget _bottomItem(BuildContext context, String title, VoidCallback onTap) {
+    return Expanded(
+      child: Clickable(
+        onTap: onTap,
+        child: Container(
+          color: AppColors.cell(context)[100],
+          child: SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

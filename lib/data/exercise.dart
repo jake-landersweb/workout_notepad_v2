@@ -1,14 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:sqflite/sql.dart';
 import 'package:uuid/uuid.dart';
-import 'package:workout_notepad_v2/data/exercise_set.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
-import 'package:workout_notepad_v2/utils/root.dart';
 
 class Exercise extends ExerciseBase {
   late String exerciseId;
-  late String userId;
   late String created;
   late String updated;
 
@@ -16,7 +12,6 @@ class Exercise extends ExerciseBase {
 
   Exercise({
     required this.exerciseId,
-    required this.userId,
     required this.created,
     required this.updated,
     required super.title,
@@ -32,7 +27,6 @@ class Exercise extends ExerciseBase {
   Exercise.empty(String uid) : super.empty() {
     var uuid = const Uuid();
     exerciseId = uuid.v4();
-    userId = uid;
     category = "";
     created = "";
     updated = "";
@@ -40,7 +34,6 @@ class Exercise extends ExerciseBase {
 
   Exercise copy() => Exercise(
         exerciseId: exerciseId,
-        userId: userId,
         category: category,
         created: created,
         updated: updated,
@@ -55,7 +48,6 @@ class Exercise extends ExerciseBase {
 
   Exercise.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
     exerciseId = json['exerciseId'];
-    userId = json['userId'];
     created = json['created'];
     updated = json['updated'];
   }
@@ -72,7 +64,6 @@ class Exercise extends ExerciseBase {
           time: json['time'],
         ) {
     exerciseId = json['exerciseId'];
-    userId = "1";
     category = json['category'];
   }
 
@@ -82,7 +73,6 @@ class Exercise extends ExerciseBase {
   Map<String, dynamic> toMap() {
     return {
       "exerciseId": exerciseId,
-      "userId": userId,
       "category": category,
       "title": title,
       "description": description,
@@ -120,11 +110,10 @@ class Exercise extends ExerciseBase {
     return response;
   }
 
-  static Future<List<Exercise>> getList(String userId) async {
+  static Future<List<Exercise>> getList() async {
     final db = await getDB();
     var sql = """
       SELECT * FROM exercise
-      WHERE userId = '$userId'
       ORDER BY created DESC
     """;
     final List<Map<String, dynamic>> response = await db.rawQuery(sql);

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 
 class CellWrapper extends StatelessWidget {
   const CellWrapper({
@@ -21,8 +22,7 @@ class CellWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: backgroundColor ??
-            Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+        color: backgroundColor ?? AppColors.cell(context),
         border: border,
         borderRadius: BorderRadius.circular(borderRadius),
       ),

@@ -1,8 +1,7 @@
 import "package:flutter/material.dart";
-import 'package:line_icons/line_icons.dart';
 import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
-import 'package:workout_notepad_v2/text_themes.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 import 'dart:math' as math;
 import './root.dart' as comp;
 
@@ -141,7 +140,7 @@ class _CountdownTimerState extends State<CountdownTimer>
                       child: Container(
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: Theme.of(context).colorScheme.outline,
+                            color: AppColors.cell(context)[400]!,
                           ),
                           borderRadius: BorderRadius.circular(100),
                         ),
@@ -160,9 +159,7 @@ class _CountdownTimerState extends State<CountdownTimer>
                                     constraints:
                                         const BoxConstraints(minHeight: 35),
                                     decoration: BoxDecoration(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondaryContainer,
+                                      color: AppColors.cell(context)[700],
                                     ),
                                     child: Icon(
                                       Icons.timer_rounded,
@@ -176,7 +173,7 @@ class _CountdownTimerState extends State<CountdownTimer>
                               Container(
                                 width: 1,
                                 height: 35,
-                                color: Theme.of(context).colorScheme.outline,
+                                color: AppColors.cell(context)[400]!,
                               ),
                               Expanded(
                                 child: Clickable(
@@ -189,9 +186,7 @@ class _CountdownTimerState extends State<CountdownTimer>
                                     constraints:
                                         const BoxConstraints(minHeight: 35),
                                     decoration: BoxDecoration(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondaryContainer,
+                                      color: AppColors.cell(context)[700],
                                     ),
                                     child: Icon(
                                       Icons.timer_10_rounded,
@@ -213,6 +208,10 @@ class _CountdownTimerState extends State<CountdownTimer>
                         children: [
                           Expanded(
                             child: comp.ActionButton(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withOpacity(0.15),
                               minHeight: 35,
                               title:
                                   _controller.isAnimating ? "Reset" : "Start",
@@ -270,7 +269,7 @@ class _CountdownTimerState extends State<CountdownTimer>
           Expanded(
             child: _numberCell(
               context,
-              Theme.of(context).colorScheme.tertiaryContainer,
+              Theme.of(context).colorScheme.primary.withOpacity(0.15),
               Theme.of(context).colorScheme.onTertiaryContainer,
               hour,
             ),
@@ -290,7 +289,7 @@ class _CountdownTimerState extends State<CountdownTimer>
         Expanded(
           child: _numberCell(
             context,
-            Theme.of(context).colorScheme.primaryContainer,
+            Theme.of(context).colorScheme.primary.withOpacity(0.15),
             Theme.of(context).colorScheme.onPrimaryContainer,
             min,
           ),
@@ -309,7 +308,7 @@ class _CountdownTimerState extends State<CountdownTimer>
         Expanded(
           child: _numberCell(
             context,
-            Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+            AppColors.cell(context),
             Theme.of(context).colorScheme.onSurfaceVariant,
             sec,
           ),
@@ -352,9 +351,11 @@ class _CountdownTimerState extends State<CountdownTimer>
                     return CustomPaint(
                       painter: CustomTimerPainter(
                         animation: _controller,
-                        backgroundColor:
-                            Theme.of(context).colorScheme.background,
-                        color: Theme.of(context).colorScheme.tertiary,
+                        backgroundColor: AppColors.background(context),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.15),
                       ),
                     );
                   },
@@ -371,10 +372,7 @@ class _CountdownTimerState extends State<CountdownTimer>
                       builder: (context, child) {
                         return Text(
                           timerString,
-                          style: TextStyle(
-                            fontSize: widget.fontSize,
-                            color: Theme.of(context).colorScheme.onBackground,
-                          ),
+                          style: TextStyle(fontSize: widget.fontSize),
                         );
                       },
                     ),

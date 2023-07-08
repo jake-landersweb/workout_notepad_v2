@@ -112,7 +112,6 @@ class _FluidScrollViewState extends State<FluidScrollView> {
 
 class _ScrollCell extends StatefulWidget {
   const _ScrollCell({
-    super.key,
     required this.index,
     required this.child,
     required this.spacing,
@@ -194,7 +193,6 @@ class _ScrollVelocityListener extends StatefulWidget {
   final Widget child;
 
   const _ScrollVelocityListener({
-    super.key,
     required this.onVelocity,
     required this.child,
   });

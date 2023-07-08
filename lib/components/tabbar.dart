@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:workout_notepad_v2/components/root.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 
 class TabBarItem {
   late IconData child;
@@ -46,7 +47,7 @@ class _TabBarState extends State<TabBar> {
         BlurredContainer(
           width: double.infinity,
           borderRadius: BorderRadius.circular(0),
-          backgroundColor: Theme.of(context).colorScheme.background,
+          backgroundColor: AppColors.background(context),
           opacity: 0.8,
           blur: 12,
           child: SafeArea(

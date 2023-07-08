@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/data/workout_cat.dart';
 import 'package:workout_notepad_v2/model/root.dart';
-import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 
 import 'package:workout_notepad_v2/components/root.dart' as comp;
@@ -59,7 +58,7 @@ class _WorkoutsHomeState extends State<WorkoutsHome> {
             padding: const EdgeInsets.only(bottom: 16.0),
             child: WorkoutCell(wc: i),
           ),
-        SizedBox(height: dmodel.workoutState == null ? 50 : 80),
+        SizedBox(height: dmodel.workoutState == null ? 100 : 130),
       ],
     );
   }

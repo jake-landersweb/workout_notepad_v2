@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 
 TextStyle ttTitle(
   BuildContext context, {
@@ -8,7 +9,7 @@ TextStyle ttTitle(
 }) {
   return TextStyle(
     fontSize: size ?? 24,
-    color: color,
+    color: color ?? AppColors.text(context),
     fontWeight: fontWeight ?? FontWeight.w600,
   );
 }
@@ -21,7 +22,7 @@ TextStyle ttSubTitle(
 }) {
   return TextStyle(
     fontSize: size ?? 22,
-    color: color,
+    color: color ?? AppColors.text(context),
     fontWeight: fontWeight ?? FontWeight.w500,
   );
 }
@@ -34,7 +35,7 @@ TextStyle ttLargeLabel(
 }) {
   return TextStyle(
     fontSize: size ?? 20,
-    color: color,
+    color: color ?? AppColors.text(context),
     fontWeight: fontWeight ?? FontWeight.w600,
   );
 }
@@ -47,7 +48,7 @@ TextStyle ttLabel(
 }) {
   return TextStyle(
     fontSize: size ?? 18,
-    color: color,
+    color: color ?? AppColors.text(context),
     fontWeight: fontWeight ?? FontWeight.w500,
   );
 }
@@ -59,8 +60,8 @@ TextStyle ttBody(
   FontWeight? fontWeight,
 }) {
   return TextStyle(
-    fontSize: size ?? 16,
-    color: color,
+    fontSize: size ?? 14,
+    color: color ?? AppColors.text(context),
     fontWeight: fontWeight ?? FontWeight.w500,
   );
 }

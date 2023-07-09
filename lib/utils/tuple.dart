@@ -12,3 +12,12 @@ class Tuple3<A, B, C> {
 
   Tuple3(this.v1, this.v2, this.v3);
 }
+
+class Tuple4<A, B, C, D> {
+  late A v1;
+  late B v2;
+  late C v3;
+  late D v4;
+
+  Tuple4(this.v1, this.v2, this.v3, this.v4);
+}

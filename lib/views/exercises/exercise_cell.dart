@@ -70,10 +70,7 @@ class ExerciseCell extends StatelessWidget {
                   ),
                 ),
                 if (exercise.category.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: CategoryCell(title: exercise.category),
-                  ),
+                  CategoryCell(categoryId: exercise.category),
               ],
             ),
           ),

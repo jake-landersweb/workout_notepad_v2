@@ -51,9 +51,11 @@ class _ClickableState extends State<Clickable> {
           if (now.difference(pressedTime).inMilliseconds < 50) {
             await Future.delayed(const Duration(milliseconds: 100));
           }
-          setState(() {
-            _isPressed = false;
-          });
+          if (mounted) {
+            setState(() {
+              _isPressed = false;
+            });
+          }
         }),
         child: AnimatedOpacity(
           opacity: _isPressed ? widget.tappedOpacity : 1,

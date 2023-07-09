@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
@@ -43,18 +42,11 @@ class _CEERootState extends State<CEERoot> {
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
-    return Navigator(
-      onGenerateRoute: (settings) {
-        return MaterialWithModalsPageRoute(
-          settings: settings,
-          builder: (context) => ChangeNotifierProvider(
-            create: (context) => widget.isCreate
-                ? CreateExerciseModel.create(dmodel, dmodel.user!.userId)
-                : CreateExerciseModel.update(dmodel, widget.exercise!),
-            builder: (context, child) => _body(context),
-          ),
-        );
-      },
+    return ChangeNotifierProvider(
+      create: (context) => widget.isCreate
+          ? CreateExerciseModel.create(dmodel, dmodel.user!.userId)
+          : CreateExerciseModel.update(dmodel, widget.exercise!),
+      builder: (context, child) => _body(context),
     );
   }
 
@@ -66,11 +58,7 @@ class _CEERootState extends State<CEERoot> {
       isFluid: true,
       itemSpacing: 16,
       crossAxisAlignment: CrossAxisAlignment.center,
-      leading: const [
-        comp.CancelButton(
-          useRoot: true,
-        )
-      ],
+      leading: const [comp.CancelButton()],
       trailing: [
         comp.ModelCreateButton(
           title: widget.isCreate ? "Create" : "Save",
@@ -87,7 +75,7 @@ class _CEERootState extends State<CEERoot> {
                   widget.onAction!(cemodel.exercise);
                 }
               }
-              Navigator.of(context, rootNavigator: true).pop();
+              Navigator.of(context).pop();
             } else {
               widget.onAction!(cemodel.exercise);
             }
@@ -114,6 +102,7 @@ class _CEERootState extends State<CEERoot> {
               onTap: () {
                 showSheetSelector<ExerciseType>(
                   context: context,
+                  useRootNavigator: true,
                   title: "Exercise Type",
                   items: [
                     ExerciseType.weight,
@@ -227,7 +216,10 @@ class _CEERootState extends State<CEERoot> {
   }
 
   Widget _category(
-      BuildContext context, CreateExerciseModel cemodel, DataModel dmodel) {
+    BuildContext context,
+    CreateExerciseModel cemodel,
+    DataModel dmodel,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Wrap(
@@ -238,21 +230,23 @@ class _CEERootState extends State<CEERoot> {
             onTap: () {
               comp.showFloatingSheet(
                 context: context,
+                useRootNavigator: true,
                 builder: (context) => CreateCategory(
-                    categories: dmodel.categories.map((e) => e.title).toList(),
-                    onCompletion: (val, icon) async {
-                      var c = Category(
-                        title: val,
-                        icon: icon,
-                      );
-                      await c.insert(
-                        conflictAlgorithm: ConflictAlgorithm.replace,
-                      );
-                      await dmodel.refreshCategories();
-                      setState(() {
-                        cemodel.exercise.category = c.title;
-                      });
-                    }),
+                  categories: dmodel.categories.map((e) => e.title).toList(),
+                  onCompletion: (val, icon) async {
+                    var c = Category.init(
+                      title: val,
+                      icon: icon,
+                    );
+                    await c.insert(
+                      conflictAlgorithm: ConflictAlgorithm.replace,
+                    );
+                    await dmodel.refreshCategories();
+                    setState(() {
+                      cemodel.exercise.category = c.categoryId;
+                    });
+                  },
+                ),
               );
             },
             child: Container(
@@ -283,12 +277,12 @@ class _CEERootState extends State<CEERoot> {
     return GestureDetector(
       onTap: () {
         setState(() {
-          cemodel.exercise.category = category.title;
+          cemodel.exercise.category = category.categoryId;
         });
       },
       child: Container(
         decoration: BoxDecoration(
-          color: category.title == cemodel.exercise.category
+          color: category.categoryId == cemodel.exercise.category
               ? Theme.of(context).colorScheme.primary
               : AppColors.cell(context),
           borderRadius: BorderRadius.circular(100),
@@ -307,7 +301,7 @@ class _CEERootState extends State<CEERoot> {
               Text(
                 category.title.capitalize(),
                 style: TextStyle(
-                  color: category.title == cemodel.exercise.category
+                  color: category.categoryId == cemodel.exercise.category
                       ? Theme.of(context).colorScheme.onPrimary
                       : Theme.of(context).colorScheme.onSurfaceVariant,
                   fontSize: 14,

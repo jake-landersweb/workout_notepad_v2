@@ -19,12 +19,20 @@ class LoadingIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (kIsWeb) {
-      return Center(child: CircularProgressIndicator(color: color));
+      return Center(
+        child: CircularProgressIndicator(
+            color: color ?? Theme.of(context).colorScheme.primary),
+      );
     } else {
       if (Platform.isIOS) {
-        return const Center(child: CupertinoActivityIndicator());
+        return Center(
+            child: CupertinoActivityIndicator(
+                color: color == Colors.white ? Colors.white : null));
       } else {
-        return Center(child: CircularProgressIndicator(color: color));
+        return Center(
+          child: CircularProgressIndicator(
+              color: color ?? Theme.of(context).colorScheme.primary),
+        );
       }
     }
   }

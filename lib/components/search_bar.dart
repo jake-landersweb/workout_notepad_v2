@@ -33,6 +33,7 @@ class SearchBar extends StatelessWidget {
               labelText: labelText,
               hintText: hintText ?? labelText,
               value: initText,
+              hasClearButton: true,
               onChanged: onChanged,
             ),
           )

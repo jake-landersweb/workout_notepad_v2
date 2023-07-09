@@ -40,6 +40,166 @@ class _CEWExerciseCellState extends State<CEWExerciseCell> {
   @override
   Widget build(BuildContext context) {
     var cmodel = Provider.of<CEWModel>(context);
+    return Container(
+      decoration: BoxDecoration(
+        color: widget.inDrag
+            ? AppColors.cell(context)[100]
+            : AppColors.cell(context),
+        border: Border(
+          bottom: BorderSide(
+            color:
+                widget.inDrag ? Colors.transparent : AppColors.divider(context),
+          ),
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        child: Row(
+          children: [
+            Clickable(
+              onTap: () {
+                comp.cupertinoSheet(
+                  context: context,
+                  builder: (context) => CEWExerciseDetail(
+                    index: widget.index,
+                    cewe: widget.cewe,
+                  ),
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 2, 8, 2),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.cell(context)[600],
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Icon(
+                      Icons.more_horiz_rounded,
+                      color: AppColors.subtext(context),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          widget.cewe.exercise.title,
+                          style: ttSubTitle(
+                            context,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      CategoryCell(categoryId: widget.cewe.exercise.category),
+                      const SizedBox(width: 8),
+                      widget.cewe.exercise.info(
+                        context,
+                        style: ttLabel(context),
+                      ),
+                    ],
+                  ),
+                  if (widget.cewe.children.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: _children(context, cmodel),
+                    ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 2, 16, 2),
+              child: widget.handle,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _children(BuildContext context, CEWModel cmodel) {
+    List<Widget> children = [];
+    for (var i in widget.cewe.children) {
+      children.add(_childCell(context, i));
+    }
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: children,
+    );
+  }
+
+  Widget _childCell(BuildContext context, ExerciseSet set) {
+    return Row(
+      children: [
+        Text(
+          "-",
+          style: ttLabel(
+            context,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: RichText(
+              text: TextSpan(
+                text: "${set.title} ",
+                style: ttLabel(context),
+                children: [
+                  TextSpan(
+                    text: "(",
+                    style: ttLabel(
+                      context,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withOpacity(0.5),
+                    ),
+                  ),
+                  set.infoRaw(
+                    context,
+                    style: ttLabel(
+                      context,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withOpacity(0.5),
+                    ),
+                  ),
+                  TextSpan(
+                    text: ")",
+                    style: ttLabel(
+                      context,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withOpacity(0.5),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget build2(BuildContext context) {
+    var cmodel = Provider.of<CEWModel>(context);
     return AnimatedContainer(
       curve: Sprung(36),
       duration: const Duration(milliseconds: 700),
@@ -418,7 +578,7 @@ class __SuperSetOrderState extends State<_SuperSetOrder> {
           widget.onSelect(item);
           Navigator.of(context).pop();
         },
-        childBuilder: (context, item) {
+        childBuilder: (context, item, _) {
           return Text(_getTitle(item), style: ttLabel(context));
         },
       ),

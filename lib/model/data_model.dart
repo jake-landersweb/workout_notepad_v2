@@ -1,7 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
@@ -29,6 +28,7 @@ class DataModel extends ChangeNotifier {
   }
 
   Future<void> createAnonymousUser(BuildContext context) async {
+    var prefs = await SharedPreferences.getInstance();
     var u = await User.loginAnon();
     if (u == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -39,6 +39,7 @@ class DataModel extends ChangeNotifier {
       );
       return;
     }
+    prefs.setString("user", jsonEncode(u.toMap()));
     await init(u: u);
   }
 
@@ -46,6 +47,7 @@ class DataModel extends ChangeNotifier {
     BuildContext context,
     auth.UserCredential credential,
   ) async {
+    var prefs = await SharedPreferences.getInstance();
     var u = await User.loginAuth(credential, convertFromAnon: user != null);
     if (u == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -56,6 +58,7 @@ class DataModel extends ChangeNotifier {
       );
       return;
     }
+    prefs.setString("user", jsonEncode(u.toMap()));
     await init(u: u);
   }
 
@@ -88,70 +91,96 @@ class DataModel extends ChangeNotifier {
   }
 
   Future<void> init({User? u}) async {
-    // delete the database
-    // await deleteDB();
-
-    if (u != null) {
-      // user already authenticated, fetch all data
-      user = u;
-      await fetchData();
-      loadStatus = LoadStatus.done;
-      notifyListeners();
-      return;
-    }
+    var prefs = await SharedPreferences.getInstance();
 
     // check for saved userId
-    var prefs = await SharedPreferences.getInstance();
-    if (!prefs.containsKey("userId")) {
-      print("[INIT] userId not saved in preferences");
-      loadStatus = LoadStatus.noUser;
-      notifyListeners();
+    if (!prefs.containsKey("user")) {
+      print("[INIT] user not saved in preferences");
+      await clearData();
       return;
     }
 
-    // get the user
-    var tmp = await User.fromId(prefs.getString("userId")!);
-    if (tmp == null) {
-      print("[INIT] There was no user found with the userId");
-      loadStatus = LoadStatus.noUser;
-      notifyListeners();
+    // get the saved user
+    user = User.fromJson(jsonDecode(prefs.getString("user")!));
+
+    // check to make sure the expire epoch is valid
+    if (user!.expireEpoch != -1 &&
+        user!.expireEpoch < DateTime.now().millisecondsSinceEpoch) {
+      // user is not longer valid
+      print("[INIT] The anon user has expired");
+      await clearData(ls: LoadStatus.expired);
       return;
     }
 
-    if (tmp.isAnon) {
-      print("[INIT] Anon user");
-      // check if expired
-      if (tmp.expireEpoch < DateTime.now().millisecondsSinceEpoch) {
-        print("[INIT] This anon user is expired");
-        expiredAnonUser = tmp;
-        loadStatus = LoadStatus.expired;
-        notifyListeners();
-        return;
-      } else {
-        print("[INIT] Anon user is valid");
-        user = tmp;
-      }
-    } else {
-      // user not anon, make sure there is a valid firebase instance
-      auth.User? firebaseUser = auth.FirebaseAuth.instance.currentUser;
-      if (firebaseUser == null) {
-        log("[INIT] No user loaded in firebase");
-        loadStatus = LoadStatus.noUser;
-        notifyListeners();
-        return;
-      } else {
-        print("[INIT] valid firebase user");
-        print(firebaseUser);
-        user = tmp;
-      }
-    }
-
-    print("[INIT] finished user validation");
-    print(user);
-
-    // get all user data
+    print("[INIT] app state is valid. Fetching user in background to ensure");
+    getUser(); // run non-asynchonously to allow for no internet
     await fetchData();
     loadStatus = LoadStatus.done;
+    notifyListeners();
+  }
+
+  /// run the get user call in a separate function to allow for
+  /// offline app usage. If the user gets online, then we can run this function
+  /// to check if the user is back online. Then can verify user data
+  Future<void> getUser() async {
+    try {
+      if (user == null) {
+        print("[GET_USER] ERROR the user was null");
+        await clearData();
+        return;
+      }
+
+      // for testing offline
+      // throw "";
+
+      await Future.delayed(const Duration(seconds: 5));
+
+      // get the user
+      var tmp = await User.fromId(user!.userId);
+      if (tmp == null) {
+        print("[GET_USER] There was no user found with the userId");
+        await clearData();
+        return;
+      }
+
+      print("[GET_USER] valid user found in AWS");
+
+      if (tmp.isAnon) {
+        print("[GET_USER] Anon user");
+        // check if expired
+        if (tmp.expireEpoch < DateTime.now().millisecondsSinceEpoch) {
+          print("[GET_USER] This anon user is expired");
+          await clearData(ls: LoadStatus.expired);
+          return;
+        } else {
+          print("[GET_USER] Anon user is valid");
+          user = tmp;
+        }
+      } else {
+        // user not anon, make sure there is a valid firebase instance
+        auth.User? firebaseUser = auth.FirebaseAuth.instance.currentUser;
+        if (firebaseUser == null) {
+          print("[GET_USER] No user loaded in firebase");
+          await clearData();
+          return;
+        } else {
+          print("[GET_USER] valid firebase user");
+          print(firebaseUser);
+          user = tmp;
+        }
+      }
+
+      print("[GET_USER] the user is valid");
+      print(user);
+      var prefs = await SharedPreferences.getInstance();
+      prefs.setString("user", jsonEncode(user!.toMap()));
+      notifyListeners();
+    } catch (error) {
+      print(
+          "GET_USER there was an error fetching the user. Assuming user is offline");
+      user!.offline = true;
+      notifyListeners();
+    }
   }
 
   Future<void> initTest({bool? delete}) async {
@@ -173,9 +202,6 @@ class DataModel extends ChangeNotifier {
     _workouts = await getW;
     _exercises = await getE;
     _tags = await getT;
-    loadStatus = LoadStatus.done;
-
-    notifyListeners();
   }
 
   bool? _lightStatus;
@@ -189,10 +215,15 @@ class DataModel extends ChangeNotifier {
     // create a snapshot of their data
     // TODO --
     await deleteDB();
+    await clearData();
+    notifyListeners();
+  }
+
+  Future<void> clearData({LoadStatus ls = LoadStatus.noUser}) async {
     var prefs = await SharedPreferences.getInstance();
-    prefs.remove("userId");
+    prefs.remove("user");
     user = null;
-    loadStatus = LoadStatus.noUser;
+    loadStatus = ls;
     notifyListeners();
   }
 
@@ -258,6 +289,7 @@ class DataModel extends ChangeNotifier {
     var exerciseLogs = await db.query("exercise_log");
     var workoutLogs = await db.query("workout_log");
     var tags = await db.query("tag");
+    var exerciseLogTags = await db.query("exercise_log_tag");
 
     // create structured data
     Map<String, dynamic> data = {
@@ -269,6 +301,7 @@ class DataModel extends ChangeNotifier {
       "exerciseLogs": exerciseLogs,
       "workoutLogs": workoutLogs,
       "tags": tags,
+      "exerciseLogTags": exerciseLogTags,
     };
 
     // encode to json
@@ -313,6 +346,7 @@ class DataModel extends ChangeNotifier {
     await load("exercise_log", data['exerciseLogs']);
     await load("workout_log", data['workoutLogs']);
     await load("tag", data['tags']);
+    await load("exercise_log_tag", data['exerciseLogTags']);
     notifyListeners();
   }
 

@@ -111,7 +111,7 @@ abstract class ExerciseBase {
   Widget getIcon(List<Category> categories, {double? size}) {
     Category match = categories.firstWhere(
       (element) => element.title.toLowerCase() == category.toLowerCase(),
-      orElse: () => Category(title: "", icon: ""),
+      orElse: () => Category(categoryId: "", title: "", icon: ""),
     );
     if (match.icon.isEmpty) {
       return const SizedBox(height: 50, width: 50);

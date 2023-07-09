@@ -7,6 +7,7 @@ import 'package:workout_notepad_v2/components/contained_list.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/components/labeled_cell.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
+import 'package:workout_notepad_v2/data/root.dart';
 
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
@@ -30,6 +31,10 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
+    var category = dmodel.categories.firstWhere(
+      (element) => element.categoryId == widget.exercise.category,
+      orElse: () => Category(categoryId: "", title: "", icon: ""),
+    );
     return HeaderBar.sheet(
       title: widget.exercise.title,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -68,13 +73,22 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
         ContainedList<Widget>(
           childPadding: const EdgeInsets.symmetric(horizontal: 16),
           children: [
-            LabeledCell(
-              label: "Category",
-              child: Text(
-                widget.exercise.category.capitalize(),
-                style: ttLabel(context),
+            if (category.categoryId.isNotEmpty)
+              LabeledCell(
+                label: "Category",
+                child: Row(
+                  children: [
+                    getImageIcon(category.icon, size: 40),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        category.title.capitalize(),
+                        style: ttLabel(context),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
             if (widget.exercise.description.isNotEmpty)
               LabeledCell(
                 label: "Description",

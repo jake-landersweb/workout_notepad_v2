@@ -11,9 +11,11 @@ void showSheetSelector<T>({
   required Function(BuildContext context, int index, T item) onSelect,
   String Function(BuildContext context, T item)? titleBuilder,
   bool closeOnSelect = true,
+  bool useRootNavigator = false,
 }) {
   showFloatingSheet(
     context: context,
+    useRootNavigator: useRootNavigator,
     builder: (context) => SheetSelector<T>(
       title: title,
       items: items,

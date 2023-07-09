@@ -73,33 +73,37 @@ class EditableExerciseItemGroup extends StatefulWidget {
 class _EditableExerciseItemGroupState extends State<EditableExerciseItemGroup> {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          flex: widget.exercise.type == ExerciseType.weight ? 1 : widget.flex1,
-          child: EditableExerciseItemCell(
-            initialValue: widget.exercise.sets,
-            label: "SETS",
-            onChanged: (val) {
-              setState(() {
-                widget.exercise.sets = val;
-              });
-              if (widget.onChanged != null) {
-                widget.onChanged!();
-              }
-            },
+    return IntrinsicHeight(
+      child: Row(
+        children: [
+          Expanded(
+            flex:
+                widget.exercise.type == ExerciseType.weight ? 1 : widget.flex1,
+            child: EditableExerciseItemCell(
+              initialValue: widget.exercise.sets,
+              label: "SETS",
+              onChanged: (val) {
+                setState(() {
+                  widget.exercise.sets = val;
+                });
+                if (widget.onChanged != null) {
+                  widget.onChanged!();
+                }
+              },
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Text("x",
-              style: ttLabel(context, color: Theme.of(context).primaryColor)),
-        ),
-        Expanded(
-          flex: widget.exercise.type == ExerciseType.weight ? 1 : widget.flex2,
-          child: _getSecond(context),
-        ),
-      ],
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Text("x",
+                style: ttLabel(context, color: Theme.of(context).primaryColor)),
+          ),
+          Expanded(
+            flex:
+                widget.exercise.type == ExerciseType.weight ? 1 : widget.flex2,
+            child: _getSecond(context),
+          ),
+        ],
+      ),
     );
   }
 
@@ -131,19 +135,38 @@ class _EditableExerciseItemGroupState extends State<EditableExerciseItemGroup> {
         color: AppColors.cell(context),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: TimePicker(
-        hours: e.getHours(),
-        minutes: e.getMinutes(),
-        seconds: e.getSeconds(),
-        label: e.type == ExerciseType.timed ? "TIME" : "GOAL TIME",
-        onChanged: (val) {
-          setState(() {
-            e.time = val;
-          });
-          if (widget.onChanged != null) {
-            widget.onChanged!();
-          }
-        },
+      child: Stack(
+        alignment: Alignment.topLeft,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TimePicker(
+                hours: e.getHours(),
+                minutes: e.getMinutes(),
+                seconds: e.getSeconds(),
+                onChanged: (val) {
+                  setState(() {
+                    e.time = val;
+                  });
+                  if (widget.onChanged != null) {
+                    widget.onChanged!();
+                  }
+                },
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Text(
+              e.type == ExerciseType.timed ? "TIME" : "GOAL TIME",
+              style: TextStyle(
+                fontSize: 12,
+                color: Theme.of(context).primaryColor,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

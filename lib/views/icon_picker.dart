@@ -59,7 +59,7 @@ class _IconPickerState extends State<_IconPicker> {
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: _icons.length,
-      crossAxisCount: 3,
+      crossAxisCount: 4,
       builder: (context, index) {
         return _iconCell(context, _icons[index]);
       },
@@ -82,11 +82,7 @@ class _IconPickerState extends State<_IconPicker> {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-                color: name == _selected
-                    ? Theme.of(context).primaryColor
-                    : Colors.transparent,
-                width: 2),
+            color: name == _selected ? AppColors.cell(context) : null,
           ),
           child: Padding(
             padding: const EdgeInsets.all(8.0),

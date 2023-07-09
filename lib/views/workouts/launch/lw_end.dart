@@ -31,7 +31,7 @@ class _LWEndState extends State<LWEnd> {
               Tuple2(Icons.close_rounded, "Cancel Workout"),
               Tuple2(Icons.star_rounded, "Finish Workout"),
             ],
-            onChildTap: (context, item) {
+            onChildTap: (context, item, _) {
               if (item.v2 == "Add Another Exercise") {
                 cupertinoSheet(
                   context: context,
@@ -76,7 +76,7 @@ class _LWEndState extends State<LWEnd> {
                 );
               }
             },
-            childBuilder: (context, item) {
+            childBuilder: (context, item, _) {
               return Row(
                 children: [
                   Icon(item.v1, color: AppColors.cell(context)[700]),

@@ -58,7 +58,9 @@ class _WorkoutsHomeState extends State<WorkoutsHome> {
             padding: const EdgeInsets.only(bottom: 16.0),
             child: WorkoutCell(wc: i),
           ),
-        SizedBox(height: dmodel.workoutState == null ? 100 : 130),
+        SizedBox(
+            height: (dmodel.workoutState == null ? 100 : 130) +
+                (dmodel.user!.offline ? 30 : 0)),
       ],
     );
   }

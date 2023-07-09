@@ -11,7 +11,6 @@ import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
-import 'package:workout_notepad_v2/views/workouts/create_edit_w/cew_reorder.dart';
 
 class CEWRoot extends StatelessWidget {
   const CEWRoot({
@@ -75,100 +74,87 @@ class _CEWState extends State<_CEW> {
       builder: (context) {
         return Stack(
           children: [
-            Scaffold(
-              resizeToAvoidBottomInset: true,
-              body: comp.RawReorderableList<CEWExercise>(
-                items: cmodel.exercises,
-                areItemsTheSame: (p0, p1) => p0.id == p1.id,
-                footer: const SizedBox(height: 100),
-                onReorderFinished: (item, from, to, newItems) {
-                  cmodel.refreshExercises(newItems);
-                },
-                slideBuilder: (item, index) {
-                  return ActionPane(
-                    extentRatio: 0.3,
-                    motion: const DrawerMotion(),
-                    children: [
-                      Expanded(
-                        child: Row(children: [
-                          SlidableAction(
-                            onPressed: (context) async {
-                              await Future.delayed(
-                                const Duration(milliseconds: 100),
-                              );
-                              cmodel.removeExercise(index);
-                            },
-                            icon: LineIcons.alternateTrash,
-                            label: "Delete",
-                            foregroundColor:
-                                Theme.of(context).colorScheme.onError,
-                            backgroundColor:
-                                Theme.of(context).colorScheme.error,
-                          ),
-                        ]),
-                      ),
-                    ],
-                  );
-                },
-                builder: (item, index, handle, inDrag) {
-                  return CEWExerciseCell(
-                    cewe: item,
-                    handle: handle,
-                    index: index,
-                    inDrag: inDrag,
-                  );
-                },
-              ),
+            comp.RawReorderableList<CEWExercise>(
+              items: cmodel.exercises,
+              areItemsTheSame: (p0, p1) => p0.id == p1.id,
+              footer:
+                  SizedBox(height: MediaQuery.of(context).padding.bottom + 80),
+              onReorderFinished: (item, from, to, newItems) {
+                cmodel.refreshExercises(newItems);
+              },
+              slideBuilder: (item, index) {
+                return ActionPane(
+                  extentRatio: 0.3,
+                  motion: const DrawerMotion(),
+                  children: [
+                    Expanded(
+                      child: Row(children: [
+                        SlidableAction(
+                          onPressed: (context) async {
+                            await Future.delayed(
+                              const Duration(milliseconds: 100),
+                            );
+                            cmodel.removeExercise(index);
+                          },
+                          icon: LineIcons.alternateTrash,
+                          label: "Delete",
+                          foregroundColor:
+                              Theme.of(context).colorScheme.onError,
+                          backgroundColor: Theme.of(context).colorScheme.error,
+                        ),
+                      ]),
+                    ),
+                  ],
+                );
+              },
+              builder: (item, index, handle, inDrag) {
+                return CEWExerciseCell(
+                  cewe: item,
+                  handle: handle,
+                  index: index,
+                  inDrag: inDrag,
+                );
+              },
             ),
             // floating action here bc scaffold effects
             // touch area
             Align(
               alignment: Alignment.bottomCenter,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    color: AppColors.divider(context),
-                    height: 0.5,
-                    width: double.infinity,
-                  ),
-                  Row(
-                    children: [
-                      _bottomItem(context, "Configure", () {
-                        comp.cupertinoSheet(
-                          context: context,
-                          enableDrag: false,
-                          builder: (context) => CEWReorder(cmodel: cmodel),
-                        );
-                      }),
-                      Container(
-                        width: 0.75,
-                      ),
-                      _bottomItem(context, "Add Exercise", () {
-                        comp.cupertinoSheet(
-                          context: context,
-                          builder: (context) => SelectExercise(
-                            selectedIds: cmodel.exercises
-                                .map((e) => e.exercise.exerciseId)
-                                .toList(),
-                            onDeselect: (e) {
-                              cmodel.exercises.removeWhere(
-                                (element) =>
-                                    element.exercise.exerciseId == e.exerciseId,
-                              );
-                              // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
-                              cmodel.notifyListeners();
-                            },
-                            onSelect: (e) {
-                              cmodel.addExercise(WorkoutExercise.fromExercise(
-                                  cmodel.workout, e));
-                            },
-                          ),
-                        );
-                      }),
-                    ],
-                  ),
-                ],
+              child: Container(
+                color: AppColors.cell(context)[500],
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(height: 0.5),
+                    Row(
+                      children: [
+                        _bottomItem(context, "Select Exercises", () {
+                          comp.cupertinoSheet(
+                            context: context,
+                            builder: (context) => SelectExercise(
+                              selectedIds: cmodel.exercises
+                                  .map((e) => e.exercise.exerciseId)
+                                  .toList(),
+                              onDeselect: (e) {
+                                cmodel.exercises.removeWhere(
+                                  (element) =>
+                                      element.exercise.exerciseId ==
+                                      e.exerciseId,
+                                );
+                                // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+                                cmodel.notifyListeners();
+                              },
+                              onSelect: (e) {
+                                cmodel.addExercise(WorkoutExercise.fromExercise(
+                                    cmodel.workout, e));
+                              },
+                            ),
+                          );
+                        }),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -251,7 +237,7 @@ class _CEWState extends State<_CEW> {
       child: Clickable(
         onTap: onTap,
         child: Container(
-          color: AppColors.cell(context)[100],
+          color: AppColors.cell(context)[400],
           child: SafeArea(
             top: false,
             child: Padding(

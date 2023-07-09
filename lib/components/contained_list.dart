@@ -53,7 +53,7 @@ class ContainedList<T> extends StatefulWidget {
     this.preDelete,
   }) : super(key: key);
   final List<T> children;
-  final Widget Function(BuildContext context, T item)? childBuilder;
+  final Widget Function(BuildContext context, T item, int index)? childBuilder;
   final Color? backgroundColor;
   final bool hasDividers;
   final Widget Function()? dividerBuilder;
@@ -61,10 +61,10 @@ class ContainedList<T> extends StatefulWidget {
   final double leadingPadding;
   final double trailingPadding;
   final double borderRadius;
-  final Function(BuildContext context, T item)? onChildTap;
+  final Function(BuildContext context, T item, int index)? onChildTap;
   final bool isAnimated;
   final bool allowsDelete;
-  final Function(T item)? onDelete;
+  final Function(BuildContext context, T item, int index)? onDelete;
   final bool showStyling;
   final List<T>? selected;
   final bool allowsSelect;
@@ -123,7 +123,7 @@ class _ContainedListState<T> extends State<ContainedList<T>> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          for (var child in widget.children)
+          for (int i = 0; i < widget.children.length; i++)
             Column(
               children: [
                 // item
@@ -131,20 +131,21 @@ class _ContainedListState<T> extends State<ContainedList<T>> {
                   Clickable(
                     onTap: () {
                       if (widget.allowsSelect) {
-                        widget.onSelect!(child);
+                        widget.onSelect!(widget.children[i]);
                       } else if (widget.onChildTap != null) {
-                        widget.onChildTap!(context, child);
+                        widget.onChildTap!(context, widget.children[i], i);
                       }
                     },
-                    child: _cell(context, child),
+                    child: _cell(context, widget.children[i], i),
                   )
                 else
-                  _cell(context, child),
+                  _cell(context, widget.children[i], i),
                 // divider if not last item
                 if (widget.hasDividers &&
                     (widget.equality != null
-                        ? !widget.equality!(child, widget.children.last)
-                        : child != widget.children.last))
+                        ? !widget.equality!(
+                            widget.children[i], widget.children.last)
+                        : widget.children[i] != widget.children.last))
                   Padding(
                     padding: EdgeInsets.only(left: widget.leadingPadding),
                     child: (widget.dividerBuilder != null)
@@ -173,8 +174,9 @@ class _ContainedListState<T> extends State<ContainedList<T>> {
     );
   }
 
-  Widget _cell(BuildContext context, T child) {
+  Widget _cell(BuildContext context, T child, int index) {
     return _ListViewCell(
+      index: index,
       item: child,
       padding: widget.childPadding,
       isAnimated: widget.isAnimated,
@@ -202,7 +204,7 @@ class _ContainedListState<T> extends State<ContainedList<T>> {
       preDelete: widget.preDelete,
       child: widget.childBuilder == null
           ? child as Widget
-          : widget.childBuilder!(context, child),
+          : widget.childBuilder!(context, child, index),
     );
   }
 }
@@ -210,6 +212,7 @@ class _ContainedListState<T> extends State<ContainedList<T>> {
 class _ListViewCell<T> extends StatefulWidget {
   const _ListViewCell({
     Key? key,
+    required this.index,
     required this.item,
     required this.child,
     required this.padding,
@@ -231,6 +234,7 @@ class _ListViewCell<T> extends StatefulWidget {
     required this.animateOpen,
     this.preDelete,
   }) : super(key: key);
+  final int index;
   final T item;
   final Widget child;
   final EdgeInsets padding;
@@ -243,7 +247,7 @@ class _ListViewCell<T> extends StatefulWidget {
   final double borderRadius;
   final bool isFirst;
   final bool isLast;
-  final Function(T)? onDelete;
+  final Function(BuildContext context, T item, int index)? onDelete;
   final List<T>? selected;
   final bool allowsSelect;
   final Function(T)? onSelect;
@@ -284,14 +288,14 @@ class _ListViewCellState<T> extends State<_ListViewCell<T>>
     super.initState();
   }
 
-  Future<void> _remove() async {
+  Future<void> _remove(BuildContext context) async {
     bool cont = true;
     if (widget.preDelete != null) {
       cont = await widget.preDelete!(widget.item);
     }
     if (cont) {
       await _controller.reverse();
-      widget.onDelete!(widget.item);
+      widget.onDelete!(context, widget.item, widget.index);
       // reset height for child that inherits this position
       setState(() {
         _controller.value = double.infinity;
@@ -326,7 +330,7 @@ class _ListViewCellState<T> extends State<_ListViewCell<T>>
                 ),
                 child: Row(children: [
                   SlidableAction(
-                    onPressed: (context) async => await _remove(),
+                    onPressed: (context) async => await _remove(context),
                     icon: Icons.delete,
                     foregroundColor: Colors.red,
                     backgroundColor: Colors.red.withOpacity(0.3),

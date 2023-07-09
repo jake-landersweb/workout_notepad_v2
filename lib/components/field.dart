@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:workout_notepad_v2/components/root.dart';
 
 enum TextFieldType { string, integer }
 
@@ -32,6 +33,7 @@ class Field extends StatefulWidget {
   final bool autocorrect;
   final TextAlign textAlign;
   final Color? highlightColor;
+  final bool hasClearButton;
 
   const Field({
     Key? key,
@@ -57,6 +59,7 @@ class Field extends StatefulWidget {
     this.autocorrect = false,
     this.textAlign = TextAlign.start,
     this.highlightColor,
+    this.hasClearButton = false,
   }) : super(key: key);
 
   @override
@@ -121,18 +124,46 @@ class _FieldState extends State<Field> {
         if (widget.controller == null
             ? _controller!.text.isNotEmpty
             : widget.controller!.text.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(right: 4),
-            child: Text(
-              widget.labelText,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Theme.of(context).brightness == Brightness.light
-                    ? Colors.black.withOpacity(0.5)
-                    : Colors.white.withOpacity(0.5),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 4),
+                child: Text(
+                  widget.labelText,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? Colors.black.withOpacity(0.5)
+                        : Colors.white.withOpacity(0.5),
+                  ),
+                ),
               ),
-            ),
+              if (widget.hasClearButton)
+                Clickable(
+                  onTap: () {
+                    if (widget.controller == null) {
+                      setState(() {
+                        _controller!.text = "";
+                      });
+                    } else {
+                      setState(() {
+                        widget.controller!.text = "";
+                      });
+                    }
+                    widget.onChanged("");
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 4),
+                    child: Icon(
+                      Icons.cancel,
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? Colors.black.withOpacity(0.3)
+                          : Colors.white.withOpacity(0.3),
+                    ),
+                  ),
+                ),
+            ],
           ),
       ],
     );

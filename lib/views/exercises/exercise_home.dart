@@ -43,7 +43,7 @@ class _ExerciseHomeState extends State<ExerciseHome> {
           hintText: "Search by title or category",
         ),
         const SizedBox(height: 16),
-        for (var i in filteredExercises(dmodel.exercises, _searchText))
+        for (var i in filteredExercises(dmodel, dmodel.exercises, _searchText))
           ExerciseCell(
             exercise: i,
             padding: const EdgeInsets.only(bottom: 8),
@@ -54,7 +54,9 @@ class _ExerciseHomeState extends State<ExerciseHome> {
               );
             },
           ),
-        SizedBox(height: dmodel.workoutState == null ? 50 : 80),
+        SizedBox(
+            height: (dmodel.workoutState == null ? 100 : 130) +
+                (dmodel.user!.offline ? 30 : 0)),
       ],
     );
   }

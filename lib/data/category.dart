@@ -1,24 +1,33 @@
 import 'package:sqflite/sql.dart';
+import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 
 class Category {
+  late String categoryId;
   late String title;
   late String icon;
 
   Category({
+    required this.categoryId,
     required this.title,
     required this.icon,
   });
 
-  Category copy() => Category(title: title, icon: icon);
+  Category.init({required this.title, required this.icon}) {
+    categoryId = const Uuid().v4();
+  }
+
+  Category copy() => Category(categoryId: categoryId, title: title, icon: icon);
 
   Category.fromJson(Map<String, dynamic> json) {
+    categoryId = json['categoryId'];
     title = json['title'];
     icon = json['icon'] ?? "";
   }
 
   Map<String, dynamic> toMap() {
     return {
+      'categoryId': categoryId,
       "title": title,
       "icon": icon,
     };

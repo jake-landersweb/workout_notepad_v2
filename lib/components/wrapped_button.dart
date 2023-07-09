@@ -3,6 +3,8 @@ import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
+enum WrappedButtonType { standard, main }
+
 class WrappedButton extends StatelessWidget {
   const WrappedButton({
     super.key,
@@ -17,7 +19,9 @@ class WrappedButton extends StatelessWidget {
     this.height = 45,
     this.center = false,
     this.padding = const EdgeInsets.symmetric(horizontal: 16),
+    this.type = WrappedButtonType.standard,
   });
+
   final String title;
   final Color? bg;
   final Color? fg;
@@ -29,6 +33,7 @@ class WrappedButton extends StatelessWidget {
   final double? height;
   final bool center;
   final EdgeInsets padding;
+  final WrappedButtonType type;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +46,7 @@ class WrappedButton extends StatelessWidget {
   Widget _body(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: bg ?? AppColors.cell(context),
+        color: getBg(context),
         borderRadius: BorderRadius.circular(10),
       ),
       height: height,
@@ -81,9 +86,27 @@ class WrappedButton extends StatelessWidget {
             ? LoadingIndicator(color: fg)
             : Text(
                 title,
-                style: ttLabel(context, color: fg),
+                style: ttLabel(context, color: getFg(context)),
               ),
       ],
     );
+  }
+
+  Color? getBg(BuildContext context) {
+    switch (type) {
+      case WrappedButtonType.standard:
+        return bg ?? AppColors.cell(context);
+      case WrappedButtonType.main:
+        return Theme.of(context).primaryColor;
+    }
+  }
+
+  Color? getFg(BuildContext context) {
+    switch (type) {
+      case WrappedButtonType.standard:
+        return fg;
+      case WrappedButtonType.main:
+        return Colors.white;
+    }
   }
 }

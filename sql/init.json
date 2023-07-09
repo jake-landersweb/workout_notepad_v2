@@ -1,58 +1,66 @@
 {
-  "id": "1688750045153-b0703625d8d94d98b0feaff6c1f19a33",
-  "categories": [
-    {
-      "created": "2023-06-20 00:40:51",
+    "id": "1688883179747-cef5415586b24da6bedc59319d345e9e",
+    "categories": [
+     {
+      "categoryId": "1",
+      "created": "2023-07-09 06:12:47",
       "icon": "leg",
       "title": "legs",
-      "updated": "2023-06-20 00:40:51"
-    },
-    {
-      "created": "2023-06-20 00:41:28",
+      "updated": "2023-07-09 06:12:47"
+     },
+     {
+      "categoryId": "2",
+      "created": "2023-07-09 06:12:47",
       "icon": "prelum",
       "title": "abs",
-      "updated": "2023-06-20 00:41:28"
-    },
-    {
-      "created": "2023-06-20 00:54:17",
+      "updated": "2023-07-09 06:12:47"
+     },
+     {
+      "categoryId": "3",
+      "created": "2023-07-09 06:12:47",
       "icon": "treadmill",
       "title": "cardio",
-      "updated": "2023-06-20 00:54:17"
-    },
-    {
-      "created": "2023-06-20 13:16:49",
-      "icon": "bench-press",
+      "updated": "2023-07-09 06:12:47"
+     },
+     {
+      "categoryId": "4",
+      "created": "2023-07-09 06:12:47",
+      "icon": "chest",
       "title": "chest",
-      "updated": "2023-06-20 13:16:49"
-    },
-    {
-      "created": "2023-06-20 13:18:16",
-      "icon": "",
+      "updated": "2023-07-09 06:12:47"
+     },
+     {
+      "categoryId": "5",
+      "created": "2023-07-09 06:12:47",
+      "icon": "shoulders",
       "title": "shoulders",
-      "updated": "2023-06-20 13:18:16"
-    },
-    {
-      "created": "2023-06-20 13:19:15",
-      "icon": "workout",
+      "updated": "2023-07-09 06:12:47"
+     },
+     {
+      "categoryId": "6",
+      "created": "2023-07-09 06:12:47",
+      "icon": "triceps",
       "title": "triceps",
-      "updated": "2023-06-20 13:19:15"
-    },
-    {
-      "created": "2023-06-21 03:18:54",
-      "icon": "middle-back",
+      "updated": "2023-07-09 06:12:47"
+     },
+     {
+      "categoryId": "7",
+      "created": "2023-07-09 06:12:47",
+      "icon": "bodybuilder",
       "title": "back",
-      "updated": "2023-06-21 03:18:54"
-    },
-    {
-      "created": "2023-06-21 03:21:07",
-      "icon": "muscle",
+      "updated": "2023-07-09 06:12:47"
+     },
+     {
+      "categoryId": "8",
+      "created": "2023-07-09 06:12:47",
+      "icon": "biceps",
       "title": "biceps",
-      "updated": "2023-06-21 03:21:07"
-    }
-  ],
-  "created": "2023-07-07 17:14:05.153427",
-  "exerciseLogs": [
-    {
+      "updated": "2023-07-09 06:12:47"
+     }
+    ],
+    "created": "2023-07-09 06:12:59.747987",
+    "exerciseLogs": [
+     {
       "created": "2023-06-20 00:45:05",
       "exerciseId": "31dc5800-930f-40b3-9607-0e832dd966bf",
       "exerciseLogId": "39103e42-8bdd-4085-95c7-deef3cde7e39",
@@ -67,8 +75,8 @@
       "weight": "135",
       "weightPost": "lbs",
       "workoutLogId": "917a2d3d-ad68-4ef1-9be2-7d0874e8f45f"
-    },
-    {
+     },
+     {
       "created": "2023-06-20 00:47:22",
       "exerciseId": "31dc5800-930f-40b3-9607-0e832dd966bf",
       "exerciseLogId": "e7a4545c-a86d-4c47-a819-0aa32ac8b262",
@@ -83,8 +91,8 @@
       "weight": "135,225,315,365,365",
       "weightPost": "lbs",
       "workoutLogId": "db5f0024-83fd-41b0-907f-b72708f04599"
-    },
-    {
+     },
+     {
       "created": "2023-06-20 00:47:23",
       "exerciseId": "1a9c4034-2230-4496-bc4a-ec991ced107a",
       "exerciseLogId": "f8b6be6b-6c7b-4311-ad49-32278d574b51",
@@ -99,8 +107,8 @@
       "weight": "135,185,185,185",
       "weightPost": "lbs",
       "workoutLogId": "db5f0024-83fd-41b0-907f-b72708f04599"
-    },
-    {
+     },
+     {
       "created": "2023-06-20 00:47:23",
       "exerciseId": "54ae501f-c066-458d-bbc3-2b5885865166",
       "exerciseLogId": "3363ad2f-bc72-4ed2-8c01-a6cdb8678f60",
@@ -115,8 +123,8 @@
       "weight": "70,80,80",
       "weightPost": "lbs",
       "workoutLogId": "db5f0024-83fd-41b0-907f-b72708f04599"
-    },
-    {
+     },
+     {
       "created": "2023-06-20 00:47:23",
       "exerciseId": "2bf680dc-7fad-45c4-b732-abd171cd7e46",
       "exerciseLogId": "c2a8822d-cc29-4962-8ee8-de6d3b00ed66",
@@ -131,8 +139,8 @@
       "weight": "183,203,203",
       "weightPost": "lbs",
       "workoutLogId": "db5f0024-83fd-41b0-907f-b72708f04599"
-    },
-    {
+     },
+     {
       "created": "2023-06-20 00:47:23",
       "exerciseId": "4f7e1ba4-da78-4d82-ba30-8901d51fcf82",
       "exerciseLogId": "b12f8ad1-6754-4b68-ae8b-6926e07452c3",
@@ -147,8 +155,8 @@
       "weight": "90,90,90,90",
       "weightPost": "lbs",
       "workoutLogId": "db5f0024-83fd-41b0-907f-b72708f04599"
-    },
-    {
+     },
+     {
       "created": "2023-06-20 00:47:23",
       "exerciseId": "9fa6f500-ed47-4bd3-97c2-ef22a81b9601",
       "exerciseLogId": "436b68e6-ca13-4bdc-95d0-e00d3cdde367",
@@ -163,8 +171,8 @@
       "weight": "0,0,0,0",
       "weightPost": "lbs",
       "workoutLogId": "db5f0024-83fd-41b0-907f-b72708f04599"
-    },
-    {
+     },
+     {
       "created": "2023-06-20 00:47:23",
       "exerciseId": "cd5e37be-cd34-43b5-a43e-5aaa78f20551",
       "exerciseLogId": "bf3e51b3-08d4-462c-acca-71f6496894a2",
@@ -179,8 +187,8 @@
       "weight": "0,0,0",
       "weightPost": "lbs",
       "workoutLogId": "db5f0024-83fd-41b0-907f-b72708f04599"
-    },
-    {
+     },
+     {
       "created": "2023-06-20 00:47:23",
       "exerciseId": "dae86f24-29f5-4d94-be20-7f9ebdde0e8b",
       "exerciseLogId": "6fac8679-a8d2-4b30-94e2-148fe717e62c",
@@ -195,8 +203,8 @@
       "weight": "50,50",
       "weightPost": "lbs",
       "workoutLogId": "db5f0024-83fd-41b0-907f-b72708f04599"
-    },
-    {
+     },
+     {
       "created": "2023-06-20 15:12:09",
       "exerciseId": "882d1763-6e5f-4bf1-b567-4a98c7dd812d",
       "exerciseLogId": "9937ccb2-a2f3-4724-ab84-0a1a14a8a127",
@@ -211,8 +219,8 @@
       "weight": "0",
       "weightPost": "lbs",
       "workoutLogId": "57f0c172-ecee-4359-8d0a-f9d5aaba6a0d"
-    },
-    {
+     },
+     {
       "created": "2023-06-20 15:12:09",
       "exerciseId": "cf9d69d2-d119-46a2-8338-135aa28ede0e",
       "exerciseLogId": "d0fe168c-f4c7-46b8-a2f3-ad51ae47cc8d",
@@ -227,8 +235,8 @@
       "weight": "70,80,90,100,100",
       "weightPost": "lbs",
       "workoutLogId": "57f0c172-ecee-4359-8d0a-f9d5aaba6a0d"
-    },
-    {
+     },
+     {
       "created": "2023-06-20 15:12:09",
       "exerciseId": "0c804742-2f37-4d8b-ab34-040aa0eb54be",
       "exerciseLogId": "e62716d0-7f65-492f-94d5-460b7aec6c9a",
@@ -243,8 +251,8 @@
       "weight": "90,115",
       "weightPost": "lbs",
       "workoutLogId": "57f0c172-ecee-4359-8d0a-f9d5aaba6a0d"
-    },
-    {
+     },
+     {
       "created": "2023-06-20 15:12:09",
       "exerciseId": "55588293-4527-4c72-9f24-ba72d6f56857",
       "exerciseLogId": "3c9d3c28-e20d-4e11-968b-459619713432",
@@ -259,8 +267,8 @@
       "weight": "135,155,185",
       "weightPost": "lbs",
       "workoutLogId": "57f0c172-ecee-4359-8d0a-f9d5aaba6a0d"
-    },
-    {
+     },
+     {
       "created": "2023-06-20 15:12:09",
       "exerciseId": "0a643fb3-1191-4aff-8696-23e90605cf83",
       "exerciseLogId": "bb6725bf-7ab5-4756-b198-6158236f01b4",
@@ -275,8 +283,8 @@
       "weight": "70,70,70",
       "weightPost": "lbs",
       "workoutLogId": "57f0c172-ecee-4359-8d0a-f9d5aaba6a0d"
-    },
-    {
+     },
+     {
       "created": "2023-06-20 15:12:09",
       "exerciseId": "953019ee-15b0-4d14-8fa5-eed668eb4d34",
       "exerciseLogId": "e87fc55e-f78e-44c6-bb4b-1d114a938dd7",
@@ -291,8 +299,8 @@
       "weight": "50,60,70",
       "weightPost": "lbs",
       "workoutLogId": "57f0c172-ecee-4359-8d0a-f9d5aaba6a0d"
-    },
-    {
+     },
+     {
       "created": "2023-06-20 15:12:09",
       "exerciseId": "ed47d49f-e0b8-45d5-8df7-6b05fa029bdb",
       "exerciseLogId": "15b9ecaa-f014-49ad-91f4-023b0dd4f5f0",
@@ -307,8 +315,8 @@
       "weight": "40,30,30",
       "weightPost": "lbs",
       "workoutLogId": "57f0c172-ecee-4359-8d0a-f9d5aaba6a0d"
-    },
-    {
+     },
+     {
       "created": "2023-06-20 15:12:09",
       "exerciseId": "5e5029e1-8057-4871-90a5-c0ec9ef1df35",
       "exerciseLogId": "55c85fff-e720-4f46-a4d4-eed8d6ee4e01",
@@ -323,8 +331,8 @@
       "weight": "100,100,100",
       "weightPost": "lbs",
       "workoutLogId": "57f0c172-ecee-4359-8d0a-f9d5aaba6a0d"
-    },
-    {
+     },
+     {
       "created": "2023-06-20 15:12:09",
       "exerciseId": "1e8454bc-11cd-4d32-8141-daf32d874db8",
       "exerciseLogId": "d6520869-b5dc-4567-83c9-5a3e5b362e80",
@@ -339,8 +347,8 @@
       "weight": "40,40,40",
       "weightPost": "lbs",
       "workoutLogId": "57f0c172-ecee-4359-8d0a-f9d5aaba6a0d"
-    },
-    {
+     },
+     {
       "created": "2023-06-20 15:12:09",
       "exerciseId": "ace00215-efc6-4003-9f04-fa4a4884bc73",
       "exerciseLogId": "a47b9c38-dee1-47a8-9785-bc4758fca3a9",
@@ -355,8 +363,8 @@
       "weight": "100,100,90",
       "weightPost": "lbs",
       "workoutLogId": "57f0c172-ecee-4359-8d0a-f9d5aaba6a0d"
-    },
-    {
+     },
+     {
       "created": "2023-06-21 03:16:10",
       "exerciseId": "cd5e37be-cd34-43b5-a43e-5aaa78f20551",
       "exerciseLogId": "4c7b7f27-8d37-4aa5-b1ae-4921bf893af1",
@@ -371,8 +379,8 @@
       "weight": "0,0,0",
       "weightPost": "lbs",
       "workoutLogId": "d831298b-e1b0-4d93-9f75-435c1b353d77"
-    },
-    {
+     },
+     {
       "created": "2023-06-21 15:23:10",
       "exerciseId": "882d1763-6e5f-4bf1-b567-4a98c7dd812d",
       "exerciseLogId": "edb63b78-86a5-4980-83d1-0fb7b1061363",
@@ -387,8 +395,8 @@
       "weight": "0",
       "weightPost": "lbs",
       "workoutLogId": "7a3642e6-ca0d-494b-ab8c-1e23303bbcae"
-    },
-    {
+     },
+     {
       "created": "2023-06-21 15:23:10",
       "exerciseId": "fccc4475-31df-460c-8961-536a606c57e9",
       "exerciseLogId": "d7c35879-201b-4473-afb0-2eb7cc637e0a",
@@ -403,8 +411,8 @@
       "weight": "130,145,160,160",
       "weightPost": "lbs",
       "workoutLogId": "7a3642e6-ca0d-494b-ab8c-1e23303bbcae"
-    },
-    {
+     },
+     {
       "created": "2023-06-21 15:23:10",
       "exerciseId": "629a7702-ed48-40e5-bb0d-73ee04cb6771",
       "exerciseLogId": "f3b9841f-5a88-4823-afd2-3548c3fc0eb2",
@@ -419,8 +427,8 @@
       "weight": "70,80,90,90",
       "weightPost": "lbs",
       "workoutLogId": "7a3642e6-ca0d-494b-ab8c-1e23303bbcae"
-    },
-    {
+     },
+     {
       "created": "2023-06-21 15:23:10",
       "exerciseId": "171522d4-9a9c-4350-aff7-455f4bf223b1",
       "exerciseLogId": "e7e19624-0dfb-411e-9d9d-691dc698af37",
@@ -435,8 +443,8 @@
       "weight": "70,70,70,80",
       "weightPost": "lbs",
       "workoutLogId": "7a3642e6-ca0d-494b-ab8c-1e23303bbcae"
-    },
-    {
+     },
+     {
       "created": "2023-06-21 15:23:10",
       "exerciseId": "99c807e5-5998-4606-9cc9-1aae4f575562",
       "exerciseLogId": "2f9d9f88-d81c-425d-928d-1d86ff947bdb",
@@ -451,8 +459,8 @@
       "weight": "45,45,45",
       "weightPost": "lbs",
       "workoutLogId": "7a3642e6-ca0d-494b-ab8c-1e23303bbcae"
-    },
-    {
+     },
+     {
       "created": "2023-06-21 15:23:10",
       "exerciseId": "a20dd781-9da9-4b5b-a04e-a4e2a9b06870",
       "exerciseLogId": "d5df8687-216b-442b-8888-5eeb57b16ae0",
@@ -467,8 +475,8 @@
       "weight": "70,80,80,80",
       "weightPost": "lbs",
       "workoutLogId": "7a3642e6-ca0d-494b-ab8c-1e23303bbcae"
-    },
-    {
+     },
+     {
       "created": "2023-06-21 15:23:10",
       "exerciseId": "3ff55895-6a33-43f0-8686-7f7a9c388fc5",
       "exerciseLogId": "f43dc611-8745-4705-a9e2-388e75723f35",
@@ -483,8 +491,8 @@
       "weight": "100,100,110",
       "weightPost": "lbs",
       "workoutLogId": "7a3642e6-ca0d-494b-ab8c-1e23303bbcae"
-    },
-    {
+     },
+     {
       "created": "2023-06-21 15:23:10",
       "exerciseId": "e85ee36b-d006-48a9-b3ff-b3207ecc24a3",
       "exerciseLogId": "8e4232d7-e8fb-4194-9225-b20c9af1374e",
@@ -499,8 +507,8 @@
       "weight": "30,30,30",
       "weightPost": "lbs",
       "workoutLogId": "7a3642e6-ca0d-494b-ab8c-1e23303bbcae"
-    },
-    {
+     },
+     {
       "created": "2023-06-21 15:23:10",
       "exerciseId": "669cbf95-07f9-4310-ae8b-1a3adeb97be2",
       "exerciseLogId": "772f7534-0cb0-422a-8956-2b55ac8ddac1",
@@ -515,8 +523,8 @@
       "weight": "0,0",
       "weightPost": "lbs",
       "workoutLogId": "7a3642e6-ca0d-494b-ab8c-1e23303bbcae"
-    },
-    {
+     },
+     {
       "created": "2023-06-22 15:20:08",
       "exerciseId": "b20f5d1c-1545-4aaf-8631-7900ced916b1",
       "exerciseLogId": "7c5f773e-d097-4410-a6dd-a2f30d73c20a",
@@ -531,8 +539,8 @@
       "weight": "0",
       "weightPost": "lbs",
       "workoutLogId": "eebaec55-e234-42c9-ab27-c379b93077df"
-    },
-    {
+     },
+     {
       "created": "2023-06-22 15:20:08",
       "exerciseId": "d4044056-dddc-4b00-9381-a64f7f96dc97",
       "exerciseLogId": "afe9c9a9-32fb-4ada-9103-e52fc673393b",
@@ -547,8 +555,8 @@
       "weight": "70,100,120,120",
       "weightPost": "lbs",
       "workoutLogId": "eebaec55-e234-42c9-ab27-c379b93077df"
-    },
-    {
+     },
+     {
       "created": "2023-06-22 15:20:08",
       "exerciseId": "06e70551-3f95-4094-9a8c-617fd06fa548",
       "exerciseLogId": "499b3966-ba6f-4106-8906-d04bc24dd84b",
@@ -563,8 +571,8 @@
       "weight": "50,50,40,40",
       "weightPost": "lbs",
       "workoutLogId": "eebaec55-e234-42c9-ab27-c379b93077df"
-    },
-    {
+     },
+     {
       "created": "2023-06-22 15:20:08",
       "exerciseId": "669cbf95-07f9-4310-ae8b-1a3adeb97be2",
       "exerciseLogId": "f36c42ff-cec3-4350-bf92-7dd8102e3645",
@@ -579,8 +587,8 @@
       "weight": "0,0,0",
       "weightPost": "lbs",
       "workoutLogId": "eebaec55-e234-42c9-ab27-c379b93077df"
-    },
-    {
+     },
+     {
       "created": "2023-06-22 15:20:08",
       "exerciseId": "9fa6f500-ed47-4bd3-97c2-ef22a81b9601",
       "exerciseLogId": "8f59fb78-1cd9-4b6e-866a-62fee1f6a9b9",
@@ -595,8 +603,8 @@
       "weight": "0,0,0",
       "weightPost": "lbs",
       "workoutLogId": "eebaec55-e234-42c9-ab27-c379b93077df"
-    },
-    {
+     },
+     {
       "created": "2023-06-22 15:20:08",
       "exerciseId": "99c807e5-5998-4606-9cc9-1aae4f575562",
       "exerciseLogId": "5c5b4f06-5167-44e6-a8d8-eca627ddc664",
@@ -611,8 +619,8 @@
       "weight": "45,45,45",
       "weightPost": "lbs",
       "workoutLogId": "eebaec55-e234-42c9-ab27-c379b93077df"
-    },
-    {
+     },
+     {
       "created": "2023-06-22 15:20:08",
       "exerciseId": "b20f5d1c-1545-4aaf-8631-7900ced916b1",
       "exerciseLogId": "879217d4-34bc-4063-86e1-d63354655a34",
@@ -627,8 +635,8 @@
       "weight": "0",
       "weightPost": "lbs",
       "workoutLogId": "eebaec55-e234-42c9-ab27-c379b93077df"
-    },
-    {
+     },
+     {
       "created": "2023-06-23 15:23:48",
       "exerciseId": "b20f5d1c-1545-4aaf-8631-7900ced916b1",
       "exerciseLogId": "3a87795f-d5b5-4d75-9a6b-10ef71538a96",
@@ -643,8 +651,8 @@
       "weight": "0",
       "weightPost": "lbs",
       "workoutLogId": "0f3e162e-76f3-48f6-b215-e78656d3ecbe"
-    },
-    {
+     },
+     {
       "created": "2023-06-23 15:23:48",
       "exerciseId": "c438be48-e118-409f-939a-ac08a9713e88",
       "exerciseLogId": "bd0fef92-862c-4e4a-b550-ad63f2d86431",
@@ -659,8 +667,8 @@
       "weight": "35,40,40,40",
       "weightPost": "lbs",
       "workoutLogId": "0f3e162e-76f3-48f6-b215-e78656d3ecbe"
-    },
-    {
+     },
+     {
       "created": "2023-06-23 15:23:48",
       "exerciseId": "bf3abcd6-bfaf-444d-aa15-6abe97283014",
       "exerciseLogId": "9fba258a-9c67-4893-832f-8d07340843d7",
@@ -675,8 +683,8 @@
       "weight": "25,20,20,20",
       "weightPost": "lbs",
       "workoutLogId": "0f3e162e-76f3-48f6-b215-e78656d3ecbe"
-    },
-    {
+     },
+     {
       "created": "2023-06-23 15:23:48",
       "exerciseId": "66cdf17a-6f92-48ac-80b4-c46299570798",
       "exerciseLogId": "53d729e0-cea6-413b-b533-e3841a017010",
@@ -691,8 +699,8 @@
       "weight": "95,115,115",
       "weightPost": "lbs",
       "workoutLogId": "0f3e162e-76f3-48f6-b215-e78656d3ecbe"
-    },
-    {
+     },
+     {
       "created": "2023-06-23 15:23:48",
       "exerciseId": "ed47d49f-e0b8-45d5-8df7-6b05fa029bdb",
       "exerciseLogId": "f1bfd1d6-5a21-4911-9573-6b8497f66f1a",
@@ -707,8 +715,8 @@
       "weight": "30,30,30",
       "weightPost": "lbs",
       "workoutLogId": "0f3e162e-76f3-48f6-b215-e78656d3ecbe"
-    },
-    {
+     },
+     {
       "created": "2023-06-23 15:23:48",
       "exerciseId": "a20dd781-9da9-4b5b-a04e-a4e2a9b06870",
       "exerciseLogId": "87a6760e-4c43-4e2f-9436-75e410e53166",
@@ -723,8 +731,8 @@
       "weight": "75,75,75,75",
       "weightPost": "lbs",
       "workoutLogId": "0f3e162e-76f3-48f6-b215-e78656d3ecbe"
-    },
-    {
+     },
+     {
       "created": "2023-06-23 15:23:48",
       "exerciseId": "e85ee36b-d006-48a9-b3ff-b3207ecc24a3",
       "exerciseLogId": "9b244cec-a359-4a37-a6e6-9fbae6ca53e2",
@@ -739,8 +747,8 @@
       "weight": "30,30,30",
       "weightPost": "lbs",
       "workoutLogId": "0f3e162e-76f3-48f6-b215-e78656d3ecbe"
-    },
-    {
+     },
+     {
       "created": "2023-06-23 15:23:48",
       "exerciseId": "de45b67e-696b-45dd-beb8-5c2a5c97d3a8",
       "exerciseLogId": "f3a065e6-d960-4719-a243-feaa1fabcdcd",
@@ -750,13 +758,13 @@
       "sets": 3,
       "time": "0,0,0",
       "title": "Dips",
-      "type": 0,
+      "type": 3,
       "updated": "2023-06-23 15:23:48",
       "weight": "0,0,0",
       "weightPost": "lbs",
       "workoutLogId": "0f3e162e-76f3-48f6-b215-e78656d3ecbe"
-    },
-    {
+     },
+     {
       "created": "2023-06-23 15:23:48",
       "exerciseId": "5e5029e1-8057-4871-90a5-c0ec9ef1df35",
       "exerciseLogId": "647d75f5-f859-4f06-a66a-fbe001bdb447",
@@ -771,8 +779,8 @@
       "weight": "120,120,120",
       "weightPost": "lbs",
       "workoutLogId": "0f3e162e-76f3-48f6-b215-e78656d3ecbe"
-    },
-    {
+     },
+     {
       "created": "2023-06-23 15:23:48",
       "exerciseId": "ace00215-efc6-4003-9f04-fa4a4884bc73",
       "exerciseLogId": "d2899943-6f36-4b57-ab3a-deedf71c5a7b",
@@ -787,8 +795,8 @@
       "weight": "120,110,110",
       "weightPost": "lbs",
       "workoutLogId": "0f3e162e-76f3-48f6-b215-e78656d3ecbe"
-    },
-    {
+     },
+     {
       "created": "2023-06-24 15:53:21",
       "exerciseId": "994f8e0c-e514-4ea2-a284-dadd8ef7f45e",
       "exerciseLogId": "199688d0-3f09-4e57-9b24-5e2ca411f274",
@@ -803,8 +811,8 @@
       "weight": "0",
       "weightPost": "lbs",
       "workoutLogId": "1655609c-68d3-415b-86ca-fde68a865e48"
-    },
-    {
+     },
+     {
       "created": "2023-06-24 15:53:21",
       "exerciseId": "42c7ba17-f23e-4eaa-a42c-0e699881df42",
       "exerciseLogId": "797e1aa8-8ea6-4e4a-bd64-d95b42789948",
@@ -819,8 +827,8 @@
       "weight": "135,185,225,225,225",
       "weightPost": "lbs",
       "workoutLogId": "1655609c-68d3-415b-86ca-fde68a865e48"
-    },
-    {
+     },
+     {
       "created": "2023-06-24 15:53:21",
       "exerciseId": "0c804742-2f37-4d8b-ab34-040aa0eb54be",
       "exerciseLogId": "cf1ee7b6-d7aa-4e91-bb44-fe0262b85995",
@@ -835,8 +843,8 @@
       "weight": "90,90,90",
       "weightPost": "lbs",
       "workoutLogId": "1655609c-68d3-415b-86ca-fde68a865e48"
-    },
-    {
+     },
+     {
       "created": "2023-06-24 15:53:21",
       "exerciseId": "0a643fb3-1191-4aff-8696-23e90605cf83",
       "exerciseLogId": "77c5ac1e-27e6-4dcb-a39b-1e02ad0c9d19",
@@ -851,8 +859,8 @@
       "weight": "25,25,25",
       "weightPost": "lbs",
       "workoutLogId": "1655609c-68d3-415b-86ca-fde68a865e48"
-    },
-    {
+     },
+     {
       "created": "2023-06-24 15:53:21",
       "exerciseId": "260669fb-298c-48f9-bd93-95a2dc2c75e4",
       "exerciseLogId": "83a262b3-ebb3-4668-9fa8-8c2c0f10d336",
@@ -867,8 +875,8 @@
       "weight": "30,30,25",
       "weightPost": "lbs",
       "workoutLogId": "1655609c-68d3-415b-86ca-fde68a865e48"
-    },
-    {
+     },
+     {
       "created": "2023-06-24 15:53:21",
       "exerciseId": "9df68111-dd10-40f6-85c5-bc405fc50618",
       "exerciseLogId": "44a51034-36a1-4ad7-a0cc-f15bb9af08d6",
@@ -883,8 +891,8 @@
       "weight": "135,155,155",
       "weightPost": "lbs",
       "workoutLogId": "1655609c-68d3-415b-86ca-fde68a865e48"
-    },
-    {
+     },
+     {
       "created": "2023-06-24 15:53:21",
       "exerciseId": "cc6054e2-a571-4cd7-b0e0-1d700174d96e",
       "exerciseLogId": "edf62a21-11e9-4de6-857a-16e988060304",
@@ -894,13 +902,13 @@
       "sets": 3,
       "time": "0,0,0",
       "title": "Pullups",
-      "type": 0,
+      "type": 3,
       "updated": "2023-06-24 15:53:21",
       "weight": "0,0,0",
       "weightPost": "lbs",
       "workoutLogId": "1655609c-68d3-415b-86ca-fde68a865e48"
-    },
-    {
+     },
+     {
       "created": "2023-06-24 15:53:21",
       "exerciseId": "3d824b9c-b7f2-4150-88f5-0b639c803bd0",
       "exerciseLogId": "05e938ae-f229-42bd-a8d4-9fed856bd3ca",
@@ -915,8 +923,8 @@
       "weight": "140,140,140",
       "weightPost": "lbs",
       "workoutLogId": "1655609c-68d3-415b-86ca-fde68a865e48"
-    },
-    {
+     },
+     {
       "created": "2023-06-24 15:53:21",
       "exerciseId": "b29dede6-b87e-497f-82a4-9b265e5e553c",
       "exerciseLogId": "bc00fd9c-4f6a-40e4-b096-cd00f4d3f81a",
@@ -931,8 +939,8 @@
       "weight": "30,30",
       "weightPost": "lbs",
       "workoutLogId": "1655609c-68d3-415b-86ca-fde68a865e48"
-    },
-    {
+     },
+     {
       "created": "2023-06-24 15:53:21",
       "exerciseId": "6d6d6c5d-ccc3-4d6c-a0d5-e60b18a89ab4",
       "exerciseLogId": "fd288b82-91d1-4678-b2ac-a6139f256ef2",
@@ -947,8 +955,8 @@
       "weight": "130,115,115",
       "weightPost": "lbs",
       "workoutLogId": "1655609c-68d3-415b-86ca-fde68a865e48"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 18:47:25",
       "exerciseId": "882d1763-6e5f-4bf1-b567-4a98c7dd812d",
       "exerciseLogId": "fb140af8-ef24-4569-9a60-1907f18f5dfc",
@@ -963,8 +971,8 @@
       "weight": "0",
       "weightPost": "lbs",
       "workoutLogId": "eb3f4e4f-55c6-4b8a-b637-287aac3598ea"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 18:47:25",
       "exerciseId": "31dc5800-930f-40b3-9607-0e832dd966bf",
       "exerciseLogId": "51ae7d12-d1b0-4268-87d9-a9af4ac643a9",
@@ -979,8 +987,8 @@
       "weight": "145,225,315,365,405,315",
       "weightPost": "lbs",
       "workoutLogId": "eb3f4e4f-55c6-4b8a-b637-287aac3598ea"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 18:47:25",
       "exerciseId": "1a9c4034-2230-4496-bc4a-ec991ced107a",
       "exerciseLogId": "9995ac3b-8b12-4db3-ae15-076bc7946d45",
@@ -995,8 +1003,8 @@
       "weight": "135,155,155",
       "weightPost": "lbs",
       "workoutLogId": "eb3f4e4f-55c6-4b8a-b637-287aac3598ea"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 18:47:25",
       "exerciseId": "54ae501f-c066-458d-bbc3-2b5885865166",
       "exerciseLogId": "3400ca3c-713a-467b-8695-4b593bcf3038",
@@ -1011,8 +1019,8 @@
       "weight": "90,90",
       "weightPost": "lbs",
       "workoutLogId": "eb3f4e4f-55c6-4b8a-b637-287aac3598ea"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 18:47:25",
       "exerciseId": "2bf680dc-7fad-45c4-b732-abd171cd7e46",
       "exerciseLogId": "a91f0edd-87e9-4d0b-bd94-1c2378b63055",
@@ -1027,8 +1035,8 @@
       "weight": "183,214,199",
       "weightPost": "lbs",
       "workoutLogId": "eb3f4e4f-55c6-4b8a-b637-287aac3598ea"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 18:47:25",
       "exerciseId": "4f7e1ba4-da78-4d82-ba30-8901d51fcf82",
       "exerciseLogId": "d59eb516-f98e-4454-930d-f7997de06c97",
@@ -1043,8 +1051,8 @@
       "weight": "90,90,90",
       "weightPost": "lbs",
       "workoutLogId": "eb3f4e4f-55c6-4b8a-b637-287aac3598ea"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 18:47:25",
       "exerciseId": "669cbf95-07f9-4310-ae8b-1a3adeb97be2",
       "exerciseLogId": "7890fc86-1200-4909-a175-cd713612f6c0",
@@ -1059,8 +1067,8 @@
       "weight": "0,0,0",
       "weightPost": "lbs",
       "workoutLogId": "eb3f4e4f-55c6-4b8a-b637-287aac3598ea"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 18:47:25",
       "exerciseId": "9fa6f500-ed47-4bd3-97c2-ef22a81b9601",
       "exerciseLogId": "b7acaeaa-3d67-46af-be5f-1e100d3d929d",
@@ -1075,8 +1083,8 @@
       "weight": "0,0,0",
       "weightPost": "lbs",
       "workoutLogId": "eb3f4e4f-55c6-4b8a-b637-287aac3598ea"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 18:47:25",
       "exerciseId": "cd5e37be-cd34-43b5-a43e-5aaa78f20551",
       "exerciseLogId": "e0f4bf51-f0bd-4c4b-9830-c3ac76564520",
@@ -1091,8 +1099,8 @@
       "weight": "0,0",
       "weightPost": "lbs",
       "workoutLogId": "eb3f4e4f-55c6-4b8a-b637-287aac3598ea"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 18:47:25",
       "exerciseId": "dae86f24-29f5-4d94-be20-7f9ebdde0e8b",
       "exerciseLogId": "d069b912-fc91-447d-afc1-5e0087c4514f",
@@ -1107,8 +1115,8 @@
       "weight": "50,50",
       "weightPost": "lbs",
       "workoutLogId": "eb3f4e4f-55c6-4b8a-b637-287aac3598ea"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 15:15:56",
       "exerciseId": "882d1763-6e5f-4bf1-b567-4a98c7dd812d",
       "exerciseLogId": "928679b9-8caa-4eb1-a61c-5b84b3cc6a75",
@@ -1123,8 +1131,8 @@
       "weight": "0",
       "weightPost": "lbs",
       "workoutLogId": "3018daa2-08b2-48f5-9966-a49a8dd7e7c7"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 15:15:56",
       "exerciseId": "cf9d69d2-d119-46a2-8338-135aa28ede0e",
       "exerciseLogId": "6f3f2762-658b-4a04-9f88-61338c2c6f4f",
@@ -1139,8 +1147,8 @@
       "weight": "70,80,90,90",
       "weightPost": "lbs",
       "workoutLogId": "3018daa2-08b2-48f5-9966-a49a8dd7e7c7"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 15:15:56",
       "exerciseId": "0c804742-2f37-4d8b-ab34-040aa0eb54be",
       "exerciseLogId": "b12d580f-2159-4334-b07e-c38c8916f179",
@@ -1155,8 +1163,8 @@
       "weight": "90,110,110,90",
       "weightPost": "lbs",
       "workoutLogId": "3018daa2-08b2-48f5-9966-a49a8dd7e7c7"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 15:15:56",
       "exerciseId": "260669fb-298c-48f9-bd93-95a2dc2c75e4",
       "exerciseLogId": "5832c62d-9fb5-4d1b-919e-5ca22d4fd183",
@@ -1171,8 +1179,8 @@
       "weight": "30,30,25",
       "weightPost": "lbs",
       "workoutLogId": "3018daa2-08b2-48f5-9966-a49a8dd7e7c7"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 15:15:56",
       "exerciseId": "0a643fb3-1191-4aff-8696-23e90605cf83",
       "exerciseLogId": "4024e3cc-237a-4d13-9f26-e24f51a0a6a9",
@@ -1187,8 +1195,8 @@
       "weight": "25,20,25",
       "weightPost": "lbs",
       "workoutLogId": "3018daa2-08b2-48f5-9966-a49a8dd7e7c7"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 15:15:56",
       "exerciseId": "953019ee-15b0-4d14-8fa5-eed668eb4d34",
       "exerciseLogId": "fc3a6fb8-ee62-4ffc-914e-ed6889a64b3a",
@@ -1203,8 +1211,8 @@
       "weight": "55,55,55",
       "weightPost": "lbs",
       "workoutLogId": "3018daa2-08b2-48f5-9966-a49a8dd7e7c7"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 15:15:56",
       "exerciseId": "de45b67e-696b-45dd-beb8-5c2a5c97d3a8",
       "exerciseLogId": "1b3ef320-b86a-4d15-bc82-5d5adf16ce17",
@@ -1214,13 +1222,13 @@
       "sets": 3,
       "time": "0,0,0",
       "title": "Dips",
-      "type": 0,
+      "type": 3,
       "updated": "2023-06-27 15:15:56",
       "weight": "0,0,0",
       "weightPost": "lbs",
       "workoutLogId": "3018daa2-08b2-48f5-9966-a49a8dd7e7c7"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 15:15:56",
       "exerciseId": "5e5029e1-8057-4871-90a5-c0ec9ef1df35",
       "exerciseLogId": "715bbdb5-2736-45c7-be9a-df30ad0f3955",
@@ -1235,8 +1243,8 @@
       "weight": "120,120,110",
       "weightPost": "lbs",
       "workoutLogId": "3018daa2-08b2-48f5-9966-a49a8dd7e7c7"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 15:15:56",
       "exerciseId": "1e8454bc-11cd-4d32-8141-daf32d874db8",
       "exerciseLogId": "fe692e72-47d6-4ad7-837a-f4676ff1e76a",
@@ -1251,8 +1259,8 @@
       "weight": "40,40,40",
       "weightPost": "lbs",
       "workoutLogId": "3018daa2-08b2-48f5-9966-a49a8dd7e7c7"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 15:15:56",
       "exerciseId": "669cbf95-07f9-4310-ae8b-1a3adeb97be2",
       "exerciseLogId": "4162b901-b947-47fb-826c-fef63219eefd",
@@ -1267,8 +1275,8 @@
       "weight": "0,0,0",
       "weightPost": "lbs",
       "workoutLogId": "3018daa2-08b2-48f5-9966-a49a8dd7e7c7"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 15:15:56",
       "exerciseId": "ace00215-efc6-4003-9f04-fa4a4884bc73",
       "exerciseLogId": "be527396-6565-4a93-a1ef-b8c417fd5102",
@@ -1283,8 +1291,8 @@
       "weight": "110,100,110",
       "weightPost": "lbs",
       "workoutLogId": "3018daa2-08b2-48f5-9966-a49a8dd7e7c7"
-    },
-    {
+     },
+     {
       "created": "2023-06-28 15:13:00",
       "exerciseId": "882d1763-6e5f-4bf1-b567-4a98c7dd812d",
       "exerciseLogId": "d23ff65c-7706-43bb-84be-7574b5961210",
@@ -1299,8 +1307,8 @@
       "weight": "0",
       "weightPost": "lbs",
       "workoutLogId": "f7f69682-0a5b-4690-a233-c1f20c3f24b9"
-    },
-    {
+     },
+     {
       "created": "2023-06-28 15:13:00",
       "exerciseId": "9df68111-dd10-40f6-85c5-bc405fc50618",
       "exerciseLogId": "76fd5903-281d-4b27-a06d-09d283ee3a7a",
@@ -1315,8 +1323,8 @@
       "weight": "135,155,185,185",
       "weightPost": "lbs",
       "workoutLogId": "f7f69682-0a5b-4690-a233-c1f20c3f24b9"
-    },
-    {
+     },
+     {
       "created": "2023-06-28 15:13:00",
       "exerciseId": "cc6054e2-a571-4cd7-b0e0-1d700174d96e",
       "exerciseLogId": "fc844ec2-0903-44be-a9b6-ab409a762806",
@@ -1326,13 +1334,13 @@
       "sets": 3,
       "time": "0,0,0",
       "title": "Pullups",
-      "type": 0,
+      "type": 3,
       "updated": "2023-06-28 15:13:00",
       "weight": "0,0,0",
       "weightPost": "lbs",
       "workoutLogId": "f7f69682-0a5b-4690-a233-c1f20c3f24b9"
-    },
-    {
+     },
+     {
       "created": "2023-06-28 15:13:00",
       "exerciseId": "3d824b9c-b7f2-4150-88f5-0b639c803bd0",
       "exerciseLogId": "6cde82d5-6bc2-49e8-aa8e-d732c1b40633",
@@ -1347,8 +1355,8 @@
       "weight": "180,180,180",
       "weightPost": "lbs",
       "workoutLogId": "f7f69682-0a5b-4690-a233-c1f20c3f24b9"
-    },
-    {
+     },
+     {
       "created": "2023-06-28 15:13:00",
       "exerciseId": "a20dd781-9da9-4b5b-a04e-a4e2a9b06870",
       "exerciseLogId": "60c5945a-8af2-4a99-9b80-bf36ed7e0776",
@@ -1363,8 +1371,8 @@
       "weight": "75,75,75,75",
       "weightPost": "lbs",
       "workoutLogId": "f7f69682-0a5b-4690-a233-c1f20c3f24b9"
-    },
-    {
+     },
+     {
       "created": "2023-06-28 15:13:00",
       "exerciseId": "e85ee36b-d006-48a9-b3ff-b3207ecc24a3",
       "exerciseLogId": "0b9b1355-21f8-47c2-8144-260b7403c957",
@@ -1379,8 +1387,8 @@
       "weight": "30,30,30",
       "weightPost": "lbs",
       "workoutLogId": "f7f69682-0a5b-4690-a233-c1f20c3f24b9"
-    },
-    {
+     },
+     {
       "created": "2023-06-28 15:13:00",
       "exerciseId": "669cbf95-07f9-4310-ae8b-1a3adeb97be2",
       "exerciseLogId": "671a8341-cb5d-4263-92f1-831072dc4f8f",
@@ -1395,8 +1403,8 @@
       "weight": "0,0",
       "weightPost": "lbs",
       "workoutLogId": "f7f69682-0a5b-4690-a233-c1f20c3f24b9"
-    },
-    {
+     },
+     {
       "created": "2023-06-28 15:13:00",
       "exerciseId": "6d6d6c5d-ccc3-4d6c-a0d5-e60b18a89ab4",
       "exerciseLogId": "98b7b8f0-ed6d-4e2b-b6e0-77cf85155be1",
@@ -1411,8 +1419,8 @@
       "weight": "115,135,135",
       "weightPost": "lbs",
       "workoutLogId": "f7f69682-0a5b-4690-a233-c1f20c3f24b9"
-    },
-    {
+     },
+     {
       "created": "2023-07-02 01:46:32",
       "exerciseId": "882d1763-6e5f-4bf1-b567-4a98c7dd812d",
       "exerciseLogId": "72d42665-cbf7-4fce-ab88-4887807d90bf",
@@ -1427,8 +1435,8 @@
       "weight": "0",
       "weightPost": "lbs",
       "workoutLogId": "26e8eb89-ee14-49f0-ad21-81e20b76c486"
-    },
-    {
+     },
+     {
       "created": "2023-07-02 01:46:32",
       "exerciseId": "cf9d69d2-d119-46a2-8338-135aa28ede0e",
       "exerciseLogId": "03a4f1f4-715f-42eb-b96b-ade24398ebff",
@@ -1443,8 +1451,8 @@
       "weight": "70,80,90,100",
       "weightPost": "lbs",
       "workoutLogId": "26e8eb89-ee14-49f0-ad21-81e20b76c486"
-    },
-    {
+     },
+     {
       "created": "2023-07-02 01:46:32",
       "exerciseId": "260669fb-298c-48f9-bd93-95a2dc2c75e4",
       "exerciseLogId": "09afabfe-690f-401c-b532-6a26a2981341",
@@ -1459,8 +1467,8 @@
       "weight": "30,25,20",
       "weightPost": "lbs",
       "workoutLogId": "26e8eb89-ee14-49f0-ad21-81e20b76c486"
-    },
-    {
+     },
+     {
       "created": "2023-07-02 01:46:32",
       "exerciseId": "0a643fb3-1191-4aff-8696-23e90605cf83",
       "exerciseLogId": "0b9a21be-1b0f-4901-a83a-e81a216382cc",
@@ -1475,8 +1483,8 @@
       "weight": "20,20,20",
       "weightPost": "lbs",
       "workoutLogId": "26e8eb89-ee14-49f0-ad21-81e20b76c486"
-    },
-    {
+     },
+     {
       "created": "2023-07-02 01:46:32",
       "exerciseId": "15dad65e-bc79-429a-93c6-9e1a45cf9d12",
       "exerciseLogId": "3fd9a5f2-e82f-4fad-8afa-8f0f1b32d46c",
@@ -1491,8 +1499,8 @@
       "weight": "90,115,90,90",
       "weightPost": "lbs",
       "workoutLogId": "26e8eb89-ee14-49f0-ad21-81e20b76c486"
-    },
-    {
+     },
+     {
       "created": "2023-07-02 01:46:32",
       "exerciseId": "cc6054e2-a571-4cd7-b0e0-1d700174d96e",
       "exerciseLogId": "4dfab398-6a0c-467f-bf54-df2e0add6f25",
@@ -1502,13 +1510,13 @@
       "sets": 4,
       "time": "0,0,0,0",
       "title": "Pullups",
-      "type": 0,
+      "type": 3,
       "updated": "2023-07-02 01:46:32",
       "weight": "0,0,0,0",
       "weightPost": "lbs",
       "workoutLogId": "26e8eb89-ee14-49f0-ad21-81e20b76c486"
-    },
-    {
+     },
+     {
       "created": "2023-07-02 01:46:32",
       "exerciseId": "171522d4-9a9c-4350-aff7-455f4bf223b1",
       "exerciseLogId": "e6846267-5e48-45f7-a462-6e1288265d44",
@@ -1523,8 +1531,8 @@
       "weight": "70,80,80",
       "weightPost": "lbs",
       "workoutLogId": "26e8eb89-ee14-49f0-ad21-81e20b76c486"
-    },
-    {
+     },
+     {
       "created": "2023-07-02 01:46:32",
       "exerciseId": "3d824b9c-b7f2-4150-88f5-0b639c803bd0",
       "exerciseLogId": "b745a570-09de-46e9-aad2-cdc5e66c4469",
@@ -1539,8 +1547,8 @@
       "weight": "180,180,180",
       "weightPost": "lbs",
       "workoutLogId": "26e8eb89-ee14-49f0-ad21-81e20b76c486"
-    },
-    {
+     },
+     {
       "created": "2023-07-02 01:46:32",
       "exerciseId": "ccfb2b8f-b272-432c-87ca-f45a00bc89b5",
       "exerciseLogId": "2324dfab-43bf-4090-8c82-5537471b48bd",
@@ -1555,8 +1563,8 @@
       "weight": "115,130,130,130",
       "weightPost": "lbs",
       "workoutLogId": "26e8eb89-ee14-49f0-ad21-81e20b76c486"
-    },
-    {
+     },
+     {
       "created": "2023-07-03 17:14:55",
       "exerciseId": "882d1763-6e5f-4bf1-b567-4a98c7dd812d",
       "exerciseLogId": "e1eb7ad5-71b6-4019-b6b1-24e920dbeece",
@@ -1571,8 +1579,8 @@
       "weight": "0",
       "weightPost": "lbs",
       "workoutLogId": "f2b46763-1f4b-4d98-805f-83363e815b60"
-    },
-    {
+     },
+     {
       "created": "2023-07-03 17:14:55",
       "exerciseId": "31dc5800-930f-40b3-9607-0e832dd966bf",
       "exerciseLogId": "414b0259-da6b-4673-9d91-467c90bb89ff",
@@ -1587,8 +1595,8 @@
       "weight": "135,225,315,315,365",
       "weightPost": "lbs",
       "workoutLogId": "f2b46763-1f4b-4d98-805f-83363e815b60"
-    },
-    {
+     },
+     {
       "created": "2023-07-03 17:14:55",
       "exerciseId": "f443c935-5f32-49e3-ba8e-79f6247f6ecc",
       "exerciseLogId": "0a40c558-e27f-4eb7-ac10-8e4ef1dc8519",
@@ -1603,8 +1611,8 @@
       "weight": "135,155,185,185",
       "weightPost": "lbs",
       "workoutLogId": "f2b46763-1f4b-4d98-805f-83363e815b60"
-    },
-    {
+     },
+     {
       "created": "2023-07-03 17:14:55",
       "exerciseId": "54ae501f-c066-458d-bbc3-2b5885865166",
       "exerciseLogId": "ad8b39b3-dd96-40b1-970e-5529b20a5db0",
@@ -1619,8 +1627,8 @@
       "weight": "90,90,90",
       "weightPost": "lbs",
       "workoutLogId": "f2b46763-1f4b-4d98-805f-83363e815b60"
-    },
-    {
+     },
+     {
       "created": "2023-07-03 17:14:55",
       "exerciseId": "2bf680dc-7fad-45c4-b732-abd171cd7e46",
       "exerciseLogId": "ad9b80c1-0355-4a26-b55d-ec1a460d9be4",
@@ -1635,8 +1643,8 @@
       "weight": "120,120,95",
       "weightPost": "lbs",
       "workoutLogId": "f2b46763-1f4b-4d98-805f-83363e815b60"
-    },
-    {
+     },
+     {
       "created": "2023-07-03 17:14:55",
       "exerciseId": "4f7e1ba4-da78-4d82-ba30-8901d51fcf82",
       "exerciseLogId": "f2e2642d-540b-4988-93b4-cd28782e7b33",
@@ -1651,8 +1659,8 @@
       "weight": "90,90,90",
       "weightPost": "lbs",
       "workoutLogId": "f2b46763-1f4b-4d98-805f-83363e815b60"
-    },
-    {
+     },
+     {
       "created": "2023-07-03 17:14:55",
       "exerciseId": "9fa6f500-ed47-4bd3-97c2-ef22a81b9601",
       "exerciseLogId": "6ee1a057-5946-484a-8eae-d0e5604b9a3c",
@@ -1667,8 +1675,8 @@
       "weight": "0,0,0",
       "weightPost": "lbs",
       "workoutLogId": "f2b46763-1f4b-4d98-805f-83363e815b60"
-    },
-    {
+     },
+     {
       "created": "2023-07-03 17:14:55",
       "exerciseId": "dae86f24-29f5-4d94-be20-7f9ebdde0e8b",
       "exerciseLogId": "8fde7da5-c378-4b4d-b65f-adfd69b45333",
@@ -1683,8 +1691,8 @@
       "weight": "45,45",
       "weightPost": "lbs",
       "workoutLogId": "f2b46763-1f4b-4d98-805f-83363e815b60"
-    },
-    {
+     },
+     {
       "created": "2023-07-04 14:58:23",
       "exerciseId": "cf9d69d2-d119-46a2-8338-135aa28ede0e",
       "exerciseLogId": "2a5b448b-7130-4cfb-a2cf-f261f8e09f41",
@@ -1699,8 +1707,8 @@
       "weight": "80,90,100,100",
       "weightPost": "lbs",
       "workoutLogId": "690a5e5c-0c81-4553-961e-2fbac75587d1"
-    },
-    {
+     },
+     {
       "created": "2023-07-04 14:58:23",
       "exerciseId": "0c804742-2f37-4d8b-ab34-040aa0eb54be",
       "exerciseLogId": "0dc6d26c-2031-47ce-bf52-8be42a1936fd",
@@ -1715,8 +1723,8 @@
       "weight": "90,140,140",
       "weightPost": "lbs",
       "workoutLogId": "690a5e5c-0c81-4553-961e-2fbac75587d1"
-    },
-    {
+     },
+     {
       "created": "2023-07-04 14:58:23",
       "exerciseId": "260669fb-298c-48f9-bd93-95a2dc2c75e4",
       "exerciseLogId": "cafd3312-8a2f-4dc6-a1e9-205bd7e476eb",
@@ -1731,8 +1739,8 @@
       "weight": "30,30,30",
       "weightPost": "lbs",
       "workoutLogId": "690a5e5c-0c81-4553-961e-2fbac75587d1"
-    },
-    {
+     },
+     {
       "created": "2023-07-04 14:58:23",
       "exerciseId": "0a643fb3-1191-4aff-8696-23e90605cf83",
       "exerciseLogId": "8a8e9011-0140-4c29-bbff-1b8e0db58274",
@@ -1747,8 +1755,8 @@
       "weight": "25,20",
       "weightPost": "lbs",
       "workoutLogId": "690a5e5c-0c81-4553-961e-2fbac75587d1"
-    },
-    {
+     },
+     {
       "created": "2023-07-04 14:58:23",
       "exerciseId": "953019ee-15b0-4d14-8fa5-eed668eb4d34",
       "exerciseLogId": "bf979786-7a59-4405-9fc9-aad88773ce13",
@@ -1763,8 +1771,8 @@
       "weight": "50,50,50",
       "weightPost": "lbs",
       "workoutLogId": "690a5e5c-0c81-4553-961e-2fbac75587d1"
-    },
-    {
+     },
+     {
       "created": "2023-07-04 14:58:23",
       "exerciseId": "de45b67e-696b-45dd-beb8-5c2a5c97d3a8",
       "exerciseLogId": "c05ee80d-ce31-4ebe-9fc3-fa75ecbcfbc7",
@@ -1774,13 +1782,13 @@
       "sets": 2,
       "time": "0,0",
       "title": "Dips",
-      "type": 0,
+      "type": 3,
       "updated": "2023-07-04 14:58:23",
       "weight": "0,0",
       "weightPost": "lbs",
       "workoutLogId": "690a5e5c-0c81-4553-961e-2fbac75587d1"
-    },
-    {
+     },
+     {
       "created": "2023-07-04 14:58:23",
       "exerciseId": "bf3abcd6-bfaf-444d-aa15-6abe97283014",
       "exerciseLogId": "224afc82-0525-474e-988f-197a36afece4",
@@ -1795,8 +1803,8 @@
       "weight": "25,25,25",
       "weightPost": "lbs",
       "workoutLogId": "690a5e5c-0c81-4553-961e-2fbac75587d1"
-    },
-    {
+     },
+     {
       "created": "2023-07-05 15:02:14",
       "exerciseId": "882d1763-6e5f-4bf1-b567-4a98c7dd812d",
       "exerciseLogId": "6dd42bc1-36be-4c3a-b9a0-077674a51213",
@@ -1811,8 +1819,8 @@
       "weight": "0",
       "weightPost": "lbs",
       "workoutLogId": "21f3efd1-c743-4ea9-b436-0ef7c3eb27a0"
-    },
-    {
+     },
+     {
       "created": "2023-07-05 15:02:14",
       "exerciseId": "9df68111-dd10-40f6-85c5-bc405fc50618",
       "exerciseLogId": "1f351303-d33e-44e7-b086-d7250f17a5bc",
@@ -1827,8 +1835,8 @@
       "weight": "135,185,205,205",
       "weightPost": "lbs",
       "workoutLogId": "21f3efd1-c743-4ea9-b436-0ef7c3eb27a0"
-    },
-    {
+     },
+     {
       "created": "2023-07-05 15:02:14",
       "exerciseId": "ccfb2b8f-b272-432c-87ca-f45a00bc89b5",
       "exerciseLogId": "ce9f8b70-e706-4286-adb2-d8e79d3682fe",
@@ -1843,8 +1851,8 @@
       "weight": "115,145,175,175",
       "weightPost": "lbs",
       "workoutLogId": "21f3efd1-c743-4ea9-b436-0ef7c3eb27a0"
-    },
-    {
+     },
+     {
       "created": "2023-07-05 15:02:14",
       "exerciseId": "3d824b9c-b7f2-4150-88f5-0b639c803bd0",
       "exerciseLogId": "f22e6361-1f62-49d1-a9f3-e32d1dc09104",
@@ -1859,8 +1867,8 @@
       "weight": "160,180,230,230",
       "weightPost": "lbs",
       "workoutLogId": "21f3efd1-c743-4ea9-b436-0ef7c3eb27a0"
-    },
-    {
+     },
+     {
       "created": "2023-07-05 15:02:14",
       "exerciseId": "99c807e5-5998-4606-9cc9-1aae4f575562",
       "exerciseLogId": "28c9c6e9-3b37-4f6a-8bdf-31d7d4d947bd",
@@ -1875,8 +1883,8 @@
       "weight": "45,45,45",
       "weightPost": "lbs",
       "workoutLogId": "21f3efd1-c743-4ea9-b436-0ef7c3eb27a0"
-    },
-    {
+     },
+     {
       "created": "2023-07-05 15:02:14",
       "exerciseId": "a20dd781-9da9-4b5b-a04e-a4e2a9b06870",
       "exerciseLogId": "766001fe-0314-4953-a8b0-b53ff50132c6",
@@ -1891,8 +1899,8 @@
       "weight": "75,75,75,75",
       "weightPost": "lbs",
       "workoutLogId": "21f3efd1-c743-4ea9-b436-0ef7c3eb27a0"
-    },
-    {
+     },
+     {
       "created": "2023-07-05 15:02:14",
       "exerciseId": "a417bf2a-76de-47a7-b80c-91c1b714fa80",
       "exerciseLogId": "2394c4ea-4af7-4b20-ae18-27092a1b5ea0",
@@ -1907,8 +1915,8 @@
       "weight": "25,25,25",
       "weightPost": "lbs",
       "workoutLogId": "21f3efd1-c743-4ea9-b436-0ef7c3eb27a0"
-    },
-    {
+     },
+     {
       "created": "2023-07-05 15:02:14",
       "exerciseId": "669cbf95-07f9-4310-ae8b-1a3adeb97be2",
       "exerciseLogId": "03a77f70-2d9c-4cb5-9fe2-8e1a61c033d2",
@@ -1923,8 +1931,8 @@
       "weight": "0,0,0",
       "weightPost": "lbs",
       "workoutLogId": "21f3efd1-c743-4ea9-b436-0ef7c3eb27a0"
-    },
-    {
+     },
+     {
       "created": "2023-07-06 16:33:24",
       "exerciseId": "b20f5d1c-1545-4aaf-8631-7900ced916b1",
       "exerciseLogId": "4e2565ad-5155-48ba-a79d-170377e1fd8c",
@@ -1939,8 +1947,8 @@
       "weight": "0",
       "weightPost": "lbs",
       "workoutLogId": "a5109a5b-7945-4dc1-bd6a-53c43369da20"
-    },
-    {
+     },
+     {
       "created": "2023-07-06 16:33:24",
       "exerciseId": "d4044056-dddc-4b00-9381-a64f7f96dc97",
       "exerciseLogId": "3b3fc026-8335-4772-b772-826142f24b8e",
@@ -1955,8 +1963,8 @@
       "weight": "120,120,135",
       "weightPost": "lbs",
       "workoutLogId": "a5109a5b-7945-4dc1-bd6a-53c43369da20"
-    },
-    {
+     },
+     {
       "created": "2023-07-06 16:33:24",
       "exerciseId": "06e70551-3f95-4094-9a8c-617fd06fa548",
       "exerciseLogId": "e0f34d85-c64f-4c76-a5d4-60591ae404b4",
@@ -1971,8 +1979,8 @@
       "weight": "80,80,70,70",
       "weightPost": "lbs",
       "workoutLogId": "a5109a5b-7945-4dc1-bd6a-53c43369da20"
-    },
-    {
+     },
+     {
       "created": "2023-07-06 16:33:24",
       "exerciseId": "669cbf95-07f9-4310-ae8b-1a3adeb97be2",
       "exerciseLogId": "0495c443-41cc-404f-817c-4f94a04402b7",
@@ -1987,8 +1995,8 @@
       "weight": "0,0,0",
       "weightPost": "lbs",
       "workoutLogId": "a5109a5b-7945-4dc1-bd6a-53c43369da20"
-    },
-    {
+     },
+     {
       "created": "2023-07-06 16:33:24",
       "exerciseId": "99c807e5-5998-4606-9cc9-1aae4f575562",
       "exerciseLogId": "33e0d3f4-e594-4901-929e-103b25f871bb",
@@ -2003,8 +2011,8 @@
       "weight": "0,0,0",
       "weightPost": "lbs",
       "workoutLogId": "a5109a5b-7945-4dc1-bd6a-53c43369da20"
-    },
-    {
+     },
+     {
       "created": "2023-07-06 16:33:24",
       "exerciseId": "b20f5d1c-1545-4aaf-8631-7900ced916b1",
       "exerciseLogId": "bac0563a-f47e-4f48-b029-2cf70fc0b9d8",
@@ -2019,8 +2027,8 @@
       "weight": "0",
       "weightPost": "lbs",
       "workoutLogId": "a5109a5b-7945-4dc1-bd6a-53c43369da20"
-    },
-    {
+     },
+     {
       "created": "2023-07-06 16:33:24",
       "exerciseId": "9fa6f500-ed47-4bd3-97c2-ef22a81b9601",
       "exerciseLogId": "0ce4d2b9-2022-4e6a-ad95-e826e174bff9",
@@ -2035,8 +2043,8 @@
       "weight": "0,0",
       "weightPost": "lbs",
       "workoutLogId": "a5109a5b-7945-4dc1-bd6a-53c43369da20"
-    },
-    {
+     },
+     {
       "created": "2023-07-07 16:07:25",
       "exerciseId": "882d1763-6e5f-4bf1-b567-4a98c7dd812d",
       "exerciseLogId": "d06f9225-73f7-4059-913d-bab9e5af49e3",
@@ -2051,8 +2059,8 @@
       "weight": "0",
       "weightPost": "lbs",
       "workoutLogId": "f0ca758b-fba3-4c01-9348-7b44430cee37"
-    },
-    {
+     },
+     {
       "created": "2023-07-07 16:07:25",
       "exerciseId": "cf9d69d2-d119-46a2-8338-135aa28ede0e",
       "exerciseLogId": "0f089559-b90a-43d0-a029-c014e828547a",
@@ -2067,8 +2075,8 @@
       "weight": "80,90,100,100",
       "weightPost": "lbs",
       "workoutLogId": "f0ca758b-fba3-4c01-9348-7b44430cee37"
-    },
-    {
+     },
+     {
       "created": "2023-07-07 16:07:25",
       "exerciseId": "55588293-4527-4c72-9f24-ba72d6f56857",
       "exerciseLogId": "36ad3992-d6eb-4937-b690-40741ecbe028",
@@ -2083,8 +2091,8 @@
       "weight": "135,155,185",
       "weightPost": "lbs",
       "workoutLogId": "f0ca758b-fba3-4c01-9348-7b44430cee37"
-    },
-    {
+     },
+     {
       "created": "2023-07-07 16:07:25",
       "exerciseId": "260669fb-298c-48f9-bd93-95a2dc2c75e4",
       "exerciseLogId": "ec0dd27a-ed7c-4d7a-b4e4-2874baf19a0a",
@@ -2099,8 +2107,8 @@
       "weight": "35,40,40",
       "weightPost": "lbs",
       "workoutLogId": "f0ca758b-fba3-4c01-9348-7b44430cee37"
-    },
-    {
+     },
+     {
       "created": "2023-07-07 16:07:25",
       "exerciseId": "0a643fb3-1191-4aff-8696-23e90605cf83",
       "exerciseLogId": "f9a24929-b3c4-494c-bc72-15acf5114527",
@@ -2115,8 +2123,8 @@
       "weight": "30,30,25",
       "weightPost": "lbs",
       "workoutLogId": "f0ca758b-fba3-4c01-9348-7b44430cee37"
-    },
-    {
+     },
+     {
       "created": "2023-07-07 16:07:25",
       "exerciseId": "cc6054e2-a571-4cd7-b0e0-1d700174d96e",
       "exerciseLogId": "a4129165-a3d2-424b-a708-00b9c9ce76fd",
@@ -2126,13 +2134,13 @@
       "sets": 3,
       "time": "0,0,0",
       "title": "Pullups",
-      "type": 0,
+      "type": 3,
       "updated": "2023-07-07 16:07:25",
       "weight": "0,0,0",
       "weightPost": "lbs",
       "workoutLogId": "f0ca758b-fba3-4c01-9348-7b44430cee37"
-    },
-    {
+     },
+     {
       "created": "2023-07-07 16:07:25",
       "exerciseId": "171522d4-9a9c-4350-aff7-455f4bf223b1",
       "exerciseLogId": "b52dd6a7-a640-424c-9649-12facdac4707",
@@ -2147,8 +2155,8 @@
       "weight": "80,80,80",
       "weightPost": "lbs",
       "workoutLogId": "f0ca758b-fba3-4c01-9348-7b44430cee37"
-    },
-    {
+     },
+     {
       "created": "2023-07-07 16:07:25",
       "exerciseId": "3d824b9c-b7f2-4150-88f5-0b639c803bd0",
       "exerciseLogId": "16761014-c543-4d2f-800b-85fcb3544154",
@@ -2163,8 +2171,8 @@
       "weight": "180,180,180,180",
       "weightPost": "lbs",
       "workoutLogId": "f0ca758b-fba3-4c01-9348-7b44430cee37"
-    },
-    {
+     },
+     {
       "created": "2023-07-07 16:07:25",
       "exerciseId": "ccfb2b8f-b272-432c-87ca-f45a00bc89b5",
       "exerciseLogId": "6fb3b4e1-22b8-4f7d-bdc1-d91dc8f278be",
@@ -2179,8 +2187,8 @@
       "weight": "130,145,145,160",
       "weightPost": "lbs",
       "workoutLogId": "f0ca758b-fba3-4c01-9348-7b44430cee37"
-    },
-    {
+     },
+     {
       "created": "2023-07-07 16:07:25",
       "exerciseId": "9df68111-dd10-40f6-85c5-bc405fc50618",
       "exerciseLogId": "6fd892f7-2f4e-4d58-a934-7555faca78e8",
@@ -2195,11 +2203,221 @@
       "weight": "70,0",
       "weightPost": "lbs",
       "workoutLogId": "f0ca758b-fba3-4c01-9348-7b44430cee37"
-    }
-  ],
-  "exercises": [
-    {
-      "category": "legs",
+     },
+     {
+      "created": "2023-07-08 22:03:57",
+      "exerciseId": "882d1763-6e5f-4bf1-b567-4a98c7dd812d",
+      "exerciseLogId": "ca2ef6ec-5d67-46a0-af13-5ff5407a25e0",
+      "note": "",
+      "parentId": null,
+      "reps": "1",
+      "sets": 1,
+      "time": "300",
+      "title": "Bike",
+      "type": 1,
+      "updated": "2023-07-08 22:03:57",
+      "weight": "0",
+      "weightPost": "lbs",
+      "workoutLogId": "ceb19863-d17b-47e2-b73d-bed37f19783a"
+     },
+     {
+      "created": "2023-07-08 22:03:57",
+      "exerciseId": "953019ee-15b0-4d14-8fa5-eed668eb4d34",
+      "exerciseLogId": "d67c135e-a659-4406-bbd4-0d4a78b3cbfb",
+      "note": "",
+      "parentId": null,
+      "reps": "10,10,5,5",
+      "sets": 4,
+      "time": "0,0,0,0",
+      "title": "Dumbbell shoulder press",
+      "type": 0,
+      "updated": "2023-07-08 22:03:57",
+      "weight": "50,65,80,80",
+      "weightPost": "lbs",
+      "workoutLogId": "ceb19863-d17b-47e2-b73d-bed37f19783a"
+     },
+     {
+      "created": "2023-07-08 22:03:57",
+      "exerciseId": "3bfa431f-4dee-4ea8-bf6e-2b4746213500",
+      "exerciseLogId": "734f9f14-a9de-4129-9675-4f57d4aaf38b",
+      "note": "",
+      "parentId": null,
+      "reps": "8,10,10",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "Lateral dumbbell raise",
+      "type": 0,
+      "updated": "2023-07-08 22:03:57",
+      "weight": "30,30,30",
+      "weightPost": "lbs",
+      "workoutLogId": "ceb19863-d17b-47e2-b73d-bed37f19783a"
+     },
+     {
+      "created": "2023-07-08 22:03:57",
+      "exerciseId": "a20dd781-9da9-4b5b-a04e-a4e2a9b06870",
+      "exerciseLogId": "37f417fa-33a2-4564-8371-69964893b173",
+      "note": "",
+      "parentId": null,
+      "reps": "13,11,10,8",
+      "sets": 4,
+      "time": "0,0,0,0",
+      "title": "EZ Bar Curl",
+      "type": 0,
+      "updated": "2023-07-08 22:03:57",
+      "weight": "75,75,75,75",
+      "weightPost": "lbs",
+      "workoutLogId": "ceb19863-d17b-47e2-b73d-bed37f19783a"
+     },
+     {
+      "created": "2023-07-08 22:03:57",
+      "exerciseId": "e85ee36b-d006-48a9-b3ff-b3207ecc24a3",
+      "exerciseLogId": "8d96817d-addc-4a48-afdf-4d36ec798155",
+      "note": "",
+      "parentId": null,
+      "reps": "9,10,10",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "Back supported curl",
+      "type": 0,
+      "updated": "2023-07-08 22:03:57",
+      "weight": "30,30,30",
+      "weightPost": "lbs",
+      "workoutLogId": "ceb19863-d17b-47e2-b73d-bed37f19783a"
+     },
+     {
+      "created": "2023-07-08 22:03:57",
+      "exerciseId": "de45b67e-696b-45dd-beb8-5c2a5c97d3a8",
+      "exerciseLogId": "b3f13d4b-06eb-484a-bd19-429692d826a1",
+      "note": "",
+      "parentId": null,
+      "reps": "15,15,12",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "Dips",
+      "type": 3,
+      "updated": "2023-07-08 22:03:57",
+      "weight": "0,0,0",
+      "weightPost": "lbs",
+      "workoutLogId": "ceb19863-d17b-47e2-b73d-bed37f19783a"
+     },
+     {
+      "created": "2023-07-08 22:03:57",
+      "exerciseId": "5e5029e1-8057-4871-90a5-c0ec9ef1df35",
+      "exerciseLogId": "b9ffc2c1-73c7-4b29-93e4-70adde544d7c",
+      "note": "",
+      "parentId": null,
+      "reps": "12,10,10",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "Ticep pull downs",
+      "type": 0,
+      "updated": "2023-07-08 22:03:57",
+      "weight": "110,110,110",
+      "weightPost": "lbs",
+      "workoutLogId": "ceb19863-d17b-47e2-b73d-bed37f19783a"
+     },
+     {
+      "created": "2023-07-08 22:03:57",
+      "exerciseId": "1e8454bc-11cd-4d32-8141-daf32d874db8",
+      "exerciseLogId": "f0bbb588-cecf-4477-830c-5ae355fa2e48",
+      "note": "",
+      "parentId": null,
+      "reps": "10,12,10",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "Single arm tricep extension",
+      "type": 0,
+      "updated": "2023-07-08 22:03:57",
+      "weight": "40,40,40",
+      "weightPost": "lbs",
+      "workoutLogId": "ceb19863-d17b-47e2-b73d-bed37f19783a"
+     },
+     {
+      "created": "2023-07-08 22:03:57",
+      "exerciseId": "669cbf95-07f9-4310-ae8b-1a3adeb97be2",
+      "exerciseLogId": "80df0c2d-6f9b-406d-b214-e795ec553c10",
+      "note": "",
+      "parentId": null,
+      "reps": "12,15,15",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "Hanging leg raises",
+      "type": 0,
+      "updated": "2023-07-08 22:03:57",
+      "weight": "0,0,0",
+      "weightPost": "lbs",
+      "workoutLogId": "ceb19863-d17b-47e2-b73d-bed37f19783a"
+     },
+     {
+      "created": "2023-07-08 22:03:57",
+      "exerciseId": "bd73c482-9549-4ed2-9b29-74796b634084",
+      "exerciseLogId": "61b9baa7-875e-4a88-a05b-246f466d930a",
+      "note": "",
+      "parentId": null,
+      "reps": "1",
+      "sets": 1,
+      "time": "1200",
+      "title": "Stairmaster",
+      "type": 2,
+      "updated": "2023-07-08 22:03:57",
+      "weight": "0",
+      "weightPost": "lbs",
+      "workoutLogId": "ceb19863-d17b-47e2-b73d-bed37f19783a"
+     },
+     {
+      "created": "2023-07-08 22:03:57",
+      "exerciseId": "bf3abcd6-bfaf-444d-aa15-6abe97283014",
+      "exerciseLogId": "d432b726-4737-4c80-a573-b8a3adbcf8b3",
+      "note": "",
+      "parentId": "953019ee-15b0-4d14-8fa5-eed668eb4d34",
+      "reps": "10,12,12",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "Seated leaning flys",
+      "type": 0,
+      "updated": "2023-07-08 22:03:57",
+      "weight": "25,25,25",
+      "weightPost": "lbs",
+      "workoutLogId": "ceb19863-d17b-47e2-b73d-bed37f19783a"
+     },
+     {
+      "created": "2023-07-08 22:03:57",
+      "exerciseId": "cb229ca2-c0ae-442f-98ae-97ae0ab7a27d",
+      "exerciseLogId": "2965f4f6-e590-48db-807d-c0c7b853b1e9",
+      "note": "",
+      "parentId": "3bfa431f-4dee-4ea8-bf6e-2b4746213500",
+      "reps": "10,10",
+      "sets": 2,
+      "time": "0,0",
+      "title": "Dumbbell shrugs",
+      "type": 0,
+      "updated": "2023-07-08 22:03:57",
+      "weight": "80,90",
+      "weightPost": "lbs",
+      "workoutLogId": "ceb19863-d17b-47e2-b73d-bed37f19783a"
+     },
+     {
+      "created": "2023-07-08 22:03:57",
+      "exerciseId": "ace00215-efc6-4003-9f04-fa4a4884bc73",
+      "exerciseLogId": "776bc8a9-45a4-4484-a8d4-cd6e4e10225d",
+      "note": "",
+      "parentId": "5e5029e1-8057-4871-90a5-c0ec9ef1df35",
+      "reps": "10,10,10",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "Overhead tricep extension",
+      "type": 0,
+      "updated": "2023-07-08 22:03:57",
+      "weight": "100,100,100",
+      "weightPost": "lbs",
+      "workoutLogId": "ceb19863-d17b-47e2-b73d-bed37f19783a"
+     }
+    ],
+    "exerciseLogTags": [
+    ],
+    "exercises": [
+     {
+      "category": "1",
       "created": "2023-06-20 00:40:51",
       "description": "",
       "exerciseId": "31dc5800-930f-40b3-9607-0e832dd966bf",
@@ -2209,10 +2427,10 @@
       "time": 0,
       "title": "Barbell back squat",
       "type": 0,
-      "updated": "2023-06-21 03:17:23"
-    },
-    {
-      "category": "abs",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "2",
       "created": "2023-06-20 00:41:28",
       "description": "",
       "exerciseId": "9fa6f500-ed47-4bd3-97c2-ef22a81b9601",
@@ -2221,11 +2439,11 @@
       "sets": 4,
       "time": 0,
       "title": "V-ups",
-      "type": 0,
-      "updated": "2023-06-21 03:17:23"
-    },
-    {
-      "category": "legs",
+      "type": 3,
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "1",
       "created": "2023-06-20 00:42:07",
       "description": "Lighter weight, slow and controlled",
       "exerciseId": "1a9c4034-2230-4496-bc4a-ec991ced107a",
@@ -2235,23 +2453,23 @@
       "time": 0,
       "title": "Smith Deadlifts",
       "type": 0,
-      "updated": "2023-06-21 03:17:23"
-    },
-    {
-      "category": "abs",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "2",
       "created": "2023-06-20 00:42:23",
       "description": "",
       "exerciseId": "cd5e37be-cd34-43b5-a43e-5aaa78f20551",
       "icon": "prelum",
       "reps": 15,
       "sets": 3,
-      "time": 0,
+      "time": 3,
       "title": "Leg Raises",
       "type": 0,
-      "updated": "2023-06-21 03:17:23"
-    },
-    {
-      "category": "legs",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "1",
       "created": "2023-06-20 00:42:54",
       "description": "",
       "exerciseId": "54ae501f-c066-458d-bbc3-2b5885865166",
@@ -2261,10 +2479,10 @@
       "time": 0,
       "title": "Goblin Squat",
       "type": 0,
-      "updated": "2023-06-21 03:17:23"
-    },
-    {
-      "category": "legs",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "1",
       "created": "2023-06-20 00:43:21",
       "description": "",
       "exerciseId": "dae86f24-29f5-4d94-be20-7f9ebdde0e8b",
@@ -2274,10 +2492,10 @@
       "time": 0,
       "title": "Bulgarian Split Squats",
       "type": 0,
-      "updated": "2023-06-21 03:17:23"
-    },
-    {
-      "category": "legs",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "1",
       "created": "2023-06-20 00:43:56",
       "description": "",
       "exerciseId": "2bf680dc-7fad-45c4-b732-abd171cd7e46",
@@ -2287,10 +2505,10 @@
       "time": 0,
       "title": "Hamstring curls",
       "type": 0,
-      "updated": "2023-06-21 03:17:23"
-    },
-    {
-      "category": "legs",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "1",
       "created": "2023-06-20 00:44:14",
       "description": "",
       "exerciseId": "4f7e1ba4-da78-4d82-ba30-8901d51fcf82",
@@ -2300,10 +2518,10 @@
       "time": 0,
       "title": "Calf Raises",
       "type": 0,
-      "updated": "2023-06-21 03:17:23"
-    },
-    {
-      "category": "cardio",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "3",
       "created": "2023-06-20 00:54:17",
       "description": "",
       "exerciseId": "882d1763-6e5f-4bf1-b567-4a98c7dd812d",
@@ -2313,10 +2531,10 @@
       "time": 300,
       "title": "Bike",
       "type": 1,
-      "updated": "2023-06-21 03:17:23"
-    },
-    {
-      "category": "chest",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "4",
       "created": "2023-06-20 13:16:49",
       "description": "",
       "exerciseId": "cf9d69d2-d119-46a2-8338-135aa28ede0e",
@@ -2326,10 +2544,10 @@
       "time": 0,
       "title": "Dumbbell Bench Press",
       "type": 0,
-      "updated": "2023-06-21 03:17:23"
-    },
-    {
-      "category": "chest",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "4",
       "created": "2023-06-20 13:17:30",
       "description": "",
       "exerciseId": "0c804742-2f37-4d8b-ab34-040aa0eb54be",
@@ -2339,10 +2557,10 @@
       "time": 0,
       "title": "Incline machine press",
       "type": 0,
-      "updated": "2023-06-21 03:17:23"
-    },
-    {
-      "category": "chest",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "4",
       "created": "2023-06-20 13:17:45",
       "description": "",
       "exerciseId": "260669fb-298c-48f9-bd93-95a2dc2c75e4",
@@ -2352,10 +2570,10 @@
       "time": 0,
       "title": "Cable flys",
       "type": 0,
-      "updated": "2023-06-21 03:17:23"
-    },
-    {
-      "category": "shoulders",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "5",
       "created": "2023-06-20 13:18:16",
       "description": "",
       "exerciseId": "953019ee-15b0-4d14-8fa5-eed668eb4d34",
@@ -2365,10 +2583,10 @@
       "time": 0,
       "title": "Dumbbell shoulder press",
       "type": 0,
-      "updated": "2023-06-21 03:17:23"
-    },
-    {
-      "category": "shoulders",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "5",
       "created": "2023-06-20 13:18:54",
       "description": "",
       "exerciseId": "ed47d49f-e0b8-45d5-8df7-6b05fa029bdb",
@@ -2378,10 +2596,10 @@
       "time": 0,
       "title": "Lateral cable raise",
       "type": 0,
-      "updated": "2023-06-21 03:17:23"
-    },
-    {
-      "category": "triceps",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "6",
       "created": "2023-06-20 13:19:15",
       "description": "",
       "exerciseId": "5e5029e1-8057-4871-90a5-c0ec9ef1df35",
@@ -2391,10 +2609,10 @@
       "time": 0,
       "title": "Ticep pull downs",
       "type": 0,
-      "updated": "2023-06-21 03:17:23"
-    },
-    {
-      "category": "triceps",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "6",
       "created": "2023-06-20 13:19:32",
       "description": "",
       "exerciseId": "ace00215-efc6-4003-9f04-fa4a4884bc73",
@@ -2404,10 +2622,10 @@
       "time": 0,
       "title": "Overhead tricep extension",
       "type": 0,
-      "updated": "2023-06-21 03:17:23"
-    },
-    {
-      "category": "triceps",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "6",
       "created": "2023-06-20 13:20:00",
       "description": "",
       "exerciseId": "1e8454bc-11cd-4d32-8141-daf32d874db8",
@@ -2417,10 +2635,10 @@
       "time": 0,
       "title": "Single arm tricep extension",
       "type": 0,
-      "updated": "2023-06-21 03:17:23"
-    },
-    {
-      "category": "abs",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "2",
       "created": "2023-06-20 13:20:14",
       "description": "",
       "exerciseId": "669cbf95-07f9-4310-ae8b-1a3adeb97be2",
@@ -2429,11 +2647,11 @@
       "sets": 3,
       "time": 0,
       "title": "Hanging leg raises",
-      "type": 0,
-      "updated": "2023-06-21 03:17:23"
-    },
-    {
-      "category": "chest",
+      "type": 3,
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "4",
       "created": "2023-06-20 14:28:02",
       "description": "",
       "exerciseId": "55588293-4527-4c72-9f24-ba72d6f56857",
@@ -2443,10 +2661,10 @@
       "time": 0,
       "title": "Incline Barbell bench",
       "type": 0,
-      "updated": "2023-06-21 03:17:23"
-    },
-    {
-      "category": "chest",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "4",
       "created": "2023-06-20 14:36:20",
       "description": "",
       "exerciseId": "0a643fb3-1191-4aff-8696-23e90605cf83",
@@ -2456,10 +2674,10 @@
       "time": 0,
       "title": "Lower cable flys",
       "type": 0,
-      "updated": "2023-06-21 03:17:23"
-    },
-    {
-      "category": "back",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "7",
       "created": "2023-06-21 03:18:54",
       "description": "",
       "exerciseId": "6d6d6c5d-ccc3-4d6c-a0d5-e60b18a89ab4",
@@ -2469,10 +2687,10 @@
       "time": 0,
       "title": "Underhand Lat pulldown",
       "type": 0,
-      "updated": "2023-06-21 03:18:54"
-    },
-    {
-      "category": "back",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "7",
       "created": "2023-06-21 03:19:38",
       "description": "",
       "exerciseId": "629a7702-ed48-40e5-bb0d-73ee04cb6771",
@@ -2482,10 +2700,10 @@
       "time": 0,
       "title": "Dumbbell row",
       "type": 0,
-      "updated": "2023-06-21 03:19:38"
-    },
-    {
-      "category": "back",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "7",
       "created": "2023-06-21 03:20:13",
       "description": "Focus on the squeeze",
       "exerciseId": "171522d4-9a9c-4350-aff7-455f4bf223b1",
@@ -2495,10 +2713,10 @@
       "time": 0,
       "title": "Cable pull downs",
       "type": 0,
-      "updated": "2023-06-21 03:20:13"
-    },
-    {
-      "category": "back",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "7",
       "created": "2023-06-21 03:20:41",
       "description": "",
       "exerciseId": "99c807e5-5998-4606-9cc9-1aae4f575562",
@@ -2508,10 +2726,10 @@
       "time": 0,
       "title": "Lower back raises",
       "type": 0,
-      "updated": "2023-06-21 03:20:41"
-    },
-    {
-      "category": "biceps",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "8",
       "created": "2023-06-21 03:21:07",
       "description": "",
       "exerciseId": "a20dd781-9da9-4b5b-a04e-a4e2a9b06870",
@@ -2521,10 +2739,10 @@
       "time": 0,
       "title": "EZ Bar Curl",
       "type": 0,
-      "updated": "2023-06-21 03:21:07"
-    },
-    {
-      "category": "biceps",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "8",
       "created": "2023-06-21 03:21:29",
       "description": "",
       "exerciseId": "201439b7-583c-4728-88c8-7b543759a57b",
@@ -2534,10 +2752,10 @@
       "time": 0,
       "title": "Cable Curls",
       "type": 0,
-      "updated": "2023-06-21 03:21:29"
-    },
-    {
-      "category": "biceps",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "8",
       "created": "2023-06-21 03:22:38",
       "description": "Very slow, use lighter weight",
       "exerciseId": "e85ee36b-d006-48a9-b3ff-b3207ecc24a3",
@@ -2547,10 +2765,10 @@
       "time": 0,
       "title": "Back supported curl",
       "type": 0,
-      "updated": "2023-06-21 03:22:38"
-    },
-    {
-      "category": "back",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "7",
       "created": "2023-06-21 14:12:07",
       "description": "",
       "exerciseId": "fccc4475-31df-460c-8961-536a606c57e9",
@@ -2560,10 +2778,10 @@
       "time": 0,
       "title": "Lat pulldown",
       "type": 0,
-      "updated": "2023-06-21 14:12:07"
-    },
-    {
-      "category": "biceps",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "8",
       "created": "2023-06-21 15:12:37",
       "description": "",
       "exerciseId": "3ff55895-6a33-43f0-8686-7f7a9c388fc5",
@@ -2573,10 +2791,10 @@
       "time": 0,
       "title": "Cable drag curls",
       "type": 0,
-      "updated": "2023-06-21 15:12:37"
-    },
-    {
-      "category": "cardio",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "3",
       "created": "2023-06-22 07:57:07",
       "description": "",
       "exerciseId": "b20f5d1c-1545-4aaf-8631-7900ced916b1",
@@ -2586,10 +2804,10 @@
       "time": 540,
       "title": "Mile run",
       "type": 2,
-      "updated": "2023-06-22 07:57:07"
-    },
-    {
-      "category": "abs",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "2",
       "created": "2023-06-22 07:57:33",
       "description": "",
       "exerciseId": "d4044056-dddc-4b00-9381-a64f7f96dc97",
@@ -2598,11 +2816,11 @@
       "sets": 4,
       "time": 0,
       "title": "Weighted rope crunch",
-      "type": 0,
-      "updated": "2023-06-22 07:57:33"
-    },
-    {
-      "category": "abs",
+      "type": 3,
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "2",
       "created": "2023-06-22 07:57:51",
       "description": "",
       "exerciseId": "06e70551-3f95-4094-9a8c-617fd06fa548",
@@ -2611,11 +2829,11 @@
       "sets": 4,
       "time": 0,
       "title": "Side cable rotations",
-      "type": 0,
-      "updated": "2023-06-22 07:57:51"
-    },
-    {
-      "category": "shoulders",
+      "type": 3,
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "5",
       "created": "2023-06-23 06:38:17",
       "description": "",
       "exerciseId": "bf3abcd6-bfaf-444d-aa15-6abe97283014",
@@ -2625,10 +2843,10 @@
       "time": 0,
       "title": "Seated leaning flys",
       "type": 0,
-      "updated": "2023-06-23 06:38:17"
-    },
-    {
-      "category": "shoulders",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "5",
       "created": "2023-06-23 06:38:53",
       "description": "",
       "exerciseId": "66cdf17a-6f92-48ac-80b4-c46299570798",
@@ -2638,10 +2856,10 @@
       "time": 0,
       "title": "Standing barbell press",
       "type": 0,
-      "updated": "2023-06-23 06:38:53"
-    },
-    {
-      "category": "chest",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "6",
       "created": "2023-06-23 06:40:08",
       "description": "",
       "exerciseId": "de45b67e-696b-45dd-beb8-5c2a5c97d3a8",
@@ -2650,11 +2868,11 @@
       "sets": 3,
       "time": 0,
       "title": "Dips",
-      "type": 0,
-      "updated": "2023-06-23 06:40:08"
-    },
-    {
-      "category": "shoulders",
+      "type": 3,
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "5",
       "created": "2023-06-23 14:14:22",
       "description": "",
       "exerciseId": "c438be48-e118-409f-939a-ac08a9713e88",
@@ -2664,10 +2882,10 @@
       "time": 0,
       "title": "Arnold press",
       "type": 0,
-      "updated": "2023-06-23 14:14:22"
-    },
-    {
-      "category": "chest",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "4",
       "created": "2023-06-24 06:36:16",
       "description": "",
       "exerciseId": "42c7ba17-f23e-4eaa-a42c-0e699881df42",
@@ -2677,10 +2895,10 @@
       "time": 0,
       "title": "Barbell bench",
       "type": 0,
-      "updated": "2023-06-24 06:36:16"
-    },
-    {
-      "category": "back",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "7",
       "created": "2023-06-24 06:38:13",
       "description": "",
       "exerciseId": "3d824b9c-b7f2-4150-88f5-0b639c803bd0",
@@ -2690,10 +2908,10 @@
       "time": 0,
       "title": "Machine back pull",
       "type": 0,
-      "updated": "2023-06-24 06:38:13"
-    },
-    {
-      "category": "cardio",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "3",
       "created": "2023-06-24 14:25:09",
       "description": "",
       "exerciseId": "994f8e0c-e514-4ea2-a284-dadd8ef7f45e",
@@ -2703,10 +2921,10 @@
       "time": 600,
       "title": "3x10 walk",
       "type": 2,
-      "updated": "2023-06-24 14:25:09"
-    },
-    {
-      "category": "back",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "7",
       "created": "2023-06-24 14:29:41",
       "description": "",
       "exerciseId": "9df68111-dd10-40f6-85c5-bc405fc50618",
@@ -2716,10 +2934,10 @@
       "time": 0,
       "title": "Barbell row",
       "type": 0,
-      "updated": "2023-06-24 14:29:41"
-    },
-    {
-      "category": "back",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "7",
       "created": "2023-06-24 14:30:16",
       "description": "",
       "exerciseId": "cc6054e2-a571-4cd7-b0e0-1d700174d96e",
@@ -2728,11 +2946,11 @@
       "sets": 4,
       "time": 0,
       "title": "Pullups",
-      "type": 0,
-      "updated": "2023-06-24 14:30:16"
-    },
-    {
-      "category": "biceps",
+      "type": 3,
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "8",
       "created": "2023-06-24 15:46:07",
       "description": "Slow and controlled",
       "exerciseId": "b29dede6-b87e-497f-82a4-9b265e5e553c",
@@ -2742,10 +2960,10 @@
       "time": 0,
       "title": "Bicep curls",
       "type": 0,
-      "updated": "2023-06-24 15:46:07"
-    },
-    {
-      "category": "back",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "7",
       "created": "2023-07-02 00:24:08",
       "description": "Slow and controlled",
       "exerciseId": "15dad65e-bc79-429a-93c6-9e1a45cf9d12",
@@ -2755,10 +2973,10 @@
       "time": 0,
       "title": "T-bar row",
       "type": 0,
-      "updated": "2023-07-02 00:24:08"
-    },
-    {
-      "category": "back",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "7",
       "created": "2023-07-02 00:24:44",
       "description": "",
       "exerciseId": "ccfb2b8f-b272-432c-87ca-f45a00bc89b5",
@@ -2768,10 +2986,10 @@
       "time": 0,
       "title": "Neutral grip lat pulldown",
       "type": 0,
-      "updated": "2023-07-02 00:24:44"
-    },
-    {
-      "category": "legs",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "1",
       "created": "2023-07-03 16:43:03",
       "description": "Slow and controlled, over- range of motion",
       "exerciseId": "f443c935-5f32-49e3-ba8e-79f6247f6ecc",
@@ -2781,10 +2999,10 @@
       "time": 0,
       "title": "Barbell extended deadlift",
       "type": 0,
-      "updated": "2023-07-03 16:43:03"
-    },
-    {
-      "category": "biceps",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "8",
       "created": "2023-07-05 14:32:50",
       "description": "",
       "exerciseId": "a417bf2a-76de-47a7-b80c-91c1b714fa80",
@@ -2794,10 +3012,10 @@
       "time": 0,
       "title": "Reverse SA Preacher Curl",
       "type": 0,
-      "updated": "2023-07-05 14:32:50"
-    },
-    {
-      "category": "back",
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "7",
       "created": "2023-07-07 15:11:23",
       "description": "",
       "exerciseId": "d914dfa8-0d75-4a11-bd25-c3ba2d5ab830",
@@ -2807,11 +3025,76 @@
       "time": 0,
       "title": "Chest supported rows",
       "type": 0,
-      "updated": "2023-07-07 15:11:23"
-    }
-  ],
-  "exerciseSets": [
-    {
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "5",
+      "created": "2023-07-08 06:14:40",
+      "description": "",
+      "exerciseId": "077b4d65-44a2-415b-9e2c-5b51b98f68b6",
+      "icon": "",
+      "reps": 10,
+      "sets": 3,
+      "time": 0,
+      "title": "Standing dumbbell press",
+      "type": 0,
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "5",
+      "created": "2023-07-08 06:17:44",
+      "description": "",
+      "exerciseId": "3bfa431f-4dee-4ea8-bf6e-2b4746213500",
+      "icon": "",
+      "reps": 10,
+      "sets": 4,
+      "time": 0,
+      "title": "Lateral dumbbell raise",
+      "type": 0,
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "5",
+      "created": "2023-07-08 06:18:51",
+      "description": "",
+      "exerciseId": "d78f99f2-bd54-4f46-8413-16cd993cc3b4",
+      "icon": "",
+      "reps": 12,
+      "sets": 4,
+      "time": 0,
+      "title": "Machine Shrugs",
+      "type": 0,
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "5",
+      "created": "2023-07-08 20:48:45",
+      "description": "",
+      "exerciseId": "cb229ca2-c0ae-442f-98ae-97ae0ab7a27d",
+      "icon": "",
+      "reps": 10,
+      "sets": 3,
+      "time": 0,
+      "title": "Dumbbell shrugs",
+      "type": 0,
+      "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "3",
+      "created": "2023-07-08 21:42:31",
+      "description": "",
+      "exerciseId": "bd73c482-9549-4ed2-9b29-74796b634084",
+      "icon": "",
+      "reps": 1,
+      "sets": 1,
+      "time": 1200,
+      "title": "Stairmaster",
+      "type": 2,
+      "updated": "2023-07-09 03:46:42"
+     }
+    ],
+    "exerciseSets": [
+     {
       "childId": "bf3abcd6-bfaf-444d-aa15-6abe97283014",
       "created": "",
       "exerciseOrder": 0,
@@ -2823,8 +3106,8 @@
       "updated": "",
       "workoutExerciseId": "1b358f86-0e70-412d-9a2a-c878d4c90881",
       "workoutId": "a50a5bd2-f996-4397-9e48-43623e055f49"
-    },
-    {
+     },
+     {
       "childId": "ace00215-efc6-4003-9f04-fa4a4884bc73",
       "created": "",
       "exerciseOrder": 0,
@@ -2836,8 +3119,8 @@
       "updated": "",
       "workoutExerciseId": "c4fce306-8b42-4188-a595-24516bd38dd2",
       "workoutId": "a50a5bd2-f996-4397-9e48-43623e055f49"
-    },
-    {
+     },
+     {
       "childId": "6d6d6c5d-ccc3-4d6c-a0d5-e60b18a89ab4",
       "created": "",
       "exerciseOrder": 0,
@@ -2849,8 +3132,8 @@
       "updated": "",
       "workoutExerciseId": "54bc3d3f-ffef-49f5-9c99-31283358e7b5",
       "workoutId": "9eda5ff8-e50c-42cc-b71c-58acbf30ab09"
-    },
-    {
+     },
+     {
       "childId": "9fa6f500-ed47-4bd3-97c2-ef22a81b9601",
       "created": "",
       "exerciseOrder": 0,
@@ -2862,8 +3145,8 @@
       "updated": "",
       "workoutExerciseId": "99fd8fb6-a2dc-42ff-95b6-328bda13c392",
       "workoutId": "1be11282-d077-4af4-b7bf-336085c71013"
-    },
-    {
+     },
+     {
       "childId": "cd5e37be-cd34-43b5-a43e-5aaa78f20551",
       "created": "",
       "exerciseOrder": 0,
@@ -2875,8 +3158,8 @@
       "updated": "",
       "workoutExerciseId": "dbcff9aa-2348-4b39-8067-26b52431ccea",
       "workoutId": "1be11282-d077-4af4-b7bf-336085c71013"
-    },
-    {
+     },
+     {
       "childId": "dae86f24-29f5-4d94-be20-7f9ebdde0e8b",
       "created": "",
       "exerciseOrder": 0,
@@ -2888,8 +3171,8 @@
       "updated": "",
       "workoutExerciseId": "56944a7c-b77d-40cb-add9-2ac4042ba02c",
       "workoutId": "1be11282-d077-4af4-b7bf-336085c71013"
-    },
-    {
+     },
+     {
       "childId": "ace00215-efc6-4003-9f04-fa4a4884bc73",
       "created": "",
       "exerciseOrder": 0,
@@ -2901,8 +3184,8 @@
       "updated": "",
       "workoutExerciseId": "5dde5105-bb0a-4e3e-904c-f089e2e9827a",
       "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2"
-    },
-    {
+     },
+     {
       "childId": "6d6d6c5d-ccc3-4d6c-a0d5-e60b18a89ab4",
       "created": "",
       "exerciseOrder": 1,
@@ -2914,8 +3197,8 @@
       "updated": "",
       "workoutExerciseId": "be8db7ff-2bfb-4800-bcba-47db2d734bb4",
       "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b"
-    },
-    {
+     },
+     {
       "childId": "bf3abcd6-bfaf-444d-aa15-6abe97283014",
       "created": "",
       "exerciseOrder": 1,
@@ -2927,8 +3210,8 @@
       "updated": "",
       "workoutExerciseId": "29f52e6c-dbf3-410b-9166-6cec6a5ca45d",
       "workoutId": "a50a5bd2-f996-4397-9e48-43623e055f49"
-    },
-    {
+     },
+     {
       "childId": "ccfb2b8f-b272-432c-87ca-f45a00bc89b5",
       "created": "",
       "exerciseOrder": 0,
@@ -2940,8 +3223,8 @@
       "updated": "",
       "workoutExerciseId": "06735182-6d88-4642-af0e-0a9e9ce33bd4",
       "workoutId": "7f0eda3a-4655-4705-b715-258642009d2e"
-    },
-    {
+     },
+     {
       "childId": "bf3abcd6-bfaf-444d-aa15-6abe97283014",
       "created": "",
       "exerciseOrder": 1,
@@ -2953,8 +3236,8 @@
       "updated": "",
       "workoutExerciseId": "6f0ba5ef-e520-47df-9cf6-583e865248a5",
       "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2"
-    },
-    {
+     },
+     {
       "childId": "9fa6f500-ed47-4bd3-97c2-ef22a81b9601",
       "created": "",
       "exerciseOrder": 1,
@@ -2966,8 +3249,8 @@
       "updated": "",
       "workoutExerciseId": "fd19d3bb-13ac-4c2d-867d-9d7618a5bd73",
       "workoutId": "2f2c28cd-3208-4982-9be4-914fdbbc4e5f"
-    },
-    {
+     },
+     {
       "childId": "9df68111-dd10-40f6-85c5-bc405fc50618",
       "created": "",
       "exerciseOrder": 1,
@@ -2979,10 +3262,88 @@
       "updated": "",
       "workoutExerciseId": "bfaa8eea-7629-4f4d-8944-865e25b555d0",
       "workoutId": "7f0eda3a-4655-4705-b715-258642009d2e"
-    }
-  ],
-  "workoutExercises": [
-    {
+     },
+     {
+      "childId": "bf3abcd6-bfaf-444d-aa15-6abe97283014",
+      "created": "",
+      "exerciseOrder": 0,
+      "exerciseSetId": "a69e3c71-9fd6-4d13-be1c-bd463d18cff2",
+      "parentId": "077b4d65-44a2-415b-9e2c-5b51b98f68b6",
+      "reps": 12,
+      "sets": 4,
+      "time": 0,
+      "updated": "",
+      "workoutExerciseId": "61b68b1c-4ad8-4d92-bb17-71fa763733f7",
+      "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951"
+     },
+     {
+      "childId": "ace00215-efc6-4003-9f04-fa4a4884bc73",
+      "created": "",
+      "exerciseOrder": 0,
+      "exerciseSetId": "6174e788-f348-466f-a039-a0639b102cc9",
+      "parentId": "5e5029e1-8057-4871-90a5-c0ec9ef1df35",
+      "reps": 12,
+      "sets": 4,
+      "time": 0,
+      "updated": "",
+      "workoutExerciseId": "4754a553-526d-43f4-bb6f-dbd619d054df",
+      "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951"
+     },
+     {
+      "childId": "bf3abcd6-bfaf-444d-aa15-6abe97283014",
+      "created": "",
+      "exerciseOrder": 1,
+      "exerciseSetId": "873626e4-ad34-4aa3-93a7-e5161b88e823",
+      "parentId": "953019ee-15b0-4d14-8fa5-eed668eb4d34",
+      "reps": 12,
+      "sets": 4,
+      "time": 0,
+      "updated": "",
+      "workoutExerciseId": "0d9a3992-1a2e-40cf-bbf2-5ac720578832",
+      "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951"
+     },
+     {
+      "childId": "cb229ca2-c0ae-442f-98ae-97ae0ab7a27d",
+      "created": "",
+      "exerciseOrder": 1,
+      "exerciseSetId": "612fecdd-6085-4134-a0f7-78b8297ee353",
+      "parentId": "3bfa431f-4dee-4ea8-bf6e-2b4746213500",
+      "reps": 10,
+      "sets": 3,
+      "time": 0,
+      "updated": "",
+      "workoutExerciseId": "e040ce4c-75a2-433b-841d-9e627968d40f",
+      "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951"
+     }
+    ],
+    "tags": [
+     {
+      "created": "2023-07-08 06:10:00",
+      "tagId": "1",
+      "title": "Failure",
+      "updated": "2023-07-09 03:39:46"
+     },
+     {
+      "created": "2023-07-08 06:10:00",
+      "tagId": "2",
+      "title": "Warmup",
+      "updated": "2023-07-09 03:39:46"
+     },
+     {
+      "created": "2023-07-08 06:10:00",
+      "tagId": "3",
+      "title": "Fatigued",
+      "updated": "2023-07-09 03:39:46"
+     },
+     {
+      "created": "2023-07-08 06:10:00",
+      "tagId": "4",
+      "title": "Max",
+      "updated": "2023-07-09 03:39:46"
+     }
+    ],
+    "workoutExercises": [
+     {
       "created": "2023-06-23 13:56:14",
       "exerciseId": "66cdf17a-6f92-48ac-80b4-c46299570798",
       "exerciseOrder": 2,
@@ -2994,8 +3355,8 @@
       "updated": "2023-06-23 13:56:14",
       "workoutExerciseId": "a821da7b-3881-40a8-81d3-2e2bdf2f43ec",
       "workoutId": "a50a5bd2-f996-4397-9e48-43623e055f49"
-    },
-    {
+     },
+     {
       "created": "2023-06-23 13:56:14",
       "exerciseId": "ed47d49f-e0b8-45d5-8df7-6b05fa029bdb",
       "exerciseOrder": 3,
@@ -3007,8 +3368,8 @@
       "updated": "2023-06-23 13:56:14",
       "workoutExerciseId": "4f0124cf-d5f1-4734-8914-892ec59ea9da",
       "workoutId": "a50a5bd2-f996-4397-9e48-43623e055f49"
-    },
-    {
+     },
+     {
       "created": "2023-06-23 13:56:14",
       "exerciseId": "a20dd781-9da9-4b5b-a04e-a4e2a9b06870",
       "exerciseOrder": 4,
@@ -3020,8 +3381,8 @@
       "updated": "2023-06-23 13:56:14",
       "workoutExerciseId": "5b825d68-cfb8-4c15-ac8f-6de1d173e668",
       "workoutId": "a50a5bd2-f996-4397-9e48-43623e055f49"
-    },
-    {
+     },
+     {
       "created": "2023-06-23 13:56:14",
       "exerciseId": "e85ee36b-d006-48a9-b3ff-b3207ecc24a3",
       "exerciseOrder": 5,
@@ -3033,8 +3394,8 @@
       "updated": "2023-06-23 13:56:14",
       "workoutExerciseId": "c6f86ce2-9fd7-4127-b863-9b4473ed8105",
       "workoutId": "a50a5bd2-f996-4397-9e48-43623e055f49"
-    },
-    {
+     },
+     {
       "created": "2023-06-23 13:56:14",
       "exerciseId": "de45b67e-696b-45dd-beb8-5c2a5c97d3a8",
       "exerciseOrder": 6,
@@ -3046,8 +3407,8 @@
       "updated": "2023-06-23 13:56:14",
       "workoutExerciseId": "2eb23d1d-ad45-4fac-ba56-2f8d1818566d",
       "workoutId": "a50a5bd2-f996-4397-9e48-43623e055f49"
-    },
-    {
+     },
+     {
       "created": "2023-06-23 13:56:14",
       "exerciseId": "5e5029e1-8057-4871-90a5-c0ec9ef1df35",
       "exerciseOrder": 7,
@@ -3059,8 +3420,8 @@
       "updated": "2023-06-23 13:56:14",
       "workoutExerciseId": "c4fce306-8b42-4188-a595-24516bd38dd2",
       "workoutId": "a50a5bd2-f996-4397-9e48-43623e055f49"
-    },
-    {
+     },
+     {
       "created": "2023-06-23 13:56:14",
       "exerciseId": "1e8454bc-11cd-4d32-8141-daf32d874db8",
       "exerciseOrder": 8,
@@ -3072,8 +3433,8 @@
       "updated": "2023-06-23 13:56:14",
       "workoutExerciseId": "93986f84-4ed3-4980-8e31-659c0b6dd600",
       "workoutId": "a50a5bd2-f996-4397-9e48-43623e055f49"
-    },
-    {
+     },
+     {
       "created": "2023-06-23 14:14:26",
       "exerciseId": "bf3abcd6-bfaf-444d-aa15-6abe97283014",
       "exerciseOrder": 1,
@@ -3085,8 +3446,8 @@
       "updated": "2023-06-23 14:14:26",
       "workoutExerciseId": "e033ca9d-054a-42da-92f1-ed5797fa7f59",
       "workoutId": "a50a5bd2-f996-4397-9e48-43623e055f49"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 17:01:30",
       "exerciseId": "994f8e0c-e514-4ea2-a284-dadd8ef7f45e",
       "exerciseOrder": 0,
@@ -3098,8 +3459,8 @@
       "updated": "2023-06-26 17:01:30",
       "workoutExerciseId": "19fb9ff7-847a-4ecb-9122-3efe618e0440",
       "workoutId": "9eda5ff8-e50c-42cc-b71c-58acbf30ab09"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 17:01:30",
       "exerciseId": "42c7ba17-f23e-4eaa-a42c-0e699881df42",
       "exerciseOrder": 1,
@@ -3111,8 +3472,8 @@
       "updated": "2023-06-26 17:01:30",
       "workoutExerciseId": "47328f0a-1646-4f54-a8a7-06ac0a4bd4b4",
       "workoutId": "9eda5ff8-e50c-42cc-b71c-58acbf30ab09"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 17:01:30",
       "exerciseId": "0c804742-2f37-4d8b-ab34-040aa0eb54be",
       "exerciseOrder": 2,
@@ -3124,8 +3485,8 @@
       "updated": "2023-06-26 17:01:30",
       "workoutExerciseId": "4a40f9d2-87db-40a8-9437-274ba0391b19",
       "workoutId": "9eda5ff8-e50c-42cc-b71c-58acbf30ab09"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 17:01:30",
       "exerciseId": "0a643fb3-1191-4aff-8696-23e90605cf83",
       "exerciseOrder": 3,
@@ -3137,8 +3498,8 @@
       "updated": "2023-06-26 17:01:30",
       "workoutExerciseId": "7c60c7cd-e017-4bb0-a94e-4608932e2366",
       "workoutId": "9eda5ff8-e50c-42cc-b71c-58acbf30ab09"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 17:01:30",
       "exerciseId": "260669fb-298c-48f9-bd93-95a2dc2c75e4",
       "exerciseOrder": 4,
@@ -3150,8 +3511,8 @@
       "updated": "2023-06-26 17:01:30",
       "workoutExerciseId": "bae267d0-6e75-4a8b-8205-cf33e018eab4",
       "workoutId": "9eda5ff8-e50c-42cc-b71c-58acbf30ab09"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 17:01:30",
       "exerciseId": "9df68111-dd10-40f6-85c5-bc405fc50618",
       "exerciseOrder": 5,
@@ -3163,8 +3524,8 @@
       "updated": "2023-06-26 17:01:30",
       "workoutExerciseId": "b97bec13-213d-4ae3-a830-34661fcb15a1",
       "workoutId": "9eda5ff8-e50c-42cc-b71c-58acbf30ab09"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 17:01:30",
       "exerciseId": "cc6054e2-a571-4cd7-b0e0-1d700174d96e",
       "exerciseOrder": 6,
@@ -3176,8 +3537,8 @@
       "updated": "2023-06-26 17:01:30",
       "workoutExerciseId": "54bc3d3f-ffef-49f5-9c99-31283358e7b5",
       "workoutId": "9eda5ff8-e50c-42cc-b71c-58acbf30ab09"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 17:01:30",
       "exerciseId": "3d824b9c-b7f2-4150-88f5-0b639c803bd0",
       "exerciseOrder": 7,
@@ -3189,8 +3550,8 @@
       "updated": "2023-06-26 17:01:30",
       "workoutExerciseId": "79ceb716-ecf2-471a-9af4-944cd3e29f5d",
       "workoutId": "9eda5ff8-e50c-42cc-b71c-58acbf30ab09"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 17:01:30",
       "exerciseId": "99c807e5-5998-4606-9cc9-1aae4f575562",
       "exerciseOrder": 8,
@@ -3202,8 +3563,8 @@
       "updated": "2023-06-26 17:01:30",
       "workoutExerciseId": "731cc0ec-2bdd-4415-8699-9bd1e6e8f1f2",
       "workoutId": "9eda5ff8-e50c-42cc-b71c-58acbf30ab09"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 17:01:30",
       "exerciseId": "b29dede6-b87e-497f-82a4-9b265e5e553c",
       "exerciseOrder": 9,
@@ -3215,8 +3576,8 @@
       "updated": "2023-06-26 17:01:30",
       "workoutExerciseId": "00efcd7f-69e6-40c5-ba93-5f0c66d2ef48",
       "workoutId": "9eda5ff8-e50c-42cc-b71c-58acbf30ab09"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 17:01:30",
       "exerciseId": "669cbf95-07f9-4310-ae8b-1a3adeb97be2",
       "exerciseOrder": 10,
@@ -3228,8 +3589,8 @@
       "updated": "2023-06-26 17:01:30",
       "workoutExerciseId": "7433550c-605f-4f10-801a-40c45945e109",
       "workoutId": "9eda5ff8-e50c-42cc-b71c-58acbf30ab09"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 17:05:43",
       "exerciseId": "882d1763-6e5f-4bf1-b567-4a98c7dd812d",
       "exerciseOrder": 0,
@@ -3241,8 +3602,8 @@
       "updated": "2023-06-26 17:05:43",
       "workoutExerciseId": "b807bac0-2861-49f0-bf64-5c40ad232b37",
       "workoutId": "1be11282-d077-4af4-b7bf-336085c71013"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 17:05:43",
       "exerciseId": "31dc5800-930f-40b3-9607-0e832dd966bf",
       "exerciseOrder": 1,
@@ -3254,8 +3615,8 @@
       "updated": "2023-06-26 17:05:43",
       "workoutExerciseId": "99fd8fb6-a2dc-42ff-95b6-328bda13c392",
       "workoutId": "1be11282-d077-4af4-b7bf-336085c71013"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 17:05:43",
       "exerciseId": "54ae501f-c066-458d-bbc3-2b5885865166",
       "exerciseOrder": 3,
@@ -3267,8 +3628,8 @@
       "updated": "2023-06-26 17:05:43",
       "workoutExerciseId": "56944a7c-b77d-40cb-add9-2ac4042ba02c",
       "workoutId": "1be11282-d077-4af4-b7bf-336085c71013"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 17:05:43",
       "exerciseId": "2bf680dc-7fad-45c4-b732-abd171cd7e46",
       "exerciseOrder": 4,
@@ -3280,8 +3641,8 @@
       "updated": "2023-06-26 17:05:43",
       "workoutExerciseId": "03d12294-102e-4c74-9346-af0bf05bc7a1",
       "workoutId": "1be11282-d077-4af4-b7bf-336085c71013"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 17:05:43",
       "exerciseId": "4f7e1ba4-da78-4d82-ba30-8901d51fcf82",
       "exerciseOrder": 5,
@@ -3293,8 +3654,8 @@
       "updated": "2023-06-26 17:05:43",
       "workoutExerciseId": "6d990814-62de-415a-a3d7-1dc3f046cbc9",
       "workoutId": "1be11282-d077-4af4-b7bf-336085c71013"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 18:42:55",
       "exerciseId": "669cbf95-07f9-4310-ae8b-1a3adeb97be2",
       "exerciseOrder": 5,
@@ -3306,8 +3667,8 @@
       "updated": "2023-06-26 18:42:55",
       "workoutExerciseId": "bd31ded3-b495-450a-96dc-a866c8a5fc88",
       "workoutId": "1be11282-d077-4af4-b7bf-336085c71013"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 13:39:24",
       "exerciseId": "cf9d69d2-d119-46a2-8338-135aa28ede0e",
       "exerciseOrder": 1,
@@ -3319,8 +3680,8 @@
       "updated": "2023-06-27 13:39:24",
       "workoutExerciseId": "2b332a28-b5e3-494c-8c10-81586a827923",
       "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 13:39:24",
       "exerciseId": "0c804742-2f37-4d8b-ab34-040aa0eb54be",
       "exerciseOrder": 2,
@@ -3332,8 +3693,8 @@
       "updated": "2023-06-27 13:39:24",
       "workoutExerciseId": "6c8cbcb3-4fd9-4c95-b962-b58a29014e6b",
       "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 13:39:24",
       "exerciseId": "260669fb-298c-48f9-bd93-95a2dc2c75e4",
       "exerciseOrder": 3,
@@ -3345,8 +3706,8 @@
       "updated": "2023-06-27 13:39:24",
       "workoutExerciseId": "b4264700-edb3-4dfd-8436-11fa8a204d36",
       "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 13:39:24",
       "exerciseId": "0a643fb3-1191-4aff-8696-23e90605cf83",
       "exerciseOrder": 4,
@@ -3358,8 +3719,8 @@
       "updated": "2023-06-27 13:39:24",
       "workoutExerciseId": "508decfe-4e64-4f6c-ad9d-7924d079b79b",
       "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 13:39:24",
       "exerciseId": "953019ee-15b0-4d14-8fa5-eed668eb4d34",
       "exerciseOrder": 5,
@@ -3371,8 +3732,8 @@
       "updated": "2023-06-27 13:39:24",
       "workoutExerciseId": "6f0ba5ef-e520-47df-9cf6-583e865248a5",
       "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 13:39:24",
       "exerciseId": "ed47d49f-e0b8-45d5-8df7-6b05fa029bdb",
       "exerciseOrder": 6,
@@ -3384,8 +3745,8 @@
       "updated": "2023-06-27 13:39:24",
       "workoutExerciseId": "3353bcb0-3511-4305-98f5-2df481cd13d2",
       "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 13:39:24",
       "exerciseId": "5e5029e1-8057-4871-90a5-c0ec9ef1df35",
       "exerciseOrder": 7,
@@ -3397,8 +3758,8 @@
       "updated": "2023-06-27 13:39:24",
       "workoutExerciseId": "5dde5105-bb0a-4e3e-904c-f089e2e9827a",
       "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 13:39:24",
       "exerciseId": "1e8454bc-11cd-4d32-8141-daf32d874db8",
       "exerciseOrder": 8,
@@ -3410,8 +3771,8 @@
       "updated": "2023-06-27 13:39:24",
       "workoutExerciseId": "e356c9f2-5d21-46ff-bc50-94a63da70631",
       "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 13:39:24",
       "exerciseId": "669cbf95-07f9-4310-ae8b-1a3adeb97be2",
       "exerciseOrder": 9,
@@ -3423,8 +3784,8 @@
       "updated": "2023-06-27 13:39:24",
       "workoutExerciseId": "4b1abb4e-b2be-4178-89af-b6cd4d39f205",
       "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 13:39:57",
       "exerciseId": "882d1763-6e5f-4bf1-b567-4a98c7dd812d",
       "exerciseOrder": -1,
@@ -3436,8 +3797,8 @@
       "updated": "2023-06-27 13:39:57",
       "workoutExerciseId": "3419a866-c556-436f-a9fd-03a45048ef49",
       "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 14:15:32",
       "exerciseId": "de45b67e-696b-45dd-beb8-5c2a5c97d3a8",
       "exerciseOrder": 6,
@@ -3449,8 +3810,8 @@
       "updated": "2023-06-27 14:15:32",
       "workoutExerciseId": "a695873d-bb13-4d87-863c-09f01170794a",
       "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2"
-    },
-    {
+     },
+     {
       "created": "2023-06-28 06:06:45",
       "exerciseId": "99c807e5-5998-4606-9cc9-1aae4f575562",
       "exerciseOrder": 4,
@@ -3462,8 +3823,8 @@
       "updated": "2023-06-28 06:06:45",
       "workoutExerciseId": "07d44eba-1feb-4b42-89f8-1783500ab332",
       "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b"
-    },
-    {
+     },
+     {
       "created": "2023-06-28 06:06:45",
       "exerciseId": "a20dd781-9da9-4b5b-a04e-a4e2a9b06870",
       "exerciseOrder": 5,
@@ -3475,8 +3836,8 @@
       "updated": "2023-06-28 06:06:45",
       "workoutExerciseId": "ea15c032-fb65-4d60-845e-71d75f68c46d",
       "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b"
-    },
-    {
+     },
+     {
       "created": "2023-06-28 06:06:45",
       "exerciseId": "e85ee36b-d006-48a9-b3ff-b3207ecc24a3",
       "exerciseOrder": 7,
@@ -3488,8 +3849,8 @@
       "updated": "2023-06-28 06:06:45",
       "workoutExerciseId": "8891b899-0cba-4457-b673-3916f9488c5f",
       "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b"
-    },
-    {
+     },
+     {
       "created": "2023-06-28 06:06:45",
       "exerciseId": "669cbf95-07f9-4310-ae8b-1a3adeb97be2",
       "exerciseOrder": 8,
@@ -3501,8 +3862,8 @@
       "updated": "2023-06-28 06:06:45",
       "workoutExerciseId": "dc9e8733-aad7-4751-a839-0e420190bcb9",
       "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b"
-    },
-    {
+     },
+     {
       "created": "2023-06-28 14:05:08",
       "exerciseId": "882d1763-6e5f-4bf1-b567-4a98c7dd812d",
       "exerciseOrder": -1,
@@ -3514,8 +3875,8 @@
       "updated": "2023-06-28 14:05:08",
       "workoutExerciseId": "44370cdf-42dc-4db0-b31f-e3519fc05920",
       "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b"
-    },
-    {
+     },
+     {
       "created": "2023-06-28 14:17:42",
       "exerciseId": "9df68111-dd10-40f6-85c5-bc405fc50618",
       "exerciseOrder": 0,
@@ -3527,8 +3888,8 @@
       "updated": "2023-06-28 14:17:42",
       "workoutExerciseId": "2dd0fe9e-4fd5-4350-84fb-69bd9ddce97b",
       "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b"
-    },
-    {
+     },
+     {
       "created": "2023-06-28 14:18:25",
       "exerciseId": "3d824b9c-b7f2-4150-88f5-0b639c803bd0",
       "exerciseOrder": 2,
@@ -3540,8 +3901,8 @@
       "updated": "2023-06-28 14:18:25",
       "workoutExerciseId": "9675a5cb-05cc-4f77-a34d-ea0acaa93658",
       "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b"
-    },
-    {
+     },
+     {
       "created": "2023-06-30 13:52:56",
       "exerciseId": "994f8e0c-e514-4ea2-a284-dadd8ef7f45e",
       "exerciseOrder": -1,
@@ -3553,8 +3914,8 @@
       "updated": "2023-06-30 13:52:56",
       "workoutExerciseId": "707548ad-eb9d-4939-90fe-476abee363e2",
       "workoutId": "a50a5bd2-f996-4397-9e48-43623e055f49"
-    },
-    {
+     },
+     {
       "created": "2023-06-30 13:53:34",
       "exerciseId": "953019ee-15b0-4d14-8fa5-eed668eb4d34",
       "exerciseOrder": 0,
@@ -3566,8 +3927,8 @@
       "updated": "2023-06-30 13:53:34",
       "workoutExerciseId": "29f52e6c-dbf3-410b-9166-6cec6a5ca45d",
       "workoutId": "a50a5bd2-f996-4397-9e48-43623e055f49"
-    },
-    {
+     },
+     {
       "created": "2023-07-02 00:25:15",
       "exerciseId": "882d1763-6e5f-4bf1-b567-4a98c7dd812d",
       "exerciseOrder": 0,
@@ -3579,8 +3940,8 @@
       "updated": "2023-07-02 00:25:15",
       "workoutExerciseId": "64dda660-a87b-43d7-9832-3a7d23ae53b5",
       "workoutId": "7f0eda3a-4655-4705-b715-258642009d2e"
-    },
-    {
+     },
+     {
       "created": "2023-07-02 00:25:15",
       "exerciseId": "cf9d69d2-d119-46a2-8338-135aa28ede0e",
       "exerciseOrder": 1,
@@ -3592,8 +3953,8 @@
       "updated": "2023-07-02 00:25:15",
       "workoutExerciseId": "843867ac-ed86-436f-97ee-34db8a0fa29f",
       "workoutId": "7f0eda3a-4655-4705-b715-258642009d2e"
-    },
-    {
+     },
+     {
       "created": "2023-07-02 00:25:15",
       "exerciseId": "260669fb-298c-48f9-bd93-95a2dc2c75e4",
       "exerciseOrder": 3,
@@ -3605,8 +3966,8 @@
       "updated": "2023-07-02 00:25:15",
       "workoutExerciseId": "93254ca1-658b-4d3b-a97d-d7daddb16a95",
       "workoutId": "7f0eda3a-4655-4705-b715-258642009d2e"
-    },
-    {
+     },
+     {
       "created": "2023-07-02 00:25:15",
       "exerciseId": "cc6054e2-a571-4cd7-b0e0-1d700174d96e",
       "exerciseOrder": 6,
@@ -3618,8 +3979,8 @@
       "updated": "2023-07-02 00:25:15",
       "workoutExerciseId": "06735182-6d88-4642-af0e-0a9e9ce33bd4",
       "workoutId": "7f0eda3a-4655-4705-b715-258642009d2e"
-    },
-    {
+     },
+     {
       "created": "2023-07-02 00:25:15",
       "exerciseId": "3d824b9c-b7f2-4150-88f5-0b639c803bd0",
       "exerciseOrder": 7,
@@ -3631,8 +3992,8 @@
       "updated": "2023-07-02 00:25:15",
       "workoutExerciseId": "bfaa8eea-7629-4f4d-8944-865e25b555d0",
       "workoutId": "7f0eda3a-4655-4705-b715-258642009d2e"
-    },
-    {
+     },
+     {
       "created": "2023-07-02 00:25:15",
       "exerciseId": "669cbf95-07f9-4310-ae8b-1a3adeb97be2",
       "exerciseOrder": 8,
@@ -3644,8 +4005,8 @@
       "updated": "2023-07-02 00:25:15",
       "workoutExerciseId": "521763c2-f3ab-41b8-a0fa-135fe9f492ae",
       "workoutId": "7f0eda3a-4655-4705-b715-258642009d2e"
-    },
-    {
+     },
+     {
       "created": "2023-07-02 01:07:19",
       "exerciseId": "0a643fb3-1191-4aff-8696-23e90605cf83",
       "exerciseOrder": 3,
@@ -3657,8 +4018,8 @@
       "updated": "2023-07-02 01:07:19",
       "workoutExerciseId": "4d574e8c-0cd1-427a-b5f3-b52f094ad26d",
       "workoutId": "7f0eda3a-4655-4705-b715-258642009d2e"
-    },
-    {
+     },
+     {
       "created": "2023-07-02 01:31:33",
       "exerciseId": "171522d4-9a9c-4350-aff7-455f4bf223b1",
       "exerciseOrder": 6,
@@ -3670,8 +4031,8 @@
       "updated": "2023-07-02 01:31:33",
       "workoutExerciseId": "2174b35a-3bf1-490f-b8d2-eb32ce16b012",
       "workoutId": "7f0eda3a-4655-4705-b715-258642009d2e"
-    },
-    {
+     },
+     {
       "created": "2023-07-03 16:43:03",
       "exerciseId": "f443c935-5f32-49e3-ba8e-79f6247f6ecc",
       "exerciseOrder": 1,
@@ -3683,8 +4044,8 @@
       "updated": "2023-07-03 16:43:03",
       "workoutExerciseId": "0d87ded8-72b1-4cca-add9-a5813481c3dc",
       "workoutId": "1be11282-d077-4af4-b7bf-336085c71013"
-    },
-    {
+     },
+     {
       "created": "2023-07-05 14:10:26",
       "exerciseId": "ccfb2b8f-b272-432c-87ca-f45a00bc89b5",
       "exerciseOrder": 1,
@@ -3696,8 +4057,8 @@
       "updated": "2023-07-05 14:10:26",
       "workoutExerciseId": "e902fc9b-951d-4d3b-a1a3-8652ba391ae5",
       "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b"
-    },
-    {
+     },
+     {
       "created": "2023-07-05 14:32:50",
       "exerciseId": "a417bf2a-76de-47a7-b80c-91c1b714fa80",
       "exerciseOrder": 5,
@@ -3709,8 +4070,8 @@
       "updated": "2023-07-05 14:32:50",
       "workoutExerciseId": "3b270aca-6a56-4b44-90a9-d9d9bff1d8e2",
       "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b"
-    },
-    {
+     },
+     {
       "created": "2023-07-06 06:11:07",
       "exerciseId": "b20f5d1c-1545-4aaf-8631-7900ced916b1",
       "exerciseOrder": 0,
@@ -3722,8 +4083,8 @@
       "updated": "2023-07-06 06:11:07",
       "workoutExerciseId": "c2da5389-e992-454c-ab02-a0c4b9243be5",
       "workoutId": "2f2c28cd-3208-4982-9be4-914fdbbc4e5f"
-    },
-    {
+     },
+     {
       "created": "2023-07-06 06:11:07",
       "exerciseId": "d4044056-dddc-4b00-9381-a64f7f96dc97",
       "exerciseOrder": 1,
@@ -3735,8 +4096,8 @@
       "updated": "2023-07-06 06:11:07",
       "workoutExerciseId": "708b22df-ab9e-46e4-ad26-622f3ec51e88",
       "workoutId": "2f2c28cd-3208-4982-9be4-914fdbbc4e5f"
-    },
-    {
+     },
+     {
       "created": "2023-07-06 06:11:07",
       "exerciseId": "06e70551-3f95-4094-9a8c-617fd06fa548",
       "exerciseOrder": 2,
@@ -3748,8 +4109,8 @@
       "updated": "2023-07-06 06:11:07",
       "workoutExerciseId": "62b182de-1239-4ce0-ae9a-2c6509b4bdf1",
       "workoutId": "2f2c28cd-3208-4982-9be4-914fdbbc4e5f"
-    },
-    {
+     },
+     {
       "created": "2023-07-06 06:11:07",
       "exerciseId": "669cbf95-07f9-4310-ae8b-1a3adeb97be2",
       "exerciseOrder": 3,
@@ -3761,8 +4122,8 @@
       "updated": "2023-07-06 06:11:07",
       "workoutExerciseId": "fd19d3bb-13ac-4c2d-867d-9d7618a5bd73",
       "workoutId": "2f2c28cd-3208-4982-9be4-914fdbbc4e5f"
-    },
-    {
+     },
+     {
       "created": "2023-07-06 06:11:07",
       "exerciseId": "9fa6f500-ed47-4bd3-97c2-ef22a81b9601",
       "exerciseOrder": 4,
@@ -3774,8 +4135,8 @@
       "updated": "2023-07-06 06:11:07",
       "workoutExerciseId": "38f599e4-2276-45f3-90f2-b48579303604",
       "workoutId": "2f2c28cd-3208-4982-9be4-914fdbbc4e5f"
-    },
-    {
+     },
+     {
       "created": "2023-07-06 06:11:07",
       "exerciseId": "99c807e5-5998-4606-9cc9-1aae4f575562",
       "exerciseOrder": 5,
@@ -3787,8 +4148,8 @@
       "updated": "2023-07-06 06:11:07",
       "workoutExerciseId": "75719e35-c26d-4b41-9f38-8d91ef914a00",
       "workoutId": "2f2c28cd-3208-4982-9be4-914fdbbc4e5f"
-    },
-    {
+     },
+     {
       "created": "2023-07-06 06:11:07",
       "exerciseId": "b20f5d1c-1545-4aaf-8631-7900ced916b1",
       "exerciseOrder": 6,
@@ -3800,8 +4161,8 @@
       "updated": "2023-07-06 06:11:07",
       "workoutExerciseId": "7bdaaf1a-40b1-46e3-b8da-decfdba2682b",
       "workoutId": "2f2c28cd-3208-4982-9be4-914fdbbc4e5f"
-    },
-    {
+     },
+     {
       "created": "2023-07-07 15:11:23",
       "exerciseId": "d914dfa8-0d75-4a11-bd25-c3ba2d5ab830",
       "exerciseOrder": 4,
@@ -3813,8 +4174,8 @@
       "updated": "2023-07-07 15:11:23",
       "workoutExerciseId": "34cbacff-f875-4561-b3c6-d88e8b7341e8",
       "workoutId": "7f0eda3a-4655-4705-b715-258642009d2e"
-    },
-    {
+     },
+     {
       "created": "2023-07-07 15:11:34",
       "exerciseId": "55588293-4527-4c72-9f24-ba72d6f56857",
       "exerciseOrder": 1,
@@ -3826,10 +4187,140 @@
       "updated": "2023-07-07 15:11:34",
       "workoutExerciseId": "137526bf-ecf0-463c-86f0-5071ea5111e2",
       "workoutId": "7f0eda3a-4655-4705-b715-258642009d2e"
-    }
-  ],
-  "workoutLogs": [
-    {
+     },
+     {
+      "created": "2023-07-08 06:19:39",
+      "exerciseId": "882d1763-6e5f-4bf1-b567-4a98c7dd812d",
+      "exerciseOrder": 0,
+      "note": "",
+      "reps": 1,
+      "sets": 1,
+      "superSetOrdering": 0,
+      "time": 300,
+      "updated": "2023-07-08 06:19:39",
+      "workoutExerciseId": "6f2e94d8-f758-472f-ae43-551cff8042f6",
+      "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951"
+     },
+     {
+      "created": "2023-07-08 06:19:39",
+      "exerciseId": "3bfa431f-4dee-4ea8-bf6e-2b4746213500",
+      "exerciseOrder": 2,
+      "note": "",
+      "reps": 10,
+      "sets": 4,
+      "superSetOrdering": 0,
+      "time": 0,
+      "updated": "2023-07-08 06:19:39",
+      "workoutExerciseId": "e040ce4c-75a2-433b-841d-9e627968d40f",
+      "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951"
+     },
+     {
+      "created": "2023-07-08 06:19:39",
+      "exerciseId": "a20dd781-9da9-4b5b-a04e-a4e2a9b06870",
+      "exerciseOrder": 3,
+      "note": "",
+      "reps": 10,
+      "sets": 4,
+      "superSetOrdering": 0,
+      "time": 0,
+      "updated": "2023-07-08 06:19:39",
+      "workoutExerciseId": "7d5acbe7-58b7-45d7-98a4-5c3acc1a4a79",
+      "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951"
+     },
+     {
+      "created": "2023-07-08 06:19:39",
+      "exerciseId": "e85ee36b-d006-48a9-b3ff-b3207ecc24a3",
+      "exerciseOrder": 4,
+      "note": "",
+      "reps": 12,
+      "sets": 3,
+      "superSetOrdering": 0,
+      "time": 0,
+      "updated": "2023-07-08 06:19:39",
+      "workoutExerciseId": "dc57196a-e2cf-4433-93a8-dcd20ba6dccf",
+      "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951"
+     },
+     {
+      "created": "2023-07-08 06:19:39",
+      "exerciseId": "de45b67e-696b-45dd-beb8-5c2a5c97d3a8",
+      "exerciseOrder": 5,
+      "note": "",
+      "reps": 12,
+      "sets": 3,
+      "superSetOrdering": 0,
+      "time": 0,
+      "updated": "2023-07-08 06:19:39",
+      "workoutExerciseId": "d7dbf92a-b000-46f7-b73c-25acf08e7309",
+      "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951"
+     },
+     {
+      "created": "2023-07-08 06:19:39",
+      "exerciseId": "5e5029e1-8057-4871-90a5-c0ec9ef1df35",
+      "exerciseOrder": 6,
+      "note": "",
+      "reps": 12,
+      "sets": 4,
+      "superSetOrdering": 0,
+      "time": 0,
+      "updated": "2023-07-08 06:19:39",
+      "workoutExerciseId": "4754a553-526d-43f4-bb6f-dbd619d054df",
+      "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951"
+     },
+     {
+      "created": "2023-07-08 06:19:39",
+      "exerciseId": "1e8454bc-11cd-4d32-8141-daf32d874db8",
+      "exerciseOrder": 7,
+      "note": "",
+      "reps": 10,
+      "sets": 3,
+      "superSetOrdering": 0,
+      "time": 0,
+      "updated": "2023-07-08 06:19:39",
+      "workoutExerciseId": "03a476a6-fe50-41d9-bad7-b4e6c675f7b1",
+      "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951"
+     },
+     {
+      "created": "2023-07-08 20:31:15",
+      "exerciseId": "953019ee-15b0-4d14-8fa5-eed668eb4d34",
+      "exerciseOrder": 0,
+      "note": "",
+      "reps": 10,
+      "sets": 4,
+      "superSetOrdering": 0,
+      "time": 0,
+      "updated": "2023-07-08 20:31:15",
+      "workoutExerciseId": "0d9a3992-1a2e-40cf-bbf2-5ac720578832",
+      "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951"
+     },
+     {
+      "created": "2023-07-08 21:36:58",
+      "exerciseId": "669cbf95-07f9-4310-ae8b-1a3adeb97be2",
+      "exerciseOrder": 7,
+      "note": "",
+      "reps": 12,
+      "sets": 3,
+      "superSetOrdering": 0,
+      "time": 0,
+      "updated": "2023-07-08 21:36:58",
+      "workoutExerciseId": "dd9a475b-661b-481a-9570-ffb2c59a9e15",
+      "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951"
+     },
+     {
+      "created": "2023-07-08 21:42:34",
+      "exerciseId": "bd73c482-9549-4ed2-9b29-74796b634084",
+      "exerciseOrder": 8,
+      "note": "",
+      "reps": 1,
+      "sets": 1,
+      "superSetOrdering": 0,
+      "time": 1200,
+      "updated": "2023-07-08 21:42:34",
+      "workoutExerciseId": "e08ce28b-8612-4414-81fd-0d3c318c308b",
+      "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951"
+     }
+    ],
+    "workoutLogs": [
+     {
       "created": "2023-06-20 00:45:05",
       "description": "Get those juicy quads",
       "duration": 36,
@@ -3838,8 +4329,8 @@
       "updated": "2023-06-20 00:45:05",
       "workoutId": "1be11282-d077-4af4-b7bf-336085c71013",
       "workoutLogId": "917a2d3d-ad68-4ef1-9be2-7d0874e8f45f"
-    },
-    {
+     },
+     {
       "created": "2023-06-20 00:47:23",
       "description": "Get those juicy quads",
       "duration": 111,
@@ -3848,8 +4339,8 @@
       "updated": "2023-06-20 00:47:23",
       "workoutId": "1be11282-d077-4af4-b7bf-336085c71013",
       "workoutLogId": "db5f0024-83fd-41b0-907f-b72708f04599"
-    },
-    {
+     },
+     {
       "created": "2023-06-20 15:12:09",
       "description": "",
       "duration": 4963,
@@ -3858,8 +4349,8 @@
       "updated": "2023-06-20 15:12:09",
       "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2",
       "workoutLogId": "57f0c172-ecee-4359-8d0a-f9d5aaba6a0d"
-    },
-    {
+     },
+     {
       "created": "2023-06-21 03:16:10",
       "description": "Get those juicy quads",
       "duration": 18,
@@ -3868,8 +4359,8 @@
       "updated": "2023-06-21 03:16:10",
       "workoutId": "1be11282-d077-4af4-b7bf-336085c71013",
       "workoutLogId": "d831298b-e1b0-4d93-9f75-435c1b353d77"
-    },
-    {
+     },
+     {
       "created": "2023-06-21 15:23:10",
       "description": "Lets get pushy fellas",
       "duration": 5107,
@@ -3878,8 +4369,8 @@
       "updated": "2023-06-21 15:23:10",
       "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b",
       "workoutLogId": "7a3642e6-ca0d-494b-ab8c-1e23303bbcae"
-    },
-    {
+     },
+     {
       "created": "2023-06-22 15:20:08",
       "description": "",
       "duration": 3393,
@@ -3888,8 +4379,8 @@
       "updated": "2023-06-22 15:20:08",
       "workoutId": "2f2c28cd-3208-4982-9be4-914fdbbc4e5f",
       "workoutLogId": "eebaec55-e234-42c9-ab27-c379b93077df"
-    },
-    {
+     },
+     {
       "created": "2023-06-23 15:23:48",
       "description": "",
       "duration": 5248,
@@ -3898,8 +4389,8 @@
       "updated": "2023-06-23 15:23:48",
       "workoutId": "a50a5bd2-f996-4397-9e48-43623e055f49",
       "workoutLogId": "0f3e162e-76f3-48f6-b215-e78656d3ecbe"
-    },
-    {
+     },
+     {
       "created": "2023-06-24 15:53:21",
       "description": "",
       "duration": 4937,
@@ -3908,8 +4399,8 @@
       "updated": "2023-06-24 15:53:21",
       "workoutId": "9eda5ff8-e50c-42cc-b71c-58acbf30ab09",
       "workoutLogId": "1655609c-68d3-415b-86ca-fde68a865e48"
-    },
-    {
+     },
+     {
       "created": "2023-06-26 18:47:25",
       "description": "Get those juicy quads",
       "duration": 4519,
@@ -3918,8 +4409,8 @@
       "updated": "2023-06-26 18:47:25",
       "workoutId": "1be11282-d077-4af4-b7bf-336085c71013",
       "workoutLogId": "eb3f4e4f-55c6-4b8a-b637-287aac3598ea"
-    },
-    {
+     },
+     {
       "created": "2023-06-27 15:15:56",
       "description": "",
       "duration": 5791,
@@ -3928,8 +4419,8 @@
       "updated": "2023-06-27 15:15:56",
       "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2",
       "workoutLogId": "3018daa2-08b2-48f5-9966-a49a8dd7e7c7"
-    },
-    {
+     },
+     {
       "created": "2023-06-28 15:13:00",
       "description": "Lets get pushy fellas",
       "duration": 4076,
@@ -3938,8 +4429,8 @@
       "updated": "2023-06-28 15:13:00",
       "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b",
       "workoutLogId": "f7f69682-0a5b-4690-a233-c1f20c3f24b9"
-    },
-    {
+     },
+     {
       "created": "2023-07-02 01:46:32",
       "description": "",
       "duration": 4864,
@@ -3948,8 +4439,8 @@
       "updated": "2023-07-02 01:46:32",
       "workoutId": "7f0eda3a-4655-4705-b715-258642009d2e",
       "workoutLogId": "26e8eb89-ee14-49f0-ad21-81e20b76c486"
-    },
-    {
+     },
+     {
       "created": "2023-07-03 17:14:55",
       "description": "Get those juicy quads",
       "duration": 4232,
@@ -3958,8 +4449,8 @@
       "updated": "2023-07-03 17:14:55",
       "workoutId": "1be11282-d077-4af4-b7bf-336085c71013",
       "workoutLogId": "f2b46763-1f4b-4d98-805f-83363e815b60"
-    },
-    {
+     },
+     {
       "created": "2023-07-04 14:58:23",
       "description": "",
       "duration": 5200,
@@ -3968,8 +4459,8 @@
       "updated": "2023-07-04 14:58:23",
       "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2",
       "workoutLogId": "690a5e5c-0c81-4553-961e-2fbac75587d1"
-    },
-    {
+     },
+     {
       "created": "2023-07-05 15:02:14",
       "description": "Lets get pushy fellas",
       "duration": 4829,
@@ -3978,8 +4469,8 @@
       "updated": "2023-07-05 15:02:14",
       "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b",
       "workoutLogId": "21f3efd1-c743-4ea9-b436-0ef7c3eb27a0"
-    },
-    {
+     },
+     {
       "created": "2023-07-06 16:33:24",
       "description": "",
       "duration": 3774,
@@ -3988,8 +4479,8 @@
       "updated": "2023-07-06 16:33:24",
       "workoutId": "2f2c28cd-3208-4982-9be4-914fdbbc4e5f",
       "workoutLogId": "a5109a5b-7945-4dc1-bd6a-53c43369da20"
-    },
-    {
+     },
+     {
       "created": "2023-07-07 16:07:25",
       "description": "",
       "duration": 4953,
@@ -3998,65 +4489,82 @@
       "updated": "2023-07-07 16:07:25",
       "workoutId": "7f0eda3a-4655-4705-b715-258642009d2e",
       "workoutLogId": "f0ca758b-fba3-4c01-9348-7b44430cee37"
-    }
-  ],
-  "workouts": [
-    {
+     },
+     {
+      "created": "2023-07-08 22:03:57",
+      "description": "",
+      "duration": 6217,
+      "note": null,
+      "title": "Arms and shoulders 2",
+      "updated": "2023-07-08 22:03:57",
+      "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951",
+      "workoutLogId": "ceb19863-d17b-47e2-b73d-bed37f19783a"
+     }
+    ],
+    "workouts": [
+     {
       "created": "2023-06-20 00:44:18",
       "description": "Get those juicy quads",
       "icon": "",
       "title": "Leg day",
-      "updated": "2023-07-06 06:11:07",
+      "updated": "2023-07-08 06:19:39",
       "workoutId": "1be11282-d077-4af4-b7bf-336085c71013"
-    },
-    {
+     },
+     {
       "created": "2023-06-20 13:20:31",
       "description": "",
       "icon": "",
       "title": "Push 1",
-      "updated": "2023-07-06 06:11:07",
+      "updated": "2023-07-08 06:19:39",
       "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2"
-    },
-    {
+     },
+     {
       "created": "2023-06-21 03:22:53",
       "description": "Lets get pushy fellas",
       "icon": "",
       "title": "Pull 1",
-      "updated": "2023-07-06 06:11:07",
+      "updated": "2023-07-08 06:19:39",
       "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b"
-    },
-    {
+     },
+     {
       "created": "2023-06-22 07:58:33",
       "description": "",
       "icon": "",
       "title": "Abs and cardio",
-      "updated": "2023-07-06 06:11:07",
+      "updated": "2023-07-08 06:19:39",
       "workoutId": "2f2c28cd-3208-4982-9be4-914fdbbc4e5f"
-    },
-    {
+     },
+     {
       "created": "2023-06-23 13:56:14",
       "description": "",
       "icon": "",
       "title": "Arms and shoulders",
-      "updated": "2023-07-06 06:11:07",
+      "updated": "2023-07-08 06:19:39",
       "workoutId": "a50a5bd2-f996-4397-9e48-43623e055f49"
-    },
-    {
+     },
+     {
       "created": "2023-06-24 06:39:17",
       "description": "",
       "icon": "",
       "title": "Chest and back",
-      "updated": "2023-07-06 06:11:07",
+      "updated": "2023-07-08 06:19:39",
       "workoutId": "9eda5ff8-e50c-42cc-b71c-58acbf30ab09"
-    },
-    {
+     },
+     {
       "created": "2023-07-02 00:25:15",
       "description": "",
       "icon": "",
       "title": "Chest and back 2",
-      "updated": "2023-07-06 06:11:07",
+      "updated": "2023-07-08 06:19:39",
       "workoutId": "7f0eda3a-4655-4705-b715-258642009d2e"
-    }
-  ],
-  "tags": []
-}
+     },
+     {
+      "created": "2023-07-08 06:10:00",
+      "description": "",
+      "icon": "",
+      "title": "Arms and shoulders 2",
+      "updated": "2023-07-08 06:19:39",
+      "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951"
+     }
+    ]
+   }

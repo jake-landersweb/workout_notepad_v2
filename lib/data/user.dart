@@ -20,6 +20,7 @@ class User {
   late int expireEpoch;
   int? created;
   int? updated;
+  bool offline = false;
 
   User({
     required this.userId,
@@ -63,8 +64,12 @@ class User {
     sync = json['sync'].round();
     isAnon = json['isAnon'];
     expireEpoch = json['expireEpoch'].round();
-    created = json['created'].round();
-    updated = json['updated'].round();
+    if (json.containsKey("created")) {
+      created = json['created'].round();
+    }
+    if (json.containsKey("updated")) {
+      updated = json['updated'].round();
+    }
   }
 
   Map<String, dynamic> toMap() {
@@ -181,6 +186,26 @@ class User {
   }
 
   Widget avatar(BuildContext context, {double size = 120}) {
+    if (offline) {
+      return Container(
+        width: size,
+        height: size,
+        decoration: const BoxDecoration(shape: BoxShape.circle),
+        child: Align(
+          child: ClipOval(
+            child: SvgPicture.asset(
+              "assets/svg/default_profile.svg",
+              height: size,
+              fit: BoxFit.fitHeight,
+              placeholderBuilder: (context) {
+                return LoadingIndicator(
+                    color: Theme.of(context).colorScheme.primary);
+              },
+            ),
+          ),
+        ),
+      );
+    }
     var defaultAvatar = SvgPicture.network(
       "https://source.boringavatars.com/beam/120/$userId?colors=418A2F,DD7373,4B3F72,283044",
       height: size,

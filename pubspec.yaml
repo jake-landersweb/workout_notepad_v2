@@ -115,8 +115,38 @@ flutter:
     - assets/icons/trekking-96.png
     - assets/icons/weightlifting-96.png
     - assets/icons/workout-96.png
+    - assets/icons/shoulders-96.png
+    - assets/icons/quadriceps-96.png
+    - assets/icons/hamstrings-96.png
+    - assets/icons/swim-96.png
+    - assets/icons/battle-ropes-96.png
+    - assets/icons/balance-96.png
+    - assets/icons/bmi-96.png
+    - assets/icons/posture-96.png
+    - assets/icons/biceps-96.png
+    - assets/icons/trapezius-96.png
+    - assets/icons/staircase-skin-type-2-96.png
+    - assets/icons/stretching-hamstring-96.png
+    - assets/icons/racquetball-96.png
+    - assets/icons/hockey-96.png
+    - assets/icons/fitness-skin-type-2-96.png
+    - assets/icons/person-lying-down-96.png
+    - assets/icons/triceps-96.png
+    - assets/icons/pilates-96.png
+    - assets/icons/broken-leg-96.png
+    - assets/icons/boxing-glove-96.png
+    - assets/icons/muscle-flexing-96.png
+    - assets/icons/chest-96.png
+    - assets/icons/cycling-skin-type-2-96.png
+    - assets/icons/dragon-boat-96.png
+    - assets/icons/strength-96.png
+    - assets/icons/basketball-net-96.png
+    - assets/icons/bodybuilder-96.png
+    - assets/icons/barbells-96.png
+    - assets/icons/lungs-96.png
 
     - assets/svg/workout.svg
+    - assets/svg/default_profile.svg
 
     - assets/images/apple.png
     - assets/images/google.png

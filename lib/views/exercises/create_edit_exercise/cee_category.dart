@@ -39,7 +39,7 @@ class ECreateCategoryState extends State<CreateCategory> {
           Clickable(
             onTap: () => showIconPicker(
                 context: context,
-                initialIcon: "none",
+                initialIcon: _icon,
                 closeOnSelection: true,
                 onSelection: (icon) {
                   setState(() {

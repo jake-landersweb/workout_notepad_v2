@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/blurred_container.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
 
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/profile/profile.dart';
@@ -63,6 +65,27 @@ class _HomeState extends State<Home> {
             top: false,
             child: Column(
               children: [
+                if (dmodel.user!.offline)
+                  Container(
+                    color: AppColors.divider(context),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 2, 16, 2),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              "You are offline.",
+                              style: TextStyle(
+                                color: AppColors.subtext(context),
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 if (dmodel.workoutState != null)
                   Clickable(
                     onTap: () {
@@ -86,10 +109,36 @@ class _HomeState extends State<Home> {
                         ),
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+                        padding: const EdgeInsets.fromLTRB(0, 4, 16, 4),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            Clickable(
+                              onTap: () async {
+                                await showAlert(
+                                  context: context,
+                                  title: "Are You Sure?",
+                                  body: const Text(
+                                      "If you cancel your workout, all progress will be lost."),
+                                  cancelText: "Go Back",
+                                  onCancel: () {},
+                                  cancelBolded: true,
+                                  submitColor: Colors.red,
+                                  submitText: "Yes",
+                                  onSubmit: () {
+                                    dmodel.stopWorkout();
+                                  },
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(16, 2, 8, 2),
+                                child: Icon(
+                                  Icons.stop_rounded,
+                                  size: 30,
+                                  color: AppColors.subtext(context),
+                                ),
+                              ),
+                            ),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,

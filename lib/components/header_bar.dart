@@ -358,8 +358,8 @@ class _HeaderBarState extends State<HeaderBar> {
           borderRadius: BorderRadius.circular(0),
           backgroundColor:
               widget.backgroundColor ?? AppColors.background(context),
-          opacity: _showElevation || !widget.canScroll ? 0.7 : 0,
-          blur: _showElevation || !widget.canScroll ? 10 : 0,
+          opacity: _showElevation || !widget.canScroll ? 0.5 : 0,
+          blur: _showElevation || !widget.canScroll ? 5 : 0,
           child: Column(
             children: [
               if (widget.hasSafeArea)

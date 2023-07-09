@@ -104,7 +104,7 @@ class _SelectExerciseState extends State<SelectExercise>
         ),
         const SizedBox(height: 16),
         // exercise list
-        for (var i in filteredExercises(dmodel.exercises, _searchText))
+        for (var i in filteredExercises(dmodel, dmodel.exercises, _searchText))
           ExerciseCell(
             exercise: i,
             trailingWidget: widget.onDeselect == null

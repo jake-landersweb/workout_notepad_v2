@@ -21,7 +21,7 @@ class _AnonAccountState extends State<AnonAccount> {
     var dmodel = context.read<DataModel>();
     return comp.HeaderBar.sheet(
       title: "",
-      leading: const [comp.CloseButton()],
+      leading: const [comp.CloseButton2()],
       children: [
         Text("Anon Mode:", style: ttTitle(context)),
         Text(

@@ -16,7 +16,7 @@ void showIconPicker({
     context: context,
     builder: (context) => HeaderBar.sheet(
       title: "",
-      leading: const [comp.CloseButton()],
+      leading: const [comp.CloseButton2()],
       children: [
         _IconPicker(
           onSelection: onSelection,

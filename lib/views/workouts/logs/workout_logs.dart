@@ -49,7 +49,7 @@ class _WorkoutLogsState extends State<WorkoutLogs> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const comp.CloseButton(useRoot: true),
+              const comp.CloseButton2(useRoot: true),
               Text(
                 widget.workout.title,
                 style: ttTitle(

@@ -41,7 +41,7 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
       isFluid: true,
       itemSpacing: 16,
       horizontalSpacing: 0,
-      leading: const [comp.CloseButton()],
+      leading: const [comp.CloseButton2()],
       children: [
         _actions(context, dmodel),
         Padding(

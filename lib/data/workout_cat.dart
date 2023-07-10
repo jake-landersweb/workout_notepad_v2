@@ -10,6 +10,11 @@ class WorkoutCategories {
     required this.categories,
   });
 
+  WorkoutCategories clone() => WorkoutCategories(
+        workout: workout.copy(),
+        categories: [for (var i in categories) i],
+      );
+
   static Future<List<WorkoutCategories>> getList() async {
     final db = await getDB();
     String sql = """

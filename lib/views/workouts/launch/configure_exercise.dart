@@ -43,7 +43,7 @@ class _LWConfigureExerciseState extends State<LWConfigureExercise> {
     var lmodel = Provider.of<LaunchWorkoutModel>(context);
     return comp.HeaderBar.sheet(
       title: "Configure Exercise",
-      leading: const [comp.CloseButton()],
+      leading: const [comp.CloseButton2()],
       trailing: [
         Clickable(
           onTap: () {

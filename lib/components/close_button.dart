@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 
-class CloseButton extends StatelessWidget {
-  const CloseButton({
+class CloseButton2 extends StatelessWidget {
+  const CloseButton2({
     super.key,
     this.useRoot = false,
     this.color,

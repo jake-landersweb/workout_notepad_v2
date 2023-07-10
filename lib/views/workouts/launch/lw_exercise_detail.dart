@@ -930,7 +930,7 @@ class _CellLogState extends State<_CellLog> {
           const Row(
             children: [
               Spacer(),
-              comp.CloseButton(),
+              comp.CloseButton2(),
             ],
           ),
           const SizedBox(height: 16),

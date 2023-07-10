@@ -7,11 +7,13 @@ import 'package:workout_notepad_v2/components/blurred_container.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
 
 import 'package:workout_notepad_v2/model/root.dart';
-import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/collection/collection_home.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/profile/profile.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
+
+enum HomeScreen { logs, collections, workouts, exercises, profile }
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -24,30 +26,31 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
-    var lmodel = Provider.of<LogicModel>(context);
     return Stack(
       alignment: Alignment.bottomCenter,
       children: [
-        _getBody(lmodel),
-        _bar(context, lmodel, dmodel),
+        _getBody(dmodel),
+        _bar(context, dmodel),
       ],
     );
   }
 
-  Widget _getBody(LogicModel lmodel) {
-    switch (lmodel.tabBarIndex) {
-      case 0:
+  Widget _getBody(DataModel dmodel) {
+    switch (dmodel.currentTabScreen) {
+      case HomeScreen.collections:
+        return const CollectionHome();
+      case HomeScreen.workouts:
         return const WorkoutsHome();
-      case 1:
+      case HomeScreen.exercises:
         return const ExerciseHome();
-      case 2:
+      case HomeScreen.profile:
         return const Profile();
-      default:
+      case HomeScreen.logs:
         return Container();
     }
   }
 
-  Widget _bar(BuildContext context, LogicModel lmodel, DataModel dmodel) {
+  Widget _bar(BuildContext context, DataModel dmodel) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -186,12 +189,41 @@ class _HomeState extends State<Home> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _barRow(context, dmodel, lmodel, LineIcons.running,
-                          "Workouts", 0),
-                      _barRow(context, dmodel, lmodel, LineIcons.dumbbell,
-                          "Exercises", 1),
-                      _barRow(context, dmodel, lmodel, LineIcons.userCircle,
-                          "Settings", 2),
+                      _barRow(
+                        context,
+                        dmodel,
+                        LineIcons.barChartAlt,
+                        "Logs",
+                        HomeScreen.logs,
+                      ),
+                      _barRow(
+                        context,
+                        dmodel,
+                        LineIcons.calendar,
+                        "Collections",
+                        HomeScreen.collections,
+                      ),
+                      _barRow(
+                        context,
+                        dmodel,
+                        LineIcons.running,
+                        "Workouts",
+                        HomeScreen.workouts,
+                      ),
+                      _barRow(
+                        context,
+                        dmodel,
+                        LineIcons.dumbbell,
+                        "Exercises",
+                        HomeScreen.exercises,
+                      ),
+                      _barRow(
+                        context,
+                        dmodel,
+                        LineIcons.userCircle,
+                        "Settings",
+                        HomeScreen.profile,
+                      ),
                     ],
                   ),
                 ),
@@ -206,23 +238,22 @@ class _HomeState extends State<Home> {
   Widget _barRow(
     BuildContext context,
     DataModel dmodel,
-    LogicModel lmodel,
     IconData icon,
     String label,
-    int index,
+    HomeScreen screen,
   ) {
     return GestureDetector(
       onTap: () {
-        lmodel.setTabBarIndex(index);
+        dmodel.setTabScreen(screen);
       },
       child: Container(
         decoration: BoxDecoration(
-          color: lmodel.tabBarIndex == index
+          color: dmodel.currentTabScreen == screen
               ? Theme.of(context).colorScheme.primary
               : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: lmodel.tabBarIndex == index
+            color: dmodel.currentTabScreen == screen
                 ? dmodel.color
                 : AppColors.subtext(context),
           ),
@@ -231,7 +262,7 @@ class _HomeState extends State<Home> {
           padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
           child: Icon(
             icon,
-            color: lmodel.tabBarIndex == index
+            color: dmodel.currentTabScreen == screen
                 ? Theme.of(context).colorScheme.onPrimary
                 : null,
           ),

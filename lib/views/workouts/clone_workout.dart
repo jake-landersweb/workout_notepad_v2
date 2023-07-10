@@ -32,7 +32,7 @@ class _CloneWorkoutState extends State<CloneWorkout> {
     var dmodel = context.read<DataModel>();
     return comp.HeaderBar.sheet(
       title: "Clone Workout",
-      leading: const [comp.CloseButton()],
+      leading: const [comp.CloseButton2()],
       children: [
         const SizedBox(height: 16),
         Container(

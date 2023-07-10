@@ -31,7 +31,7 @@ class _WLExercisesState extends State<WLExercises> {
   Widget build(BuildContext context) {
     return HeaderBar.sheet(
       title: "Exericse Logs",
-      leading: const [comp.CloseButton()],
+      leading: const [comp.CloseButton2()],
       children: [
         if (_exerciseLogs != null)
           for (var i = 0; i < _exerciseLogs!.length; i++)

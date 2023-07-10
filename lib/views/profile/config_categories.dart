@@ -33,7 +33,7 @@ class _ConfigureCategoriesState extends State<ConfigureCategories> {
     return comp.HeaderBar.sheet(
       title: "Categories",
       horizontalSpacing: 0,
-      leading: const [comp.CloseButton()],
+      leading: const [comp.CloseButton2()],
       trailing: [
         _isLoading
             ? const comp.LoadingIndicator()

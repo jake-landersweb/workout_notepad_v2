@@ -12,12 +12,20 @@ import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:path/path.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/views/home.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
 import 'package:http/http.dart' as http;
 
 enum LoadStatus { init, noUser, done, expired }
 
 class DataModel extends ChangeNotifier {
+  HomeScreen _currentTabScreen = HomeScreen.workouts;
+  HomeScreen get currentTabScreen => _currentTabScreen;
+  void setTabScreen(HomeScreen screen) {
+    _currentTabScreen = screen;
+    notifyListeners();
+  }
+
   User? user;
   User? expiredAnonUser;
   LoadStatus loadStatus = LoadStatus.init;
@@ -347,6 +355,7 @@ class DataModel extends ChangeNotifier {
     await load("workout_log", data['workoutLogs']);
     await load("tag", data['tags']);
     await load("exercise_log_tag", data['exerciseLogTags']);
+    await fetchData();
     notifyListeners();
   }
 

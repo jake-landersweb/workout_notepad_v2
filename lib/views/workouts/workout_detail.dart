@@ -1,8 +1,12 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
+import 'package:workout_notepad_v2/components/cancel_button.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
+import 'package:workout_notepad_v2/components/close_button.dart';
 import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/data/root.dart';
@@ -19,11 +23,23 @@ import 'package:workout_notepad_v2/views/workouts/logs/root.dart';
 import 'package:workout_notepad_v2/views/workouts/workout_exercise_cell.dart';
 
 class WorkoutDetail extends StatefulWidget {
-  const WorkoutDetail({
+  WorkoutDetail({
     super.key,
     required this.workout,
-  });
-  final WorkoutCategories workout;
+  }) {
+    isCupertino = false;
+    showButtons = true;
+  }
+  WorkoutDetail.small({
+    super.key,
+    required this.workout,
+  }) {
+    isCupertino = true;
+    showButtons = false;
+  }
+  late WorkoutCategories workout;
+  late bool isCupertino;
+  late bool showButtons;
 
   @override
   State<WorkoutDetail> createState() => _WorkoutDetailState();
@@ -64,6 +80,14 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
   @override
   Widget build(BuildContext context) {
     var dmodel = context.read<DataModel>();
+    if (widget.isCupertino) {
+      return HeaderBar.sheet(
+        title: _workout.title,
+        horizontalSpacing: 0,
+        trailing: const [CloseButton2()],
+        children: _children(context, dmodel),
+      );
+    }
     return Scaffold(
       body: HeaderBar(
         title: _workout.title,
@@ -88,46 +112,56 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
               },
             )
         ],
-        children: [
-          // wrapped container to keep all widgets in memory
-          Column(
-            children: [
-              const SizedBox(height: 8),
-              if ((_workout.description ?? "") != "")
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Text(
-                      _workout.description!,
-                      style: ttLabel(
-                        context,
-                        color: Theme.of(context).colorScheme.onBackground,
-                      ),
-                    ),
-                  ),
-                ),
-              const SizedBox(height: 16),
-              _actions(context, dmodel),
-              const SizedBox(height: 16),
-              for (int i = 0; i < _exercises.length; i++)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: WorkoutExerciseCell(
-                      workoutId: widget.workout.workout.workoutId,
-                      exercise: _exercises[i]),
-                )
-                    .animate(delay: (25 * i).ms)
-                    .slideX(
-                        begin: 0.25,
-                        curve: Sprung(36),
-                        duration: const Duration(milliseconds: 500))
-                    .fadeIn()
-            ],
-          ),
-        ],
+        children: _children(context, dmodel),
       ),
     );
+  }
+
+  List<Widget> _children(BuildContext context, DataModel dmodel) {
+    return [
+      // wrapped container to keep all widgets in memory
+      Column(
+        children: [
+          const SizedBox(height: 8),
+          if ((_workout.description ?? "") != "")
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  _workout.description!,
+                  style: ttLabel(
+                    context,
+                    color: Theme.of(context).colorScheme.onBackground,
+                  ),
+                ),
+              ),
+            ),
+          const SizedBox(height: 16),
+          if (widget.showButtons)
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _actions(context, dmodel),
+                const SizedBox(height: 16),
+              ],
+            ),
+          for (int i = 0; i < _exercises.length; i++)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: WorkoutExerciseCell(
+                  workoutId: widget.workout.workout.workoutId,
+                  exercise: _exercises[i]),
+            )
+                .animate(delay: (25 * i).ms)
+                .slideX(
+                    begin: 0.25,
+                    curve: Sprung(36),
+                    duration: const Duration(milliseconds: 500))
+                .fadeIn()
+        ],
+      ),
+    ];
   }
 
   Widget _actions(BuildContext context, DataModel dmodel) {

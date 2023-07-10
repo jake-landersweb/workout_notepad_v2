@@ -176,3 +176,19 @@ CREATE TABLE exercise_log_tag(
 );
 --
 CREATE INDEX exercise_log_tag_tagid ON exercise_log_tag(tagId);
+--
+CREATE TABLE collection(
+    collectionId TEXT PRIMARY KEY,
+    title TEXT NOT NULL,
+    collectionType INTEGER NOT NULL,
+    description TEXT NOT NULL,
+    numRepeats INTEGER NOT NULL,
+    numWeeks INTEGER NOT NULL,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+--
+CREATE TRIGGER collection_update AFTER UPDATE ON collection
+BEGIN
+    UPDATE collection SET updated = CURRENT_TIMESTAMP;
+END;

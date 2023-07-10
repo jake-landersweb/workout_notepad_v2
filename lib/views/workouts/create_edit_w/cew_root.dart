@@ -169,26 +169,23 @@ class _CEWState extends State<_CEW> {
       children: [
         Row(
           children: [
-            comp.CloseButton(color: AppColors.subtext(context), useRoot: true),
+            comp.CloseButton2(color: AppColors.subtext(context), useRoot: true),
             const Spacer(),
             Clickable(
               onTap: () async {
                 if (cmodel.isValid()) {
+                  Workout? w;
                   if (widget.isCreate) {
-                    var w = await cmodel.createWorkout(dmodel);
-                    if (w == null) {
-                      return;
-                    }
-                    widget.onAction(w);
-                    Navigator.of(context, rootNavigator: true).pop();
+                    w = await cmodel.createWorkout(dmodel);
                   } else {
-                    var w = await cmodel.updateWorkout(dmodel);
-                    if (w == null) {
-                      return;
-                    }
-                    widget.onAction(w);
-                    Navigator.of(context, rootNavigator: true).pop();
+                    w = await cmodel.updateWorkout(dmodel);
                   }
+                  if (w == null) {
+                    return;
+                  }
+                  await dmodel.fetchData();
+                  widget.onAction(w);
+                  Navigator.of(context, rootNavigator: true).pop();
                 }
               },
               child: Text(

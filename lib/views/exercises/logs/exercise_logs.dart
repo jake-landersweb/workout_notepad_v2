@@ -112,7 +112,7 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          comp.CloseButton(
+                          comp.CloseButton2(
                             useRoot: true,
                             color: AppColors.subtext(context),
                           ),
@@ -138,7 +138,7 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
         title: elmodel.exercise.title,
         canScroll: false,
         horizontalSpacing: 0,
-        leading: const [comp.CloseButton()],
+        leading: const [comp.CloseButton2()],
         children: [
           const SizedBox(
             height: 60,

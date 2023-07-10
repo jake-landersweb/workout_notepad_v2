@@ -25,7 +25,7 @@ class _LoginState extends State<Login> {
     var dmodel = context.read<DataModel>();
     return comp.HeaderBar.sheet(
       title: "",
-      leading: const [comp.CloseButton()],
+      leading: const [comp.CloseButton2()],
       children: [
         Text(
           "Welcome Back!",

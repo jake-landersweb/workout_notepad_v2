@@ -30,7 +30,6 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => DataModel()),
-        ChangeNotifierProvider(create: (context) => LogicModel()),
       ],
       builder: (context, child) {
         return _body(context);

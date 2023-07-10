@@ -24,7 +24,7 @@ class _CreateAccountState extends State<CreateAccount> {
     var dmodel = context.read<DataModel>();
     return comp.HeaderBar.sheet(
       title: "",
-      leading: const [comp.CloseButton()],
+      leading: const [comp.CloseButton2()],
       children: [
         Text(
           "One Step Away From Fitness Planning.",

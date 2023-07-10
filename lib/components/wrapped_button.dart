@@ -20,6 +20,8 @@ class WrappedButton extends StatelessWidget {
     this.center = false,
     this.padding = const EdgeInsets.symmetric(horizontal: 16),
     this.type = WrappedButtonType.standard,
+    this.rowAxisSize = MainAxisSize.min,
+    this.iconSpacing = 12,
   });
 
   final String title;
@@ -34,6 +36,8 @@ class WrappedButton extends StatelessWidget {
   final bool center;
   final EdgeInsets padding;
   final WrappedButtonType type;
+  final MainAxisSize rowAxisSize;
+  final double iconSpacing;
 
   @override
   Widget build(BuildContext context) {
@@ -52,22 +56,20 @@ class WrappedButton extends StatelessWidget {
       height: height,
       child: Padding(
         padding: padding,
-        child: center
-            ? Center(
-                child: _content(context),
-              )
-            : _content(context),
+        child: _content(context),
       ),
     );
   }
 
   Widget _content(BuildContext context) {
     return Row(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: rowAxisSize,
+      mainAxisAlignment:
+          center ? MainAxisAlignment.center : MainAxisAlignment.start,
       children: [
         if (icon != null)
           Padding(
-            padding: const EdgeInsets.only(right: 12.0),
+            padding: EdgeInsets.only(right: iconSpacing),
             child: Container(
               decoration: BoxDecoration(
                 color: iconBg ?? Theme.of(context).colorScheme.primary,

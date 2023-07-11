@@ -184,7 +184,7 @@ class CollectionItem {
   }) {
     collectionItemId = const Uuid().v4();
     date = DateTime.now();
-    daysBreak = 0;
+    daysBreak = 1;
   }
 
   CollectionItem.fromWorkout({
@@ -195,7 +195,7 @@ class CollectionItem {
     workoutId = workout!.workout.workoutId;
     collectionItemId = const Uuid().v4();
     date = DateTime.now();
-    daysBreak = 0;
+    daysBreak = 1;
   }
 
   CollectionItem.fromJson(dynamic json) {

@@ -192,42 +192,14 @@ class _CECConfigureState extends State<CECConfigure> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth: MediaQuery.of(context).size.width / 2,
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: NumberPicker(
-                              key: ValueKey(
-                                  cmodel.collection.items[i].collectionItemId),
-                              intialValue: cmodel.collection.items[i].daysBreak,
-                              textFontSize: 30,
-                              showPicker: false,
-                              maxValue: 7,
-                              onChanged: (v) {
-                                cmodel.collection.items[i].daysBreak = v;
-                                setState(() {
-                                  cmodel.refresh();
-                                });
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            flex: 2,
-                            child: Center(
-                              child: Text(
-                                "Days Break",
-                                textAlign: TextAlign.center,
-                                style: ttLabel(context),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
+                    child: _RepeatDayPicker(
+                      val: cmodel.collection.items[i].daysBreak,
+                      onChanged: (val) {
+                        cmodel.collection.items[i].daysBreak = val;
+                        setState(() {
+                          cmodel.refresh();
+                        });
+                      },
                     ),
                   ),
                   Padding(
@@ -291,5 +263,98 @@ class _CECConfigureState extends State<CECConfigure> {
       case CollectionType.schedule:
         return Container();
     }
+  }
+}
+
+class _RepeatDayPicker extends StatelessWidget {
+  const _RepeatDayPicker({
+    super.key,
+    required this.val,
+    required this.onChanged,
+    this.maxVal = 7,
+  });
+  final int val;
+  final Function(int val) onChanged;
+  final int maxVal;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _cell(
+                context: context,
+                icon: Icons.add_rounded,
+                fg: Colors.white,
+                bg: Theme.of(context).colorScheme.primary,
+                onTap: () {
+                  if (val < maxVal) {
+                    onChanged(val + 1);
+                  }
+                },
+              ),
+              _cell(
+                context: context,
+                icon: Icons.remove_rounded,
+                fg: Theme.of(context).colorScheme.primary,
+                bg: AppColors.cell(context),
+                onTap: () {
+                  if (val > 0) {
+                    onChanged(val - 1);
+                  }
+                },
+              )
+            ],
+          ),
+        ),
+        const SizedBox(width: 16),
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.cell(context),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          height: 50,
+          width: 150,
+          child: Center(
+            child: Text(title, style: ttLabel(context)),
+          ),
+        ),
+      ],
+    );
+  }
+
+  String get title {
+    switch (val) {
+      case 0:
+        return "Same Day";
+      case 1:
+        return "Next Day";
+      default:
+        return "${val - 1} Day break";
+    }
+  }
+
+  Widget _cell({
+    required BuildContext context,
+    required IconData icon,
+    required Color fg,
+    required Color bg,
+    required VoidCallback onTap,
+  }) {
+    return Clickable(
+      onTap: onTap,
+      child: Container(
+        color: bg,
+        width: 50,
+        height: 25,
+        child: Center(child: Icon(icon, color: fg)),
+      ),
+    );
   }
 }

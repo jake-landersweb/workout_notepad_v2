@@ -19,8 +19,10 @@ class _CECPreviewState extends State<CECPreview> {
     return Scaffold(
       body: SfCalendar(
         view: CalendarView.month,
+        showNavigationArrow: true,
         appointmentTextStyle: const TextStyle(fontSize: 24),
         dataSource: CollectionDataSource(cmodel.getRenderedCollectionItems()),
+        initialSelectedDate: cmodel.collection.startDate,
         monthViewSettings: const MonthViewSettings(
           showAgenda: true,
           appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
@@ -52,7 +54,7 @@ class CollectionDataSource extends CalendarDataSource {
 
   @override
   Color getColor(int index) {
-    return ColorUtil.random(appointments![index].collectionItemId);
+    return ColorUtil.random(appointments![index].workoutId);
   }
 
   @override

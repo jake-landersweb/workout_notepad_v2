@@ -9,6 +9,7 @@ import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/collection/collection_home.dart';
+import 'package:workout_notepad_v2/views/logs/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/profile/profile.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
@@ -46,7 +47,7 @@ class _HomeState extends State<Home> {
       case HomeScreen.profile:
         return const Profile();
       case HomeScreen.logs:
-        return Container();
+        return const LogsHome();
     }
   }
 

@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
+import 'package:workout_notepad_v2/data/collection.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/model/root.dart';
@@ -16,7 +17,8 @@ import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
 enum PopupState { minimize, finish, cancel }
 
 Future<void> launchWorkout(
-    BuildContext context, DataModel dmodel, Workout workout) async {
+    BuildContext context, DataModel dmodel, Workout workout,
+    {CollectionItem? collectionItem}) async {
   if (dmodel.workoutState != null) {
     if (dmodel.workoutState!.workout.workoutId == workout.workoutId) {
       var s = dmodel.workoutState!;
@@ -41,7 +43,10 @@ Future<void> launchWorkout(
         },
         submitText: "Overwrite",
         onSubmit: () async {
-          var s = await dmodel.createWorkoutState(workout);
+          var s = await dmodel.createWorkoutState(
+            workout,
+            collectionItem: collectionItem,
+          );
           showMaterialModalBottomSheet(
             context: context,
             enableDrag: true,
@@ -53,7 +58,10 @@ Future<void> launchWorkout(
       );
     }
   } else {
-    var s = await dmodel.createWorkoutState(workout);
+    var s = await dmodel.createWorkoutState(
+      workout,
+      collectionItem: collectionItem,
+    );
     showMaterialModalBottomSheet(
       context: context,
       enableDrag: true,

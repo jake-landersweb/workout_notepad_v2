@@ -3,3 +3,4 @@ export 'icons.dart';
 export 'filters.dart';
 export 'color.dart';
 export 'tuple.dart';
+export 'functions.dart';

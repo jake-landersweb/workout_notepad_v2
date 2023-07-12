@@ -54,8 +54,8 @@ class _CECOrderState extends State<CECOrder> {
                           );
                           cmodel.collection.items.removeWhere(
                             (element) =>
-                                element.workoutId ==
-                                item.workout!.workout.workoutId,
+                                element.collectionItemId ==
+                                item.collectionItemId,
                           );
                           setState(() {
                             cmodel.refresh();

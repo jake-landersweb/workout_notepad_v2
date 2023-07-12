@@ -3,8 +3,8 @@ import 'package:line_icons/line_icons.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 
-class BackButton extends StatelessWidget {
-  const BackButton({
+class BackButton2 extends StatelessWidget {
+  const BackButton2({
     super.key,
     this.useRoot = false,
     this.text,

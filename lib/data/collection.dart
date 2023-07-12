@@ -1,7 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/data/root.dart';
-import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 
 enum CollectionType { repeat, days, schedule }
@@ -25,10 +24,8 @@ class Collection {
   late String description;
   late DateTime startDate;
 
-  // CollectionType.repeat number of times to repeat
+  // number of times to repeat the pattern
   late int numRepeats;
-  // CollectionType.(days,schedule) number of weeks for this program
-  late int numWeeks;
 
   // not in DB
   late List<CollectionItem> items;
@@ -43,7 +40,6 @@ class Collection {
     required this.description,
     required this.startDate,
     required this.numRepeats,
-    required this.numWeeks,
     required this.items,
   });
 
@@ -54,7 +50,6 @@ class Collection {
         description: description,
         startDate: startDate,
         numRepeats: numRepeats,
-        numWeeks: numWeeks,
         items: [for (var i in items) i.clone()],
       );
 
@@ -65,7 +60,6 @@ class Collection {
     description = "";
     startDate = DateTime.now().add(const Duration(days: 1));
     numRepeats = 5;
-    numWeeks = 12;
     items = [];
   }
 
@@ -76,13 +70,11 @@ class Collection {
     description = json['description'];
     startDate = DateTime.parse(json['startDate']);
     numRepeats = json['numRepeats'];
-    numWeeks = json['numWeeks'];
     created = json['created'];
     updated = json['updated'];
   }
 
   static Future<List<Collection>> getList({
-    required String collectionId,
     Database? db,
   }) async {
     db ??= await getDB();
@@ -110,6 +102,7 @@ class Collection {
         """
           SELECT * FROM collection_item
           WHERE collectionId = '$collectionId'
+          ORDER BY date
         """,
       );
 
@@ -134,8 +127,28 @@ class Collection {
         "description": description,
         "startDate": startDate.toIso8601String(),
         "numRepeats": numRepeats,
-        "numWeeks": numWeeks,
       };
+
+  Future<int> insert({ConflictAlgorithm? conflictAlgorithm}) async {
+    final db = await getDB();
+    var response = await db.insert(
+      'collection',
+      toMap(),
+      conflictAlgorithm: conflictAlgorithm ?? ConflictAlgorithm.replace,
+    );
+    return response;
+  }
+
+  /// gets the next most recent item that is today or in the future
+  CollectionItem? get nextItem {
+    var filtered = items.where((element) =>
+        element.date.compareTo(DateTime.now()) >= 0 &&
+        element.workoutLogId == null);
+    if (filtered.isEmpty) {
+      return null;
+    }
+    return filtered.first;
+  }
 
   @override
   String toString() => toMap().toString();
@@ -149,6 +162,7 @@ class CollectionItem {
   // date of the workout
   late DateTime date;
   late int daysBreak;
+  late int day;
   // for tracking the completion
   String? workoutLogId;
 
@@ -164,6 +178,7 @@ class CollectionItem {
     required this.workoutId,
     required this.date,
     required this.daysBreak,
+    required this.day,
     this.workoutLogId,
     this.workout,
   });
@@ -174,6 +189,7 @@ class CollectionItem {
         workoutId: workoutId,
         date: date,
         daysBreak: daysBreak,
+        day: day,
         workoutLogId: workoutLogId,
         workout: workout?.clone(),
       );
@@ -185,6 +201,7 @@ class CollectionItem {
     collectionItemId = const Uuid().v4();
     date = DateTime.now();
     daysBreak = 1;
+    day = 0;
   }
 
   CollectionItem.fromWorkout({
@@ -196,6 +213,7 @@ class CollectionItem {
     collectionItemId = const Uuid().v4();
     date = DateTime.now();
     daysBreak = 1;
+    day = 0;
   }
 
   CollectionItem.fromJson(dynamic json) {
@@ -204,6 +222,7 @@ class CollectionItem {
     workoutId = json['workoutId'];
     date = DateTime.parse(json['date']);
     daysBreak = json['daysBreak'];
+    day = json['day'];
     workoutLogId = json['workoutLogId'];
     created = json['created'];
     updated = json['updated'];
@@ -234,8 +253,53 @@ class CollectionItem {
         "workoutId": workoutId,
         "date": date.toIso8601String(),
         "daysBreak": daysBreak,
+        "day": day,
         "workoutLogId": workoutLogId,
       };
+
+  Future<int> insert({ConflictAlgorithm? conflictAlgorithm}) async {
+    final db = await getDB();
+    var response = await db.insert(
+      'collection_item',
+      toMap(),
+      conflictAlgorithm: conflictAlgorithm ?? ConflictAlgorithm.replace,
+    );
+    return response;
+  }
+
+  String get dateStr {
+    List<String> dayNames = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday'
+    ];
+
+    List<String> monthNames = [
+      '',
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ];
+
+    String dayName = dayNames[date.weekday - 1];
+    String monthName = monthNames[date.month];
+    String dayNum = date.day.toString();
+
+    return '$dayName, $monthName $dayNum';
+  }
 
   @override
   String toString() => toMap().toString();

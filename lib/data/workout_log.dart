@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:sqflite/sql.dart';
 import 'package:uuid/uuid.dart';
+import 'package:workout_notepad_v2/data/collection.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/model/root.dart';
@@ -14,6 +15,7 @@ class WorkoutLog {
   String? note;
   late String created;
   late String updated;
+  CollectionItem? collectionItem;
 
   // private runtime fields
   List<ExerciseLog>? _exericseLogs;
@@ -27,6 +29,7 @@ class WorkoutLog {
     this.note,
     required this.created,
     required this.updated,
+    this.collectionItem,
   });
 
   WorkoutLog copy() => WorkoutLog(

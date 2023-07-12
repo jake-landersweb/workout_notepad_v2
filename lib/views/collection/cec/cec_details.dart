@@ -29,7 +29,7 @@ class _CECDetailsState extends State<CECDetails> {
           child: Column(
             children: [
               Text(
-                "Now, add some details to your collection.",
+                "Lastly, add some details to your collection.",
                 style: ttLabel(context),
               ),
               const SizedBox(height: 8),
@@ -64,6 +64,7 @@ class _CECDetailsState extends State<CECDetails> {
                   child: Field(
                     labelText: "Description",
                     value: cmodel.collection.description,
+                    isLabeled: false,
                     maxLines: 5,
                     minLines: 5,
                     onChanged: (v) {

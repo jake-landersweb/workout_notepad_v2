@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
-import 'package:workout_notepad_v2/components/cancel_button.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/components/close_button.dart';
 import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
@@ -95,7 +94,7 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
         isLarge: true,
         horizontalSpacing: 0,
         largeTitlePadding: const EdgeInsets.only(left: 16),
-        leading: const [comp.BackButton()],
+        leading: const [comp.BackButton2()],
         trailing: [
           if (dmodel.workoutState?.workout.workoutId != _workout.workoutId)
             comp.EditButton(
@@ -132,7 +131,7 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
                   _workout.description!,
                   style: ttLabel(
                     context,
-                    color: Theme.of(context).colorScheme.onBackground,
+                    color: AppColors.subtext(context),
                   ),
                 ),
               ),

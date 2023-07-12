@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sprung/sprung.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:workout_notepad_v2/data/collection.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/exercise_set.dart';
 import 'package:workout_notepad_v2/data/root.dart';
@@ -33,6 +34,7 @@ class LaunchWorkoutModelState {
   List<List<ExerciseLog>> exerciseChildLogs = [];
   late double offsetY;
   List<TimerInstance> timerInstances = [];
+  CollectionItem? collectionItem;
 
   LaunchWorkoutModelState({
     this.workoutIndex = 0,
@@ -42,6 +44,7 @@ class LaunchWorkoutModelState {
     required this.wl,
     required this.startTime,
     this.offsetY = -5,
+    this.collectionItem,
   });
 
   int getCurrentSeconds() {
@@ -83,11 +86,24 @@ class LaunchWorkoutModel extends ChangeNotifier {
 
   void setLogReps(int index, int row, int val) {
     state.exerciseLogs[index].metadata[row].reps = val;
+
+    // set all unsaved next to this val
+    for (int i = row + 1; i < state.exerciseLogs[index].metadata.length; i++) {
+      if (!state.exerciseLogs[index].metadata[i].saved) {
+        state.exerciseLogs[index].metadata[i].reps = val;
+      }
+    }
     notifyListeners();
   }
 
   void setLogWeight(int index, int row, int val) {
     state.exerciseLogs[index].metadata[row].weight = val;
+    // save all next unsaved
+    for (int i = row + 1; i < state.exerciseLogs[index].metadata.length; i++) {
+      if (!state.exerciseLogs[index].metadata[i].saved) {
+        state.exerciseLogs[index].metadata[i].weight = val;
+      }
+    }
     notifyListeners();
   }
 
@@ -98,6 +114,12 @@ class LaunchWorkoutModel extends ChangeNotifier {
 
   void setLogTime(int index, int row, int val) {
     state.exerciseLogs[index].metadata[row].time = val;
+    // set all unsaved next
+    for (int i = row + 1; i < state.exerciseLogs[index].metadata.length; i++) {
+      if (!state.exerciseLogs[index].metadata[i].saved) {
+        state.exerciseLogs[index].metadata[i].time = val;
+      }
+    }
     notifyListeners();
   }
 
@@ -134,11 +156,27 @@ class LaunchWorkoutModel extends ChangeNotifier {
 
   void setLogChildReps(int i, int j, int row, int val) {
     state.exerciseChildLogs[i][j].metadata[row].reps = val;
+    // set all next not saved
+    for (int g = row + 1;
+        g < state.exerciseChildLogs[i][j].metadata.length;
+        g++) {
+      if (!state.exerciseChildLogs[i][j].metadata[g].saved) {
+        state.exerciseChildLogs[i][j].metadata[g].reps = val;
+      }
+    }
     notifyListeners();
   }
 
   void setLogChildWeight(int i, int j, int row, int val) {
     state.exerciseChildLogs[i][j].metadata[row].weight = val;
+    // set all next not saved
+    for (int g = row + 1;
+        g < state.exerciseChildLogs[i][j].metadata.length;
+        g++) {
+      if (!state.exerciseChildLogs[i][j].metadata[g].saved) {
+        state.exerciseChildLogs[i][j].metadata[g].weight = val;
+      }
+    }
     notifyListeners();
   }
 
@@ -149,6 +187,14 @@ class LaunchWorkoutModel extends ChangeNotifier {
 
   void setLogChildTime(int i, int j, int row, int val) {
     state.exerciseChildLogs[i][j].metadata[row].time = val;
+    // set all next not saved
+    for (int g = row + 1;
+        g < state.exerciseChildLogs[i][j].metadata.length;
+        g++) {
+      if (!state.exerciseChildLogs[i][j].metadata[g].saved) {
+        state.exerciseChildLogs[i][j].metadata[g].time = val;
+      }
+    }
     notifyListeners();
   }
 
@@ -214,7 +260,17 @@ class LaunchWorkoutModel extends ChangeNotifier {
     // insert the workout
     await state.wl.insert();
 
-    dmodel.stopWorkout();
+    // if there is a collection item, attach this log id to it
+    if (dmodel.workoutState!.collectionItem != null) {
+      // TODO -- find out why state.wl.collectionItem is NULL
+      print("adding workoutlogid to collectionItem");
+      dmodel.workoutState!.collectionItem!.workoutLogId = state.wl.workoutLogId;
+      await dmodel.workoutState!.collectionItem!.insert(
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
+
+    await dmodel.stopWorkout();
   }
 
   Future<void> addExercise(

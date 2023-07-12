@@ -1,4 +1,4 @@
-// ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
@@ -14,14 +14,17 @@ class CECollection extends StatefulWidget {
   const CECollection({
     super.key,
     this.collection,
+    this.onCreate,
   });
   final Collection? collection;
+  final Function(Collection collection)? onCreate;
 
   @override
   State<CECollection> createState() => _CECollectionState();
 }
 
 class _CECollectionState extends State<CECollection> {
+  bool _isLoading = false;
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
@@ -50,7 +53,7 @@ class _CECollectionState extends State<CECollection> {
             cmodel.setIndex(index);
           },
           children: const [
-            CECWorkouts(),
+            CECBasic(),
             CECConfigure(),
             CECDetails(),
             CECPreview(),
@@ -61,6 +64,7 @@ class _CECollectionState extends State<CECollection> {
   }
 
   Widget _header(BuildContext context, DataModel dmodel, CECModel cmodel) {
+    var isValid = cmodel.isValid();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -70,18 +74,50 @@ class _CECollectionState extends State<CECollection> {
             const Spacer(),
             Clickable(
               onTap: () async {
-                //
+                if (!isValid.v1) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(isValid.v2),
+                      backgroundColor: Colors.red[300],
+                    ),
+                  );
+                } else {
+                  setState(() {
+                    _isLoading = true;
+                  });
+                  var response = await cmodel.create();
+                  if (response.v1) {
+                    await dmodel.refreshCategories();
+                    if (widget.onCreate != null) {
+                      widget.onCreate!(cmodel.collection);
+                    }
+                    Navigator.of(context, rootNavigator: true).pop();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(response.v2),
+                        backgroundColor: Colors.red[300],
+                      ),
+                    );
+                    setState(() {
+                      _isLoading = false;
+                    });
+                  }
+                }
               },
-              child: Text(
-                cmodel.isCreate ? "Create" : "Save",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                  // color: cmodel.isValid()
-                  //     ? AppColors.text(context)
-                  //     : Colors.black.withOpacity(0.3),
-                ),
-              ),
+              child: _isLoading
+                  ? LoadingIndicator(
+                      color: Theme.of(context).colorScheme.primary)
+                  : Text(
+                      cmodel.isCreate ? "Create" : "Save",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                        color: isValid.v1
+                            ? AppColors.text(context)
+                            : Colors.black.withOpacity(0.3),
+                      ),
+                    ),
             ),
           ],
         ),
@@ -93,7 +129,7 @@ class _CECollectionState extends State<CECollection> {
             _headerItem(
               context: context,
               cmodel: cmodel,
-              title: "Workouts",
+              title: "Basic",
               icon: LineIcons.dumbbell,
               index: 0,
             ),

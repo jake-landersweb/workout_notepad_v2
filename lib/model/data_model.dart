@@ -1,4 +1,4 @@
-// ignore_for_file: depend_on_referenced_packages
+// ignore_for_file: depend_on_referenced_packages, avoid_print
 
 import 'dart:convert';
 
@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:workout_notepad_v2/data/collection.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
@@ -98,8 +99,23 @@ class DataModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  List<Collection> _collections = [];
+  List<Collection> get collections => _collections;
+  Future<void> refreshCollections() async {
+    _collections = await Collection.getList();
+  }
+
+  List<ExerciseLog> _exerciseLogs = [];
+  List<ExerciseLog> get exerciseLogs => _exerciseLogs;
+  Future<void> refreshExerciseLogs() async {
+    _exerciseLogs = await ExerciseLog.getList();
+  }
+
   Future<void> init({User? u}) async {
     var prefs = await SharedPreferences.getInstance();
+
+    // TODO delete and re-create
+    // await importData();
 
     // check for saved userId
     if (!prefs.containsKey("user")) {
@@ -138,10 +154,11 @@ class DataModel extends ChangeNotifier {
         return;
       }
 
-      // for testing offline
+      // TODO for testing offline
       // throw "";
 
-      await Future.delayed(const Duration(seconds: 5));
+      // TODO testing time taking data to load
+      // await Future.delayed(const Duration(seconds: 5));
 
       // get the user
       var tmp = await User.fromId(user!.userId);
@@ -206,10 +223,13 @@ class DataModel extends ChangeNotifier {
     var getW = WorkoutCategories.getList();
     var getE = Exercise.getList();
     var getT = Tag.getList();
+    var getCo = Collection.getList();
+    var getL = ExerciseLog.getList();
     _categories = await getC;
     _workouts = await getW;
     _exercises = await getE;
     _tags = await getT;
+    _collections = await getCo;
   }
 
   bool? _lightStatus;
@@ -236,7 +256,10 @@ class DataModel extends ChangeNotifier {
   }
 
   LaunchWorkoutModelState? workoutState;
-  Future<LaunchWorkoutModelState> createWorkoutState(Workout workout) async {
+  Future<LaunchWorkoutModelState> createWorkoutState(
+    Workout workout, {
+    CollectionItem? collectionItem,
+  }) async {
     workoutState = null;
     notifyListeners();
     workoutState = LaunchWorkoutModelState(
@@ -245,6 +268,7 @@ class DataModel extends ChangeNotifier {
       pageController: PageController(initialPage: 0),
       wl: WorkoutLog.init(workout),
       startTime: DateTime.now(),
+      collectionItem: collectionItem,
     );
     if (workoutState!.exercises.isEmpty) {
       // get the exercise children
@@ -279,8 +303,9 @@ class DataModel extends ChangeNotifier {
     return workoutState!;
   }
 
-  void stopWorkout() {
+  Future<void> stopWorkout() async {
     workoutState = null;
+    await fetchData();
     notifyListeners();
   }
 
@@ -298,6 +323,8 @@ class DataModel extends ChangeNotifier {
     var workoutLogs = await db.query("workout_log");
     var tags = await db.query("tag");
     var exerciseLogTags = await db.query("exercise_log_tag");
+    var collections = await db.query("collection");
+    var collectionItems = await db.query("collection_item");
 
     // create structured data
     Map<String, dynamic> data = {
@@ -310,6 +337,8 @@ class DataModel extends ChangeNotifier {
       "workoutLogs": workoutLogs,
       "tags": tags,
       "exerciseLogTags": exerciseLogTags,
+      "collections": collections,
+      "collectionItems": collectionItems,
     };
 
     // encode to json
@@ -355,6 +384,8 @@ class DataModel extends ChangeNotifier {
     await load("workout_log", data['workoutLogs']);
     await load("tag", data['tags']);
     await load("exercise_log_tag", data['exerciseLogTags']);
+    await load("collection", data['collections']);
+    await load("collection_item", data['collectionItems']);
     await fetchData();
     notifyListeners();
   }

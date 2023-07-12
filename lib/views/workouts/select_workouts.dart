@@ -10,11 +10,13 @@ import 'package:workout_notepad_v2/views/root.dart';
 class SelectWorkouts extends StatefulWidget {
   const SelectWorkouts({
     super.key,
-    required this.selectedIds,
+    this.selectedIds,
     required this.onSelect,
+    this.closeOnSelect = true,
   });
-  final List<String> selectedIds;
-  final List<String> Function(WorkoutCategories wc) onSelect;
+  final List<String>? selectedIds;
+  final Function(WorkoutCategories wc) onSelect;
+  final bool closeOnSelect;
 
   @override
   State<SelectWorkouts> createState() => _SelectWorkoutsState();
@@ -25,7 +27,14 @@ class _SelectWorkoutsState extends State<SelectWorkouts> {
 
   @override
   void initState() {
-    _selectedIds = widget.selectedIds;
+    if (!widget.closeOnSelect && widget.selectedIds == null) {
+      throw "`closeOnSelect` cannot be false while `selectedIds` is null";
+    }
+    if (widget.closeOnSelect) {
+      _selectedIds = [];
+    } else {
+      _selectedIds = widget.selectedIds!;
+    }
     super.initState();
   }
 
@@ -36,26 +45,75 @@ class _SelectWorkoutsState extends State<SelectWorkouts> {
       title: "Select Workouts",
       trailing: const [CancelButton(title: "Done")],
       children: [
-        for (var i in dmodel.workouts)
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                _selectedIds = widget.onSelect(i);
-              });
-            },
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: WorkoutCellSmall(
-                wc: i,
-                bg: _selectedIds
-                        .any((element) => element == i.workout.workoutId)
-                    ? Theme.of(context).colorScheme.primary.withOpacity(0.15)
-                    : AppColors.cell(context),
-              ),
-            ),
-          ),
+        const SizedBox(height: 16),
+        WrappedButton(
+          title: "Create New",
+          type: WrappedButtonType.main,
+          center: true,
+        ),
+        const SizedBox(height: 16),
+        for (var i in dmodel.workouts) _cell(context, i),
         SizedBox(height: MediaQuery.of(context).padding.bottom + 50),
       ],
+    );
+  }
+
+  Widget _cell(BuildContext context, WorkoutCategories workout) {
+    bool selected =
+        _selectedIds.any((element) => element == workout.workout.workoutId);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: WorkoutCellSmall(
+        wc: workout,
+        bg: AppColors.cell(context),
+        endWidget: Padding(
+          padding: const EdgeInsets.only(top: 8.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: WrappedButton(
+                  title: "Details",
+                  center: true,
+                  bg: AppColors.cell(context)[500],
+                  onTap: () {
+                    cupertinoSheet(
+                      context: context,
+                      builder: (context) =>
+                          WorkoutDetail.small(workout: workout),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: WrappedButton(
+                  title: selected ? "Selected" : "Select",
+                  icon: selected ? Icons.check : null,
+                  fg: selected || widget.closeOnSelect
+                      ? Colors.white
+                      : AppColors.text(context),
+                  bg: selected || widget.closeOnSelect
+                      ? Theme.of(context).colorScheme.primary
+                      : AppColors.cell(context)[500],
+                  iconBg: Colors.transparent,
+                  iconFg: Colors.white,
+                  iconSpacing: 4,
+                  center: true,
+                  rowAxisSize: MainAxisSize.max,
+                  onTap: () {
+                    widget.onSelect(workout);
+                    if (widget.closeOnSelect) {
+                      Navigator.of(context).pop();
+                    } else {
+                      throw "unimplemented";
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

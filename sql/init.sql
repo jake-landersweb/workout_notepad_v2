@@ -182,13 +182,33 @@ CREATE TABLE collection(
     title TEXT NOT NULL,
     collectionType INTEGER NOT NULL,
     description TEXT NOT NULL,
+    startDate TEXT NOT NULL,
     numRepeats INTEGER NOT NULL,
-    numWeeks INTEGER NOT NULL,
     created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 --
 CREATE TRIGGER collection_update AFTER UPDATE ON collection
+BEGIN
+    UPDATE collection SET updated = CURRENT_TIMESTAMP;
+END;
+--
+CREATE TABLE collection_item(
+    collectionItemId TEXT PRIMARY KEY,
+    collectionId TEXT NOT NULL,
+    workoutId TEXT NOT NULL,
+    date TEXT NOT NULL,
+    daysBreak INTEGER NOT NULL,
+    day INTEGER NOT NULL,
+    workoutLogId TEXT,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+
+    FOREIGN KEY (collectionId) REFERENCES collection(collectionId),
+    FOREIGN KEY (workoutId) REFERENCES workout(workoutId)
+);
+-- 
+CREATE TRIGGER collection_item_update AFTER UPDATE ON collection_item
 BEGIN
     UPDATE collection SET updated = CURRENT_TIMESTAMP;
 END;

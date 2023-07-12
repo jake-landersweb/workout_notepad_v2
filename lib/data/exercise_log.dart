@@ -1,6 +1,7 @@
 import 'package:sqflite/sql.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/data/exercise_base.dart';
+import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:intl/intl.dart';
 
@@ -238,6 +239,36 @@ class ExerciseLog {
       }
     }
     return response;
+  }
+
+  static Future<List<ExerciseLog>> getList() async {
+    var db = await getDB();
+    var response =
+        await db.rawQuery("SELECT * FROM exercise_log ORDER BY created desc");
+
+    List<ExerciseLog> logs = [];
+    for (var i in response) {
+      logs.add(ExerciseLog.fromJson(i));
+    }
+    // TODO -- see if can remove
+    await Future.delayed(const Duration(milliseconds: 50));
+    return logs;
+  }
+
+  static Future<List<Exercise>> getMostRecentLogsExercise() async {
+    var db = await getDB();
+    var response = await db.rawQuery("""
+      SELECT * from exercise_log el
+      JOIN exercise e ON e.exerciseId = el.exerciseId
+      ORDER BY el.created DESC
+      LIMIT 20
+    """);
+
+    List<Exercise> list = [];
+    for (var i in response) {
+      list.add(Exercise.fromJson(i));
+    }
+    return list;
   }
 
   DateTime getCreated() => DateTime.parse(created);

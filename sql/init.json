@@ -1,5 +1,5 @@
 {
-    "id": "1688883179747-cef5415586b24da6bedc59319d345e9e",
+    "id": "1689088060393-93aa5e478077444ead4ba2087adbb1e1",
     "categories": [
      {
       "categoryId": "1",
@@ -58,7 +58,7 @@
       "updated": "2023-07-09 06:12:47"
      }
     ],
-    "created": "2023-07-09 06:12:59.747987",
+    "created": "2023-07-11 15:07:40.393404",
     "exerciseLogs": [
      {
       "created": "2023-06-20 00:45:05",
@@ -2411,9 +2411,406 @@
       "weight": "100,100,100",
       "weightPost": "lbs",
       "workoutLogId": "ceb19863-d17b-47e2-b73d-bed37f19783a"
+     },
+     {
+      "created": "2023-07-10 15:10:06",
+      "exerciseId": "882d1763-6e5f-4bf1-b567-4a98c7dd812d",
+      "exerciseLogId": "81e54b0c-2fc3-43cc-b446-b5d656841b6d",
+      "note": "",
+      "parentId": null,
+      "reps": "1",
+      "sets": 1,
+      "time": "300",
+      "title": "Bike",
+      "type": 1,
+      "updated": "2023-07-10 15:10:06",
+      "weight": "0",
+      "weightPost": "lbs",
+      "workoutLogId": "207c504a-4361-4f17-a43a-1b7333cad71d"
+     },
+     {
+      "created": "2023-07-10 15:10:06",
+      "exerciseId": "31dc5800-930f-40b3-9607-0e832dd966bf",
+      "exerciseLogId": "55dff824-ad10-4902-927d-c3afc5e5a83b",
+      "note": "",
+      "parentId": null,
+      "reps": "10,8,7,5,2",
+      "sets": 5,
+      "time": "0,0,0,0,0",
+      "title": "Barbell back squat",
+      "type": 0,
+      "updated": "2023-07-10 15:10:06",
+      "weight": "135,225,315,315,365",
+      "weightPost": "lbs",
+      "workoutLogId": "207c504a-4361-4f17-a43a-1b7333cad71d"
+     },
+     {
+      "created": "2023-07-10 15:10:06",
+      "exerciseId": "f443c935-5f32-49e3-ba8e-79f6247f6ecc",
+      "exerciseLogId": "ef5dfd99-a8a7-47d5-9c06-aab0a0717aba",
+      "note": "",
+      "parentId": null,
+      "reps": "12,10,9,8",
+      "sets": 4,
+      "time": "0,0,0,0",
+      "title": "Barbell extended deadlift",
+      "type": 0,
+      "updated": "2023-07-10 15:10:06",
+      "weight": "135,155,185,185",
+      "weightPost": "lbs",
+      "workoutLogId": "207c504a-4361-4f17-a43a-1b7333cad71d"
+     },
+     {
+      "created": "2023-07-10 15:10:06",
+      "exerciseId": "e57d86fc-8194-4c9c-933c-c593219172ab",
+      "exerciseLogId": "6e9c45b9-e922-41f1-ae3c-5bbacb1a0656",
+      "note": "",
+      "parentId": null,
+      "reps": "12,10,9",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "Smith machine hack squat",
+      "type": 0,
+      "updated": "2023-07-10 15:10:06",
+      "weight": "135,185,185",
+      "weightPost": "lbs",
+      "workoutLogId": "207c504a-4361-4f17-a43a-1b7333cad71d"
+     },
+     {
+      "created": "2023-07-10 15:10:06",
+      "exerciseId": "2bf680dc-7fad-45c4-b732-abd171cd7e46",
+      "exerciseLogId": "c7cb0f66-ad4b-4a67-8768-0f0a2fcfdb3c",
+      "note": "",
+      "parentId": null,
+      "reps": "13,9,9",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "Hamstring curls",
+      "type": 0,
+      "updated": "2023-07-10 15:10:06",
+      "weight": "183,199,199",
+      "weightPost": "lbs",
+      "workoutLogId": "207c504a-4361-4f17-a43a-1b7333cad71d"
+     },
+     {
+      "created": "2023-07-10 15:10:06",
+      "exerciseId": "4f7e1ba4-da78-4d82-ba30-8901d51fcf82",
+      "exerciseLogId": "ae2e81ff-c1d2-4539-97fa-b3813021edb6",
+      "note": "",
+      "parentId": null,
+      "reps": "12,12,12",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "Calf Raises",
+      "type": 0,
+      "updated": "2023-07-10 15:10:06",
+      "weight": "90,90,90",
+      "weightPost": "lbs",
+      "workoutLogId": "207c504a-4361-4f17-a43a-1b7333cad71d"
+     },
+     {
+      "created": "2023-07-10 15:10:06",
+      "exerciseId": "586f307f-c4cc-4c8b-b061-c9fb951bb396",
+      "exerciseLogId": "b5641741-3da7-4c07-aab0-6ac036958624",
+      "note": "",
+      "parentId": null,
+      "reps": "15,15,15",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "Bosu ball squats",
+      "type": 3,
+      "updated": "2023-07-10 15:10:06",
+      "weight": "0,0,0",
+      "weightPost": "lbs",
+      "workoutLogId": "207c504a-4361-4f17-a43a-1b7333cad71d"
+     },
+     {
+      "created": "2023-07-10 15:10:06",
+      "exerciseId": "bd73c482-9549-4ed2-9b29-74796b634084",
+      "exerciseLogId": "2c504657-06e8-43a9-a4f4-c0de65adac16",
+      "note": "",
+      "parentId": null,
+      "reps": "1",
+      "sets": 1,
+      "time": "1300",
+      "title": "Stairmaster",
+      "type": 2,
+      "updated": "2023-07-10 15:10:06",
+      "weight": "0",
+      "weightPost": "lbs",
+      "workoutLogId": "207c504a-4361-4f17-a43a-1b7333cad71d"
+     },
+     {
+      "created": "2023-07-10 15:10:06",
+      "exerciseId": "9fa6f500-ed47-4bd3-97c2-ef22a81b9601",
+      "exerciseLogId": "48de10b3-22fe-451d-8fee-faf095badd52",
+      "note": "",
+      "parentId": "31dc5800-930f-40b3-9607-0e832dd966bf",
+      "reps": "20,20,20",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "V-ups",
+      "type": 3,
+      "updated": "2023-07-10 15:10:06",
+      "weight": "0,0,0",
+      "weightPost": "lbs",
+      "workoutLogId": "207c504a-4361-4f17-a43a-1b7333cad71d"
+     },
+     {
+      "created": "2023-07-11 15:07:24",
+      "exerciseId": "882d1763-6e5f-4bf1-b567-4a98c7dd812d",
+      "exerciseLogId": "b8f145e7-16b2-4f39-9a7d-95de46524f03",
+      "note": "",
+      "parentId": null,
+      "reps": "1",
+      "sets": 1,
+      "time": "300",
+      "title": "Bike",
+      "type": 1,
+      "updated": "2023-07-11 15:07:24",
+      "weight": "0",
+      "weightPost": "lbs",
+      "workoutLogId": "fc618401-260b-40e8-8969-7f9997a2cfba"
+     },
+     {
+      "created": "2023-07-11 15:07:24",
+      "exerciseId": "cf9d69d2-d119-46a2-8338-135aa28ede0e",
+      "exerciseLogId": "25020a1a-d8a6-4456-87a0-ba4a8fdc27c8",
+      "note": "",
+      "parentId": null,
+      "reps": "10,15,10,5",
+      "sets": 4,
+      "time": "0,0,0,0",
+      "title": "Dumbbell Bench Press",
+      "type": 0,
+      "updated": "2023-07-11 15:07:24",
+      "weight": "50,80,90,100",
+      "weightPost": "lbs",
+      "workoutLogId": "fc618401-260b-40e8-8969-7f9997a2cfba"
+     },
+     {
+      "created": "2023-07-11 15:07:24",
+      "exerciseId": "6233b167-38c4-4408-a371-0698fcfdd4af",
+      "exerciseLogId": "e20a480f-fbac-4b2e-a788-07c4cacb0641",
+      "note": "",
+      "parentId": null,
+      "reps": "10,8,8",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "Incline smith machine press",
+      "type": 0,
+      "updated": "2023-07-11 15:07:24",
+      "weight": "135,185,185",
+      "weightPost": "lbs",
+      "workoutLogId": "fc618401-260b-40e8-8969-7f9997a2cfba"
+     },
+     {
+      "created": "2023-07-11 15:07:24",
+      "exerciseId": "260669fb-298c-48f9-bd93-95a2dc2c75e4",
+      "exerciseLogId": "a8b2957f-a69d-4980-8eff-3a59dbc24b1c",
+      "note": "",
+      "parentId": null,
+      "reps": "12,10,10",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "Cable flys",
+      "type": 0,
+      "updated": "2023-07-11 15:07:24",
+      "weight": "30,30,27",
+      "weightPost": "lbs",
+      "workoutLogId": "fc618401-260b-40e8-8969-7f9997a2cfba"
+     },
+     {
+      "created": "2023-07-11 15:07:24",
+      "exerciseId": "0a643fb3-1191-4aff-8696-23e90605cf83",
+      "exerciseLogId": "91cf1e93-4a0e-43c0-9ddc-de0e44602bab",
+      "note": "",
+      "parentId": null,
+      "reps": "8,12,10",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "Lower cable flys",
+      "type": 0,
+      "updated": "2023-07-11 15:07:24",
+      "weight": "25,20,20",
+      "weightPost": "lbs",
+      "workoutLogId": "fc618401-260b-40e8-8969-7f9997a2cfba"
+     },
+     {
+      "created": "2023-07-11 15:07:24",
+      "exerciseId": "18713c27-844f-44a9-8e3d-04c44af30fb4",
+      "exerciseLogId": "35cfba45-8da6-464c-98f4-23b610a1526e",
+      "note": "",
+      "parentId": null,
+      "reps": "10,15,10",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "Cable shoulder press",
+      "type": 0,
+      "updated": "2023-07-11 15:07:24",
+      "weight": "60,70,80",
+      "weightPost": "lbs",
+      "workoutLogId": "fc618401-260b-40e8-8969-7f9997a2cfba"
+     },
+     {
+      "created": "2023-07-11 15:07:24",
+      "exerciseId": "de45b67e-696b-45dd-beb8-5c2a5c97d3a8",
+      "exerciseLogId": "2fcf4a7e-b1c9-40da-aefd-7ddfd7caf024",
+      "note": "",
+      "parentId": null,
+      "reps": "12,10,10",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "Dips",
+      "type": 3,
+      "updated": "2023-07-11 15:07:24",
+      "weight": "0,0,0",
+      "weightPost": "lbs",
+      "workoutLogId": "fc618401-260b-40e8-8969-7f9997a2cfba"
+     },
+     {
+      "created": "2023-07-11 15:07:24",
+      "exerciseId": "5e5029e1-8057-4871-90a5-c0ec9ef1df35",
+      "exerciseLogId": "fbe92c00-334c-41b1-b9db-fb8fdad313f7",
+      "note": "",
+      "parentId": null,
+      "reps": "12,12",
+      "sets": 2,
+      "time": "0,0",
+      "title": "Ticep pull downs",
+      "type": 0,
+      "updated": "2023-07-11 15:07:24",
+      "weight": "110,110",
+      "weightPost": "lbs",
+      "workoutLogId": "fc618401-260b-40e8-8969-7f9997a2cfba"
+     },
+     {
+      "created": "2023-07-11 15:07:24",
+      "exerciseId": "1e8454bc-11cd-4d32-8141-daf32d874db8",
+      "exerciseLogId": "a72eead6-241a-4b8a-8119-6fa138972309",
+      "note": "",
+      "parentId": null,
+      "reps": "8,10",
+      "sets": 2,
+      "time": "0,0",
+      "title": "Single arm tricep extension",
+      "type": 0,
+      "updated": "2023-07-11 15:07:24",
+      "weight": "40,40",
+      "weightPost": "lbs",
+      "workoutLogId": "fc618401-260b-40e8-8969-7f9997a2cfba"
+     },
+     {
+      "created": "2023-07-11 15:07:24",
+      "exerciseId": "669cbf95-07f9-4310-ae8b-1a3adeb97be2",
+      "exerciseLogId": "920b14c8-3b59-44da-b5d5-64c3bbaaee1c",
+      "note": "",
+      "parentId": null,
+      "reps": "12,12",
+      "sets": 2,
+      "time": "0,0",
+      "title": "Hanging leg raises",
+      "type": 3,
+      "updated": "2023-07-11 15:07:24",
+      "weight": "0,0",
+      "weightPost": "lbs",
+      "workoutLogId": "fc618401-260b-40e8-8969-7f9997a2cfba"
+     },
+     {
+      "created": "2023-07-11 15:07:24",
+      "exerciseId": "ace00215-efc6-4003-9f04-fa4a4884bc73",
+      "exerciseLogId": "5ea2fd94-d9d1-4ae4-9b9a-8b91a44dd678",
+      "note": "",
+      "parentId": "5e5029e1-8057-4871-90a5-c0ec9ef1df35",
+      "reps": "10,10",
+      "sets": 2,
+      "time": "0,0",
+      "title": "Overhead tricep extension",
+      "type": 0,
+      "updated": "2023-07-11 15:07:24",
+      "weight": "100,100",
+      "weightPost": "lbs",
+      "workoutLogId": "fc618401-260b-40e8-8969-7f9997a2cfba"
      }
     ],
     "exerciseLogTags": [
+     {
+      "created": "2023-07-10 15:10:06",
+      "exerciseLogId": "55dff824-ad10-4902-927d-c3afc5e5a83b",
+      "exerciseLogTagId": "5e7ef1f1-b716-4ad0-82de-4af44f303829",
+      "setIndex": 0,
+      "tagId": "2"
+     },
+     {
+      "created": "2023-07-10 15:10:06",
+      "exerciseLogId": "ef5dfd99-a8a7-47d5-9c06-aab0a0717aba",
+      "exerciseLogTagId": "306b858e-00a9-4569-9f33-dcc50d1166fa",
+      "setIndex": 0,
+      "tagId": "2"
+     },
+     {
+      "created": "2023-07-10 15:10:06",
+      "exerciseLogId": "c7cb0f66-ad4b-4a67-8768-0f0a2fcfdb3c",
+      "exerciseLogTagId": "e941a986-c4e1-435e-a11e-164362b51680",
+      "setIndex": 0,
+      "tagId": "1"
+     },
+     {
+      "created": "2023-07-10 15:10:06",
+      "exerciseLogId": "c7cb0f66-ad4b-4a67-8768-0f0a2fcfdb3c",
+      "exerciseLogTagId": "cd40e702-e22e-4218-b2c4-c05f002ad1c6",
+      "setIndex": 1,
+      "tagId": "1"
+     },
+     {
+      "created": "2023-07-10 15:10:06",
+      "exerciseLogId": "c7cb0f66-ad4b-4a67-8768-0f0a2fcfdb3c",
+      "exerciseLogTagId": "1ec02203-762f-4d9d-abe1-bc0fd25948a9",
+      "setIndex": 2,
+      "tagId": "1"
+     },
+     {
+      "created": "2023-07-11 15:07:24",
+      "exerciseLogId": "25020a1a-d8a6-4456-87a0-ba4a8fdc27c8",
+      "exerciseLogTagId": "6bedc627-542c-4b18-b762-afc57b1fd487",
+      "setIndex": 0,
+      "tagId": "2"
+     },
+     {
+      "created": "2023-07-11 15:07:24",
+      "exerciseLogId": "a8b2957f-a69d-4980-8eff-3a59dbc24b1c",
+      "exerciseLogTagId": "c8ab4fc9-3916-4e45-a9a7-d9c898cbd4e9",
+      "setIndex": 1,
+      "tagId": "3"
+     },
+     {
+      "created": "2023-07-11 15:07:24",
+      "exerciseLogId": "a8b2957f-a69d-4980-8eff-3a59dbc24b1c",
+      "exerciseLogTagId": "f94635e7-cec9-447f-9181-1a04a18192db",
+      "setIndex": 2,
+      "tagId": "3"
+     },
+     {
+      "created": "2023-07-11 15:07:24",
+      "exerciseLogId": "91cf1e93-4a0e-43c0-9ddc-de0e44602bab",
+      "exerciseLogTagId": "cfbbc018-7480-496e-bcc4-ce2116288a39",
+      "setIndex": 0,
+      "tagId": "3"
+     },
+     {
+      "created": "2023-07-11 15:07:24",
+      "exerciseLogId": "2fcf4a7e-b1c9-40da-aefd-7ddfd7caf024",
+      "exerciseLogTagId": "174bbead-ee89-4679-8274-88bc012d1835",
+      "setIndex": 1,
+      "tagId": "3"
+     },
+     {
+      "created": "2023-07-11 15:07:24",
+      "exerciseLogId": "2fcf4a7e-b1c9-40da-aefd-7ddfd7caf024",
+      "exerciseLogTagId": "ffbaf808-c866-471f-8ba5-7fcf22990c24",
+      "setIndex": 2,
+      "tagId": "3"
+     }
     ],
     "exercises": [
      {
@@ -3091,6 +3488,58 @@
       "title": "Stairmaster",
       "type": 2,
       "updated": "2023-07-09 03:46:42"
+     },
+     {
+      "category": "1",
+      "created": "2023-07-10 13:37:57",
+      "description": "",
+      "exerciseId": "586f307f-c4cc-4c8b-b061-c9fb951bb396",
+      "icon": "",
+      "reps": 15,
+      "sets": 3,
+      "time": 0,
+      "title": "Bosu ball squats",
+      "type": 3,
+      "updated": "2023-07-10 13:37:57"
+     },
+     {
+      "category": "1",
+      "created": "2023-07-10 14:16:50",
+      "description": "Treat the smith machine like a hacksquat, slow and controlled. Lean against the bar as you squat",
+      "exerciseId": "e57d86fc-8194-4c9c-933c-c593219172ab",
+      "icon": "",
+      "reps": 10,
+      "sets": 4,
+      "time": 0,
+      "title": "Smith machine hack squat",
+      "type": 0,
+      "updated": "2023-07-10 14:16:50"
+     },
+     {
+      "category": "4",
+      "created": "2023-07-11 14:18:09",
+      "description": "",
+      "exerciseId": "6233b167-38c4-4408-a371-0698fcfdd4af",
+      "icon": "",
+      "reps": 10,
+      "sets": 3,
+      "time": 0,
+      "title": "Incline smith machine press",
+      "type": 0,
+      "updated": "2023-07-11 14:18:09"
+     },
+     {
+      "category": "5",
+      "created": "2023-07-11 14:34:58",
+      "description": "",
+      "exerciseId": "18713c27-844f-44a9-8e3d-04c44af30fb4",
+      "icon": "",
+      "reps": 10,
+      "sets": 3,
+      "time": 0,
+      "title": "Cable shoulder press",
+      "type": 0,
+      "updated": "2023-07-11 14:34:58"
      }
     ],
     "exerciseSets": [
@@ -3320,7 +3769,7 @@
      {
       "created": "2023-07-08 06:10:00",
       "tagId": "1",
-      "title": "Failure",
+      "title": "To Failure",
       "updated": "2023-07-09 03:39:46"
      },
      {
@@ -3339,6 +3788,12 @@
       "created": "2023-07-08 06:10:00",
       "tagId": "4",
       "title": "Max",
+      "updated": "2023-07-09 03:39:46"
+     },
+     {
+      "created": "2023-07-08 06:10:00",
+      "tagId": "5",
+      "title": "Working Set",
       "updated": "2023-07-09 03:39:46"
      }
     ],
@@ -3618,19 +4073,6 @@
      },
      {
       "created": "2023-06-26 17:05:43",
-      "exerciseId": "54ae501f-c066-458d-bbc3-2b5885865166",
-      "exerciseOrder": 3,
-      "note": "",
-      "reps": 8,
-      "sets": 3,
-      "superSetOrdering": 0,
-      "time": 0,
-      "updated": "2023-06-26 17:05:43",
-      "workoutExerciseId": "56944a7c-b77d-40cb-add9-2ac4042ba02c",
-      "workoutId": "1be11282-d077-4af4-b7bf-336085c71013"
-     },
-     {
-      "created": "2023-06-26 17:05:43",
       "exerciseId": "2bf680dc-7fad-45c4-b732-abd171cd7e46",
       "exerciseOrder": 4,
       "note": "",
@@ -3656,19 +4098,6 @@
       "workoutId": "1be11282-d077-4af4-b7bf-336085c71013"
      },
      {
-      "created": "2023-06-26 18:42:55",
-      "exerciseId": "669cbf95-07f9-4310-ae8b-1a3adeb97be2",
-      "exerciseOrder": 5,
-      "note": "",
-      "reps": 12,
-      "sets": 3,
-      "superSetOrdering": 0,
-      "time": 0,
-      "updated": "2023-06-26 18:42:55",
-      "workoutExerciseId": "bd31ded3-b495-450a-96dc-a866c8a5fc88",
-      "workoutId": "1be11282-d077-4af4-b7bf-336085c71013"
-     },
-     {
       "created": "2023-06-27 13:39:24",
       "exerciseId": "cf9d69d2-d119-46a2-8338-135aa28ede0e",
       "exerciseOrder": 1,
@@ -3679,19 +4108,6 @@
       "time": 0,
       "updated": "2023-06-27 13:39:24",
       "workoutExerciseId": "2b332a28-b5e3-494c-8c10-81586a827923",
-      "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2"
-     },
-     {
-      "created": "2023-06-27 13:39:24",
-      "exerciseId": "0c804742-2f37-4d8b-ab34-040aa0eb54be",
-      "exerciseOrder": 2,
-      "note": "",
-      "reps": 10,
-      "sets": 4,
-      "superSetOrdering": 0,
-      "time": 0,
-      "updated": "2023-06-27 13:39:24",
-      "workoutExerciseId": "6c8cbcb3-4fd9-4c95-b962-b58a29014e6b",
       "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2"
      },
      {
@@ -3718,19 +4134,6 @@
       "time": 0,
       "updated": "2023-06-27 13:39:24",
       "workoutExerciseId": "508decfe-4e64-4f6c-ad9d-7924d079b79b",
-      "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2"
-     },
-     {
-      "created": "2023-06-27 13:39:24",
-      "exerciseId": "953019ee-15b0-4d14-8fa5-eed668eb4d34",
-      "exerciseOrder": 5,
-      "note": "",
-      "reps": 10,
-      "sets": 4,
-      "superSetOrdering": 0,
-      "time": 0,
-      "updated": "2023-06-27 13:39:24",
-      "workoutExerciseId": "6f0ba5ef-e520-47df-9cf6-583e865248a5",
       "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2"
      },
      {
@@ -4317,6 +4720,71 @@
       "updated": "2023-07-08 21:42:34",
       "workoutExerciseId": "e08ce28b-8612-4414-81fd-0d3c318c308b",
       "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951"
+     },
+     {
+      "created": "2023-07-10 13:37:57",
+      "exerciseId": "586f307f-c4cc-4c8b-b061-c9fb951bb396",
+      "exerciseOrder": 5,
+      "note": "",
+      "reps": 15,
+      "sets": 3,
+      "superSetOrdering": 0,
+      "time": 0,
+      "updated": "2023-07-10 13:37:57",
+      "workoutExerciseId": "df4b72ad-cf58-449c-b976-0fc5fecc12ec",
+      "workoutId": "1be11282-d077-4af4-b7bf-336085c71013"
+     },
+     {
+      "created": "2023-07-10 14:16:50",
+      "exerciseId": "e57d86fc-8194-4c9c-933c-c593219172ab",
+      "exerciseOrder": 2,
+      "note": "",
+      "reps": 10,
+      "sets": 4,
+      "superSetOrdering": 0,
+      "time": 0,
+      "updated": "2023-07-10 14:16:50",
+      "workoutExerciseId": "29c426a4-3c98-4992-b2e4-49582edb9571",
+      "workoutId": "1be11282-d077-4af4-b7bf-336085c71013"
+     },
+     {
+      "created": "2023-07-10 14:44:54",
+      "exerciseId": "bd73c482-9549-4ed2-9b29-74796b634084",
+      "exerciseOrder": 6,
+      "note": "",
+      "reps": 1,
+      "sets": 1,
+      "superSetOrdering": 0,
+      "time": 1200,
+      "updated": "2023-07-10 14:44:54",
+      "workoutExerciseId": "f4d47097-0948-409a-b78e-9ba698e88ca4",
+      "workoutId": "1be11282-d077-4af4-b7bf-336085c71013"
+     },
+     {
+      "created": "2023-07-11 14:18:09",
+      "exerciseId": "6233b167-38c4-4408-a371-0698fcfdd4af",
+      "exerciseOrder": 1,
+      "note": "",
+      "reps": 10,
+      "sets": 3,
+      "superSetOrdering": 0,
+      "time": 0,
+      "updated": "2023-07-11 14:18:09",
+      "workoutExerciseId": "6d831887-f064-4ea8-911e-dc867c84bca5",
+      "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2"
+     },
+     {
+      "created": "2023-07-11 14:34:58",
+      "exerciseId": "18713c27-844f-44a9-8e3d-04c44af30fb4",
+      "exerciseOrder": 4,
+      "note": "",
+      "reps": 10,
+      "sets": 3,
+      "superSetOrdering": 0,
+      "time": 0,
+      "updated": "2023-07-11 14:34:58",
+      "workoutExerciseId": "b3103e16-7b37-4e4c-9fd7-2c44e2812058",
+      "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2"
      }
     ],
     "workoutLogs": [
@@ -4499,6 +4967,26 @@
       "updated": "2023-07-08 22:03:57",
       "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951",
       "workoutLogId": "ceb19863-d17b-47e2-b73d-bed37f19783a"
+     },
+     {
+      "created": "2023-07-10 15:10:06",
+      "description": "Get those juicy quads",
+      "duration": 6120,
+      "note": null,
+      "title": "Leg day",
+      "updated": "2023-07-10 15:10:06",
+      "workoutId": "1be11282-d077-4af4-b7bf-336085c71013",
+      "workoutLogId": "207c504a-4361-4f17-a43a-1b7333cad71d"
+     },
+     {
+      "created": "2023-07-11 15:07:24",
+      "description": "",
+      "duration": 5060,
+      "note": null,
+      "title": "Push 1",
+      "updated": "2023-07-11 15:07:24",
+      "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2",
+      "workoutLogId": "fc618401-260b-40e8-8969-7f9997a2cfba"
      }
     ],
     "workouts": [

@@ -161,7 +161,14 @@ class _ProfileState extends State<Profile> {
             setState(() {
               _loadingIndex = 100;
             });
-            await dmodel.exportToJSON();
+            var response = await dmodel.exportToJSON();
+            if (response) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text("Success!"),
+                ),
+              );
+            }
             setState(() {
               _loadingIndex = -1;
             });

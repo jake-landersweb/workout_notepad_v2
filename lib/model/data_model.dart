@@ -309,85 +309,98 @@ class DataModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> exportToJSON() async {
-    // get the database
-    var db = await getDB();
+  Future<bool> exportToJSON() async {
+    try {
+      // get the database
+      var db = await getDB();
 
-    // get data
-    var categories = await db.query("category");
-    var exercises = await db.query("exercise");
-    var exerciseSets = await db.query("exercise_set");
-    var workouts = await db.query("workout");
-    var workoutExercises = await db.query("workout_exercise");
-    var exerciseLogs = await db.query("exercise_log");
-    var workoutLogs = await db.query("workout_log");
-    var tags = await db.query("tag");
-    var exerciseLogTags = await db.query("exercise_log_tag");
-    var collections = await db.query("collection");
-    var collectionItems = await db.query("collection_item");
+      // get data
+      var categories = await db.query("category");
+      var exercises = await db.query("exercise");
+      var exerciseSets = await db.query("exercise_set");
+      var workouts = await db.query("workout");
+      var workoutExercises = await db.query("workout_exercise");
+      var exerciseLogs = await db.query("exercise_log");
+      var workoutLogs = await db.query("workout_log");
+      var tags = await db.query("tag");
+      var exerciseLogTags = await db.query("exercise_log_tag");
+      var collections = await db.query("collection");
+      var collectionItems = await db.query("collection_item");
 
-    // create structured data
-    Map<String, dynamic> data = {
-      "categories": categories,
-      "exercises": exercises,
-      "exerciseSets": exerciseSets,
-      "workouts": workouts,
-      "workoutExercises": workoutExercises,
-      "exerciseLogs": exerciseLogs,
-      "workoutLogs": workoutLogs,
-      "tags": tags,
-      "exerciseLogTags": exerciseLogTags,
-      "collections": collections,
-      "collectionItems": collectionItems,
-    };
+      // create structured data
+      Map<String, dynamic> data = {
+        "categories": categories,
+        "exercises": exercises,
+        "exerciseSets": exerciseSets,
+        "workouts": workouts,
+        "workoutExercises": workoutExercises,
+        "exerciseLogs": exerciseLogs,
+        "workoutLogs": workoutLogs,
+        "tags": tags,
+        "exerciseLogTags": exerciseLogTags,
+        "collections": collections,
+        "collectionItems": collectionItems,
+      };
 
-    // encode to json
-    String encoded = jsonEncode(data);
+      // encode to json
+      String encoded = jsonEncode(data);
 
-    // send to url
-    var response = await http.Client().post(
-      Uri.parse(
-          "https://4q849d280b.execute-api.us-west-2.amazonaws.com/api/v2/export"),
-      headers: {"Content-type": "application/json"},
-      body: encoded,
-    );
+      // send to url
+      var response = await http.Client().post(
+        Uri.parse(
+            "https://4q849d280b.execute-api.us-west-2.amazonaws.com/api/v2/export"),
+        headers: {"Content-type": "application/json"},
+        body: encoded,
+      );
 
-    print(response.statusCode);
+      print(response.statusCode);
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 
-  Future<void> importData({bool delete = true}) async {
-    print("IMPORTING DATA");
-    if (delete) {
-      String path = join(await getDatabasesPath(), 'workout_notepad.db');
-      await databaseFactory.deleteDatabase(path);
-    }
-    // load / create database
-    var db = await getDB();
-
-    // read file
-    String json = await rootBundle.loadString("sql/init.json");
-    Map<String, dynamic> data = const JsonDecoder().convert(json);
-
-    Future<void> load(String table, List<dynamic> objects) async {
-      for (var i in objects) {
-        await db.insert(table, i, conflictAlgorithm: ConflictAlgorithm.replace);
+  Future<bool> importData({bool delete = true}) async {
+    try {
+      print("IMPORTING DATA");
+      if (delete) {
+        String path = join(await getDatabasesPath(), 'workout_notepad.db');
+        await databaseFactory.deleteDatabase(path);
       }
-    }
+      // load / create database
+      var db = await getDB();
 
-    // load all data
-    await load("category", data['categories']);
-    await load("exercise", data['exercises']);
-    await load("exercise_set", data['exerciseSets']);
-    await load("workout", data['workouts']);
-    await load("workout_exercise", data['workoutExercises']);
-    await load("exercise_log", data['exerciseLogs']);
-    await load("workout_log", data['workoutLogs']);
-    await load("tag", data['tags']);
-    await load("exercise_log_tag", data['exerciseLogTags']);
-    await load("collection", data['collections']);
-    await load("collection_item", data['collectionItems']);
-    await fetchData();
-    notifyListeners();
+      // read file
+      String json = await rootBundle.loadString("sql/init.json");
+      Map<String, dynamic> data = const JsonDecoder().convert(json);
+
+      Future<void> load(String table, List<dynamic> objects) async {
+        for (var i in objects) {
+          await db.insert(table, i,
+              conflictAlgorithm: ConflictAlgorithm.replace);
+        }
+      }
+
+      // load all data
+      await load("category", data['categories']);
+      await load("exercise", data['exercises']);
+      await load("exercise_set", data['exerciseSets']);
+      await load("workout", data['workouts']);
+      await load("workout_exercise", data['workoutExercises']);
+      await load("exercise_log", data['exerciseLogs']);
+      await load("workout_log", data['workoutLogs']);
+      await load("tag", data['tags']);
+      await load("exercise_log_tag", data['exerciseLogTags']);
+      // await load("collection", data['collections']);
+      // await load("collection_item", data['collectionItems']);
+      await fetchData();
+      notifyListeners();
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 
   Future<void> deleteDB() async {

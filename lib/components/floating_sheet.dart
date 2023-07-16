@@ -100,7 +100,7 @@ class FloatingSheet extends StatefulWidget {
 class _FloatingSheetState extends State<FloatingSheet> {
   @override
   Widget build(BuildContext context) {
-    var dmodel = context.read<DataModel>();
+    var dmodel = Provider.of<DataModel>(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [

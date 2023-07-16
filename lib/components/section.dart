@@ -3,7 +3,6 @@ import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
-
 class Section extends StatefulWidget {
   const Section(
     this.title, {
@@ -183,7 +182,11 @@ class _SectionState extends State<Section> with TickerProviderStateMixin {
       opacity: 0.5,
       child: Text(
         widget.title.toUpperCase(),
-        style: TextStyle(fontWeight: FontWeight.w500, color: widget.textColor),
+        style: TextStyle(
+          fontWeight: FontWeight.w600,
+          color: widget.textColor,
+          fontSize: 13,
+        ),
       ),
     );
   }

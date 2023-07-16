@@ -59,6 +59,7 @@ dependencies:
   firebase_auth: ^4.6.3
   google_sign_in: ^6.1.4
   syncfusion_flutter_calendar: ^22.1.37
+  collection: ^1.17.1
 
 dev_dependencies:
   flutter_test:
@@ -86,6 +87,7 @@ flutter:
     - sql/init.sql
     - sql/tests.json
     - sql/init.json
+    - sql/init-test.json
     
     - assets/icons/unavailable-96.png
     - assets/icons/bench-press-96.png
@@ -145,6 +147,8 @@ flutter:
     - assets/icons/bodybuilder-96.png
     - assets/icons/barbells-96.png
     - assets/icons/lungs-96.png
+    - assets/icons/time-96.png
+    - assets/icons/clock-96.png
 
     - assets/svg/workout.svg
     - assets/svg/default_profile.svg

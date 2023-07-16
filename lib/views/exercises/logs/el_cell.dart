@@ -5,6 +5,39 @@ import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
+class ELCellLarge extends StatefulWidget {
+  const ELCellLarge({
+    super.key,
+    required this.log,
+  });
+  final ExerciseLog log;
+
+  @override
+  State<ELCellLarge> createState() => _ELCellLargeState();
+}
+
+class _ELCellLargeState extends State<ELCellLarge> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.cell(context),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 0, 2),
+            child: Text(widget.log.title, style: ttLabel(context)),
+          ),
+          ELCell(log: widget.log, showDate: true),
+        ],
+      ),
+    );
+  }
+}
+
 class ELCell extends StatefulWidget {
   const ELCell({
     super.key,
@@ -48,7 +81,7 @@ class _ELCellState extends State<ELCell> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                for (int i = 0; i < widget.log.sets; i++)
+                for (int i = 0; i < widget.log.metadata.length; i++)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
                     child: _cell(context, i, widget.log.metadata[i]),
@@ -88,6 +121,7 @@ class _ELCellState extends State<ELCell> {
                     padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
                     child: Text(
                       i.title,
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
@@ -123,7 +157,7 @@ class _ELCellState extends State<ELCell> {
             Expanded(
               child: _itemCell(
                 context,
-                widget.log.weightPost.toUpperCase(),
+                meta.weightPost,
                 meta.weight.toString(),
               ),
             ),

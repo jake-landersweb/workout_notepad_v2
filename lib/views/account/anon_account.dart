@@ -18,7 +18,7 @@ class _AnonAccountState extends State<AnonAccount> {
 
   @override
   Widget build(BuildContext context) {
-    var dmodel = context.read<DataModel>();
+    var dmodel = Provider.of<DataModel>(context);
     return comp.HeaderBar.sheet(
       title: "",
       leading: const [comp.CloseButton2()],

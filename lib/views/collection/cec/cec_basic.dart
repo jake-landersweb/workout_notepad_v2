@@ -23,7 +23,7 @@ class _CECBasicState extends State<CECBasic> {
   @override
   Widget build(BuildContext context) {
     var cmodel = context.read<CECModel>();
-    var dmodel = context.read<DataModel>();
+    var dmodel = Provider.of<DataModel>(context);
     return Scaffold(
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -38,7 +38,7 @@ class _CECBasicState extends State<CECBasic> {
               const SizedBox(height: 16),
               WrappedButton(
                 title:
-                    "Start Date: ${DateFormat('MMMM d').format(cmodel.collection.startDate)}",
+                    "Start Date: ${DateFormat('MMMM d').format(cmodel.collection.datetime)}",
                 icon: Icons.calendar_month,
                 iconBg: Colors.indigo,
                 rowAxisSize: MainAxisSize.max,
@@ -54,11 +54,11 @@ class _CECBasicState extends State<CECBasic> {
                         const SizedBox(height: 70),
                         SfCalendar(
                           view: CalendarView.month,
-                          initialSelectedDate: cmodel.collection.startDate,
+                          initialSelectedDate: cmodel.collection.datetime,
                           appointmentTextStyle: const TextStyle(fontSize: 24),
                           onTap: (calendarTapDetails) {
                             cmodel.collection.startDate =
-                                calendarTapDetails.date!;
+                                calendarTapDetails.date!.millisecondsSinceEpoch;
                             cmodel.refresh();
                             Navigator.of(context).pop();
                           },
@@ -146,12 +146,10 @@ class _CECBasicState extends State<CECBasic> {
     }
   }
 
-  Widget _workoutCell(
-      BuildContext context, CECModel cmodel, WorkoutCategories wc) {
-    var selected =
-        cmodel.workoutIds.any((element) => element == wc.workout.workoutId);
+  Widget _workoutCell(BuildContext context, CECModel cmodel, Workout w) {
+    var selected = cmodel.workoutIds.any((element) => element == w.workoutId);
     return WorkoutCellSmall(
-      wc: wc,
+      workout: w,
       bg: AppColors.cell(context),
       endWidget: Padding(
         padding: const EdgeInsets.only(top: 8.0),
@@ -165,7 +163,7 @@ class _CECBasicState extends State<CECBasic> {
                 onTap: () {
                   cupertinoSheet(
                     context: context,
-                    builder: (context) => WorkoutDetail.small(workout: wc),
+                    builder: (context) => WorkoutDetail.small(workout: w),
                   );
                 },
               ),
@@ -186,9 +184,8 @@ class _CECBasicState extends State<CECBasic> {
                 rowAxisSize: MainAxisSize.max,
                 onTap: () {
                   if (selected) {
-                    cmodel.collection.items.removeWhere((element) =>
-                        element.workout!.workout.workoutId ==
-                        wc.workout.workoutId);
+                    cmodel.collection.items.removeWhere(
+                        (element) => element.workout!.workoutId == w.workoutId);
                   } else {
                     if (cmodel.collection.items.length >= 10) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -203,7 +200,7 @@ class _CECBasicState extends State<CECBasic> {
                     cmodel.collection.items.add(
                       CollectionItem.fromWorkout(
                         collectionId: cmodel.collection.collectionId,
-                        wc: wc,
+                        w: w,
                       ),
                     );
                   }

@@ -49,12 +49,8 @@ class _CountupTimerState extends State<CountupTimer> {
               Expanded(
                 child: _numberCell(
                   context,
-                  isOK(controller)
-                      ? Theme.of(context).colorScheme.primary.withOpacity(0.15)
-                      : Theme.of(context).colorScheme.errorContainer,
-                  isOK(controller)
-                      ? Theme.of(context).colorScheme.onTertiaryContainer
-                      : Theme.of(context).colorScheme.onErrorContainer,
+                  Theme.of(context).colorScheme.primary.withOpacity(0.15),
+                  Theme.of(context).colorScheme.onTertiaryContainer,
                   hours(controller),
                 ),
               ),
@@ -73,12 +69,8 @@ class _CountupTimerState extends State<CountupTimer> {
             Expanded(
               child: _numberCell(
                 context,
-                isOK(controller)
-                    ? Theme.of(context).primaryColor.withOpacity(0.15)
-                    : Theme.of(context).colorScheme.errorContainer,
-                isOK(controller)
-                    ? Theme.of(context).colorScheme.onPrimaryContainer
-                    : Theme.of(context).colorScheme.onErrorContainer,
+                Theme.of(context).primaryColor.withOpacity(0.15),
+                Theme.of(context).colorScheme.onPrimaryContainer,
                 minutes(controller),
               ),
             ),
@@ -96,12 +88,8 @@ class _CountupTimerState extends State<CountupTimer> {
             Expanded(
               child: _numberCell(
                 context,
-                isOK(controller)
-                    ? AppColors.cell(context)
-                    : Theme.of(context).colorScheme.error.withOpacity(0.3),
-                isOK(controller)
-                    ? Theme.of(context).colorScheme.onSurfaceVariant
-                    : Theme.of(context).colorScheme.onError,
+                AppColors.cell(context),
+                Theme.of(context).colorScheme.onSurfaceVariant,
                 seconds(controller),
               ),
             ),
@@ -205,13 +193,6 @@ class _CountupTimerState extends State<CountupTimer> {
 
   String seconds(comp.TextTimerController controller) {
     return (controller.time.inSeconds % 60).toString().padLeft(2, '0');
-  }
-
-  bool isOK(comp.TextTimerController controller) {
-    if (widget.goalDuration == null) {
-      return true;
-    }
-    return controller.time.inMilliseconds < widget.goalDuration!.inMilliseconds;
   }
 
   String _formatHHMMSS(int seconds) {

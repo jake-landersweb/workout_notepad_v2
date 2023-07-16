@@ -35,6 +35,7 @@ class LaunchWorkoutModelState {
   late double offsetY;
   List<TimerInstance> timerInstances = [];
   CollectionItem? collectionItem;
+  bool isEmpty;
 
   LaunchWorkoutModelState({
     this.workoutIndex = 0,
@@ -45,6 +46,7 @@ class LaunchWorkoutModelState {
     required this.startTime,
     this.offsetY = -5,
     this.collectionItem,
+    this.isEmpty = false,
   });
 
   int getCurrentSeconds() {
@@ -107,8 +109,8 @@ class LaunchWorkoutModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setLogWeightPost(int index, String val) {
-    state.exerciseLogs[index].weightPost = val;
+  void setLogWeightPost(int index, int j, String val) {
+    state.exerciseLogs[index].metadata[j].weightPost = val;
     notifyListeners();
   }
 
@@ -150,7 +152,7 @@ class LaunchWorkoutModel extends ChangeNotifier {
     // TODO -- implement multiple tags
     state.exerciseLogs[index].metadata[setIndex].tags
         .removeWhere((element) => true);
-    state.exerciseLogs[index].addSetTag(tag, setIndex);
+    state.exerciseLogs[index].metadata[setIndex].addTag(tag);
     notifyListeners();
   }
 
@@ -180,8 +182,8 @@ class LaunchWorkoutModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setLogChildWeightPost(int i, int j, String val) {
-    state.exerciseChildLogs[i][j].weightPost = val;
+  void setLogChildWeightPost(int i, int j, int setIndex, String val) {
+    state.exerciseChildLogs[i][j].metadata[setIndex].weightPost = val;
     notifyListeners();
   }
 
@@ -226,7 +228,7 @@ class LaunchWorkoutModel extends ChangeNotifier {
     // TODO -- implement multiple tags
     state.exerciseChildLogs[index][childIndex].metadata[setIndex].tags
         .removeWhere((element) => true);
-    state.exerciseChildLogs[index][childIndex].addSetTag(tag, setIndex);
+    state.exerciseChildLogs[index][childIndex].metadata[setIndex].addTag(tag);
     notifyListeners();
   }
 
@@ -285,9 +287,9 @@ class LaunchWorkoutModel extends ChangeNotifier {
     await we.insert();
 
     var log = ExerciseLog.workoutInit(
-      we.exerciseId,
-      state.wl.workoutLogId,
-      we,
+      eid: we.exerciseId,
+      wlid: state.wl.workoutLogId,
+      exercise: we,
     );
 
     if (index >= state.exercises.length) {
@@ -341,10 +343,10 @@ class LaunchWorkoutModel extends ChangeNotifier {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
       var log = ExerciseLog.exerciseSetInit(
-        sets[i].childId,
-        sets[i].parentId,
-        state.wl.workoutLogId,
-        sets[i],
+        eid: sets[i].childId,
+        parentEid: sets[i].parentId,
+        wlid: state.wl.workoutLogId,
+        exercise: sets[i],
       );
       logs.add(log);
     }

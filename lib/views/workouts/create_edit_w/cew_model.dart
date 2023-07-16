@@ -241,7 +241,8 @@ class CEWModel extends ChangeNotifier {
         }
       });
       // update the data
-      await dmodel.refreshWorkouts();
+      await dmodel.fetchData();
+      notifyListeners();
       return workout;
     } catch (e) {
       if (kDebugMode) {

@@ -94,6 +94,10 @@ extension AppColors on Color {
     return text(context).withOpacity(0.63);
   }
 
+  static Color light(BuildContext context) {
+    return text(context).withOpacity(0.3);
+  }
+
   static Color divider(BuildContext context) {
     return text(context).withOpacity(0.065);
   }

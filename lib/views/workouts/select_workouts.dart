@@ -15,7 +15,7 @@ class SelectWorkouts extends StatefulWidget {
     this.closeOnSelect = true,
   });
   final List<String>? selectedIds;
-  final Function(WorkoutCategories wc) onSelect;
+  final Function(Workout workout) onSelect;
   final bool closeOnSelect;
 
   @override
@@ -40,7 +40,7 @@ class _SelectWorkoutsState extends State<SelectWorkouts> {
 
   @override
   Widget build(BuildContext context) {
-    var dmodel = context.read<DataModel>();
+    var dmodel = Provider.of<DataModel>(context);
     return HeaderBar.sheet(
       title: "Select Workouts",
       trailing: const [CancelButton(title: "Done")],
@@ -58,13 +58,12 @@ class _SelectWorkoutsState extends State<SelectWorkouts> {
     );
   }
 
-  Widget _cell(BuildContext context, WorkoutCategories workout) {
-    bool selected =
-        _selectedIds.any((element) => element == workout.workout.workoutId);
+  Widget _cell(BuildContext context, Workout workout) {
+    bool selected = _selectedIds.any((element) => element == workout.workoutId);
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: WorkoutCellSmall(
-        wc: workout,
+        workout: workout,
         bg: AppColors.cell(context),
         endWidget: Padding(
           padding: const EdgeInsets.only(top: 8.0),

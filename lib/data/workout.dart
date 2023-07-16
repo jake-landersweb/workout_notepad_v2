@@ -26,7 +26,9 @@ class Workout {
   late String created;
   late String updated;
 
-  // --- Constructors
+  // not stored in database
+  late List<String> categories;
+  late List<WorkoutExercise> exercises;
 
   Workout({
     required this.workoutId,
@@ -35,6 +37,8 @@ class Workout {
     required this.icon,
     required this.created,
     required this.updated,
+    required this.categories,
+    required this.exercises,
   });
 
   Workout.init() {
@@ -45,6 +49,8 @@ class Workout {
     icon = "";
     created = "";
     updated = "";
+    categories = [];
+    exercises = [];
   }
 
   Workout copy() => Workout(
@@ -54,27 +60,25 @@ class Workout {
         icon: icon,
         created: created,
         updated: updated,
+        categories: [for (var i in categories) i],
+        exercises: [for (var i in exercises) i.copy()],
       );
 
-  Workout.fromJson(Map<String, dynamic> json) {
-    workoutId = json['workoutId'];
-    title = json['title'];
-    description = json['description'];
-    icon = json['icon'];
-    created = json['created'];
-    updated = json['updated'];
+  static Future<Workout> fromJson(Map<String, dynamic> json) async {
+    var w = Workout(
+      workoutId: json['workoutId'],
+      title: json['title'],
+      description: json['description'],
+      icon: json['icon'],
+      created: json['created'],
+      updated: json['updated'],
+      categories: [],
+      exercises: [],
+    );
+    w.exercises = await w.getChildren();
+    w.categories = await w.getCategories();
+    return w;
   }
-
-  Workout.fromTest(Map<String, dynamic> json) {
-    workoutId = json['workoutId'];
-    title = json['title'];
-    description = json['description'];
-    icon = json['icon'] ?? "";
-    created = "";
-    updated = "";
-  }
-
-  // --- Class Methods
 
   Map<String, dynamic> toMap() {
     return {
@@ -87,17 +91,6 @@ class Workout {
 
   Image getIcon({double? size}) {
     return getImageIcon(icon, size: size);
-  }
-
-  // --- DB Methods
-
-  Future<void> insert({ConflictAlgorithm? conflictAlgorithm}) async {
-    final db = await getDB();
-    await db.insert(
-      'workout',
-      toMap(),
-      conflictAlgorithm: conflictAlgorithm ?? ConflictAlgorithm.abort,
-    );
   }
 
   Future<List<WorkoutExercise>> getChildren() async {
@@ -129,10 +122,13 @@ class Workout {
 
   static Future<List<Workout>> getList() async {
     final db = await getDB();
-    final List<Map<String, dynamic>> response = await db.query('workout');
+    var response = await db.rawQuery("""
+      SELECT * FROM workout
+      ORDER BY created DESC
+    """);
     List<Workout> w = [];
     for (var i in response) {
-      w.add(Workout.fromJson(i));
+      w.add(await Workout.fromJson(i));
     }
     return w;
   }
@@ -146,7 +142,7 @@ class Workout {
     var response = await db.rawQuery(sql);
     List<WorkoutLog> logs = [];
     for (var i in response) {
-      logs.add(WorkoutLog.fromJson(i));
+      logs.add(await WorkoutLog.fromJson(i));
     }
     return logs;
   }

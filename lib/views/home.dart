@@ -10,11 +10,12 @@ import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/collection/collection_home.dart';
 import 'package:workout_notepad_v2/views/logs/root.dart';
+import 'package:workout_notepad_v2/views/overview/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/profile/profile.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
 
-enum HomeScreen { logs, collections, workouts, exercises, profile }
+enum HomeScreen { logs, collections, overview, exercises, profile }
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -40,8 +41,9 @@ class _HomeState extends State<Home> {
     switch (dmodel.currentTabScreen) {
       case HomeScreen.collections:
         return const CollectionHome();
-      case HomeScreen.workouts:
-        return const WorkoutsHome();
+      case HomeScreen.overview:
+        return const OverviewHome();
+      // return const WorkoutsHome();
       case HomeScreen.exercises:
         return const ExerciseHome();
       case HomeScreen.profile:
@@ -130,7 +132,7 @@ class _HomeState extends State<Home> {
                                   submitColor: Colors.red,
                                   submitText: "Yes",
                                   onSubmit: () {
-                                    dmodel.stopWorkout();
+                                    dmodel.stopWorkout(isCancel: true);
                                   },
                                 );
                               },
@@ -200,16 +202,16 @@ class _HomeState extends State<Home> {
                       _barRow(
                         context,
                         dmodel,
-                        LineIcons.calendar,
+                        LineIcons.box,
                         "Collections",
                         HomeScreen.collections,
                       ),
                       _barRow(
                         context,
                         dmodel,
-                        LineIcons.running,
-                        "Workouts",
-                        HomeScreen.workouts,
+                        LineIcons.home,
+                        "Dashboard",
+                        HomeScreen.overview,
                       ),
                       _barRow(
                         context,

@@ -22,12 +22,15 @@ class CollectionProgressBar extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "$completed / ${collection.items.length}",
-          style: ttBody(
-            context,
-            color: AppColors.subtext(context),
-            size: 12,
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Text(
+            "$completed / ${collection.items.length}",
+            style: ttBody(
+              context,
+              color: AppColors.subtext(context),
+              size: 12,
+            ),
           ),
         ),
         LayoutBuilder(

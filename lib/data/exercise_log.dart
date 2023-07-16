@@ -1,3 +1,4 @@
+import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sql.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/data/exercise_base.dart';
@@ -13,11 +14,12 @@ class ExerciseLog {
   late String title;
   late ExerciseType type;
   late int sets;
-  late String weightPost;
   String? note;
-  late List<ExerciseLogMeta> metadata;
   late String created;
   late String updated;
+
+  // not in db
+  late List<ExerciseLogMeta> metadata;
 
   ExerciseLog({
     required this.exerciseLogId,
@@ -27,9 +29,7 @@ class ExerciseLog {
     required this.title,
     required this.sets,
     required this.type,
-    required this.weightPost,
     this.note,
-    required this.metadata,
     required this.created,
     required this.updated,
   });
@@ -41,114 +41,86 @@ class ExerciseLog {
     title = exercise.title;
     sets = exercise.sets;
     type = exercise.type;
-    weightPost = "lbs";
-    metadata = [];
     note = "";
-    for (int i = 0; i < exercise.sets; i++) {
-      metadata.add(
-        ExerciseLogMeta(
-          reps: exercise.reps,
-          time: exercise.time,
-          weight: 0,
-          saved: false,
-          tags: [],
-        ),
-      );
-    }
     created = "";
     updated = "";
+    metadata = [];
   }
 
-  ExerciseLog.workoutInit(
-    String eid,
-    String wlid,
-    ExerciseBase exercise,
-  ) {
-    var uuid = const Uuid();
-    exerciseLogId = uuid.v4();
+  ExerciseLog.workoutInit({
+    required String eid,
+    required String wlid,
+    required ExerciseBase exercise,
+    Tag? defaultTag,
+  }) {
+    exerciseLogId = const Uuid().v4();
     exerciseId = eid;
     workoutLogId = wlid;
     title = exercise.title;
     sets = exercise.sets;
     type = exercise.type;
-    weightPost = "lbs";
-    metadata = [];
     note = "";
+    created = "";
+    updated = "";
+    metadata = [];
     for (int i = 0; i < exercise.sets; i++) {
       metadata.add(
-        ExerciseLogMeta(
-          reps: exercise.reps,
-          time: exercise.time,
-          weight: 0,
-          saved: false,
-          tags: [],
+        ExerciseLogMeta.init(
+          log: this,
+          exercise: exercise,
+          defaultTag: defaultTag,
         ),
       );
     }
-    created = "";
-    updated = "";
   }
 
-  ExerciseLog.exerciseSetInit(
-    String eid,
-    String parentEid,
-    String wlid,
-    ExerciseBase exercise,
-  ) {
-    var uuid = const Uuid();
-    exerciseLogId = uuid.v4();
+  ExerciseLog.exerciseSetInit({
+    required String eid,
+    required String parentEid,
+    required String wlid,
+    required ExerciseBase exercise,
+    Tag? defaultTag,
+  }) {
+    exerciseLogId = const Uuid().v4();
     exerciseId = eid;
     parentId = parentEid;
     workoutLogId = wlid;
     title = exercise.title;
     sets = exercise.sets;
     type = exercise.type;
-    weightPost = "lbs";
-    metadata = [];
     note = "";
-    for (int i = 0; i < exercise.sets; i++) {
-      metadata.add(
-        ExerciseLogMeta(
-          reps: exercise.reps,
-          time: exercise.time,
-          weight: 0,
-          saved: false,
-          tags: [],
-        ),
-      );
-    }
     created = "";
     updated = "";
-  }
-
-  ExerciseLog.fromJson(Map<String, dynamic> json) {
-    exerciseLogId = json['exerciseLogId'];
-    exerciseId = json['exerciseId'];
-    parentId = json['parentId'];
-    workoutLogId = json['workoutLogId'];
-    title = json['title'];
-    type = exerciseTypeFromJson(json['type']);
-    sets = json['sets'];
-    weightPost = json['weightPost'];
-    note = json['note'];
     metadata = [];
-    var r = json['reps'].split(",");
-    var t = json['time'].split(",");
-    var w = json['weight'].split(",");
-    for (int i = 0; i < sets; i++) {
+    for (int i = 0; i < exercise.sets; i++) {
       metadata.add(
-        ExerciseLogMeta(
-          reps: int.parse(r[i]),
-          time: int.parse(t[i]),
-          weight: int.parse(w[i]),
-          saved: true,
-          tags: [],
+        ExerciseLogMeta.init(
+          log: this,
+          exercise: exercise,
+          defaultTag: defaultTag,
         ),
       );
     }
-    created = json['created'];
-    updated = json['updated'];
-    setTags();
+  }
+
+  static Future<ExerciseLog> fromJson(
+    Map<String, dynamic> json, {
+    Database? db,
+  }) async {
+    var el = ExerciseLog(
+      exerciseLogId: json['exerciseLogId'],
+      exerciseId: json['exerciseId'],
+      parentId: json['parentId'],
+      workoutLogId: json['workoutLogId'],
+      title: json['title'],
+      type: exerciseTypeFromJson(json['type']),
+      sets: json['sets'],
+      note: json['note'],
+      created: json['created'],
+      updated: json['updated'],
+    );
+    el.metadata = await el.getMetadata(db: db) ?? [];
+    return el;
   }
 
   bool removeSet(int index) {
@@ -160,9 +132,19 @@ class ExerciseLog {
     return true;
   }
 
-  bool addSet() {
+  bool addSet({
+    Tag? defaultTag,
+  }) {
     sets += 1;
-    metadata.add(ExerciseLogMeta.from(metadata.elementAt(metadata.length - 1)));
+    if (metadata.isNotEmpty) {
+      metadata
+          .add(ExerciseLogMeta.from(metadata.elementAt(metadata.length - 1)));
+    } else {
+      metadata.add(ExerciseLogMeta.empty(
+        log: this,
+        defaultTag: defaultTag,
+      ));
+    }
     return true;
   }
 
@@ -171,104 +153,64 @@ class ExerciseLog {
     metadata[index].setDuration(duration);
   }
 
-  Map<String, dynamic> toMap() {
-    var r = [];
-    var t = [];
-    var w = [];
-    for (int i = 0; i < metadata.length; i++) {
-      r.add(metadata[i].reps);
-      t.add(metadata[i].time);
-      w.add(metadata[i].weight);
-    }
-    return {
-      "exerciseLogId": exerciseLogId,
-      "exerciseId": exerciseId,
-      "parentId": parentId,
-      "workoutLogId": workoutLogId,
-      "title": title,
-      "type": exerciseTypeToJson(type),
-      "sets": metadata.length,
-      "reps": r.join(","),
-      "time": t.join(","),
-      "weight": w.join(","),
-      "weightPost": weightPost,
-      "note": note,
-    };
-  }
+  Map<String, dynamic> toMap() => {
+        "exerciseLogId": exerciseLogId,
+        "exerciseId": exerciseId,
+        "parentId": parentId,
+        "workoutLogId": workoutLogId,
+        "title": title,
+        "type": exerciseTypeToJson(type),
+        "sets": sets,
+        "note": note,
+      };
 
-  Future<void> setTags() async {
-    var db = await getDB();
-    var resp = await db.rawQuery("""
-      SELECT * from exercise_log_tag elt
-      JOIN tag t ON t.tagId = elt.tagId
-      WHERE elt.exerciseLogId = '$exerciseLogId'
-    """);
-    for (var i in resp) {
-      var elt = ExerciseLogTag.fromJson(i);
-      metadata[elt.setIndex].tags.add(elt);
-    }
-  }
+  Future<bool> insert({ConflictAlgorithm? conflictAlgorithm}) async {
+    try {
+      final db = await getDB();
+      // insert under transaction
+      await db.transaction((txn) async {
+        // insert the exercise log
+        await txn.insert("exercise_log", toMap());
 
-  bool addSetTag(Tag tag, int index) {
-    metadata[index].insertTag(exerciseLogId, tag, index);
-    return true;
-  }
+        // delete all metadata objects
+        await txn.rawDelete(
+            "DELETE FROM exercise_log_meta WHERE exerciseLogId = '$exerciseLogId'");
 
-  Future<int> insert({ConflictAlgorithm? conflictAlgorithm}) async {
-    final db = await getDB();
-    var response = await db.insert(
-      'exercise_log',
-      toMap(),
-      conflictAlgorithm: conflictAlgorithm ?? ConflictAlgorithm.abort,
-    );
-    if (response != 0) {
-      // delete all tags
-      var _ = await db.rawDelete(
-          "DELETE FROM exercise_log_tag WHERE exerciseLogId = '$exerciseLogId'");
-      // insert all tags from metadata
-      for (int i = 0; i < metadata.length; i++) {
-        for (int j = 0; j < metadata[i].tags.length; j++) {
-          // make sure set index is okay
-          metadata[i].tags[j].setIndex = i;
-          var resp = await metadata[i].tags[j].insert();
-          if (resp == 0) {
-            throw "THERE WAS AN ERROR";
-            // TODO!! -- HANDLE ERROR
+        // insert all metadata items
+        for (var meta in metadata) {
+          // insert the metadata object
+          await txn.insert("exercise_log_meta", meta.toMap());
+
+          // insert all metadata tags
+          for (var tag in meta.tags) {
+            await txn.insert("exercise_log_meta_tag", tag.toMap());
           }
         }
-      }
+        // success
+      });
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
     }
-    return response;
   }
 
-  static Future<List<ExerciseLog>> getList() async {
-    var db = await getDB();
-    var response =
-        await db.rawQuery("SELECT * FROM exercise_log ORDER BY created desc");
-
-    List<ExerciseLog> logs = [];
-    for (var i in response) {
-      logs.add(ExerciseLog.fromJson(i));
-    }
-    // TODO -- see if can remove
-    await Future.delayed(const Duration(milliseconds: 50));
-    return logs;
-  }
-
-  static Future<List<Exercise>> getMostRecentLogsExercise() async {
-    var db = await getDB();
-    var response = await db.rawQuery("""
-      SELECT * from exercise_log el
-      JOIN exercise e ON e.exerciseId = el.exerciseId
-      ORDER BY el.created DESC
-      LIMIT 20
+  Future<List<ExerciseLogMeta>?> getMetadata({Database? db}) async {
+    try {
+      db ??= await getDB();
+      var response = await db.rawQuery("""
+      SELECT * FROM exercise_log_meta
+      WHERE exerciseLogId = '$exerciseLogId'
     """);
-
-    List<Exercise> list = [];
-    for (var i in response) {
-      list.add(Exercise.fromJson(i));
+      List<ExerciseLogMeta> elm = [];
+      for (var i in response) {
+        elm.add(await ExerciseLogMeta.fromJson(i));
+      }
+      return elm;
+    } catch (e) {
+      print(e);
+      return null;
     }
-    return list;
   }
 
   DateTime getCreated() => DateTime.parse(created);
@@ -292,153 +234,207 @@ class ExerciseLog {
 }
 
 class ExerciseLogMeta {
-  late String id;
+  late String exerciseLogMetaId;
+  late String exerciseLogId;
+  late String exerciseId;
   late int reps;
   late int time;
   late int weight;
+  late String weightPost;
+
+  // not in database
   late bool saved;
-  late List<ExerciseLogTag> tags;
+  late List<ExerciseLogMetaTag> tags;
 
   ExerciseLogMeta({
+    required this.exerciseLogMetaId,
+    required this.exerciseLogId,
+    required this.exerciseId,
     required this.reps,
     required this.time,
     required this.weight,
-    required this.saved,
-    required this.tags,
+    required this.weightPost,
+  });
+
+  ExerciseLogMeta.init({
+    required ExerciseLog log,
+    required ExerciseBase exercise,
+    Tag? defaultTag,
   }) {
-    var uuid = const Uuid();
-    id = uuid.v4();
+    exerciseLogMetaId = const Uuid().v4();
+    exerciseLogId = log.exerciseLogId;
+    exerciseId = log.exerciseId;
+    reps = exercise.reps;
+    time = exercise.time;
+    weight = 0;
+    saved = false;
+    tags = [];
+    if (defaultTag != null) {
+      tags.add(ExerciseLogMetaTag.init(
+        exerciseLogId: exerciseLogId,
+        exerciseLogMetaId: exerciseLogMetaId,
+        sortPos: 0,
+        tag: defaultTag,
+      ));
+    }
+    weightPost = "lbs";
+  }
+
+  ExerciseLogMeta.empty({
+    required ExerciseLog log,
+    Tag? defaultTag,
+  }) {
+    exerciseLogMetaId = const Uuid().v4();
+    exerciseLogId = log.exerciseLogId;
+    exerciseId = log.exerciseId;
+    reps = 0;
+    time = 0;
+    weight = 0;
+    saved = false;
+    tags = [];
+    if (defaultTag != null) {
+      tags.add(
+        ExerciseLogMetaTag.init(
+          exerciseLogId: exerciseLogId,
+          exerciseLogMetaId: exerciseLogMetaId,
+          tag: defaultTag,
+          sortPos: 0,
+        ),
+      );
+    }
+    weightPost = "lbs";
   }
 
   ExerciseLogMeta.from(ExerciseLogMeta m) {
-    var uuid = const Uuid();
-    id = uuid.v4();
+    exerciseLogMetaId = const Uuid().v4();
+    exerciseLogId = m.exerciseLogId;
+    exerciseLogMetaId = m.exerciseLogMetaId;
     reps = m.reps;
     time = m.time;
     weight = m.weight;
     saved = false;
     tags = [for (var i in m.tags) i.clone()];
+    weightPost = m.weightPost;
+  }
+
+  static Future<ExerciseLogMeta> fromJson(dynamic json, {Database? db}) async {
+    var elm = ExerciseLogMeta(
+      exerciseLogMetaId: json['exerciseLogMetaId'],
+      exerciseLogId: json['exerciseLogId'],
+      exerciseId: json['exerciseId'],
+      reps: json['reps'],
+      time: json['time'],
+      weight: json['weight'],
+      weightPost: json['weightPost'] ?? "lbs",
+    );
+    elm.tags = await elm.getTags(db: db) ?? [];
+    return elm;
   }
 
   void setDuration(Duration duration) {
     time = duration.inSeconds;
   }
 
-  bool insertTag(String exerciseLogId, Tag tag, int index) {
+  bool addTag(Tag tag) {
     if (tags.any((element) => element.tagId == tag.tagId)) {
       return false;
     }
     tags.add(
-      ExerciseLogTag.init(
-          exerciseLogId: exerciseLogId, tag: tag, setIndex: index),
+      ExerciseLogMetaTag.init(
+        exerciseLogId: exerciseLogId,
+        exerciseLogMetaId: exerciseLogMetaId,
+        tag: tag,
+        sortPos: tags.length,
+      ),
     );
     return true;
   }
-}
 
-class Tag {
-  late String tagId;
-  late String title;
-
-  Tag({
-    required this.tagId,
-    required this.title,
-  });
-
-  Tag.init({required this.title}) {
-    tagId = const Uuid().v4();
-  }
-
-  Tag.fromJson(dynamic json) {
-    tagId = json['tagId'];
-    title = json['title'];
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      "tagId": tagId,
-      "title": title,
-    };
-  }
-
-  Future<int> insert({ConflictAlgorithm? conflictAlgorithm}) async {
-    final db = await getDB();
-    var response = await db.insert(
-      'tag',
-      toMap(),
-      conflictAlgorithm: conflictAlgorithm ?? ConflictAlgorithm.replace,
-    );
-    return response;
-  }
-
-  static Future<List<Tag>> getList() async {
-    final db = await getDB();
-    var response = await db.rawQuery("SELECT * FROM tag");
-    List<Tag> t = [];
-    for (var i in response) {
-      t.add(Tag.fromJson(i));
+  Future<List<ExerciseLogMetaTag>?> getTags({Database? db}) async {
+    try {
+      db ??= await getDB();
+      var response = await db.rawQuery("""
+      SELECT * from exercise_log_meta_tag et
+      JOIN tag t ON t.tagId = et.tagId
+      WHERE et.exerciseLogMetaId = '$exerciseLogMetaId'
+    """);
+      List<ExerciseLogMetaTag> t = [];
+      for (var i in response) {
+        t.add(ExerciseLogMetaTag.fromJson(i));
+      }
+      return t;
+    } catch (e) {
+      print(e);
+      return null;
     }
-    return t;
   }
+
+  Map<String, dynamic> toMap() => {
+        "exerciseLogMetaId": exerciseLogMetaId,
+        "exerciseLogId": exerciseLogId,
+        "exerciseId": exerciseId,
+        "reps": reps,
+        "time": time,
+        "weight": weight,
+        "weightPost": weightPost,
+      };
 }
 
-class ExerciseLogTag {
-  late String exerciseLogTagId;
+class ExerciseLogMetaTag {
+  late String exerciseLogMetaTagId;
+  late String exerciseLogMetaId;
   late String exerciseLogId;
   late String tagId;
-  late String title;
-  late int setIndex;
+  late int sortPos;
 
-  ExerciseLogTag({
-    required this.exerciseLogTagId,
+  // not stored in database
+  late String title;
+
+  ExerciseLogMetaTag({
+    required this.exerciseLogMetaTagId,
+    required this.exerciseLogMetaId,
     required this.exerciseLogId,
     required this.tagId,
     required this.title,
-    required this.setIndex,
+    required this.sortPos,
   });
 
-  ExerciseLogTag.init({
+  ExerciseLogMetaTag.init({
     required this.exerciseLogId,
+    required this.exerciseLogMetaId,
     required Tag tag,
-    required this.setIndex,
+    required this.sortPos,
   }) {
-    exerciseLogTagId = const Uuid().v4();
+    exerciseLogMetaTagId = const Uuid().v4();
     tagId = tag.tagId;
     title = tag.title;
   }
 
-  ExerciseLogTag clone() => ExerciseLogTag(
-        exerciseLogTagId: exerciseLogTagId,
+  ExerciseLogMetaTag clone() => ExerciseLogMetaTag(
+        exerciseLogMetaTagId: exerciseLogMetaTagId,
+        exerciseLogMetaId: exerciseLogMetaId,
         exerciseLogId: exerciseLogId,
         tagId: tagId,
         title: title,
-        setIndex: setIndex,
+        sortPos: sortPos,
       );
 
-  ExerciseLogTag.fromJson(dynamic json) {
-    exerciseLogTagId = json['exerciseLogTagId'];
+  ExerciseLogMetaTag.fromJson(dynamic json) {
+    exerciseLogMetaTagId = json['exerciseLogMetaTagId'];
+    exerciseLogMetaId = json['exerciseLogMetaId'];
     exerciseLogId = json['exerciseLogId'];
     tagId = json['tagId'];
     title = json['title'];
-    setIndex = json['setIndex'];
+    sortPos = json['sortPos'];
   }
 
   Map<String, dynamic> toMap() {
     return {
-      "exerciseLogTagId": exerciseLogTagId,
+      "exerciseLogMetaTagId": exerciseLogMetaTagId,
+      "exerciseLogMetaId": exerciseLogMetaId,
       "exerciseLogId": exerciseLogId,
       "tagId": tagId,
-      "setIndex": setIndex,
+      "sortPos": sortPos,
     };
-  }
-
-  Future<int> insert({ConflictAlgorithm? conflictAlgorithm}) async {
-    final db = await getDB();
-    var response = await db.insert(
-      'exercise_log_tag',
-      toMap(),
-      conflictAlgorithm: conflictAlgorithm ?? ConflictAlgorithm.replace,
-    );
-    return response;
   }
 }

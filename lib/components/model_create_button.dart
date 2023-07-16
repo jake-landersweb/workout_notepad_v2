@@ -23,7 +23,7 @@ class ModelCreateButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var dmodel = context.read<DataModel>();
+    var dmodel = Provider.of<DataModel>(context);
     return Clickable(
       onTap: () {
         if (isValid) {

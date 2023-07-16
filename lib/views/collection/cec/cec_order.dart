@@ -84,7 +84,7 @@ class _CECOrderState extends State<CECOrder> {
                     children: [
                       Expanded(
                         child: Text(
-                          item.workout!.workout.title,
+                          item.workout!.title,
                           style: ttLabel(context),
                         ),
                       ),

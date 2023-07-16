@@ -62,7 +62,7 @@ class _CECConfigureState extends State<CECConfigure> {
                         },
                       ),
                     Tuple4(
-                      "Start Date: ${DateFormat('MMMM d').format(cmodel.collection.startDate)}",
+                      "Start Date: ${DateFormat('MMMM d').format(cmodel.collection.datetime)}",
                       Icons.calendar_month,
                       Colors.indigo,
                       () {
@@ -77,13 +77,13 @@ class _CECConfigureState extends State<CECConfigure> {
                               const SizedBox(height: 70),
                               SfCalendar(
                                 view: CalendarView.month,
-                                initialSelectedDate:
-                                    cmodel.collection.startDate,
+                                initialSelectedDate: cmodel.collection.datetime,
                                 appointmentTextStyle:
                                     const TextStyle(fontSize: 24),
                                 onTap: (calendarTapDetails) {
                                   cmodel.collection.startDate =
-                                      calendarTapDetails.date!;
+                                      calendarTapDetails
+                                          .date!.millisecondsSinceEpoch;
                                   cmodel.refresh();
                                   Navigator.of(context).pop();
                                 },
@@ -151,7 +151,8 @@ class _CECConfigureState extends State<CECConfigure> {
             for (int i = 0; i < cmodel.collection.items.length; i++)
               Column(
                 children: [
-                  WorkoutCellSmall(wc: cmodel.collection.items[i].workout!),
+                  WorkoutCellSmall(
+                      workout: cmodel.collection.items[i].workout!),
                   const SizedBox(height: 8),
                   Icon(
                     Icons.arrow_downward,
@@ -340,7 +341,7 @@ class _CECConfigureState extends State<CECConfigure> {
           for (var i in items)
             Padding(
               padding: const EdgeInsets.only(bottom: 8.0),
-              child: WorkoutCellSmall(wc: i.workout!),
+              child: WorkoutCellSmall(workout: i.workout!),
             ),
         ],
       ),
@@ -348,7 +349,7 @@ class _CECConfigureState extends State<CECConfigure> {
   }
 
   Widget _selectWorkout(BuildContext context, CECModel cmodel,
-      {Function(WorkoutCategories w)? onSelect}) {
+      {Function(Workout w)? onSelect}) {
     return WrappedButton(
       title: "Add A Workout",
       rowAxisSize: MainAxisSize.max,
@@ -375,7 +376,7 @@ class _CECConfigureState extends State<CECConfigure> {
                 cmodel.collection.items.add(
                   CollectionItem.fromWorkout(
                     collectionId: cmodel.collection.collectionId,
-                    wc: w,
+                    w: w,
                   ),
                 );
                 setState(() {
@@ -444,7 +445,7 @@ class __DayOfWeekPickerState extends State<_DayOfWeekPicker> {
                         }
                         var c = CollectionItem.fromWorkout(
                           collectionId: cmodel.collection.collectionId,
-                          wc: w,
+                          w: w,
                         );
                         c.day = widget.day;
                         cmodel.collection.items.add(c);
@@ -511,7 +512,7 @@ class __DayOfWeekPickerState extends State<_DayOfWeekPicker> {
                     children: [
                       Expanded(
                         child: Text(
-                          item.workout!.workout.title,
+                          item.workout!.title,
                           style: ttLabel(context),
                         ),
                       ),

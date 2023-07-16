@@ -56,7 +56,7 @@ class _LWEndState extends State<LWEnd> {
                   submitText: "Yes",
                   onSubmit: () {
                     Navigator.of(context, rootNavigator: true).pop();
-                    dmodel.stopWorkout();
+                    dmodel.stopWorkout(isCancel: true);
                   },
                 );
               } else if (item.v2 == "Finish Workout") {

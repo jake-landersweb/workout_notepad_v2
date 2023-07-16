@@ -8,11 +8,11 @@ import 'package:workout_notepad_v2/views/root.dart';
 class WorkoutCellSmall extends StatelessWidget {
   const WorkoutCellSmall({
     super.key,
-    required this.wc,
+    required this.workout,
     this.bg,
     this.endWidget,
   });
-  final WorkoutCategories wc;
+  final Workout workout;
   final Color? bg;
   final Widget? endWidget;
 
@@ -34,8 +34,8 @@ class WorkoutCellSmall extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    wc.workout.title,
-                    style: ttSubTitle(context),
+                    workout.title,
+                    style: ttTitle(context),
                   ),
                 ),
               ],
@@ -45,8 +45,8 @@ class WorkoutCellSmall extends StatelessWidget {
               spacing: 8,
               runSpacing: 8,
               children: [
-                for (int j = 0; j < wc.categories.length; j++)
-                  CategoryCell(categoryId: wc.categories[j])
+                for (int j = 0; j < workout.categories.length; j++)
+                  CategoryCell(categoryId: workout.categories[j])
               ],
             ),
             if (endWidget != null) endWidget!,

@@ -22,7 +22,7 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    var dmodel = context.read<DataModel>();
+    var dmodel = Provider.of<DataModel>(context);
     return comp.HeaderBar.sheet(
       title: "",
       leading: const [comp.CloseButton2()],

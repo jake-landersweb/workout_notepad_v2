@@ -42,7 +42,7 @@ class CECModel extends ChangeNotifier {
   }
 
   List<String> get workoutIds {
-    return collection.items.map((e) => e.workout!.workout.workoutId).toList();
+    return collection.items.map((e) => e.workout!.workoutId).toList();
   }
 
   List<CollectionItem> getRenderedCollectionItems() {
@@ -50,12 +50,12 @@ class CECModel extends ChangeNotifier {
 
     switch (collection.collectionType) {
       case CollectionType.repeat:
-        var currentDate = collection.startDate;
+        var currentDate = collection.datetime;
         for (int repeats = 0; repeats < collection.numRepeats; repeats++) {
           for (var i in collection.items) {
             var c = i.clone();
             c.collectionItemId = const Uuid().v4();
-            c.date = currentDate;
+            c.date = currentDate.millisecondsSinceEpoch;
             items.add(c);
             currentDate = currentDate.add(Duration(days: c.daysBreak));
           }
@@ -64,16 +64,16 @@ class CECModel extends ChangeNotifier {
       case CollectionType.days:
         List<CollectionItem> weekItems = [];
         // get the closest sunday in the past
-        var daysToSubtract = collection.startDate.weekday % 7;
+        var daysToSubtract = collection.datetime.weekday % 7;
         var currentDate =
-            collection.startDate.subtract(Duration(days: daysToSubtract));
+            collection.datetime.subtract(Duration(days: daysToSubtract));
         for (int i = 0; i < 7; i++) {
           // get all items from collection that match the day
           var tmpItems = collection.items.where((element) => element.day == i);
           // set the date on all items
           for (var item in tmpItems) {
             // check if date is in range of the current selected day
-            item.date = currentDate;
+            item.date = currentDate.millisecondsSinceEpoch;
             weekItems.add(item);
             // add a second to maintain order
             currentDate = currentDate.add(const Duration(seconds: 1));
@@ -86,9 +86,11 @@ class CECModel extends ChangeNotifier {
           for (int i = 0; i < collection.numRepeats; i++) {
             var cloned = item.clone();
             cloned.collectionItemId = const Uuid().v4();
-            cloned.date = cloned.date.add(Duration(days: 7 * i));
+            cloned.date = cloned.datetime
+                .add(Duration(days: 7 * i))
+                .millisecondsSinceEpoch;
             // make sure item is in range of the collection start date
-            if (cloned.date.compareTo(collection.startDate) >= 0) {
+            if (cloned.datetime.compareTo(collection.datetime) >= 0) {
               items.add(cloned);
             }
           }

@@ -65,3 +65,16 @@ TextStyle ttBody(
     fontWeight: fontWeight ?? FontWeight.w500,
   );
 }
+
+TextStyle ttcaption(
+  BuildContext context, {
+  Color? color,
+  double? size,
+  FontWeight? fontWeight,
+}) {
+  return TextStyle(
+    fontSize: size ?? 12,
+    color: color ?? AppColors.text(context).withOpacity(0.5),
+    fontWeight: fontWeight ?? FontWeight.w600,
+  );
+}

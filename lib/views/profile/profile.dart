@@ -13,6 +13,7 @@ import 'package:workout_notepad_v2/utils/color.dart';
 import 'package:workout_notepad_v2/utils/tuple.dart';
 import 'package:workout_notepad_v2/views/account/root.dart';
 import 'package:workout_notepad_v2/views/profile/config_categories.dart';
+import 'package:workout_notepad_v2/views/profile/configure_tags.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -88,7 +89,14 @@ class _ProfileState extends State<Profile> {
               "Configure Tags",
               Icons.tag_rounded,
               Colors.deepOrange,
-              () async {},
+              () async {
+                cupertinoSheet(
+                  context: context,
+                  builder: (context) => ConfigureTags(
+                    tags: dmodel.tags,
+                  ),
+                );
+              },
             ),
             Tuple4(
               "Logout",

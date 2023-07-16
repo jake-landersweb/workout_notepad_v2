@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,7 +21,7 @@ import 'package:http/http.dart' as http;
 enum LoadStatus { init, noUser, done, expired }
 
 class DataModel extends ChangeNotifier {
-  HomeScreen _currentTabScreen = HomeScreen.workouts;
+  HomeScreen _currentTabScreen = HomeScreen.overview;
   HomeScreen get currentTabScreen => _currentTabScreen;
   void setTabScreen(HomeScreen screen) {
     _currentTabScreen = screen;
@@ -78,10 +79,10 @@ class DataModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<WorkoutCategories> _workouts = [];
-  List<WorkoutCategories> get workouts => _workouts;
+  List<Workout> _workouts = [];
+  List<Workout> get workouts => _workouts;
   Future<void> refreshWorkouts() async {
-    _workouts = await WorkoutCategories.getList();
+    _workouts = await Workout.getList();
     notifyListeners();
   }
 
@@ -105,10 +106,11 @@ class DataModel extends ChangeNotifier {
     _collections = await Collection.getList();
   }
 
-  List<ExerciseLog> _exerciseLogs = [];
-  List<ExerciseLog> get exerciseLogs => _exerciseLogs;
-  Future<void> refreshExerciseLogs() async {
-    _exerciseLogs = await ExerciseLog.getList();
+  CollectionItem? _nextWorkout;
+  CollectionItem? get nextWorkout => _nextWorkout;
+  Future<void> refreshNextWorkout() async {
+    _getNextWorkout();
+    notifyListeners();
   }
 
   Future<void> init({User? u}) async {
@@ -220,16 +222,23 @@ class DataModel extends ChangeNotifier {
 
   Future<void> fetchData() async {
     var getC = Category.getList();
-    var getW = WorkoutCategories.getList();
+    var getW = Workout.getList();
     var getE = Exercise.getList();
     var getT = Tag.getList();
     var getCo = Collection.getList();
-    var getL = ExerciseLog.getList();
-    _categories = await getC;
-    _workouts = await getW;
-    _exercises = await getE;
-    _tags = await getT;
-    _collections = await getCo;
+    var getNW = _getNextWorkout();
+
+    // run all asynchronously at the same time
+    List<dynamic> results =
+        await Future.wait([getC, getW, getE, getT, getCo, getNW]);
+
+    _categories = results[0];
+    _workouts = results[1];
+    _exercises = results[2];
+    _tags = results[3];
+    _collections = results[4];
+    _nextWorkout = results[5];
+    notifyListeners();
   }
 
   bool? _lightStatus;
@@ -259,6 +268,7 @@ class DataModel extends ChangeNotifier {
   Future<LaunchWorkoutModelState> createWorkoutState(
     Workout workout, {
     CollectionItem? collectionItem,
+    bool isEmpty = false,
   }) async {
     workoutState = null;
     notifyListeners();
@@ -269,6 +279,7 @@ class DataModel extends ChangeNotifier {
       wl: WorkoutLog.init(workout),
       startTime: DateTime.now(),
       collectionItem: collectionItem,
+      isEmpty: isEmpty,
     );
     if (workoutState!.exercises.isEmpty) {
       // get the exercise children
@@ -281,9 +292,10 @@ class DataModel extends ChangeNotifier {
       // create the log group for each exercise
       workoutState!.exerciseLogs.add(
         ExerciseLog.workoutInit(
-          workoutState!.exercises[i].exerciseId,
-          workoutState!.wl.workoutLogId,
-          workoutState!.exercises[i],
+          eid: workoutState!.exercises[i].exerciseId,
+          wlid: workoutState!.wl.workoutLogId,
+          exercise: workoutState!.exercises[i],
+          defaultTag: tags.firstWhereOrNull((element) => element.isDefault),
         ),
       );
 
@@ -292,10 +304,11 @@ class DataModel extends ChangeNotifier {
       for (var j in tmp) {
         workoutState!.exerciseChildLogs[i].add(
           ExerciseLog.exerciseSetInit(
-            j.childId,
-            j.parentId,
-            workoutState!.wl.workoutLogId,
-            j,
+            eid: j.childId,
+            parentEid: j.parentId,
+            wlid: workoutState!.wl.workoutLogId,
+            exercise: j,
+            defaultTag: tags.firstWhereOrNull((element) => element.isDefault),
           ),
         );
       }
@@ -303,10 +316,38 @@ class DataModel extends ChangeNotifier {
     return workoutState!;
   }
 
-  Future<void> stopWorkout() async {
+  Future<void> stopWorkout({bool isCancel = false}) async {
+    if (workoutState!.isEmpty && isCancel) {
+      print("Deleting this temporary workout");
+      var db = await getDB();
+      await db.rawQuery(
+        "DELETE from workout WHERE workoutId = '${workoutState!.workout.workoutId}'",
+      );
+    }
     workoutState = null;
     await fetchData();
     notifyListeners();
+  }
+
+  Future<CollectionItem?> _getNextWorkout() async {
+    var db = await getDB();
+    CollectionItem? nextWorkout;
+
+    // next workout
+    var yesterday = DateTime.now().subtract(const Duration(days: 1));
+    var response = await db.rawQuery("""
+      SELECT ci.*, c.title
+      FROM collection_item ci
+      JOIN collection c ON ci.collectionId = c.collectionId
+      WHERE ci.date > '${yesterday.millisecondsSinceEpoch}'
+      AND ci.workoutLogId IS NULL
+      ORDER BY ci.date LIMIT 1
+    """);
+    if (response.isNotEmpty) {
+      nextWorkout = await CollectionItem.fromJson(response[0]);
+    }
+
+    return nextWorkout;
   }
 
   Future<bool> exportToJSON() async {
@@ -372,13 +413,16 @@ class DataModel extends ChangeNotifier {
       var db = await getDB();
 
       // read file
-      String json = await rootBundle.loadString("sql/init.json");
+      String json = await rootBundle.loadString("sql/init-test.json");
       Map<String, dynamic> data = const JsonDecoder().convert(json);
 
       Future<void> load(String table, List<dynamic> objects) async {
         for (var i in objects) {
-          await db.insert(table, i,
-              conflictAlgorithm: ConflictAlgorithm.replace);
+          await db.insert(
+            table,
+            i,
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
         }
       }
 
@@ -388,12 +432,13 @@ class DataModel extends ChangeNotifier {
       await load("exercise_set", data['exerciseSets']);
       await load("workout", data['workouts']);
       await load("workout_exercise", data['workoutExercises']);
-      await load("exercise_log", data['exerciseLogs']);
       await load("workout_log", data['workoutLogs']);
+      await load("exercise_log", data['exerciseLogs']);
+      await load("exercise_log_meta", data['exerciseLogsMeta']);
       await load("tag", data['tags']);
-      await load("exercise_log_tag", data['exerciseLogTags']);
-      // await load("collection", data['collections']);
-      // await load("collection_item", data['collectionItems']);
+      // await load("exercise_log_meta_tag", data['exerciseLogTags']);
+      await load("collection", data['collections']);
+      await load("collection_item", data['collectionItems']);
       await fetchData();
       notifyListeners();
       return true;

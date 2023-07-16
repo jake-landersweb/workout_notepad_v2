@@ -12,6 +12,7 @@ import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/components/time_picker.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/views/exercises/create_edit_exercise/cee_type.dart';
 import 'package:workout_notepad_v2/views/exercises/create_edit_exercise/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/icon_picker.dart';
@@ -100,23 +101,16 @@ class _CEERootState extends State<CEERoot> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Clickable(
               onTap: () {
-                showSheetSelector<ExerciseType>(
+                comp.cupertinoSheet(
                   context: context,
-                  useRootNavigator: true,
-                  title: "Exercise Type",
-                  items: [
-                    ExerciseType.weight,
-                    ExerciseType.timed,
-                    ExerciseType.duration,
-                    ExerciseType.bw,
-                  ],
-                  initialItem: cemodel.exercise.type,
-                  titleBuilder: (context, item) => exerciseTypeTitle(item),
-                  onSelect: (context, index, item) {
-                    setState(() {
-                      cemodel.exercise.type = item;
-                    });
-                  },
+                  builder: (cntext) => CEEType(
+                    type: cemodel.exercise.type,
+                    onSelect: (type) {
+                      setState(() {
+                        cemodel.exercise.type = type;
+                      });
+                    },
+                  ),
                 );
               },
               child: Container(
@@ -129,10 +123,8 @@ class _CEERootState extends State<CEERoot> {
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.category_rounded,
-                        color: AppColors.cell(context)[700],
-                      ),
+                      Image.asset(exerciseTypeIcon(cemodel.exercise.type),
+                          height: 40, width: 40),
                       const SizedBox(width: 8),
                       Expanded(
                         child: comp.LabeledCell(

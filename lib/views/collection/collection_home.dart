@@ -16,7 +16,7 @@ class CollectionHome extends StatefulWidget {
 class _CollectionHomeState extends State<CollectionHome> {
   @override
   Widget build(BuildContext context) {
-    var dmodel = context.read<DataModel>();
+    var dmodel = Provider.of<DataModel>(context);
     return HeaderBar(
       title: "Collections",
       isLarge: true,
@@ -27,7 +27,9 @@ class _CollectionHomeState extends State<CollectionHome> {
               context: context,
               enableDrag: false,
               builder: (context) => CECollection(
-                onCreate: (collection) => dmodel.refreshCollections(),
+                onCreate: (collection) async {
+                  await dmodel.fetchData();
+                },
               ),
             );
           },

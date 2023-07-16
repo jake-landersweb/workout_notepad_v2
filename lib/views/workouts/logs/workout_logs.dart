@@ -5,6 +5,7 @@ import 'package:workout_notepad_v2/components/fluid_scroll_view.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 
 import 'package:workout_notepad_v2/components/root.dart' as comp;
+import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/views/workouts/logs/root.dart';
@@ -14,8 +15,12 @@ class WorkoutLogs extends StatefulWidget {
   const WorkoutLogs({
     super.key,
     required this.workout,
+    this.onSelect,
+    this.closeOnSelect = true,
   });
   final Workout workout;
+  final Function(WorkoutLog log)? onSelect;
+  final bool closeOnSelect;
 
   @override
   State<WorkoutLogs> createState() => _WorkoutLogsState();
@@ -72,11 +77,28 @@ class _WorkoutLogsState extends State<WorkoutLogs> {
       builder: (context) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: FluidScrollView(
-            children: [
-              const SizedBox(height: 0),
-              for (var i in lmodel.logs) WorkoutLogCell(workoutLog: i),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 16),
+                for (var i in lmodel.logs)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: WorkoutLogCell(
+                      workoutLog: i,
+                      onSelect: widget.onSelect == null
+                          ? null
+                          : () {
+                              widget.onSelect!(i);
+                              if (widget.closeOnSelect) {
+                                Navigator.of(context, rootNavigator: true)
+                                    .pop();
+                              }
+                            },
+                    ),
+                  ),
+              ],
+            ),
           ),
         );
       },

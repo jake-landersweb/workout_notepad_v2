@@ -25,7 +25,7 @@ class CategoryCell extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(
-            color: AppColors.subtext(context),
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
           ),
           borderRadius: BorderRadius.circular(20),
         ),

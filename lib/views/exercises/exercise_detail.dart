@@ -158,30 +158,6 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
               },
               index: 2,
             ),
-            const SizedBox(width: 16),
-            _actionCell(
-              context: context,
-              dmodel: dmodel,
-              icon: Icons.add_rounded,
-              title: "Add",
-              description: "Exercise to workout",
-              onTap: () {
-                // TODO -- implement
-              },
-              index: 3,
-            ),
-            const SizedBox(width: 16),
-            _actionCell(
-              context: context,
-              dmodel: dmodel,
-              icon: Icons.delete_rounded,
-              title: "Delete",
-              description: "Delete this exercise",
-              onTap: () {
-                // TODO -- implement
-              },
-              index: 4,
-            ),
           ],
         ),
       ),

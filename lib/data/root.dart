@@ -4,5 +4,5 @@ export 'exercise.dart';
 export 'user.dart';
 export 'workout_exercise.dart';
 export 'workout.dart';
-export 'workout_cat.dart';
 export 'exercise_base.dart';
+export 'tag.dart';

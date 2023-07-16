@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sql.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/data/collection.dart';
@@ -13,12 +14,13 @@ class WorkoutLog {
   String? description;
   late int duration;
   String? note;
+
   late String created;
   late String updated;
   CollectionItem? collectionItem;
 
-  // private runtime fields
-  List<ExerciseLog>? _exericseLogs;
+  // not stored in database
+  late List<ExerciseLog> exerciseLogs;
 
   WorkoutLog({
     required this.workoutLogId,
@@ -51,17 +53,25 @@ class WorkoutLog {
     duration = 0;
     created = "";
     updated = "";
+    exerciseLogs = [];
   }
 
-  WorkoutLog.fromJson(Map<String, dynamic> json) {
-    workoutLogId = json['workoutLogId'];
-    workoutId = json['workoutId'];
-    title = json['title'];
-    description = json['description'];
-    duration = json['duration'];
-    note = json['note'];
-    created = json['created'];
-    updated = json['updated'];
+  static Future<WorkoutLog> fromJson(
+    Map<String, dynamic> json, {
+    Database? db,
+  }) async {
+    var wl = WorkoutLog(
+      workoutLogId: json['workoutLogId'],
+      workoutId: json['workoutId'],
+      title: json['title'],
+      description: json['description'],
+      duration: json['duration'],
+      note: json['note'],
+      created: json['created'],
+      updated: json['updated'],
+    );
+    wl.exerciseLogs = await wl.getExercises(db: db) ?? [];
+    return wl;
   }
 
   Map<String, dynamic> toMap() {
@@ -85,22 +95,25 @@ class WorkoutLog {
     return response;
   }
 
-  Future<List<ExerciseLog>> getExercises({bool forceReload = false}) async {
-    if (forceReload || _exericseLogs == null) {
-      var db = await getDB();
+  Future<List<ExerciseLog>?> getExercises({
+    bool forceReload = false,
+    Database? db,
+  }) async {
+    try {
+      db ??= await getDB();
       String sql = """
-      SELECT * FROM exercise_log WHERE workoutLogId = '$workoutLogId'
-      ORDER BY created DESC
-    """;
+        SELECT * FROM exercise_log WHERE workoutLogId = '$workoutLogId'
+        ORDER BY created DESC
+      """;
       var response = await db.rawQuery(sql);
       List<ExerciseLog> logs = [];
       for (var i in response) {
-        logs.add(ExerciseLog.fromJson(i));
+        logs.add(await ExerciseLog.fromJson(i, db: db));
       }
-      _exericseLogs = logs;
       return logs;
-    } else {
-      return _exericseLogs!;
+    } catch (e) {
+      print(e);
+      return null;
     }
   }
 
@@ -113,7 +126,7 @@ class WorkoutLog {
     var response = await db.rawQuery(sql);
     List<WorkoutLog> logs = [];
     for (var i in response) {
-      logs.add(WorkoutLog.fromJson(i));
+      logs.add(await WorkoutLog.fromJson(i));
     }
     return logs;
   }

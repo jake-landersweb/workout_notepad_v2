@@ -23,13 +23,14 @@ class _LogsHomeState extends State<LogsHome> {
   }
 
   Future<void> init() async {
-    _recents = await ExerciseLog.getMostRecentLogsExercise();
+    // TODO--
+    // _recents = await ExerciseLog.getMostRecentLogsExercise();
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    var dmodel = context.read<DataModel>();
+    var dmodel = Provider.of<DataModel>(context);
     return HeaderBar(
       title: "Recently Logged",
       isLarge: true,

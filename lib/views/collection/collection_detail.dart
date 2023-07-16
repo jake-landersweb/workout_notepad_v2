@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/collection.dart';
+import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/collection/collection_item_cell.dart';
 import 'package:workout_notepad_v2/views/collection/collection_progress_bar.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
+import 'package:workout_notepad_v2/views/workouts/logs/root.dart';
 
 class CollectionDetail extends StatefulWidget {
   const CollectionDetail({
     super.key,
     required this.collection,
+    required this.onStateChange,
   });
   final Collection collection;
+  final VoidCallback onStateChange;
 
   @override
   State<CollectionDetail> createState() => _CollectionDetailState();
@@ -36,83 +44,22 @@ class _CollectionDetailState extends State<CollectionDetail> {
           const SizedBox(height: 16),
           if (nextItem != null)
             Section(
-              "Next - ${nextItem.dateStr}",
-              child: WorkoutCellSmall(
-                wc: nextItem.workout!,
-                endWidget: Padding(
-                  padding: const EdgeInsets.only(top: 16.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: WrappedButton(
-                          title: "Details",
-                          center: true,
-                          bg: AppColors.cell(context)[500],
-                          onTap: () {
-                            cupertinoSheet(
-                              context: context,
-                              builder: (context) => WorkoutDetail.small(
-                                workout: nextItem.workout!,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: WrappedButton(
-                          bg: dmodel.workoutState?.workout.workoutId ==
-                                  nextItem.workout!.workout.workoutId
-                              ? AppColors.cell(context)[600]
-                              : Theme.of(context).colorScheme.primary,
-                          fg: dmodel.workoutState?.workout.workoutId ==
-                                  nextItem.workout!.workout.workoutId
-                              ? AppColors.text(context)
-                              : Colors.white,
-                          center: true,
-                          title: dmodel.workoutState?.workout.workoutId ==
-                                  nextItem.workout!.workout.workoutId
-                              ? "Resume"
-                              : "Start",
-                          onTap: () async => await launchWorkout(
-                            context,
-                            dmodel,
-                            nextItem.workout!.workout,
-                            collectionItem: nextItem,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              "Next Workout",
+              child: CollectionItemCell(item: nextItem),
             ),
           Section(
-            "Completed",
-            allowsCollapse: true,
-            initOpen: false,
-            child: ContainedList<CollectionItem>(
-              children: widget.collection.items
-                  .where((element) => element.workoutLogId != null)
-                  .toList(),
-              leadingPadding: 0,
-              trailingPadding: 0,
-              childBuilder: (context, item, index) => _itemCell(context, item),
-            ),
-          ),
-          Section(
-            "Todo",
+            "All",
             allowsCollapse: true,
             initOpen: true,
             child: ContainedList<CollectionItem>(
               children: widget.collection.items
                   .where((element) =>
-                      element.workoutLogId == null &&
                       element.collectionItemId != nextItem?.collectionItemId)
                   .toList(),
               leadingPadding: 0,
               trailingPadding: 0,
-              childBuilder: (context, item, index) => _itemCell(context, item),
+              childBuilder: (context, item, index) =>
+                  _itemCell(context, dmodel, item),
             ),
           ),
         ],
@@ -120,14 +67,15 @@ class _CollectionDetailState extends State<CollectionDetail> {
     );
   }
 
-  Widget _itemCell(BuildContext context, CollectionItem item) {
+  Widget _itemCell(
+      BuildContext context, DataModel dmodel, CollectionItem item) {
     return Row(
       children: [
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(item.workout!.workout.title),
+              Text(item.workout!.title),
               Text(
                 item.dateStr,
                 style: TextStyle(
@@ -143,7 +91,17 @@ class _CollectionDetailState extends State<CollectionDetail> {
           onTap: () {
             showFloatingSheet(
               context: context,
-              builder: (context) => Container(),
+              builder: (context) => _CheckButton(
+                collectionItem: item,
+                onWorkoutLogSelect: (log) async {
+                  item.workoutLogId = log.workoutLogId;
+                  await item.insert(
+                      conflictAlgorithm: ConflictAlgorithm.replace);
+                  await dmodel.refreshCollections();
+                  widget.onStateChange();
+                  setState(() {});
+                },
+              ),
             );
           },
           child: Container(
@@ -168,6 +126,77 @@ class _CollectionDetailState extends State<CollectionDetail> {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _CheckButton extends StatefulWidget {
+  const _CheckButton({
+    super.key,
+    required this.collectionItem,
+    required this.onWorkoutLogSelect,
+  });
+  final CollectionItem collectionItem;
+  final Function(WorkoutLog log) onWorkoutLogSelect;
+
+  @override
+  State<_CheckButton> createState() => __CheckButtonState();
+}
+
+class __CheckButtonState extends State<_CheckButton> {
+  @override
+  Widget build(BuildContext context) {
+    return FloatingSheet(
+      title: "",
+      child: Column(
+        children: [
+          ContainedList<Tuple4<String, IconData, Color, VoidCallback>>(
+            childPadding: EdgeInsets.zero,
+            leadingPadding: 0,
+            trailingPadding: 0,
+            children: [
+              Tuple4(
+                "Attach Previous Log",
+                Icons.list_alt_rounded,
+                Colors.deepPurple[600]!,
+                () {
+                  showMaterialModalBottomSheet(
+                    context: context,
+                    builder: (context) => WorkoutLogs(
+                      workout: widget.collectionItem.workout!,
+                      onSelect: (log) => widget.onWorkoutLogSelect(log),
+                    ),
+                  );
+                },
+              ),
+              if (widget.collectionItem.workoutLogId != null)
+                Tuple4(
+                  "View Log",
+                  Icons.article_rounded,
+                  Colors.indigo,
+                  () {
+                    cupertinoSheet(
+                      context: context,
+                      builder: (context) => WLExercises(
+                        workoutLogId: widget.collectionItem.workoutLogId!,
+                      ),
+                    );
+                  },
+                ),
+            ],
+            onChildTap: (context, item, index) {
+              item.v4();
+            },
+            childBuilder: (context, item, index) {
+              return WrappedButton(
+                title: item.v1,
+                icon: item.v2,
+                iconBg: item.v3,
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }

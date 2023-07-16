@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
+import 'package:workout_notepad_v2/components/wrapped_button.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/icon_picker.dart';
+import 'package:workout_notepad_v2/views/root.dart';
 
 class ConfigureCategories extends StatefulWidget {
   const ConfigureCategories({
@@ -32,7 +35,6 @@ class _ConfigureCategoriesState extends State<ConfigureCategories> {
   Widget build(BuildContext context) {
     return comp.HeaderBar.sheet(
       title: "Categories",
-      horizontalSpacing: 0,
       leading: const [comp.CloseButton2()],
       trailing: [
         _isLoading
@@ -52,74 +54,102 @@ class _ConfigureCategoriesState extends State<ConfigureCategories> {
       ],
       children: [
         const SizedBox(height: 16),
-        comp.ContainedList<Category>(
-          children: _categories,
-          allowsDelete: true,
-          onDelete: (context, item, index) {
-            setState(() {
-              _categories.removeAt(index);
-            });
-          },
-          childBuilder: (context, item, index) {
-            return Row(
-              children: [
-                comp.Clickable(
-                  onTap: () {
-                    showIconPicker(
-                      context: context,
-                      initialIcon: item.icon,
-                      closeOnSelection: true,
-                      onSelection: (icon) {
-                        setState(() {
-                          item.icon = icon;
-                        });
-                      },
+        for (var i in _categories)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: _itemCell(context, i),
+          ),
+        const SizedBox(height: 8),
+        WrappedButton(
+          title: "Create A New Category",
+          onTap: () {
+            cupertinoSheet(
+              context: context,
+              builder: (context) => CreateCategory(
+                categories: _categories.map((e) => e.title).toList(),
+                onCompletion: (val, icon) {
+                  setState(() {
+                    _categories.add(
+                      Category.init(title: val, icon: icon),
                     );
-                  },
-                  child: Stack(
-                    alignment: Alignment.bottomRight,
-                    children: [
-                      getImageIcon(item.icon, size: 50),
-                      Icon(
-                        Icons.edit,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .primary
-                            .withOpacity(0.5),
-                      )
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: AppColors.cell(context)[600]!,
-                          ),
-                        ),
-                      ),
-                      child: comp.Field(
-                        labelText: "Title",
-                        value: item.title,
-                        isLabeled: false,
-                        onChanged: (val) {
-                          setState(() {
-                            item.title = val;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+                  });
+                },
+              ),
             );
           },
         ),
-        const SizedBox(height: 16),
+      ],
+    );
+  }
+
+  Widget _itemCell(BuildContext context, Category item) {
+    return Row(
+      children: [
+        comp.Clickable(
+          onTap: () {
+            showIconPicker(
+              context: context,
+              initialIcon: item.icon,
+              closeOnSelection: true,
+              onSelection: (icon) {
+                setState(() {
+                  item.icon = icon;
+                });
+              },
+            );
+          },
+          child: Stack(
+            alignment: Alignment.bottomRight,
+            children: [
+              getImageIcon(item.icon, size: 50),
+              Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.cell(context)[700],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: Icon(
+                    Icons.edit_rounded,
+                    color: AppColors.cell(context),
+                    size: 18,
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: AppColors.cell(context)[600]!,
+                ),
+              ),
+            ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.cell(context),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(left: 16.0),
+                child: comp.Field(
+                  labelText: "Title",
+                  value: item.title.capitalize(),
+                  isLabeled: false,
+                  onChanged: (val) {
+                    setState(() {
+                      item.title = val;
+                    });
+                  },
+                ),
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -132,21 +162,31 @@ class _ConfigureCategoriesState extends State<ConfigureCategories> {
   }
 
   Future<void> _onSave(BuildContext context) async {
-    if (!_isLoading) {
-      setState(() {
-        _isLoading = true;
-      });
-      var dmodel = context.read<DataModel>();
-      var db = await getDB();
-      await db.rawQuery("DELETE FROM category");
-      for (var i in _categories) {
-        await i.insert();
+    try {
+      if (!_isLoading) {
+        setState(() {
+          _isLoading = true;
+        });
+        var dmodel = context.read<DataModel>();
+        var db = await getDB();
+        await db.transaction((txn) async {
+          await txn.delete("category");
+          for (var i in _categories) {
+            await txn.insert("category", i.toMap());
+          }
+        });
+        await dmodel.fetchData();
+        setState(() {
+          _isLoading = false;
+        });
+        Navigator.of(context).pop();
       }
-      await dmodel.fetchData();
-      setState(() {
-        _isLoading = false;
-      });
-      Navigator.of(context).pop();
+    } catch (e) {
+      print(e);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("There was an issue saving your categories"),
+        backgroundColor: Colors.red[300],
+      ));
     }
   }
 }

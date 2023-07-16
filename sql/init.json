@@ -1,5 +1,5 @@
 {
-    "id": "1689088060393-93aa5e478077444ead4ba2087adbb1e1",
+    "id": "1689213370610-acdfc20a26224ae3af5f6c6ecfa00e02",
     "categories": [
      {
       "categoryId": "1",
@@ -58,7 +58,351 @@
       "updated": "2023-07-09 06:12:47"
      }
     ],
-    "created": "2023-07-11 15:07:40.393404",
+    "collectionItems": [
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "c925af3a-817b-4da3-b164-3ba42b9185b6",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-07-10T00:00:00.000",
+      "day": 1,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "1be11282-d077-4af4-b7bf-336085c71013",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "e7b2212d-d826-42dc-910f-6996448d27c3",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-07-17T00:00:00.000",
+      "day": 1,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "1be11282-d077-4af4-b7bf-336085c71013",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "25a5311d-c614-4153-883d-963f9b79c201",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-07-24T00:00:00.000",
+      "day": 1,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "1be11282-d077-4af4-b7bf-336085c71013",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "de4e4ee5-7aac-40c5-8a3b-51bf8edba799",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-07-31T00:00:00.000",
+      "day": 1,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "1be11282-d077-4af4-b7bf-336085c71013",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "6bd20ceb-8682-4e36-9be3-243745397e78",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-08-07T00:00:00.000",
+      "day": 1,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "1be11282-d077-4af4-b7bf-336085c71013",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "7ae744a3-4e34-4b1d-9dee-ca023f668581",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-07-11T00:00:01.000",
+      "day": 2,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "f1429c31-af43-4720-835f-6bca97fc8b34",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-07-18T00:00:01.000",
+      "day": 2,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "587986dd-fcd9-4136-b925-c7188a196c98",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-07-25T00:00:01.000",
+      "day": 2,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "26732a4d-29a7-406b-a9fa-e21a48f37003",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-08-01T00:00:01.000",
+      "day": 2,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "6bad6b47-b9cf-438c-bc20-8994bed858c5",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-08-08T00:00:01.000",
+      "day": 2,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "8e1e1f52-ef94-4e46-b762-5beca4f55a6d",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-07-12T00:00:02.000",
+      "day": 3,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "96e3d398-bccc-404e-a85c-dd8d250735e9",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-07-19T00:00:02.000",
+      "day": 3,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "0c5e0803-2805-4f4e-8ffe-a09f8fd535e1",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-07-26T00:00:02.000",
+      "day": 3,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "27577fb0-da54-4655-94d9-3a092cc43f57",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-08-02T00:00:02.000",
+      "day": 3,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "f7d92d3e-fc22-4ce3-a7a0-a10c206abdac",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-08-09T00:00:02.000",
+      "day": 3,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "6b46ac81-7db4-44d6-8ee0-2c0c770538ad",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-07-13T00:00:03.000",
+      "day": 4,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "2f2c28cd-3208-4982-9be4-914fdbbc4e5f",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "6fb9ed0c-1430-498d-b6f0-af12c9f81df2",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-07-20T00:00:03.000",
+      "day": 4,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "2f2c28cd-3208-4982-9be4-914fdbbc4e5f",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "b6a87b0e-664b-42b7-97c0-fa0581044742",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-07-27T00:00:03.000",
+      "day": 4,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "2f2c28cd-3208-4982-9be4-914fdbbc4e5f",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "5b17815a-69fa-4347-b69d-de1b3dbb38dd",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-08-03T00:00:03.000",
+      "day": 4,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "2f2c28cd-3208-4982-9be4-914fdbbc4e5f",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "4449e66d-5ad3-4dd9-babe-a56b799d089d",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-08-10T00:00:03.000",
+      "day": 4,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "2f2c28cd-3208-4982-9be4-914fdbbc4e5f",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "d3e429cc-350d-4413-ad93-721e82cf1137",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-07-14T00:00:04.000",
+      "day": 5,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "7f0eda3a-4655-4705-b715-258642009d2e",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "005fc499-bd77-45e8-a30f-f3b6a41b6281",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-07-21T00:00:04.000",
+      "day": 5,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "7f0eda3a-4655-4705-b715-258642009d2e",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "08715bd9-e2c2-4a88-93c1-625051640f6e",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-07-28T00:00:04.000",
+      "day": 5,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "7f0eda3a-4655-4705-b715-258642009d2e",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "ee30320b-753c-4910-829c-e5449e4982b0",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-08-04T00:00:04.000",
+      "day": 5,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "7f0eda3a-4655-4705-b715-258642009d2e",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "a5e297a2-7888-486c-9473-3cc5cfc93354",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-08-11T00:00:04.000",
+      "day": 5,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "7f0eda3a-4655-4705-b715-258642009d2e",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "77555cbf-07c6-441a-8b58-69ef7887c8e6",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-07-15T00:00:05.000",
+      "day": 6,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "d2b816d1-d0d4-4891-9c02-49bf22ed396c",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-07-22T00:00:05.000",
+      "day": 6,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "f60a84cb-84fe-4ed2-b2c8-e1a6bca27aa8",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-07-29T00:00:05.000",
+      "day": 6,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "d83b8316-07fb-4093-b805-f541961d1273",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-08-05T00:00:05.000",
+      "day": 6,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951",
+      "workoutLogId": null
+     },
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionItemId": "82070957-af87-4ffa-8de9-64f313eb05d4",
+      "created": "2023-07-12 05:46:34",
+      "date": "2023-08-12T00:00:05.000",
+      "day": 6,
+      "daysBreak": 1,
+      "updated": "2023-07-12 05:46:34",
+      "workoutId": "badb499b-70c6-4c28-ab12-66dc544ec951",
+      "workoutLogId": null
+     }
+    ],
+    "collections": [
+     {
+      "collectionId": "7e516105-d3d6-4668-ae97-355af770f270",
+      "collectionType": 1,
+      "created": "2023-07-12 05:46:34",
+      "description": "Modified split",
+      "numRepeats": 5,
+      "startDate": "2023-07-10T00:00:00.000",
+      "title": "PPL-Arnold",
+      "updated": "2023-07-12 05:46:34"
+     }
+    ],
+    "created": "2023-07-13 01:56:10.610787",
     "exerciseLogs": [
      {
       "created": "2023-06-20 00:45:05",
@@ -2731,6 +3075,118 @@
       "weight": "100,100",
       "weightPost": "lbs",
       "workoutLogId": "fc618401-260b-40e8-8969-7f9997a2cfba"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseId": "882d1763-6e5f-4bf1-b567-4a98c7dd812d",
+      "exerciseLogId": "fd548481-452e-4fdc-abe4-3c5d97fb6789",
+      "note": "",
+      "parentId": null,
+      "reps": "1",
+      "sets": 1,
+      "time": "300",
+      "title": "Bike",
+      "type": 1,
+      "updated": "2023-07-12 15:15:18",
+      "weight": "0",
+      "weightPost": "lbs",
+      "workoutLogId": "8ad82f26-a8ba-439b-9b54-0b87c922ecd0"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseId": "b4125ec2-5a87-4777-be40-954f7a2b968a",
+      "exerciseLogId": "3eb802e5-82e9-4897-8cea-85a3c6a5a5ea",
+      "note": "",
+      "parentId": null,
+      "reps": "10,10,12,11",
+      "sets": 4,
+      "time": "0,0,0,0",
+      "title": "Horizontal cable row",
+      "type": 0,
+      "updated": "2023-07-12 15:15:18",
+      "weight": "100,130,160,160",
+      "weightPost": "lbs",
+      "workoutLogId": "8ad82f26-a8ba-439b-9b54-0b87c922ecd0"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseId": "ccfb2b8f-b272-432c-87ca-f45a00bc89b5",
+      "exerciseLogId": "d7ea8085-ffc9-4ef1-9330-21c17b35bbeb",
+      "note": "",
+      "parentId": null,
+      "reps": "8,12,10,9",
+      "sets": 4,
+      "time": "0,0,0,0",
+      "title": "Neutral grip lat pulldown",
+      "type": 0,
+      "updated": "2023-07-12 15:15:18",
+      "weight": "115,145,160,160",
+      "weightPost": "lbs",
+      "workoutLogId": "8ad82f26-a8ba-439b-9b54-0b87c922ecd0"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseId": "d914dfa8-0d75-4a11-bd25-c3ba2d5ab830",
+      "exerciseLogId": "214d77b3-efbf-4f33-b818-c832fae842e1",
+      "note": "",
+      "parentId": null,
+      "reps": "15,10,10,10",
+      "sets": 4,
+      "time": "0,0,0,0",
+      "title": "Chest supported rows",
+      "type": 0,
+      "updated": "2023-07-12 15:15:18",
+      "weight": "50,60,60,60",
+      "weightPost": "lbs",
+      "workoutLogId": "8ad82f26-a8ba-439b-9b54-0b87c922ecd0"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseId": "a20dd781-9da9-4b5b-a04e-a4e2a9b06870",
+      "exerciseLogId": "a7c24cf9-1434-4173-85ca-4f3fbc431cdc",
+      "note": "",
+      "parentId": null,
+      "reps": "13,10,8,9",
+      "sets": 4,
+      "time": "0,0,0,0",
+      "title": "EZ Bar Curl",
+      "type": 0,
+      "updated": "2023-07-12 15:15:18",
+      "weight": "75,75,75,75",
+      "weightPost": "lbs",
+      "workoutLogId": "8ad82f26-a8ba-439b-9b54-0b87c922ecd0"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseId": "a417bf2a-76de-47a7-b80c-91c1b714fa80",
+      "exerciseLogId": "f76980fb-4e4f-4cca-a7bc-d1e090a21b99",
+      "note": "",
+      "parentId": null,
+      "reps": "9,8,8",
+      "sets": 3,
+      "time": "0,0,0",
+      "title": "Reverse SA Preacher Curl",
+      "type": 0,
+      "updated": "2023-07-12 15:15:18",
+      "weight": "25,25,25",
+      "weightPost": "lbs",
+      "workoutLogId": "8ad82f26-a8ba-439b-9b54-0b87c922ecd0"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseId": "bd73c482-9549-4ed2-9b29-74796b634084",
+      "exerciseLogId": "37f26b81-20a7-4a19-82f7-1f66e1618e0a",
+      "note": "",
+      "parentId": null,
+      "reps": "1",
+      "sets": 1,
+      "time": "960",
+      "title": "Stairmaster",
+      "type": 2,
+      "updated": "2023-07-12 15:15:18",
+      "weight": "0",
+      "weightPost": "lbs",
+      "workoutLogId": "8ad82f26-a8ba-439b-9b54-0b87c922ecd0"
      }
     ],
     "exerciseLogTags": [
@@ -2810,6 +3266,139 @@
       "exerciseLogTagId": "ffbaf808-c866-471f-8ba5-7fcf22990c24",
       "setIndex": 2,
       "tagId": "3"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseLogId": "3eb802e5-82e9-4897-8cea-85a3c6a5a5ea",
+      "exerciseLogTagId": "298d8570-a413-4949-b8e0-c2e582650a33",
+      "setIndex": 0,
+      "tagId": "2"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseLogId": "3eb802e5-82e9-4897-8cea-85a3c6a5a5ea",
+      "exerciseLogTagId": "d1228c02-9041-44e4-a187-c5a780ea492c",
+      "setIndex": 1,
+      "tagId": "2"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseLogId": "3eb802e5-82e9-4897-8cea-85a3c6a5a5ea",
+      "exerciseLogTagId": "c37ffa0a-906d-4ff5-a7e2-ccca4afe4184",
+      "setIndex": 2,
+      "tagId": "5"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseLogId": "3eb802e5-82e9-4897-8cea-85a3c6a5a5ea",
+      "exerciseLogTagId": "5a5d6322-ca00-4bb5-874b-6683c25601f9",
+      "setIndex": 3,
+      "tagId": "5"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseLogId": "d7ea8085-ffc9-4ef1-9330-21c17b35bbeb",
+      "exerciseLogTagId": "78f878c4-7f2c-4692-be2c-372c2ede0797",
+      "setIndex": 0,
+      "tagId": "2"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseLogId": "d7ea8085-ffc9-4ef1-9330-21c17b35bbeb",
+      "exerciseLogTagId": "2830cf4e-d6a0-4abe-a01a-0abcc80d753f",
+      "setIndex": 1,
+      "tagId": "5"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseLogId": "d7ea8085-ffc9-4ef1-9330-21c17b35bbeb",
+      "exerciseLogTagId": "bd7f3355-19d9-447d-94e9-cbab8a81ef5d",
+      "setIndex": 2,
+      "tagId": "5"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseLogId": "d7ea8085-ffc9-4ef1-9330-21c17b35bbeb",
+      "exerciseLogTagId": "eb27e977-9ef5-4ac4-a572-3ded985cc01f",
+      "setIndex": 3,
+      "tagId": "5"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseLogId": "214d77b3-efbf-4f33-b818-c832fae842e1",
+      "exerciseLogTagId": "911e338d-789a-48dc-aa85-a48f07c71e01",
+      "setIndex": 0,
+      "tagId": "2"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseLogId": "214d77b3-efbf-4f33-b818-c832fae842e1",
+      "exerciseLogTagId": "1c0ca361-11ea-4953-b60c-9948cc835054",
+      "setIndex": 1,
+      "tagId": "5"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseLogId": "214d77b3-efbf-4f33-b818-c832fae842e1",
+      "exerciseLogTagId": "c3a77426-18bc-48eb-9109-d20c70048cfd",
+      "setIndex": 2,
+      "tagId": "5"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseLogId": "214d77b3-efbf-4f33-b818-c832fae842e1",
+      "exerciseLogTagId": "9ba32c0c-1ae2-4795-8db3-852334dd9b67",
+      "setIndex": 3,
+      "tagId": "5"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseLogId": "a7c24cf9-1434-4173-85ca-4f3fbc431cdc",
+      "exerciseLogTagId": "b93e99d6-52c2-4565-a155-d16cd0842d8a",
+      "setIndex": 0,
+      "tagId": "5"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseLogId": "a7c24cf9-1434-4173-85ca-4f3fbc431cdc",
+      "exerciseLogTagId": "4f775e80-967e-4eeb-8802-30ae461d4e79",
+      "setIndex": 1,
+      "tagId": "5"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseLogId": "a7c24cf9-1434-4173-85ca-4f3fbc431cdc",
+      "exerciseLogTagId": "83694c25-a573-4153-a8b8-150d8de120ce",
+      "setIndex": 2,
+      "tagId": "5"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseLogId": "a7c24cf9-1434-4173-85ca-4f3fbc431cdc",
+      "exerciseLogTagId": "842810f6-693c-44a3-a523-c19d20d5c45e",
+      "setIndex": 3,
+      "tagId": "5"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseLogId": "f76980fb-4e4f-4cca-a7bc-d1e090a21b99",
+      "exerciseLogTagId": "c2a3cbcd-2490-4957-afdf-7bc866c86f05",
+      "setIndex": 0,
+      "tagId": "5"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseLogId": "f76980fb-4e4f-4cca-a7bc-d1e090a21b99",
+      "exerciseLogTagId": "eafa905c-1fe7-475b-8968-a6302afbb814",
+      "setIndex": 1,
+      "tagId": "5"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "exerciseLogId": "f76980fb-4e4f-4cca-a7bc-d1e090a21b99",
+      "exerciseLogTagId": "3547c443-dbe6-45d5-a72d-863c1f42e87d",
+      "setIndex": 2,
+      "tagId": "5"
      }
     ],
     "exercises": [
@@ -3540,6 +4129,19 @@
       "title": "Cable shoulder press",
       "type": 0,
       "updated": "2023-07-11 14:34:58"
+     },
+     {
+      "category": "7",
+      "created": "2023-07-12 13:49:05",
+      "description": "",
+      "exerciseId": "b4125ec2-5a87-4777-be40-954f7a2b968a",
+      "icon": "",
+      "reps": 10,
+      "sets": 4,
+      "time": 0,
+      "title": "Horizontal cable row",
+      "type": 0,
+      "updated": "2023-07-12 13:49:05"
      }
     ],
     "exerciseSets": [
@@ -4216,19 +4818,6 @@
      },
      {
       "created": "2023-06-28 06:06:45",
-      "exerciseId": "99c807e5-5998-4606-9cc9-1aae4f575562",
-      "exerciseOrder": 4,
-      "note": "",
-      "reps": 10,
-      "sets": 3,
-      "superSetOrdering": 0,
-      "time": 0,
-      "updated": "2023-06-28 06:06:45",
-      "workoutExerciseId": "07d44eba-1feb-4b42-89f8-1783500ab332",
-      "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b"
-     },
-     {
-      "created": "2023-06-28 06:06:45",
       "exerciseId": "a20dd781-9da9-4b5b-a04e-a4e2a9b06870",
       "exerciseOrder": 5,
       "note": "",
@@ -4254,19 +4843,6 @@
       "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b"
      },
      {
-      "created": "2023-06-28 06:06:45",
-      "exerciseId": "669cbf95-07f9-4310-ae8b-1a3adeb97be2",
-      "exerciseOrder": 8,
-      "note": "",
-      "reps": 12,
-      "sets": 3,
-      "superSetOrdering": 0,
-      "time": 0,
-      "updated": "2023-06-28 06:06:45",
-      "workoutExerciseId": "dc9e8733-aad7-4751-a839-0e420190bcb9",
-      "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b"
-     },
-     {
       "created": "2023-06-28 14:05:08",
       "exerciseId": "882d1763-6e5f-4bf1-b567-4a98c7dd812d",
       "exerciseOrder": -1,
@@ -4277,32 +4853,6 @@
       "time": 300,
       "updated": "2023-06-28 14:05:08",
       "workoutExerciseId": "44370cdf-42dc-4db0-b31f-e3519fc05920",
-      "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b"
-     },
-     {
-      "created": "2023-06-28 14:17:42",
-      "exerciseId": "9df68111-dd10-40f6-85c5-bc405fc50618",
-      "exerciseOrder": 0,
-      "note": "",
-      "reps": 9,
-      "sets": 4,
-      "superSetOrdering": 0,
-      "time": 0,
-      "updated": "2023-06-28 14:17:42",
-      "workoutExerciseId": "2dd0fe9e-4fd5-4350-84fb-69bd9ddce97b",
-      "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b"
-     },
-     {
-      "created": "2023-06-28 14:18:25",
-      "exerciseId": "3d824b9c-b7f2-4150-88f5-0b639c803bd0",
-      "exerciseOrder": 2,
-      "note": "",
-      "reps": 12,
-      "sets": 4,
-      "superSetOrdering": 0,
-      "time": 0,
-      "updated": "2023-06-28 14:18:25",
-      "workoutExerciseId": "9675a5cb-05cc-4f77-a34d-ea0acaa93658",
       "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b"
      },
      {
@@ -4785,6 +5335,58 @@
       "updated": "2023-07-11 14:34:58",
       "workoutExerciseId": "b3103e16-7b37-4e4c-9fd7-2c44e2812058",
       "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2"
+     },
+     {
+      "created": "2023-07-12 13:49:05",
+      "exerciseId": "b4125ec2-5a87-4777-be40-954f7a2b968a",
+      "exerciseOrder": 0,
+      "note": "",
+      "reps": 10,
+      "sets": 4,
+      "superSetOrdering": 0,
+      "time": 0,
+      "updated": "2023-07-12 13:49:05",
+      "workoutExerciseId": "6f566b63-8ddc-4bb6-9ba1-a5d074d4b06b",
+      "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b"
+     },
+     {
+      "created": "2023-07-12 13:49:37",
+      "exerciseId": "d914dfa8-0d75-4a11-bd25-c3ba2d5ab830",
+      "exerciseOrder": 2,
+      "note": "",
+      "reps": 10,
+      "sets": 4,
+      "superSetOrdering": 0,
+      "time": 0,
+      "updated": "2023-07-12 13:49:37",
+      "workoutExerciseId": "6ce18ba2-1ab7-4d08-adf2-237f0f859168",
+      "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b"
+     },
+     {
+      "created": "2023-07-12 13:49:50",
+      "exerciseId": "171522d4-9a9c-4350-aff7-455f4bf223b1",
+      "exerciseOrder": 3,
+      "note": "",
+      "reps": 10,
+      "sets": 4,
+      "superSetOrdering": 0,
+      "time": 0,
+      "updated": "2023-07-12 13:49:50",
+      "workoutExerciseId": "bc4ccd97-ecd5-49e7-a836-eeaa222893d5",
+      "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b"
+     },
+     {
+      "created": "2023-07-12 14:53:40",
+      "exerciseId": "bd73c482-9549-4ed2-9b29-74796b634084",
+      "exerciseOrder": 7,
+      "note": "",
+      "reps": 1,
+      "sets": 1,
+      "superSetOrdering": 0,
+      "time": 1200,
+      "updated": "2023-07-12 14:53:40",
+      "workoutExerciseId": "21402966-1bbb-49c4-b652-d3b627eaa252",
+      "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b"
      }
     ],
     "workoutLogs": [
@@ -4987,6 +5589,16 @@
       "updated": "2023-07-11 15:07:24",
       "workoutId": "3413d22b-a432-4d2a-ad88-f4ad494910c2",
       "workoutLogId": "fc618401-260b-40e8-8969-7f9997a2cfba"
+     },
+     {
+      "created": "2023-07-12 15:15:18",
+      "description": "Lets get pushy fellas",
+      "duration": 5202,
+      "note": null,
+      "title": "Pull 1",
+      "updated": "2023-07-12 15:15:18",
+      "workoutId": "ab0e7907-a689-4c94-90aa-d1f406e9556b",
+      "workoutLogId": "8ad82f26-a8ba-439b-9b54-0b87c922ecd0"
      }
     ],
     "workouts": [

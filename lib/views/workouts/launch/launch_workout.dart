@@ -17,8 +17,12 @@ import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
 enum PopupState { minimize, finish, cancel }
 
 Future<void> launchWorkout(
-    BuildContext context, DataModel dmodel, Workout workout,
-    {CollectionItem? collectionItem}) async {
+  BuildContext context,
+  DataModel dmodel,
+  Workout workout, {
+  CollectionItem? collectionItem,
+  bool isEmpty = false,
+}) async {
   if (dmodel.workoutState != null) {
     if (dmodel.workoutState!.workout.workoutId == workout.workoutId) {
       var s = dmodel.workoutState!;
@@ -46,6 +50,7 @@ Future<void> launchWorkout(
           var s = await dmodel.createWorkoutState(
             workout,
             collectionItem: collectionItem,
+            isEmpty: isEmpty,
           );
           showMaterialModalBottomSheet(
             context: context,
@@ -61,6 +66,7 @@ Future<void> launchWorkout(
     var s = await dmodel.createWorkoutState(
       workout,
       collectionItem: collectionItem,
+      isEmpty: isEmpty,
     );
     showMaterialModalBottomSheet(
       context: context,
@@ -187,7 +193,7 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
                       submitText: "Yes",
                       onSubmit: () {
                         Navigator.of(context, rootNavigator: true).pop();
-                        dmodel.stopWorkout();
+                        dmodel.stopWorkout(isCancel: true);
                       },
                     );
                     break;

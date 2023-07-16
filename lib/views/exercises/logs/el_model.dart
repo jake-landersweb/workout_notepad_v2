@@ -43,9 +43,6 @@ class ELModel extends ChangeNotifier {
     await compose();
     isLoading = false;
     notifyListeners();
-    // wait a small bit for log tags to finish fetching
-    await Future.delayed(const Duration(milliseconds: 200));
-    notifyListeners();
   }
 
   Future<void> compose() async {
@@ -547,17 +544,19 @@ class LineDataModel extends ChangeNotifier {
 
 /// Account for logs being represented in kg or lbs
 double _getAdjustedWeight(ExerciseLog log, num val, bool isLbs) {
-  if (log.weightPost == "lbs") {
-    if (isLbs) {
-      return val.toDouble();
-    } else {
-      return val / 2.205;
-    }
-  } else {
-    if (isLbs) {
-      return val * 2.205;
-    } else {
-      return val.toDouble();
-    }
-  }
+  // if (log.weightPost == "lbs") {
+  //   if (isLbs) {
+  //     return val.toDouble();
+  //   } else {
+  //     return val / 2.205;
+  //   }
+  // } else {
+  //   if (isLbs) {
+  //     return val * 2.205;
+  //   } else {
+  //     return val.toDouble();
+  //   }
+  // }
+  // TODO--
+  return val.toDouble();
 }

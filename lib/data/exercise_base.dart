@@ -38,6 +38,32 @@ String exerciseTypeTitle(ExerciseType type) {
   }
 }
 
+String exerciseTypeDesc(ExerciseType type) {
+  switch (type) {
+    case ExerciseType.weight:
+      return "An exercise where you track your reps completed and weight lifted for every set. This is the default exercise type and suitable for most exericses in a traditional workout plan.";
+    case ExerciseType.timed:
+      return "This gives you a timer that counts up from 00:00, giving you an open goal to either complete the exercise in less than the time, or edure the exercise for longer than this time.";
+    case ExerciseType.duration:
+      return "An exercise with a traditional count-down timer. This is good for ab workouts where you want to hold something for x minutes, and want the convenience of a timer in the app.";
+    case ExerciseType.bw:
+      return "Suitable for workouts where you are not moving any weight. This can be air squats, pullups, burpees, etc. If you do plan on adding weight later, either create another exercise or use a weighed exercise with weight 0.";
+  }
+}
+
+String exerciseTypeIcon(ExerciseType type) {
+  switch (type) {
+    case ExerciseType.weight:
+      return "assets/icons/strength-96.png";
+    case ExerciseType.timed:
+      return "assets/icons/time-96.png";
+    case ExerciseType.duration:
+      return "assets/icons/clock-96.png";
+    case ExerciseType.bw:
+      return "assets/icons/sit-ups-96.png";
+  }
+}
+
 int exerciseTypeToJson(ExerciseType type) {
   switch (type) {
     case ExerciseType.weight:
@@ -239,7 +265,7 @@ abstract class ExerciseBase {
     var response = await db.rawQuery(sql);
     List<ExerciseLog> items = [];
     for (var i in response) {
-      items.add(ExerciseLog.fromJson(i));
+      items.add(await ExerciseLog.fromJson(i));
     }
     return items;
   }

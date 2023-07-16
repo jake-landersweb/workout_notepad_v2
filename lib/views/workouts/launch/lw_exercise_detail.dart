@@ -13,6 +13,7 @@ import 'package:workout_notepad_v2/components/time_picker.dart';
 import 'package:workout_notepad_v2/components/timer.dart';
 import 'package:workout_notepad_v2/data/exercise_base.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
+import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
@@ -406,7 +407,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                   title: "SET ${i + 1}",
                   reps: item.reps,
                   weight: item.weight,
-                  weightPost: e.weightPost,
+                  weightPost: item.weightPost,
                   time: item.time,
                   type: e.type,
                   saved: item.saved,
@@ -416,7 +417,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                   onWeightChange: (val) =>
                       lmodel.setLogWeight(widget.index, i, val),
                   onWeightPostChange: (val) =>
-                      lmodel.setLogWeightPost(widget.index, val),
+                      lmodel.setLogWeightPost(widget.index, i, val),
                   onTimeChange: (val) =>
                       lmodel.setLogTime(widget.index, i, val),
                   onSaved: (val) => lmodel.setLogSaved(widget.index, i, val),
@@ -426,7 +427,8 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
               ),
             );
           }),
-          areItemsTheSame: ((oldItem, newItem) => oldItem.id == newItem.id),
+          areItemsTheSame: ((oldItem, newItem) =>
+              oldItem.exerciseLogMetaId == newItem.exerciseLogMetaId),
         ),
       ],
     );
@@ -620,7 +622,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                   title: "SET ${i + 1}",
                   reps: item.reps,
                   weight: item.weight,
-                  weightPost: e.weightPost,
+                  weightPost: item.weightPost,
                   time: item.time,
                   type: e.type,
                   saved: item.saved,
@@ -630,7 +632,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                   onWeightChange: (val) => lmodel.setLogChildWeight(
                       widget.index, childIndex, i, val),
                   onWeightPostChange: (val) => lmodel.setLogChildWeightPost(
-                      widget.index, childIndex, val),
+                      widget.index, childIndex, i, val),
                   onTimeChange: (val) =>
                       lmodel.setLogChildTime(widget.index, childIndex, i, val),
                   onSaved: (val) =>
@@ -643,7 +645,8 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
               ),
             );
           }),
-          areItemsTheSame: ((oldItem, newItem) => oldItem.id == newItem.id),
+          areItemsTheSame: ((oldItem, newItem) =>
+              oldItem.exerciseLogMetaId == newItem.exerciseLogMetaId),
         ),
       ],
     );
@@ -734,7 +737,7 @@ class _Cell extends StatelessWidget {
   final int time;
   final ExerciseType type;
   final bool saved;
-  final List<ExerciseLogTag> tags;
+  final List<ExerciseLogMetaTag> tags;
   final Function(int val) onRepsChange;
   final Function(int val) onWeightChange;
   final Function(String val) onWeightPostChange;
@@ -886,7 +889,7 @@ class _CellLog extends StatefulWidget {
   final String weightPost;
   final int time;
   final ExerciseType type;
-  final List<ExerciseLogTag> tags;
+  final List<ExerciseLogMetaTag> tags;
   final Function(int val) onRepsChange;
   final Function(int val) onWeightChange;
   final Function(String val) onWeightPostChange;
@@ -921,7 +924,7 @@ class _CellLogState extends State<_CellLog> {
 
   @override
   Widget build(BuildContext context) {
-    var dmodel = context.read<DataModel>();
+    var dmodel = Provider.of<DataModel>(context);
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(

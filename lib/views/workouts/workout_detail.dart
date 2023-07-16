@@ -36,7 +36,7 @@ class WorkoutDetail extends StatefulWidget {
     isCupertino = true;
     showButtons = false;
   }
-  late WorkoutCategories workout;
+  late Workout workout;
   late bool isCupertino;
   late bool showButtons;
 
@@ -50,7 +50,7 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
 
   @override
   void initState() {
-    _workout = widget.workout.workout.copy();
+    _workout = widget.workout.copy();
     _init();
     super.initState();
   }
@@ -78,7 +78,7 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
 
   @override
   Widget build(BuildContext context) {
-    var dmodel = context.read<DataModel>();
+    var dmodel = Provider.of<DataModel>(context);
     if (widget.isCupertino) {
       return HeaderBar.sheet(
         title: _workout.title,
@@ -149,8 +149,7 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: WorkoutExerciseCell(
-                  workoutId: widget.workout.workout.workoutId,
-                  exercise: _exercises[i]),
+                  workoutId: widget.workout.workoutId, exercise: _exercises[i]),
             )
                 .animate(delay: (25 * i).ms)
                 .slideX(
@@ -212,17 +211,6 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
               },
               index: 2,
             ),
-            const SizedBox(width: 16),
-            _actionCell(
-              context: context,
-              icon: Icons.delete_rounded,
-              title: "Delete",
-              description: "Delete this workout",
-              onTap: () {
-                // TODO -- implement
-              },
-              index: 3,
-            )
           ],
         ),
       ),

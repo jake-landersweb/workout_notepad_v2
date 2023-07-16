@@ -22,7 +22,7 @@ class _CECPreviewState extends State<CECPreview> {
         showNavigationArrow: true,
         appointmentTextStyle: const TextStyle(fontSize: 24),
         dataSource: CollectionDataSource(cmodel.getRenderedCollectionItems()),
-        initialSelectedDate: cmodel.collection.startDate,
+        initialSelectedDate: cmodel.collection.datetime,
         monthViewSettings: const MonthViewSettings(
           showAgenda: true,
           appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
@@ -39,17 +39,17 @@ class CollectionDataSource extends CalendarDataSource {
 
   @override
   DateTime getStartTime(int index) {
-    return appointments![index].date;
+    return appointments![index].datetime;
   }
 
   @override
   DateTime getEndTime(int index) {
-    return appointments![index].date;
+    return appointments![index].datetime;
   }
 
   @override
   String getSubject(int index) {
-    return appointments![index].workout.workout.title;
+    return appointments![index].workout.title;
   }
 
   @override

@@ -28,7 +28,7 @@ class Category {
   Map<String, dynamic> toMap() {
     return {
       'categoryId': categoryId,
-      "title": title,
+      "title": title.toLowerCase(),
       "icon": icon,
     };
   }

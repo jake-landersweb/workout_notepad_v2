@@ -29,7 +29,7 @@ class _CloneWorkoutState extends State<CloneWorkout> {
 
   @override
   Widget build(BuildContext context) {
-    var dmodel = context.read<DataModel>();
+    var dmodel = Provider.of<DataModel>(context);
     return comp.HeaderBar.sheet(
       title: "Clone Workout",
       leading: const [comp.CloseButton2()],
@@ -66,13 +66,17 @@ class _CloneWorkoutState extends State<CloneWorkout> {
               _isLoading = true;
             });
             var cloned = await widget.workout.clone(_title);
-            await cloned.workout.insert();
-            for (var i in cloned.exercises) {
-              await i.v1.insert();
-              for (var j in i.v2) {
-                await j.insert();
+            // insert in transaction
+            var db = await getDB();
+            await db.transaction((txn) async {
+              await txn.insert("workout", cloned.workout.toMap());
+              for (var i in cloned.exercises) {
+                await txn.insert("workout_exercise", i.v1.toMap());
+                for (var j in i.v2) {
+                  await txn.insert("exercise_set", j.toMap());
+                }
               }
-            }
+            });
             await dmodel.refreshWorkouts();
             setState(() {
               _isLoading = false;

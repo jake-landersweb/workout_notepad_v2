@@ -752,11 +752,22 @@ class _Cell extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         Expanded(
-          flex: 1,
+          flex: 2,
           child: Center(
-            child: Text(
-              title,
-              style: ttBody(context),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  title,
+                  style: ttBody(context),
+                ),
+                if (tags.isNotEmpty && saved)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 2),
+                    child: TagCell(title: tags[0].title),
+                  ),
+              ],
             ),
           ),
         ),
@@ -802,7 +813,7 @@ class _Cell extends StatelessWidget {
           ),
         ),
         Expanded(
-          flex: 2,
+          flex: 3,
           child: _post(context),
         ),
       ],

@@ -64,6 +64,19 @@ String exerciseTypeIcon(ExerciseType type) {
   }
 }
 
+Color exerciseTypeColor(ExerciseType type) {
+  switch (type) {
+    case ExerciseType.weight:
+      return Colors.red[300]!;
+    case ExerciseType.timed:
+      return Colors.green[300]!;
+    case ExerciseType.duration:
+      return Colors.blue[300]!;
+    case ExerciseType.bw:
+      return Colors.yellow[700]!;
+  }
+}
+
 int exerciseTypeToJson(ExerciseType type) {
   switch (type) {
     case ExerciseType.weight:

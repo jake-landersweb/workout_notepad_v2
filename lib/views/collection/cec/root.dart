@@ -4,4 +4,4 @@ export 'cec_basic.dart';
 export 'cec_configure.dart';
 export 'cec_order.dart';
 export 'cec_details.dart';
-export 'cec_preview.dart';
+export '../col_preview.dart';

@@ -3,6 +3,7 @@ import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/collection.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/collection/cec/root.dart';
 import 'package:workout_notepad_v2/views/collection/collection_detail.dart';
 import 'package:workout_notepad_v2/views/collection/collection_progress_bar.dart';
 
@@ -28,6 +29,7 @@ class _CollectionCellState extends State<CollectionCell> {
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
@@ -39,6 +41,14 @@ class _CollectionCellState extends State<CollectionCell> {
                 ),
               ],
             ),
+            if (widget.collection.dateRange.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Text(
+                  widget.collection.dateRange,
+                  style: ttcaption(context),
+                ),
+              ),
             CollectionProgressBar(collection: widget.collection),
             if (widget.collection.nextItem != null)
               Padding(
@@ -81,7 +91,6 @@ class _CollectionCellState extends State<CollectionCell> {
             const SizedBox(height: 16),
             Row(
               children: [
-                Expanded(child: Container()),
                 Expanded(
                   child: WrappedButton(
                     title: "Details",
@@ -93,6 +102,32 @@ class _CollectionCellState extends State<CollectionCell> {
                         builder: (context) => CollectionDetail(
                           collection: widget.collection,
                           onStateChange: () => setState(() {}),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: WrappedButton(
+                    title: "Calendar",
+                    type: WrappedButtonType.main,
+                    center: true,
+                    onTap: () {
+                      cupertinoSheet(
+                        context: context,
+                        builder: (context) => HeaderBar.sheet(
+                          title: "",
+                          trailing: const [CancelButton(title: "Done")],
+                          canScroll: false,
+                          children: [
+                            const SizedBox(height: 70),
+                            Expanded(
+                              child: CollectionPreview(
+                                collection: widget.collection,
+                              ),
+                            ),
+                          ],
                         ),
                       );
                     },

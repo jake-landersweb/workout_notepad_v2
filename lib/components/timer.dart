@@ -139,6 +139,8 @@ String formatHHMMSS(int seconds, {bool truncate = true}) {
 
   if (hours == 0 && truncate) {
     return "$minutesStr:$secondsStr";
+  } else if (hours < 10 && truncate) {
+    return "${hoursStr[1]}:$minutesStr:$secondsStr";
   }
 
   return "$hoursStr:$minutesStr:$secondsStr";

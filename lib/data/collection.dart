@@ -2,6 +2,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 
 enum CollectionType { repeat, days, schedule }
 
@@ -86,7 +87,10 @@ class Collection {
   }) async {
     db ??= await getDB();
 
-    var response = await db.rawQuery("SELECT * FROM collection");
+    var response = await db.rawQuery("""
+      SELECT * FROM collection
+      ORDER BY startDate
+    """);
     List<Collection> collections = [];
     for (var i in response) {
       var c = await Collection.fromJson(i);
@@ -144,6 +148,13 @@ class Collection {
       return null;
     }
     return filtered.first;
+  }
+
+  String get dateRange {
+    if (items.isEmpty) {
+      return "";
+    }
+    return "${items.first.dateStr} - ${items.last.dateStr}";
   }
 
   @override
@@ -268,39 +279,7 @@ class CollectionItem {
     return response;
   }
 
-  String get dateStr {
-    List<String> dayNames = [
-      'Mon',
-      'Tues',
-      'Wed',
-      'Thurs',
-      'Fri',
-      'Sat',
-      'Sun'
-    ];
-
-    List<String> monthNames = [
-      '',
-      'Jan',
-      'Feb',
-      'Mar',
-      'April',
-      'May',
-      'June',
-      'July',
-      'Aug',
-      'Sept',
-      'Oct',
-      'Nov',
-      'Dec'
-    ];
-
-    String dayName = dayNames[datetime.weekday - 1];
-    String monthName = monthNames[datetime.month];
-    String dayNum = datetime.day.toString();
-
-    return '$dayName, $monthName $dayNum';
-  }
+  String get dateStr => formatDateTime(datetime);
 
   @override
   String toString() => toMap().toString();

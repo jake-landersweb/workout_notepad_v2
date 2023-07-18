@@ -4,6 +4,7 @@ import 'package:workout_notepad_v2/data/exercise_base.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/root.dart';
 
 class ELCellLarge extends StatefulWidget {
   const ELCellLarge({
@@ -111,25 +112,7 @@ class _ELCellState extends State<ELCell> {
                 ),
               ),
               // assume single tag for now
-              for (var i in meta.tags)
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.cell(context)[600],
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
-                    child: Text(
-                      i.title,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.subtext(context),
-                      ),
-                    ),
-                  ),
-                ),
+              for (var i in meta.tags) TagCell(title: i.title),
             ],
           ),
         ),

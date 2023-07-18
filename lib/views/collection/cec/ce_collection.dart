@@ -52,11 +52,14 @@ class _CECollectionState extends State<CECollection> {
           onPageChanged: (index) {
             cmodel.setIndex(index);
           },
-          children: const [
-            CECBasic(),
-            CECConfigure(),
-            CECDetails(),
-            CECPreview(),
+          children: [
+            const CECBasic(),
+            const CECConfigure(),
+            const CECDetails(),
+            CollectionPreview(
+              collection: cmodel.collection,
+              items: cmodel.getRenderedCollectionItems(),
+            ),
           ],
         );
       },

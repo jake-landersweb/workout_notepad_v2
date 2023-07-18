@@ -1,4 +1,4 @@
-// ignore_for_file: depend_on_referenced_packages, avoid_print
+// ignore_for_file: depend_on_referenced_packages, avoid_print, prefer_const_constructors, use_build_context_synchronously
 
 import 'dart:convert';
 
@@ -8,9 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/data/collection.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/root.dart';
+import 'package:workout_notepad_v2/data/snapshot.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:path/path.dart';
 import 'package:workout_notepad_v2/model/root.dart';
@@ -113,6 +115,9 @@ class DataModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  List<Snapshot> _snapshots = [];
+  List<Snapshot> get snapshots => _snapshots;
+
   Future<void> init({User? u}) async {
     var prefs = await SharedPreferences.getInstance();
 
@@ -202,10 +207,59 @@ class DataModel extends ChangeNotifier {
       var prefs = await SharedPreferences.getInstance();
       prefs.setString("user", jsonEncode(user!.toMap()));
       notifyListeners();
+      handleSnapshotInit();
     } catch (error) {
       print(
           "GET_USER there was an error fetching the user. Assuming user is offline");
       user!.offline = true;
+      notifyListeners();
+    }
+  }
+
+  // fetched and determines whether a snapshot needs to be created
+  // on init
+  Future<void> handleSnapshotInit() async {
+    // get the user snapshots
+    var snp = await Snapshot.getList(user!.userId);
+    if (snp == null) {
+      print("There was an issue fetching all snapshots");
+      // TODO -- handle errors
+      return;
+    }
+    if (snp.isEmpty) {
+      // snapshot the data for the first time
+      var snps = await Snapshot.snapshotDatabase(user!.userId);
+      if (snps == null) {
+        // TODO -- handle errors
+        print("There was an issue creating the snapshot");
+        return;
+      }
+      _snapshots = snps;
+      notifyListeners();
+      return;
+    }
+    // if last snapshot is more than a day old
+    if (snp.last.created <
+        DateTime.now()
+            .subtract(const Duration(days: 1))
+            .millisecondsSinceEpoch) {
+      print("last snapshot is older than a day, creating a snapshot");
+      var sn = await Snapshot.snapshotDatabase(user!.userId);
+      if (sn == null) {
+        print("There was an error snapshotting the data");
+        return;
+      }
+      var snp = await Snapshot.getList(user!.userId);
+      if (snp == null) {
+        print("There was an issue getting the new snapshot list");
+        return;
+      }
+      _snapshots = snp;
+      notifyListeners();
+    } else {
+      print("The user's snapshots are up to date");
+      // snapshots are up to date
+      _snapshots = snp;
       notifyListeners();
     }
   }
@@ -248,12 +302,33 @@ class DataModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> logout() async {
+  Future<void> logout(BuildContext context) async {
     // create a snapshot of their data
-    // TODO --
-    await deleteDB();
-    await clearData();
-    notifyListeners();
+    var sn = await Snapshot.snapshotDatabase(user!.userId);
+    var cont = true;
+    if (sn == null) {
+      await showAlert(
+        context: context,
+        title: "An Error Occured",
+        body: Text(
+            "There was an issue creating a snapshot of your exercise data, if you logout now, you may lose your workout information."),
+        cancelText: "Cancel",
+        cancelBolded: true,
+        onCancel: () {
+          cont = false;
+        },
+        submitColor: Colors.red,
+        submitText: "I'm Sure",
+        onSubmit: () {
+          cont = true;
+        },
+      );
+    }
+    if (cont) {
+      await deleteDB();
+      await clearData();
+      notifyListeners();
+    }
   }
 
   Future<void> clearData({LoadStatus ls = LoadStatus.noUser}) async {
@@ -354,48 +429,31 @@ class DataModel extends ChangeNotifier {
     try {
       // get the database
       var db = await getDB();
+      // get all table names
+      var response = await db
+          .rawQuery("SELECT name FROM sqlite_master WHERE type='table'");
 
-      // get data
-      var categories = await db.query("category");
-      var exercises = await db.query("exercise");
-      var exerciseSets = await db.query("exercise_set");
-      var workouts = await db.query("workout");
-      var workoutExercises = await db.query("workout_exercise");
-      var exerciseLogs = await db.query("exercise_log");
-      var workoutLogs = await db.query("workout_log");
-      var tags = await db.query("tag");
-      var exerciseLogTags = await db.query("exercise_log_tag");
-      var collections = await db.query("collection");
-      var collectionItems = await db.query("collection_item");
+      Map<String, dynamic> data = {};
 
-      // create structured data
-      Map<String, dynamic> data = {
-        "categories": categories,
-        "exercises": exercises,
-        "exerciseSets": exerciseSets,
-        "workouts": workouts,
-        "workoutExercises": workoutExercises,
-        "exerciseLogs": exerciseLogs,
-        "workoutLogs": workoutLogs,
-        "tags": tags,
-        "exerciseLogTags": exerciseLogTags,
-        "collections": collections,
-        "collectionItems": collectionItems,
-      };
+      // compose the data for dynamodb
+      for (var i in response) {
+        var r = await db.query(i['name'] as String);
+        data[i['name'] as String] = r;
+      }
 
-      // encode to json
+      // // encode to json
       String encoded = jsonEncode(data);
 
-      // send to url
-      var response = await http.Client().post(
+      // // send to url
+      var apiResponse = await http.Client().post(
         Uri.parse(
             "https://4q849d280b.execute-api.us-west-2.amazonaws.com/api/v2/export"),
         headers: {"Content-type": "application/json"},
         body: encoded,
       );
 
-      print(response.statusCode);
-      return true;
+      // return success or error
+      return apiResponse.statusCode == 200;
     } catch (e) {
       print(e);
       return false;
@@ -413,32 +471,22 @@ class DataModel extends ChangeNotifier {
       var db = await getDB();
 
       // read file
-      String json = await rootBundle.loadString("sql/init-test.json");
+      String json = await rootBundle.loadString("sql/init.json");
       Map<String, dynamic> data = const JsonDecoder().convert(json);
+      // remove dynamodb fields
+      data.remove("id");
+      data.remove("created");
 
-      Future<void> load(String table, List<dynamic> objects) async {
-        for (var i in objects) {
+      for (var key in data.keys) {
+        for (var i in data[key]) {
           await db.insert(
-            table,
+            key,
             i,
             conflictAlgorithm: ConflictAlgorithm.replace,
           );
         }
       }
 
-      // load all data
-      await load("category", data['categories']);
-      await load("exercise", data['exercises']);
-      await load("exercise_set", data['exerciseSets']);
-      await load("workout", data['workouts']);
-      await load("workout_exercise", data['workoutExercises']);
-      await load("workout_log", data['workoutLogs']);
-      await load("exercise_log", data['exerciseLogs']);
-      await load("exercise_log_meta", data['exerciseLogsMeta']);
-      await load("tag", data['tags']);
-      // await load("exercise_log_meta_tag", data['exerciseLogTags']);
-      await load("collection", data['collections']);
-      await load("collection_item", data['collectionItems']);
       await fetchData();
       notifyListeners();
       return true;

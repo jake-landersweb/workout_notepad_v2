@@ -9,11 +9,12 @@ import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/components/wrapped_button.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
-import 'package:workout_notepad_v2/utils/color.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/utils/tuple.dart';
 import 'package:workout_notepad_v2/views/account/root.dart';
 import 'package:workout_notepad_v2/views/profile/config_categories.dart';
 import 'package:workout_notepad_v2/views/profile/configure_tags.dart';
+import 'package:intl/intl.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -98,44 +99,44 @@ class _ProfileState extends State<Profile> {
                 );
               },
             ),
-            Tuple4(
-              "Logout",
-              Icons.logout_rounded,
-              AppColors.cell(context)[700]!,
-              () async {
-                if (dmodel.user!.isAnon) {
-                  await showAlert(
-                    context: context,
-                    title: "WARNING!",
-                    body: const Text(
-                        "As an anonymous user, once you logout, your exercise data will be UNRECOVERABLE. If you want to switch accounts, it is recommended that you first create an account under this user."),
-                    cancelText: "Cancel",
-                    onCancel: () {},
-                    cancelBolded: true,
-                    submitText: "Delete Data",
-                    submitColor: Colors.red,
-                    onSubmit: () async {
-                      await dmodel.logout();
-                    },
-                  );
-                } else {
-                  await showAlert(
-                    context: context,
-                    title: "Are You Sure?",
-                    body: const Text(
-                        "Your exercise data will be removed from your phone on logout. If you are online, a snapshot will be automatically created for you."),
-                    cancelText: "Cancel",
-                    onCancel: () {},
-                    cancelBolded: true,
-                    submitText: "Logout",
-                    submitColor: Colors.red,
-                    onSubmit: () async {
-                      await dmodel.logout();
-                    },
-                  );
-                }
-              },
-            ),
+            // Tuple4(
+            //   "Logout",
+            //   Icons.logout_rounded,
+            //   AppColors.cell(context)[700]!,
+            //   () async {
+            //     if (dmodel.user!.isAnon) {
+            //       await showAlert(
+            //         context: context,
+            //         title: "WARNING!",
+            //         body: const Text(
+            //             "As an anonymous user, once you logout, your exercise data will be UNRECOVERABLE. If you want to switch accounts, it is recommended that you first create an account under this user."),
+            //         cancelText: "Cancel",
+            //         onCancel: () {},
+            //         cancelBolded: true,
+            //         submitText: "Delete Data",
+            //         submitColor: Colors.red,
+            //         onSubmit: () async {
+            //           await dmodel.logout();
+            //         },
+            //       );
+            //     } else {
+            //       await showAlert(
+            //         context: context,
+            //         title: "Are You Sure?",
+            //         body: const Text(
+            //             "Your exercise data will be removed from your phone on logout. If you are online, a snapshot will be automatically created for you."),
+            //         cancelText: "Cancel",
+            //         onCancel: () {},
+            //         cancelBolded: true,
+            //         submitText: "Logout",
+            //         submitColor: Colors.red,
+            //         onSubmit: () async {
+            //           await dmodel.logout();
+            //         },
+            //       );
+            //     }
+            //   },
+            // ),
           ],
           onChildTap: (context, item, index) async {
             setState(() {
@@ -155,7 +156,52 @@ class _ProfileState extends State<Profile> {
             );
           },
         ),
-
+        Section(
+          "Data Snapshots",
+          child: ContainedList<Tuple2<DateTime, AsyncCallback>>(
+            leadingPadding: 0,
+            trailingPadding: 0,
+            childPadding: EdgeInsets.zero,
+            children: [
+              for (var i in dmodel.snapshots)
+                Tuple2(
+                  DateTime.fromMillisecondsSinceEpoch(i.created.round()),
+                  () async {
+                    cupertinoSheet(
+                      context: context,
+                      builder: (context) => ConfigureTags(
+                        tags: dmodel.tags,
+                      ),
+                    );
+                  },
+                ),
+            ],
+            onChildTap: (context, item, index) async {
+              //
+            },
+            childBuilder: (context, item, index) {
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                child: Row(
+                  children: [
+                    Text(
+                      DateFormat('yyyy, MMMM d').format(item.v1),
+                      style: ttLabel(context),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text("-"),
+                    ),
+                    Text(
+                      DateFormat('h:mm:ss a').format(item.v1),
+                      style: ttcaption(context),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
         const SizedBox(height: 32),
         // TODO!! -- remove
         Text("DEV"),

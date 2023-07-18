@@ -5,24 +5,24 @@ import 'package:workout_notepad_v2/data/collection.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/collection/cec/root.dart';
 
-class CECPreview extends StatefulWidget {
-  const CECPreview({super.key});
+class CollectionPreview extends StatelessWidget {
+  const CollectionPreview({
+    super.key,
+    required this.collection,
+    this.items,
+  });
+  final Collection collection;
+  final List<CollectionItem>? items;
 
-  @override
-  State<CECPreview> createState() => _CECPreviewState();
-}
-
-class _CECPreviewState extends State<CECPreview> {
   @override
   Widget build(BuildContext context) {
-    var cmodel = context.read<CECModel>();
     return Scaffold(
       body: SfCalendar(
         view: CalendarView.month,
         showNavigationArrow: true,
         appointmentTextStyle: const TextStyle(fontSize: 24),
-        dataSource: CollectionDataSource(cmodel.getRenderedCollectionItems()),
-        initialSelectedDate: cmodel.collection.datetime,
+        dataSource: CollectionDataSource(items ?? collection.items),
+        initialSelectedDate: collection.datetime,
         monthViewSettings: const MonthViewSettings(
           showAgenda: true,
           appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,

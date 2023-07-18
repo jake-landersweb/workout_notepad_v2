@@ -53,15 +53,22 @@ class ExerciseCell extends StatelessWidget {
   }
 
   Widget _content(BuildContext context) {
+    var dmodel = Provider.of<DataModel>(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       child: Row(
         children: [
+          if (exercise.category.isNotEmpty) getIcon(dmodel),
           Expanded(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (getCategoryTitle(dmodel).isNotEmpty)
+                  Text(
+                    getCategoryTitle(dmodel).capitalize(),
+                    style: ttcaption(context),
+                  ),
                 Text(
                   exercise.title,
                   style: ttLabel(
@@ -69,8 +76,6 @@ class ExerciseCell extends StatelessWidget {
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
-                if (exercise.category.isNotEmpty)
-                  CategoryCell(categoryId: exercise.category),
               ],
             ),
           ),
@@ -91,5 +96,33 @@ class ExerciseCell extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget getIcon(DataModel dmodel) {
+    var match = dmodel.categories.firstWhere(
+      (element) => element.categoryId == exercise.category,
+      orElse: () => Category(categoryId: "", title: "", icon: ""),
+    );
+    if (match.icon.isEmpty) {
+      return Container();
+    }
+    return Padding(
+      padding: const EdgeInsets.only(right: 8.0),
+      child: getImageIcon(match.icon, size: 40),
+    );
+  }
+
+  String getCategoryTitle(DataModel dmodel) {
+    if (exercise.category.isEmpty) {
+      return "";
+    }
+    var match = dmodel.categories.firstWhere(
+      (element) => element.categoryId == exercise.category,
+      orElse: () => Category(categoryId: "", title: "", icon: ""),
+    );
+    if (match.icon.isEmpty) {
+      return "";
+    }
+    return match.title;
   }
 }

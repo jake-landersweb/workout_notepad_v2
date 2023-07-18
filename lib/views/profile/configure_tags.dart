@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sql.dart';
@@ -57,11 +58,12 @@ class _ConfigureTagsState extends State<ConfigureTags> {
       children: [
         const SizedBox(height: 16),
         Section(
-          "Default - Title",
+          "Default - ${_tags.firstWhereOrNull((element) => element.isDefault)?.title ?? 'None'} ",
           child: ContainedList<Tag>(
             children: _tags,
             leadingPadding: 0,
             trailingPadding: 0,
+            childPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             childBuilder: (context, item, index) {
               return _cell(context, item);
             },

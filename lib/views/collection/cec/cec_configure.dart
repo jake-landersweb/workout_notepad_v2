@@ -105,9 +105,13 @@ class _CECConfigureState extends State<CECConfigure> {
                             canScroll: false,
                             horizontalSpacing: 0,
                             trailing: const [CancelButton(title: "Done")],
-                            children: const [
-                              SizedBox(height: 70),
-                              Expanded(child: CECPreview()),
+                            children: [
+                              const SizedBox(height: 70),
+                              Expanded(
+                                  child: CollectionPreview(
+                                      collection: cmodel.collection,
+                                      items:
+                                          cmodel.getRenderedCollectionItems())),
                             ],
                           ),
                         );

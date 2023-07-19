@@ -3,11 +3,44 @@ import 'package:workout_notepad_v2/model/client.dart';
 import 'package:http/http.dart' as http;
 import 'package:workout_notepad_v2/model/root.dart';
 
+class SnapshotMetadataItem {
+  late String table;
+  late int length;
+
+  SnapshotMetadataItem({
+    required this.table,
+    required this.length,
+  });
+
+  SnapshotMetadataItem.fromJson(dynamic json) {
+    table = json['table'];
+    length = json['length'].round();
+  }
+
+  Map<String, dynamic> toMap() => {
+        "table": table,
+        "length": length,
+      };
+
+  @override
+  bool operator ==(other) {
+    if (identical(this, other)) return true;
+    return other is SnapshotMetadataItem &&
+        table == other.table &&
+        length == other.length;
+  }
+
+  @override
+  // TODO: implement hashCode
+  int get hashCode => super.hashCode;
+}
+
 class Snapshot {
   late String userId;
   late double created;
   late String createdStr;
   late String s3FileName;
+  late List<SnapshotMetadataItem> metadata;
   Map<String, dynamic>? fileData;
 
   Snapshot({
@@ -22,6 +55,10 @@ class Snapshot {
     created = json['created'];
     createdStr = json['createdStr'];
     s3FileName = json['s3FileName'];
+    metadata = [];
+    for (var i in json['metadata']) {
+      metadata.add(SnapshotMetadataItem.fromJson(i));
+    }
   }
 
   /// Get the json blob of the snapshot
@@ -102,11 +139,32 @@ class Snapshot {
     }
   }
 
+  int get workoutLength {
+    return metadata.firstWhere((element) => element.table == "workout").length;
+  }
+
+  int get workoutLogLength {
+    return metadata
+        .firstWhere((element) => element.table == "workout_log")
+        .length;
+  }
+
+  int get exerciseLength {
+    return metadata.firstWhere((element) => element.table == "exercise").length;
+  }
+
+  int get exerciseLogLength {
+    return metadata
+        .firstWhere((element) => element.table == "exercise_log")
+        .length;
+  }
+
   Map<String, dynamic> toMap() => {
         "userId": userId,
         "created": created,
         "createdStr": createdStr,
         "s3FileName": s3FileName,
+        "metadata": [for (var i in metadata) i.toMap()],
       };
 
   @override

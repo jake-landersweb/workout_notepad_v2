@@ -1,21 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:line_icons/line_icons.dart';
-import 'package:provider/provider.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:workout_notepad_v2/components/clickable.dart';
-import 'package:workout_notepad_v2/components/contained_list.dart';
-import 'package:workout_notepad_v2/components/sheet_selector.dart';
-import 'package:workout_notepad_v2/components/field.dart';
-import 'package:workout_notepad_v2/components/header_bar.dart';
 
 import 'package:workout_notepad_v2/components/root.dart';
-import 'package:workout_notepad_v2/components/time_picker.dart';
 import 'package:workout_notepad_v2/data/root.dart';
-import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
-import 'package:workout_notepad_v2/views/exercises/create_edit_exercise/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:workout_notepad_v2/views/icon_picker.dart';
 
 class CEEType extends StatefulWidget {
   const CEEType({

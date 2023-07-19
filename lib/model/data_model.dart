@@ -34,6 +34,7 @@ class DataModel extends ChangeNotifier {
   User? expiredAnonUser;
   LoadStatus loadStatus = LoadStatus.init;
   Color color = const Color(0xFF418a2f);
+  List<SnapshotMetadataItem> currentMetadata = [];
 
   DataModel() {
     init();
@@ -120,6 +121,10 @@ class DataModel extends ChangeNotifier {
 
   Future<void> init({User? u}) async {
     var prefs = await SharedPreferences.getInstance();
+
+    // set to index page
+    _currentTabScreen = HomeScreen.overview;
+    notifyListeners();
 
     // TODO delete and re-create
     // await importData();
@@ -227,23 +232,17 @@ class DataModel extends ChangeNotifier {
       return;
     }
     if (snp.isEmpty) {
-      // snapshot the data for the first time
-      var snps = await Snapshot.snapshotDatabase(user!.userId);
-      if (snps == null) {
-        // TODO -- handle errors
-        print("There was an issue creating the snapshot");
-        return;
-      }
-      _snapshots = snps;
-      notifyListeners();
+      await snapshotData();
       return;
     }
-    // if last snapshot is more than a day old
+
     if (snp.last.created <
         DateTime.now()
-            .subtract(const Duration(days: 1))
+            .subtract(const Duration(hours: 8))
             .millisecondsSinceEpoch) {
-      print("last snapshot is older than a day, creating a snapshot");
+      print(
+        "last snapshot is older than 8 hours, creating a new snapshot",
+      );
       var sn = await Snapshot.snapshotDatabase(user!.userId);
       if (sn == null) {
         print("There was an error snapshotting the data");
@@ -264,14 +263,17 @@ class DataModel extends ChangeNotifier {
     }
   }
 
-  Future<void> initTest({bool? delete}) async {
-    if (delete ?? false) {
-      String path = join(await getDatabasesPath(), 'workout_notepad.db');
-      await databaseFactory.deleteDatabase(path);
-      await importData();
+  Future<bool> snapshotData() async {
+    // snapshot the data for the first time
+    var snps = await Snapshot.snapshotDatabase(user!.userId);
+    if (snps == null) {
+      // TODO -- handle errors
+      print("There was an issue creating the snapshot");
+      return false;
     }
-
-    await fetchData();
+    _snapshots = snps;
+    notifyListeners();
+    return true;
   }
 
   Future<void> fetchData() async {
@@ -281,10 +283,11 @@ class DataModel extends ChangeNotifier {
     var getT = Tag.getList();
     var getCo = Collection.getList();
     var getNW = _getNextWorkout();
+    var getMD = currentDataMetadata();
 
     // run all asynchronously at the same time
     List<dynamic> results =
-        await Future.wait([getC, getW, getE, getT, getCo, getNW]);
+        await Future.wait([getC, getW, getE, getT, getCo, getNW, getMD]);
 
     _categories = results[0];
     _workouts = results[1];
@@ -292,6 +295,7 @@ class DataModel extends ChangeNotifier {
     _tags = results[3];
     _collections = results[4];
     _nextWorkout = results[5];
+    currentMetadata = results[6];
     notifyListeners();
   }
 
@@ -399,6 +403,10 @@ class DataModel extends ChangeNotifier {
         "DELETE from workout WHERE workoutId = '${workoutState!.workout.workoutId}'",
       );
     }
+    if (!isCancel) {
+      // create a snapshot of the database
+      await snapshotData();
+    }
     workoutState = null;
     await fetchData();
     notifyListeners();
@@ -425,42 +433,29 @@ class DataModel extends ChangeNotifier {
     return nextWorkout;
   }
 
-  Future<bool> exportToJSON() async {
-    try {
-      // get the database
-      var db = await getDB();
-      // get all table names
-      var response = await db
-          .rawQuery("SELECT name FROM sqlite_master WHERE type='table'");
+  /// a list of metadata objects that reflect the current state of the database
+  Future<List<SnapshotMetadataItem>> currentDataMetadata() async {
+    var db = await getDB();
+    // get all table names
+    var response =
+        await db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'");
 
-      Map<String, dynamic> data = {};
+    List<SnapshotMetadataItem> data = [];
 
-      // compose the data for dynamodb
-      for (var i in response) {
-        var r = await db.query(i['name'] as String);
-        data[i['name'] as String] = r;
-      }
-
-      // // encode to json
-      String encoded = jsonEncode(data);
-
-      // // send to url
-      var apiResponse = await http.Client().post(
-        Uri.parse(
-            "https://4q849d280b.execute-api.us-west-2.amazonaws.com/api/v2/export"),
-        headers: {"Content-type": "application/json"},
-        body: encoded,
+    for (var i in response) {
+      var r = await db.query(i['name'] as String);
+      data.add(
+        SnapshotMetadataItem(table: i['name'] as String, length: r.length),
       );
-
-      // return success or error
-      return apiResponse.statusCode == 200;
-    } catch (e) {
-      print(e);
-      return false;
     }
+    return data;
   }
 
-  Future<bool> importData({bool delete = true}) async {
+  //
+  Future<bool> importSnapshot(
+    Snapshot snapshot, {
+    bool delete = true,
+  }) async {
     try {
       print("IMPORTING DATA");
       if (delete) {
@@ -471,11 +466,18 @@ class DataModel extends ChangeNotifier {
       var db = await getDB();
 
       // read file
-      String json = await rootBundle.loadString("sql/init.json");
-      Map<String, dynamic> data = const JsonDecoder().convert(json);
-      // remove dynamodb fields
-      data.remove("id");
-      data.remove("created");
+      // String json = await rootBundle.loadString("sql/init.json");
+      // Map<String, dynamic> data = const JsonDecoder().convert(json);
+      // // remove dynamodb fields
+      // data.remove("id");
+      // data.remove("created");
+
+      // get the snapshot file data
+      var data = await snapshot.getFileData();
+      if (data == null) {
+        print("There was an issue importing the data");
+        return false;
+      }
 
       for (var key in data.keys) {
         for (var i in data[key]) {
@@ -487,7 +489,7 @@ class DataModel extends ChangeNotifier {
         }
       }
 
-      await fetchData();
+      await init();
       notifyListeners();
       return true;
     } catch (e) {

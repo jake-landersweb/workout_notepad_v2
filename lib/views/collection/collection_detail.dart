@@ -6,12 +6,9 @@ import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/collection.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
-import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/collection/collection_item_cell.dart';
 import 'package:workout_notepad_v2/views/collection/collection_progress_bar.dart';
-import 'package:workout_notepad_v2/views/root.dart';
-import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
 import 'package:workout_notepad_v2/views/workouts/logs/root.dart';
 
 class CollectionDetail extends StatefulWidget {

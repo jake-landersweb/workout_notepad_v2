@@ -7,6 +7,7 @@ import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/components/wrapped_button.dart';
+import 'package:workout_notepad_v2/data/snapshot.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -15,12 +16,31 @@ import 'package:workout_notepad_v2/views/account/root.dart';
 import 'package:workout_notepad_v2/views/profile/config_categories.dart';
 import 'package:workout_notepad_v2/views/profile/configure_tags.dart';
 import 'package:intl/intl.dart';
+import 'dart:math' as math;
+
+import 'package:workout_notepad_v2/views/profile/manage_data.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
 
   @override
   State<Profile> createState() => _ProfileState();
+}
+
+class ProfileItem {
+  final String title;
+  final IconData icon;
+  final Color color;
+  final int postType;
+  final AsyncCallback onTap;
+
+  ProfileItem({
+    required this.title,
+    required this.icon,
+    required this.color,
+    required this.postType,
+    required this.onTap,
+  });
 }
 
 class _ProfileState extends State<Profile> {
@@ -68,16 +88,17 @@ class _ProfileState extends State<Profile> {
               },
             ),
           ),
-        ContainedList<Tuple4<String, IconData, Color, AsyncCallback>>(
+        ContainedList<ProfileItem>(
           leadingPadding: 0,
           trailingPadding: 0,
           childPadding: EdgeInsets.zero,
           children: [
-            Tuple4(
-              "Configure Categories",
-              Icons.category_rounded,
-              Colors.blue,
-              () async {
+            ProfileItem(
+              title: "Configure Categories",
+              icon: Icons.category_rounded,
+              color: Colors.blue[300]!,
+              postType: 1,
+              onTap: () async {
                 cupertinoSheet(
                   context: context,
                   builder: (context) => ConfigureCategories(
@@ -86,16 +107,29 @@ class _ProfileState extends State<Profile> {
                 );
               },
             ),
-            Tuple4(
-              "Configure Tags",
-              Icons.tag_rounded,
-              Colors.deepOrange,
-              () async {
+            ProfileItem(
+              title: "Configure tags",
+              icon: Icons.tag_rounded,
+              color: Colors.deepOrange[300]!,
+              postType: 1,
+              onTap: () async {
                 cupertinoSheet(
                   context: context,
                   builder: (context) => ConfigureTags(
                     tags: dmodel.tags,
                   ),
+                );
+              },
+            ),
+            ProfileItem(
+              title: "Manage Data",
+              icon: Icons.tag_rounded,
+              color: Colors.green[300]!,
+              postType: 2,
+              onTap: () async {
+                navigate(
+                  context: context,
+                  builder: (context) => const ManageData(),
                 );
               },
             ),
@@ -142,121 +176,38 @@ class _ProfileState extends State<Profile> {
             setState(() {
               _loadingIndex = index;
             });
-            await item.v4();
+            await item.onTap();
             setState(() {
               _loadingIndex = -1;
             });
           },
           childBuilder: (context, item, index) {
-            return WrappedButton(
-              title: item.v1,
-              icon: item.v2,
-              iconBg: item.v3,
-              isLoading: _loadingIndex == index,
+            return Row(
+              children: [
+                Expanded(
+                  child: WrappedButton(
+                    title: item.title,
+                    icon: item.icon,
+                    iconBg: item.color,
+                    isLoading: _loadingIndex == index,
+                  ),
+                ),
+                if (item.postType > 0)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Transform.rotate(
+                      angle: item.postType == 1 ? math.pi / -2 : 0,
+                      child: Icon(
+                        Icons.chevron_right_rounded,
+                        color: AppColors.subtext(context),
+                      ),
+                    ),
+                  ),
+              ],
             );
           },
-        ),
-        Section(
-          "Data Snapshots",
-          child: ContainedList<Tuple2<DateTime, AsyncCallback>>(
-            leadingPadding: 0,
-            trailingPadding: 0,
-            childPadding: EdgeInsets.zero,
-            children: [
-              for (var i in dmodel.snapshots)
-                Tuple2(
-                  DateTime.fromMillisecondsSinceEpoch(i.created.round()),
-                  () async {
-                    cupertinoSheet(
-                      context: context,
-                      builder: (context) => ConfigureTags(
-                        tags: dmodel.tags,
-                      ),
-                    );
-                  },
-                ),
-            ],
-            onChildTap: (context, item, index) async {
-              //
-            },
-            childBuilder: (context, item, index) {
-              return Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                child: Row(
-                  children: [
-                    Text(
-                      DateFormat('yyyy, MMMM d').format(item.v1),
-                      style: ttLabel(context),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text("-"),
-                    ),
-                    Text(
-                      DateFormat('h:mm:ss a').format(item.v1),
-                      style: ttcaption(context),
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
         ),
         const SizedBox(height: 32),
-        // TODO!! -- remove
-        Text("DEV"),
-        const SizedBox(height: 8),
-        WrappedButton(
-          title: "Export Data",
-          icon: Icons.download_rounded,
-          iconBg: Colors.purple,
-          isLoading: _loadingIndex == 100,
-          onTap: () async {
-            setState(() {
-              _loadingIndex = 100;
-            });
-            var response = await dmodel.exportToJSON();
-            if (response) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text("Success!"),
-                ),
-              );
-            }
-            setState(() {
-              _loadingIndex = -1;
-            });
-          },
-        ),
-        const SizedBox(height: 8),
-        WrappedButton(
-          title: "Import Data",
-          icon: Icons.upload_rounded,
-          iconBg: Colors.blue,
-          isLoading: _loadingIndex == 101,
-          onTap: () async {
-            setState(() {
-              _loadingIndex = 101;
-            });
-            await showAlert(
-              context: context,
-              title: "Caution",
-              body: const Text(
-                  "Importing a file will overwrite your current workouts, exercises, and logs. Are you sure you want to continue?"),
-              cancelText: "Cancel",
-              onCancel: () {},
-              cancelBolded: true,
-              submitText: "Overwrite",
-              submitColor: Colors.red,
-              onSubmit: () async {
-                await dmodel.importData();
-              },
-            );
-            setState(() {
-              _loadingIndex = -1;
-            });
-          },
-        ),
       ],
     );
   }

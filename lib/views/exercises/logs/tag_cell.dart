@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
 class TagCell extends StatelessWidget {

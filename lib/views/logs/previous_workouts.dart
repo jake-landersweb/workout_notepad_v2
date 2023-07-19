@@ -8,6 +8,8 @@ import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'dart:math' as math;
 
+import 'package:workout_notepad_v2/views/workouts/logs/root.dart';
+
 class LogsPreviousWorkouts extends StatefulWidget {
   const LogsPreviousWorkouts({super.key});
 
@@ -16,13 +18,13 @@ class LogsPreviousWorkouts extends StatefulWidget {
 }
 
 class _LogsPreviousWorkoutsState extends State<LogsPreviousWorkouts> {
-  List<Tuple2<DateTime, double>> _workoutDurationDays = [];
-  List<WorkoutLog> _workoutLogs = [];
+  final List<Tuple2<DateTime, double>> _workoutDurationDays = [];
+  final List<WorkoutLog> _workoutLogs = [];
   bool _isLoading = true;
 
   @override
   void initState() {
-    fetchData();
+    _fetchData();
     super.initState();
   }
 
@@ -145,6 +147,12 @@ class _LogsPreviousWorkoutsState extends State<LogsPreviousWorkouts> {
                 trailingPadding: 0,
                 childPadding: const EdgeInsets.fromLTRB(16, 8, 10, 8),
                 children: _workoutLogs,
+                onChildTap: (context, item, index) {
+                  cupertinoSheet(
+                    context: context,
+                    builder: (context) => WLExercises(workoutLog: item),
+                  );
+                },
                 childBuilder: (context, item, index) {
                   return Row(
                     children: [
@@ -181,7 +189,7 @@ class _LogsPreviousWorkoutsState extends State<LogsPreviousWorkouts> {
     );
   }
 
-  Future<void> fetchData() async {
+  Future<void> _fetchData() async {
     setState(() {
       _isLoading = true;
     });

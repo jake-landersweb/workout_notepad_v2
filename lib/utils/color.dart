@@ -36,7 +36,7 @@ Map<int, Color> getSwatch(Color color) {
 
 extension ColorUtil on Color {
   static Color random(String seed) {
-    int num = 0;
+    int num = 15;
     for (int i = 0; i < seed.length; i++) {
       num += seed[i].codeUnitAt(0);
     }

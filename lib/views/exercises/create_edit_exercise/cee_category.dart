@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:workout_notepad_v2/components/clickable.dart';
-import 'package:workout_notepad_v2/components/floating_sheet.dart';
-import 'package:workout_notepad_v2/components/cell_wrapper.dart';
-import 'package:workout_notepad_v2/components/field.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 
 import 'package:workout_notepad_v2/model/root.dart';

@@ -272,6 +272,11 @@ class LaunchWorkoutModel extends ChangeNotifier {
       );
     }
 
+    // create a snapshot of the workout
+    var db = await getDB();
+    var snp = await state.workout.toSnapshot();
+    await db.insert("workout_snapshot", snp.toMap());
+
     await dmodel.stopWorkout();
   }
 

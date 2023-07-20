@@ -228,3 +228,16 @@ CREATE TRIGGER collection_item_update AFTER UPDATE ON collection_item
 BEGIN
     UPDATE collection SET updated = CURRENT_TIMESTAMP;
 END;
+--
+CREATE TABLE workout_snapshot(
+    workoutSnapshotId TEXT PRIMARY KEY,
+    workoutId TEXT NOT NULL,
+    jsonData TEXT NOT NULL,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    createdEpoch INTEGER NOT NULL,
+
+    FOREIGN KEY (workoutId) REFERENCES workout(workoutId) ON DELETE CASCADE
+);
+--
+CREATE INDEX workout_snapshot_workoutid ON workout_snapshot(workoutId);
+--

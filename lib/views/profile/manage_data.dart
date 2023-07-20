@@ -31,36 +31,6 @@ class _ManageDataState extends State<ManageData> {
         leading: const [BackButton2()],
         children: [
           Section(
-            "Current Data",
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.cell(context),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              width: double.infinity,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Workouts - ${dmodel.currentMetadata.firstWhere((element) => element.table == 'workout').length}",
-                    ),
-                    Text(
-                      "Workout Logs - ${dmodel.currentMetadata.firstWhere((element) => element.table == 'workout_log').length}",
-                    ),
-                    Text(
-                      "Exercises - ${dmodel.currentMetadata.firstWhere((element) => element.table == 'exercise').length}",
-                    ),
-                    Text(
-                      "Exercise Logs - ${dmodel.currentMetadata.firstWhere((element) => element.table == 'exercise_log').length}",
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Section(
             "Data Snapshots",
             child: Column(
               children: [
@@ -114,7 +84,7 @@ class _ManageDataState extends State<ManageData> {
                   },
                   childBuilder: (context, item, index) {
                     return Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                      padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -132,39 +102,12 @@ class _ManageDataState extends State<ManageData> {
                                 style: ttcaption(context),
                               ),
                               const Spacer(),
-                              if (_loadingIndex == 50 + index)
-                                LoadingIndicator(
-                                    color:
-                                        Theme.of(context).colorScheme.primary),
-                              if (index == 0 && _loadingIndex != 50 + index)
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    borderRadius: BorderRadius.circular(100),
-                                  ),
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(8, 2, 8, 2),
-                                    child: Text(
-                                      "Latest",
-                                      style: ttcaption(
-                                        context,
-                                        color: AppColors.cell(context),
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                              Icon(
+                                Icons.chevron_right_rounded,
+                                color: AppColors.subtext(context),
+                              ),
                             ],
                           ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 8.0),
-                            child: Divider(),
-                          ),
-                          Text("Workouts - ${item.v1.workoutLength}"),
-                          Text("Workout Logs - ${item.v1.workoutLogLength}"),
-                          Text("Exercises - ${item.v1.exerciseLength}"),
-                          Text("Exercise Logs - ${item.v1.exerciseLogLength}"),
                         ],
                       ),
                     );

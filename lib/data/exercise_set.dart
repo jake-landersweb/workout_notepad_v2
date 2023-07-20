@@ -117,6 +117,28 @@ class ExerciseSet extends ExerciseBase {
     updated = json['updated'];
   }
 
+  /// for creating map objects when creating snapshots and such
+  Map<String, dynamic> toMapRAW() {
+    return {
+      "title": title,
+      "category": category,
+      "description": description,
+      "icon": icon,
+      "type": exerciseTypeToJson(type),
+      "exerciseSetId": exerciseSetId,
+      "workoutExerciseId": workoutExerciseId,
+      "workoutId": workoutId,
+      "parentId": parentId,
+      "childId": childId,
+      "exerciseOrder": exerciseOrder,
+      "sets": sets,
+      "reps": reps,
+      "time": time,
+      "created": created,
+      "updated": updated,
+    };
+  }
+
   @override
   Map<String, dynamic> toMap() {
     return {

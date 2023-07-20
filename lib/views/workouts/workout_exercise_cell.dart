@@ -9,10 +9,12 @@ class WorkoutExerciseCell extends StatefulWidget {
     super.key,
     required this.workoutId,
     required this.exercise,
+    this.children,
   });
 
   final String workoutId;
   final WorkoutExercise exercise;
+  final List<ExerciseSet>? children;
 
   @override
   State<WorkoutExerciseCell> createState() => _WorkoutExerciseCellState();
@@ -24,7 +26,11 @@ class _WorkoutExerciseCellState extends State<WorkoutExerciseCell> {
   @override
   void initState() {
     super.initState();
-    _getChildren();
+    if (widget.children == null) {
+      _getChildren();
+    } else {
+      _children = widget.children!;
+    }
   }
 
   Future<void> _getChildren() async {

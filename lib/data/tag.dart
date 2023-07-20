@@ -51,8 +51,8 @@ class Tag {
     return response;
   }
 
-  static Future<List<Tag>> getList() async {
-    final db = await getDB();
+  static Future<List<Tag>> getList({Database? db}) async {
+    db ??= await getDB();
     var response = await db.rawQuery("SELECT * FROM tag");
     List<Tag> t = [];
     for (var i in response) {

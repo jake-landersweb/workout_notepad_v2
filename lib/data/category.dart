@@ -1,3 +1,4 @@
+import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sql.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/model/root.dart';
@@ -42,8 +43,8 @@ class Category {
     );
   }
 
-  static Future<List<Category>> getList() async {
-    final db = await getDB();
+  static Future<List<Category>> getList({Database? db}) async {
+    db ??= await getDB();
     final List<Map<String, dynamic>> response = await db.query('category');
     List<Category> w = [];
     for (var i in response) {

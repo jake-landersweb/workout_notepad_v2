@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sql.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/data/exercise_set.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
+import 'package:workout_notepad_v2/data/workout_snapshot.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/icons.dart';
 import 'package:workout_notepad_v2/utils/tuple.dart';
@@ -120,8 +122,8 @@ class Workout {
     return c.toSet().toList();
   }
 
-  static Future<List<Workout>> getList() async {
-    final db = await getDB();
+  static Future<List<Workout>> getList({Database? db}) async {
+    db ??= await getDB();
     var response = await db.rawQuery("""
       SELECT * FROM workout
       ORDER BY created DESC
@@ -171,6 +173,43 @@ class Workout {
       workout: clonedWorkout,
       exercises: clonedChildren,
     );
+  }
+
+  /// for storing the workout information as a JSON string, to allow for
+  /// previous lookback on how a workout evolves
+  Future<WorkoutSnapshot> toSnapshot() async {
+    // initial workout data
+    Map<String, dynamic> jsonData = toMap();
+    List<Map<String, dynamic>> childData = [];
+    // get children
+    var children = await getChildren();
+    for (var i in children) {
+      Map<String, dynamic> childJsonData = i.toMapRAW();
+      List<Map<String, dynamic>> childChildData = [];
+      var cchildren = await i.getChildren(workoutId);
+      for (var j in cchildren) {
+        childChildData.add(j.toMapRAW());
+      }
+      childJsonData['children'] = childChildData;
+      childData.add(childJsonData);
+    }
+    jsonData['children'] = childData;
+    return WorkoutSnapshot.init(workoutId: workoutId, jsonData: jsonData);
+  }
+
+  /// get all of the snapshots for this workout
+  Future<List<WorkoutSnapshot>> getSnapshots() async {
+    var db = await getDB();
+    var response = await db.rawQuery("""
+      SELECT * FROM workout_snapshot
+      WHERE workoutId = '$workoutId'
+      ORDER BY CREATED DESC
+    """);
+    List<WorkoutSnapshot> snapshots = [];
+    for (var i in response) {
+      snapshots.add(WorkoutSnapshot.fromJson(i));
+    }
+    return snapshots;
   }
 
   @override

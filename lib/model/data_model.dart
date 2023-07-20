@@ -212,7 +212,10 @@ class DataModel extends ChangeNotifier {
       var prefs = await SharedPreferences.getInstance();
       prefs.setString("user", jsonEncode(user!.toMap()));
       notifyListeners();
-      handleSnapshotInit();
+      // do not snapshot anon data
+      if (!user!.isAnon) {
+        handleSnapshotInit();
+      }
     } catch (error) {
       print(
           "GET_USER there was an error fetching the user. Assuming user is offline");
@@ -236,7 +239,7 @@ class DataModel extends ChangeNotifier {
       return;
     }
 
-    if (snp.last.created <
+    if (snp.first.created <
         DateTime.now()
             .subtract(const Duration(hours: 8))
             .millisecondsSinceEpoch) {
@@ -264,6 +267,10 @@ class DataModel extends ChangeNotifier {
   }
 
   Future<bool> snapshotData() async {
+    // do not snapshot anon data
+    if (user!.isAnon) {
+      return true;
+    }
     // snapshot the data for the first time
     var snps = await Snapshot.snapshotDatabase(user!.userId);
     if (snps == null) {
@@ -277,13 +284,14 @@ class DataModel extends ChangeNotifier {
   }
 
   Future<void> fetchData() async {
-    var getC = Category.getList();
-    var getW = Workout.getList();
-    var getE = Exercise.getList();
-    var getT = Tag.getList();
-    var getCo = Collection.getList();
-    var getNW = _getNextWorkout();
-    var getMD = currentDataMetadata();
+    var db = await getDB();
+    var getC = Category.getList(db: db);
+    var getW = Workout.getList(db: db);
+    var getE = Exercise.getList(db: db);
+    var getT = Tag.getList(db: db);
+    var getCo = Collection.getList(db: db);
+    var getNW = _getNextWorkout(db: db);
+    var getMD = currentDataMetadata(db: db);
 
     // run all asynchronously at the same time
     List<dynamic> results =
@@ -404,16 +412,16 @@ class DataModel extends ChangeNotifier {
       );
     }
     if (!isCancel) {
-      // create a snapshot of the database
-      await snapshotData();
+      // create a snapshot of the database in background
+      snapshotData();
     }
     workoutState = null;
     await fetchData();
     notifyListeners();
   }
 
-  Future<CollectionItem?> _getNextWorkout() async {
-    var db = await getDB();
+  Future<CollectionItem?> _getNextWorkout({Database? db}) async {
+    db ??= await getDB();
     CollectionItem? nextWorkout;
 
     // next workout
@@ -434,8 +442,8 @@ class DataModel extends ChangeNotifier {
   }
 
   /// a list of metadata objects that reflect the current state of the database
-  Future<List<SnapshotMetadataItem>> currentDataMetadata() async {
-    var db = await getDB();
+  Future<List<SnapshotMetadataItem>> currentDataMetadata({Database? db}) async {
+    db ??= await getDB();
     // get all table names
     var response =
         await db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'");

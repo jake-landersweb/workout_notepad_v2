@@ -112,8 +112,28 @@ class WorkoutExercise extends ExerciseBase {
     exerciseOrder = json['exerciseOrder'];
     note = json['note'] ?? "";
     superSetOrdering = json['superSetOrdering'] ?? 0;
-    created = json['created'];
-    updated = json['updated'];
+    created = json['created'] ?? "";
+    updated = json['updated'] ?? "";
+  }
+
+  /// for creating map objects for workout snapshots
+  Map<String, dynamic> toMapRAW() {
+    return {
+      "title": title,
+      "category": category,
+      "description": description,
+      "icon": icon,
+      "type": exerciseTypeToJson(type),
+      "workoutExerciseId": workoutExerciseId,
+      "workoutId": workoutId,
+      "exerciseId": exerciseId,
+      "exerciseOrder": exerciseOrder,
+      "sets": sets,
+      "reps": reps,
+      "time": time,
+      "note": note,
+      "superSetOrdering": superSetOrdering,
+    };
   }
 
   @override

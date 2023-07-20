@@ -20,6 +20,7 @@ import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:workout_notepad_v2/views/workouts/logs/root.dart';
 import 'package:workout_notepad_v2/views/workouts/workout_exercise_cell.dart';
+import 'package:workout_notepad_v2/views/workouts/snapshots/workout_snapshots.dart';
 
 class WorkoutDetail extends StatefulWidget {
   WorkoutDetail({
@@ -200,6 +201,20 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
             const SizedBox(width: 16),
             _actionCell(
               context: context,
+              icon: Icons.camera_rounded,
+              title: "Snapshots",
+              description: "View previous versions",
+              onTap: () {
+                cupertinoSheet(
+                  context: context,
+                  builder: (context) => WorkoutSnapshots(workout: _workout),
+                );
+              },
+              index: 3,
+            ),
+            const SizedBox(width: 16),
+            _actionCell(
+              context: context,
               icon: Icons.content_copy_rounded,
               title: "Clone",
               description: "Clone this workout",
@@ -209,7 +224,7 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
                   builder: (context) => CloneWorkout(workout: _workout),
                 );
               },
-              index: 2,
+              index: 4,
             ),
           ],
         ),

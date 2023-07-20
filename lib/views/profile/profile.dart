@@ -133,44 +133,6 @@ class _ProfileState extends State<Profile> {
                 );
               },
             ),
-            // Tuple4(
-            //   "Logout",
-            //   Icons.logout_rounded,
-            //   AppColors.cell(context)[700]!,
-            //   () async {
-            //     if (dmodel.user!.isAnon) {
-            //       await showAlert(
-            //         context: context,
-            //         title: "WARNING!",
-            //         body: const Text(
-            //             "As an anonymous user, once you logout, your exercise data will be UNRECOVERABLE. If you want to switch accounts, it is recommended that you first create an account under this user."),
-            //         cancelText: "Cancel",
-            //         onCancel: () {},
-            //         cancelBolded: true,
-            //         submitText: "Delete Data",
-            //         submitColor: Colors.red,
-            //         onSubmit: () async {
-            //           await dmodel.logout();
-            //         },
-            //       );
-            //     } else {
-            //       await showAlert(
-            //         context: context,
-            //         title: "Are You Sure?",
-            //         body: const Text(
-            //             "Your exercise data will be removed from your phone on logout. If you are online, a snapshot will be automatically created for you."),
-            //         cancelText: "Cancel",
-            //         onCancel: () {},
-            //         cancelBolded: true,
-            //         submitText: "Logout",
-            //         submitColor: Colors.red,
-            //         onSubmit: () async {
-            //           await dmodel.logout();
-            //         },
-            //       );
-            //     }
-            //   },
-            // ),
           ],
           onChildTap: (context, item, index) async {
             setState(() {
@@ -205,6 +167,44 @@ class _ProfileState extends State<Profile> {
                   ),
               ],
             );
+          },
+        ),
+        const SizedBox(height: 32),
+        WrappedButton(
+          title: "Logout",
+          rowAxisSize: MainAxisSize.max,
+          onTap: () async {
+            if (dmodel.user!.isAnon) {
+              await showAlert(
+                context: context,
+                title: "WARNING!",
+                body: const Text(
+                    "As an anonymous user, once you logout, your exercise data will be UNRECOVERABLE. If you want to switch accounts, it is recommended that you first create an account under this user."),
+                cancelText: "Cancel",
+                onCancel: () {},
+                cancelBolded: true,
+                submitText: "Delete Data",
+                submitColor: Colors.red,
+                onSubmit: () async {
+                  await dmodel.logout(context);
+                },
+              );
+            } else {
+              await showAlert(
+                context: context,
+                title: "Are You Sure?",
+                body: const Text(
+                    "Your exercise data will be removed from your phone on logout. If you are online, a snapshot will be automatically created for you."),
+                cancelText: "Cancel",
+                onCancel: () {},
+                cancelBolded: true,
+                submitText: "Logout",
+                submitColor: Colors.red,
+                onSubmit: () async {
+                  await dmodel.logout(context);
+                },
+              );
+            }
           },
         ),
         const SizedBox(height: 32),

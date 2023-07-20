@@ -1,3 +1,4 @@
+import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sql.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/data/root.dart';
@@ -110,8 +111,8 @@ class Exercise extends ExerciseBase {
     return response;
   }
 
-  static Future<List<Exercise>> getList() async {
-    final db = await getDB();
+  static Future<List<Exercise>> getList({Database? db}) async {
+    db ??= await getDB();
     var sql = """
       SELECT * FROM exercise
       ORDER BY created DESC

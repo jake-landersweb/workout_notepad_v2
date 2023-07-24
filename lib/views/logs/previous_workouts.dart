@@ -148,6 +148,7 @@ class _LogsPreviousWorkoutsState extends State<LogsPreviousWorkouts> {
                 childPadding: const EdgeInsets.fromLTRB(16, 8, 10, 8),
                 children: _workoutLogs,
                 onChildTap: (context, item, index) {
+                  print(item.workoutLogId);
                   cupertinoSheet(
                     context: context,
                     builder: (context) => WLExercises(workoutLog: item),

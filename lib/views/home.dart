@@ -199,13 +199,13 @@ class _HomeState extends State<Home> {
                         "Logs",
                         HomeScreen.logs,
                       ),
-                      _barRow(
-                        context,
-                        dmodel,
-                        LineIcons.box,
-                        "Collections",
-                        HomeScreen.collections,
-                      ),
+                      // _barRow(
+                      //   context,
+                      //   dmodel,
+                      //   LineIcons.box,
+                      //   "Collections",
+                      //   HomeScreen.collections,
+                      // ),
                       _barRow(
                         context,
                         dmodel,

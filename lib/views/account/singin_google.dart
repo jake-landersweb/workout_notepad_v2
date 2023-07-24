@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -89,6 +90,11 @@ class _SigninGoogleState extends State<SigninGoogle> {
           await FirebaseAuth.instance.signInWithCredential(oauthCredential);
       widget.onSignIn(credential);
     } catch (error) {
+      NewrelicMobile.instance.recordError(
+        error,
+        StackTrace.current,
+        attributes: {"err_code": "signin_google"},
+      );
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.red[300],

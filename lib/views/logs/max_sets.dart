@@ -1,6 +1,9 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
+import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -15,9 +18,8 @@ class LogsMaxSets extends StatefulWidget {
 
 class _LogsMaxSetsState extends State<LogsMaxSets> {
   bool _isLoading = true;
-  final List<Tuple2<Exercise, int>> _maxWeight = [];
-  final List<Tuple2<Exercise, int>> _maxTime = [];
-  final List<Tuple2<Exercise, int>> _maxReps = [];
+  List<Tuple3<Category, Exercise, String>> _items = [];
+  String _type = "Weight";
 
   @override
   void initState() {
@@ -33,80 +35,86 @@ class _LogsMaxSetsState extends State<LogsMaxSets> {
         isLarge: true,
         leading: const [BackButton2()],
         children: [
-          if (_maxWeight.isNotEmpty)
-            Section(
-              "Weight",
-              child: ContainedList<Tuple2<Exercise, int>>(
-                children: _maxWeight,
-                leadingPadding: 0,
-                trailingPadding: 0,
-                childPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                childBuilder: (context, item, index) => _cell(
-                  context,
-                  item.v1,
-                  "${item.v2} lbs",
-                ),
+          const SizedBox(height: 16),
+          SegmentedPicker(
+              titles: ["Weight", "Time", "Reps"],
+              style: SegmentedPickerStyle(
+                backgroundColor: AppColors.cell(context),
               ),
-            ),
-          if (_maxTime.isNotEmpty)
-            Section(
-              "Timed",
-              child: ContainedList<Tuple2<Exercise, int>>(
-                children: _maxTime,
-                leadingPadding: 0,
-                trailingPadding: 0,
-                childPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                childBuilder: (context, item, index) => _cell(
-                  context,
-                  item.v1,
-                  formatHHMMSS(item.v2),
-                ),
-              ),
-            ),
-          if (_maxWeight.isNotEmpty)
-            Section(
-              "Reps",
-              child: ContainedList<Tuple2<Exercise, int>>(
-                children: _maxReps,
-                leadingPadding: 0,
-                trailingPadding: 0,
-                childPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                childBuilder: (context, item, index) => _cell(
-                  context,
-                  item.v1,
-                  "x ${item.v2}",
-                ),
-              ),
+              onSelection: (v) async {
+                setState(() {
+                  _type = v as String;
+                });
+                await _fetchData();
+              },
+              selection: _type),
+          if (_items.isNotEmpty)
+            Column(
+              children: [
+                for (var i in _items)
+                  Section(
+                    i.v1.title,
+                    child: _cell(
+                      context,
+                      i.v1,
+                      i.v2,
+                      i.v3,
+                    ),
+                  ),
+              ],
             ),
         ],
       ),
     );
   }
 
-  Widget _cell(BuildContext context, Exercise exercise, String val) {
-    return Row(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _cell(
+    BuildContext context,
+    Category c,
+    Exercise exercise,
+    String val,
+  ) {
+    return Clickable(
+      onTap: () {
+        cupertinoSheet(
+          context: context,
+          builder: (context) => ExerciseLogs(
+            exerciseId: exercise.exerciseId,
+            isInteractive: false,
+          ),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.cell(context),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
             children: [
-              Text(
-                formatDateTime(DateTime.parse(exercise.created)),
-                style: ttcaption(context),
+              getImageIcon(c.icon),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      formatDateTime(DateTime.parse(exercise.created)),
+                      style: ttcaption(context),
+                    ),
+                    Text(
+                      exercise.title,
+                      style: ttLabel(context),
+                    ),
+                  ],
+                ),
               ),
-              Text(
-                exercise.title,
-                style: ttLabel(context),
-              ),
-              const SizedBox(height: 4),
-              CategoryCell(
-                categoryId: exercise.category,
-              ),
+              Text(val, style: ttBody(context, fontWeight: FontWeight.w700)),
             ],
           ),
         ),
-        Text(val, style: ttTitle(context)),
-      ],
+      ),
     );
   }
 
@@ -114,51 +122,170 @@ class _LogsMaxSetsState extends State<LogsMaxSets> {
     setState(() {
       _isLoading = true;
     });
+    _items = [];
     var db = await getDB();
-    var maxWeightResponse = await db.rawQuery("""
-      SELECT 
-        *,
-        MAX(CASE WHEN elm.weightPost = "kg" THEN elm.weight * 2.204 ELSE elm.weight END) AS max_weight
-      FROM exercise e
-      JOIN exercise_log_meta elm
-        ON e.exerciseId = elm.exerciseId
-      GROUP BY e.exerciseId
-      ORDER BY max_weight DESC
-      LIMIT 3;
-    """);
-    var maxTimeResponse = await db.rawQuery("""
-      SELECT 
-        *,
-        MAX(elm.time) AS max_time
-      FROM exercise e
-      JOIN exercise_log_meta elm
-        ON e.exerciseId = elm.exerciseId
-      GROUP BY e.exerciseId
-      ORDER BY max_time DESC
-      LIMIT 3;
-    """);
-    var maxRepsResponse = await db.rawQuery("""
-      SELECT 
-        *,
-        MAX(elm.reps) AS max_reps
-      FROM exercise e
-      JOIN exercise_log_meta elm
-        ON e.exerciseId = elm.exerciseId
-      GROUP BY e.exerciseId
-      ORDER BY max_reps DESC
-      LIMIT 3;
-    """);
-    for (var i in maxWeightResponse) {
-      _maxWeight.add(Tuple2(Exercise.fromJson(i), i['max_weight'] as int));
-    }
-    for (var i in maxTimeResponse) {
-      _maxTime.add(Tuple2(Exercise.fromJson(i), i['max_time'] as int));
-    }
-    for (var i in maxRepsResponse) {
-      _maxReps.add(Tuple2(Exercise.fromJson(i), i['max_reps'] as int));
+    var response = await db.rawQuery(query);
+    var dmodel = context.read<DataModel>();
+    for (var i in response) {
+      // check category
+      var c = dmodel.categories.firstWhereOrNull(
+        (element) => element.categoryId == i['category'] as String,
+      );
+      if (c != null) {
+        switch (_type) {
+          case "Weight":
+            _items.add(Tuple3(c, Exercise.fromJson(i), "${i['max']} lbs"));
+            break;
+          case "Time":
+            _items.add(
+                Tuple3(c, Exercise.fromJson(i), formatHHMMSS(i['max'] as int)));
+            break;
+          case "Reps":
+            _items.add(Tuple3(c, Exercise.fromJson(i), "x ${i['max']}"));
+            break;
+        }
+      }
     }
     setState(() {
       _isLoading = false;
     });
+  }
+
+  String get query {
+    switch (_type) {
+      case "Weight":
+        return """
+        WITH weight_in_pounds AS (
+          SELECT
+            e.exerciseId,
+            e.category,
+            el.created AS log_created,
+            CASE
+              WHEN elm.weightPost = 'kg' THEN elm.weight * 2.204
+              ELSE elm.weight
+            END AS weight
+          FROM exercise_log_meta elm
+          JOIN exercise_log el ON elm.exerciseLogId = el.exerciseLogId
+          JOIN exercise e ON el.exerciseId = e.exerciseId
+          WHERE elm.weight > 0
+        ),
+        max_weight AS (
+          SELECT
+            exerciseId,
+            category,
+            MAX(weight) AS max_weight,
+            log_created AS max_log_created
+          FROM weight_in_pounds
+          GROUP BY exerciseId, category
+        ),
+        ranked_exercises AS (
+          SELECT 
+            mw.exerciseId,
+            mw.category,
+            mw.max_weight,
+            mw.max_log_created,
+            ROW_NUMBER() OVER(PARTITION BY mw.category ORDER BY mw.max_weight DESC, mw.max_log_created DESC) as rn
+          FROM max_weight mw
+        )
+        SELECT 
+          re.category,
+          re.max_weight AS max,
+          re.max_log_created AS created,
+          e.exerciseId,
+          e.title,
+          e.description,
+          e.icon,
+          e.type,
+          e.sets,
+          e.reps,
+          e.time,
+          e.updated
+        FROM ranked_exercises re
+        JOIN exercise e ON re.exerciseId = e.exerciseId
+        WHERE rn = 1;
+        """;
+      case "Time":
+        return """
+          WITH max_time AS (
+            SELECT
+              e.exerciseId,
+              e.category,
+              MAX(elm.time) AS max_time,
+              el.created AS max_log_created
+            FROM exercise_log_meta elm
+            JOIN exercise_log el ON elm.exerciseLogId = el.exerciseLogId
+            JOIN exercise e ON el.exerciseId = e.exerciseId
+            WHERE elm.time > 0
+            GROUP BY e.exerciseId, e.category
+          ),
+          ranked_exercises AS (
+            SELECT 
+              mt.exerciseId,
+              mt.category,
+              mt.max_time,
+              mt.max_log_created,
+              ROW_NUMBER() OVER(PARTITION BY mt.category ORDER BY mt.max_time DESC) as rn
+            FROM max_time mt
+          )
+          SELECT 
+            re.category,
+            re.max_time AS max,
+            e.title,
+            e.exerciseId,
+            e.description,
+            e.icon,
+            e.type,
+            e.sets,
+            e.reps,
+            e.time,
+            re.max_log_created AS created,
+            e.updated
+          FROM ranked_exercises re
+          JOIN exercise e ON re.exerciseId = e.exerciseId
+          WHERE rn = 1;
+        """;
+      case "Reps":
+        return """
+          WITH max_reps AS (
+            SELECT
+              e.exerciseId,
+              e.category,
+              MAX(elm.reps) AS max_reps,
+              el.created AS max_log_created
+            FROM exercise_log_meta elm
+            JOIN exercise_log el ON elm.exerciseLogId = el.exerciseLogId
+            JOIN exercise e ON el.exerciseId = e.exerciseId
+            WHERE elm.reps > 0
+            GROUP BY e.exerciseId, e.category
+          ),
+          ranked_exercises AS (
+            SELECT 
+              mr.exerciseId,
+              mr.category,
+              mr.max_reps,
+              mr.max_log_created,
+              ROW_NUMBER() OVER(PARTITION BY mr.category ORDER BY mr.max_reps DESC) as rn
+            FROM max_reps mr
+          )
+          SELECT 
+            re.category,
+            re.max_reps AS max,
+            e.title,
+            e.exerciseId,
+            e.description,
+            e.icon,
+            e.type,
+            e.sets,
+            e.reps,
+            e.time,
+            re.max_log_created AS created,
+            e.updated
+          FROM ranked_exercises re
+          JOIN exercise e ON re.exerciseId = e.exerciseId
+          WHERE rn = 1;
+        """;
+      default:
+        throw "Invalid type";
+    }
   }
 }

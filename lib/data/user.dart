@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/components/root.dart';
@@ -122,6 +123,11 @@ class User {
       prefs.setString("userId", user.userId);
       return user;
     } catch (error) {
+      NewrelicMobile.instance.recordError(
+        error,
+        StackTrace.current,
+        attributes: {"err_code": "login_auth"},
+      );
       print("UNKNOWN ERROR - $error");
       return null;
     }
@@ -156,6 +162,11 @@ class User {
       prefs.setString("userId", user.userId);
       return user;
     } catch (error) {
+      NewrelicMobile.instance.recordError(
+        error,
+        StackTrace.current,
+        attributes: {"err_code": "login_anon"},
+      );
       print("UNKNOWN ERROR - $error");
       return null;
     }
@@ -180,6 +191,11 @@ class User {
       prefs.setString("userId", user.userId);
       return user;
     } catch (error) {
+      NewrelicMobile.instance.recordError(
+        error,
+        StackTrace.current,
+        attributes: {"err_code": "login_fromid"},
+      );
       print("UNKNOWN ERROR - $error");
       return null;
     }

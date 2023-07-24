@@ -1,3 +1,4 @@
+import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/data/root.dart';
@@ -120,6 +121,11 @@ class Collection {
       }
       return tmpItems;
     } catch (error) {
+      NewrelicMobile.instance.recordError(
+        error,
+        StackTrace.current,
+        attributes: {"err_code": "fetch_colection_items"},
+      );
       print(error);
       return null;
     }

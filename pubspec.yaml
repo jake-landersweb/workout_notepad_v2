@@ -60,6 +60,11 @@ dependencies:
   google_sign_in: ^6.1.4
   syncfusion_flutter_calendar: ^22.1.37
   collection: ^1.17.1
+  image_picker: ^1.0.1
+  path_provider: ^2.0.15
+  path: ^1.8.3
+  video_player: ^2.7.0
+  newrelic_mobile: 1.0.0
 
 dev_dependencies:
   flutter_test:

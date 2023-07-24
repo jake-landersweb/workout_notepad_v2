@@ -1,14 +1,17 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:sprung/sprung.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/data/collection.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/exercise_set.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/utils/tuple.dart';
 
 class TimerInstance {
   late int index;
@@ -52,6 +55,24 @@ class LaunchWorkoutModelState {
   int getCurrentSeconds() {
     return DateTime.now().difference(startTime).inSeconds;
   }
+
+  // for NR
+  Map<String, dynamic> toMap() => {
+        "workoutIndex": workoutIndex,
+        "workout": workout.toMap(),
+        "exercises": [for (var i in exercises) i.toMap()],
+        "exerciseChildren": [
+          for (var i in exerciseChildren) [for (var j in i) j.toMap()]
+        ],
+        "exerciseLogs": [for (var i in exerciseLogs) i.toMap()],
+        "exerciseChildLogs": [
+          for (var i in exerciseChildLogs) [for (var j in i) j.toMap()]
+        ],
+        "wl": wl.toMap(),
+        "startTime": startTime.millisecondsSinceEpoch,
+        "collectionItem": collectionItem?.toMap(),
+        "isEmpty": isEmpty,
+      };
 }
 
 class LaunchWorkoutModel extends ChangeNotifier {
@@ -232,52 +253,171 @@ class LaunchWorkoutModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> finishWorkout(DataModel dmodel) async {
-    // loop through all logs and create log records
+  Future<Tuple2<bool, String>> finishWorkout(DataModel dmodel) async {
+    // remove all metadata entries that are not saved
     for (var i in state.exerciseLogs) {
-      // remove all logs entries that are not complete
       i.metadata.removeWhere((element) => !element.saved);
-      // check if empty
-      if (i.metadata.isEmpty) {
-        continue;
-      }
-      // add log
-      await i.insert();
     }
-
-    // loop through all log children to create records
     for (var i in state.exerciseChildLogs) {
       for (var j in i) {
         j.metadata.removeWhere((element) => !element.saved);
-        if (j.metadata.isEmpty) {
-          continue;
-        }
-        await j.insert();
       }
     }
 
-    // determine duration workout has gone on
+    // get duration of workout
     state.wl.duration = state.getCurrentSeconds();
 
-    // insert the workout
-    await state.wl.insert();
+    try {
+      // insert all under transaction
+      var db = await getDB();
+      await db.transaction((txn) async {
+        // insert exercises and exercise sets after each other
+        for (int i = 0; i < state.exerciseLogs.length; i++) {
+          // insert workout exercise
+          state.exerciseLogs[i].isSuperSet = false;
+          if (state.exerciseLogs[i].metadata.isNotEmpty) {
+            await txn.insert("exercise_log", state.exerciseLogs[i].toMap());
 
-    // if there is a collection item, attach this log id to it
-    if (dmodel.workoutState!.collectionItem != null) {
-      // TODO -- find out why state.wl.collectionItem is NULL
-      print("adding workoutlogid to collectionItem");
-      dmodel.workoutState!.collectionItem!.workoutLogId = state.wl.workoutLogId;
-      await dmodel.workoutState!.collectionItem!.insert(
-        conflictAlgorithm: ConflictAlgorithm.replace,
+            // insert metadata
+            for (int m = 0; m < state.exerciseLogs[i].metadata.length; m++) {
+              await txn.insert(
+                "exercise_log_meta",
+                state.exerciseLogs[i].metadata[m].toMap(),
+              );
+              // insert tags
+              for (int c = 0;
+                  c < state.exerciseLogs[i].metadata[m].tags.length;
+                  c++) {
+                await txn.insert(
+                  "exercise_log_meta_tag",
+                  state.exerciseLogs[i].metadata[m].tags[c].toMap(),
+                );
+              }
+            }
+          }
+
+          // insert super sets
+          for (int j = 0; j < state.exerciseChildLogs[i].length; j++) {
+            state.exerciseChildLogs[i][j].isSuperSet = true;
+            if (state.exerciseChildLogs[i][j].metadata.isNotEmpty) {
+              await txn.insert(
+                "exercise_log",
+                state.exerciseChildLogs[i][j].toMap(),
+              );
+
+              // insert metadata
+              for (int m = 0;
+                  m < state.exerciseChildLogs[i][j].metadata.length;
+                  m++) {
+                await txn.insert(
+                  "exercise_log_meta",
+                  state.exerciseChildLogs[i][j].metadata[m].toMap(),
+                );
+                // insert tags
+                for (int c = 0;
+                    c < state.exerciseChildLogs[i][j].metadata[m].tags.length;
+                    c++) {
+                  await txn.insert(
+                    "exercise_log_meta_tag",
+                    state.exerciseChildLogs[i][j].metadata[m].tags[c].toMap(),
+                  );
+                }
+              }
+            }
+          }
+        }
+
+        // insert the workout
+        await txn.insert("workout_log", state.wl.toMap());
+        NewrelicMobile.instance.recordCustomEvent(
+          "Major",
+          eventName: "workout_end",
+          eventAttributes: state.wl.toMap(),
+        );
+      });
+    } catch (error) {
+      var errorId = const Uuid().v4();
+      NewrelicMobile.instance.recordError(
+        error,
+        StackTrace.current,
+        attributes: {
+          "err_code": "saving_workout",
+          "workout_log": state.wl.toMap(),
+          "error_id": errorId
+        },
+      );
+      print(error);
+      return Tuple2(
+        false,
+        "We are so sorry, but there was an unknown issue saving this workout. A snapshot has been taken and set to support. They have been notified and will be reaching out to you on steps to preserve this workout data. Reference code: $errorId",
       );
     }
 
+    if (dmodel.workoutState!.collectionItem != null) {
+      try {
+        // if there is a collection item, attach this log id to it
+        // TODO -- find out why state.wl.collectionItem is NULL
+        print("adding workoutlogid to collectionItem");
+        dmodel.workoutState!.collectionItem!.workoutLogId =
+            state.wl.workoutLogId;
+        await dmodel.workoutState!.collectionItem!.insert(
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      } catch (error) {
+        var errorId = const Uuid().v4();
+        NewrelicMobile.instance.recordError(
+          error,
+          StackTrace.current,
+          attributes: {
+            "err_code": "attaching_collection",
+            "workout_log": state.wl.toMap(),
+            "error_id": errorId
+          },
+        );
+        print(error);
+        return Tuple2(false,
+            "Your workout was successfully saved, but there was an issue attaching this workout to the apporpriate collection. You can safely cancel this workout and not lose progress. Reference code: $errorId");
+      }
+    }
+
     // create a snapshot of the workout
-    var db = await getDB();
-    var snp = await state.workout.toSnapshot();
-    await db.insert("workout_snapshot", snp.toMap());
+    try {
+      var db = await getDB();
+      var snp = await state.workout.toSnapshot();
+      await db.insert("workout_snapshot", snp.toMap());
+    } catch (error) {
+      var errorId = const Uuid().v4();
+      NewrelicMobile.instance.recordError(
+        error,
+        StackTrace.current,
+        attributes: {
+          "err_code": "workout_snapshot",
+          "workout_log": state.wl.toMap(),
+          "error_id": errorId
+        },
+      );
+      print(error);
+      return Tuple2(false,
+          "Your workout was successfully saved, but there was an issue creating a snapshot of the workout. You can safely cancel this workout and not lose progress. Reference code: $errorId");
+    }
 
     await dmodel.stopWorkout();
+    return Tuple2(true, "Successfully saved workout");
+  }
+
+  Future<void> handleWorkoutFinish(
+    BuildContext context,
+    DataModel dmodel,
+  ) async {
+    var response = await finishWorkout(dmodel);
+    if (response.v1) {
+      Navigator.of(context, rootNavigator: true).pop();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(response.v2),
+        backgroundColor: Colors.red[300],
+      ));
+    }
   }
 
   Future<void> addExercise(

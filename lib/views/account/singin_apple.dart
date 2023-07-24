@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
@@ -74,6 +75,11 @@ class _SigninAppleState extends State<SigninApple> {
       }
       widget.onSignIn(credential);
     } catch (error) {
+      NewrelicMobile.instance.recordError(
+        error,
+        StackTrace.current,
+        attributes: {"err_code": "signin_apple"},
+      );
       print(error);
     }
   }

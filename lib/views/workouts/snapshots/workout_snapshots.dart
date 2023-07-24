@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/cancel_button.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/components/root.dart';
@@ -60,6 +61,31 @@ class _WorkoutSnapshotsState extends State<WorkoutSnapshots> {
                 ),
                 childBuilder: (context, item, index) =>
                     _snapshotCell(context, item),
+              ),
+              const SizedBox(height: 16),
+              WrappedButton(
+                title: "Create New Snapshot",
+                rowAxisSize: MainAxisSize.max,
+                center: true,
+                isLoading: _isLoading,
+                onTap: () async {
+                  showAlert(
+                    context: context,
+                    title: "Confirm",
+                    body: Text(
+                        "Are you sure you want to create a snapshot of the workout at this time?"),
+                    cancelText: "Cancel",
+                    onCancel: () {},
+                    submitText: "Confirm",
+                    submitBolded: true,
+                    onSubmit: () async {
+                      var snp = await widget.workout.toSnapshot();
+                      var db = await getDB();
+                      await db.insert("workout_snapshot", snp.toMap());
+                      await _getSnapshots();
+                    },
+                  );
+                },
               ),
             ],
           ),

@@ -124,15 +124,17 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
       header: (context) => _header(context, dmodel, lmodel),
       headerPadding: const EdgeInsets.fromLTRB(16, 0, 0, 16),
       builder: (context) {
-        return PageView(
-          onPageChanged: (value) => lmodel.setIndex(value),
-          controller: lmodel.state.pageController,
-          children: [
-            if (lmodel.state.exerciseChildren.isNotEmpty)
-              for (int i = 0; i < lmodel.state.exercises.length; i++)
-                LWExerciseDetail(index: i),
-            const LWEnd(),
-          ],
+        return Scaffold(
+          body: PageView(
+            onPageChanged: (value) => lmodel.setIndex(value),
+            controller: lmodel.state.pageController,
+            children: [
+              if (lmodel.state.exerciseChildren.isNotEmpty)
+                for (int i = 0; i < lmodel.state.exercises.length; i++)
+                  LWExerciseDetail(index: i),
+              const LWEnd(),
+            ],
+          ),
         );
       },
     );
@@ -175,8 +177,7 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
                       submitBolded: true,
                       submitText: "Finish",
                       onSubmit: () async {
-                        await lmodel.finishWorkout(dmodel);
-                        Navigator.of(context, rootNavigator: true).pop();
+                        await lmodel.handleWorkoutFinish(context, dmodel);
                       },
                     );
                     break;

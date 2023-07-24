@@ -4,8 +4,10 @@ import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:workout_notepad_v2/components/alert.dart';
@@ -106,14 +108,14 @@ class DataModel extends ChangeNotifier {
   List<Collection> _collections = [];
   List<Collection> get collections => _collections;
   Future<void> refreshCollections() async {
-    _collections = await Collection.getList();
+    // _collections = await Collection.getList();
   }
 
   CollectionItem? _nextWorkout;
   CollectionItem? get nextWorkout => _nextWorkout;
   Future<void> refreshNextWorkout() async {
-    _getNextWorkout();
-    notifyListeners();
+    // _getNextWorkout();
+    // notifyListeners();
   }
 
   List<Snapshot> _snapshots = [];
@@ -211,12 +213,21 @@ class DataModel extends ChangeNotifier {
       print(user);
       var prefs = await SharedPreferences.getInstance();
       prefs.setString("user", jsonEncode(user!.toMap()));
+
+      // set user id in newrelic
+      await NewrelicMobile.instance.setUserId(user!.userId);
+
       notifyListeners();
       // do not snapshot anon data
       if (!user!.isAnon) {
         handleSnapshotInit();
       }
     } catch (error) {
+      NewrelicMobile.instance.recordError(
+        error,
+        StackTrace.current,
+        attributes: {"err_code": "fetch_user"},
+      );
       print(
           "GET_USER there was an error fetching the user. Assuming user is offline");
       user!.offline = true;
@@ -267,6 +278,10 @@ class DataModel extends ChangeNotifier {
   }
 
   Future<bool> snapshotData() async {
+    // do not snapshot in debug mode
+    if (foundation.kDebugMode) {
+      return true;
+    }
     // do not snapshot anon data
     if (user!.isAnon) {
       return true;
@@ -289,21 +304,16 @@ class DataModel extends ChangeNotifier {
     var getW = Workout.getList(db: db);
     var getE = Exercise.getList(db: db);
     var getT = Tag.getList(db: db);
-    var getCo = Collection.getList(db: db);
-    var getNW = _getNextWorkout(db: db);
     var getMD = currentDataMetadata(db: db);
 
     // run all asynchronously at the same time
-    List<dynamic> results =
-        await Future.wait([getC, getW, getE, getT, getCo, getNW, getMD]);
+    List<dynamic> results = await Future.wait([getC, getW, getE, getT, getMD]);
 
     _categories = results[0];
     _workouts = results[1];
     _exercises = results[2];
     _tags = results[3];
-    _collections = results[4];
-    _nextWorkout = results[5];
-    currentMetadata = results[6];
+    currentMetadata = results[4];
     notifyListeners();
   }
 
@@ -400,6 +410,11 @@ class DataModel extends ChangeNotifier {
         );
       }
     }
+    await NewrelicMobile.instance.recordCustomEvent(
+      "Major",
+      eventName: "create_workout_state",
+      eventAttributes: workoutState?.toMap(),
+    );
     return workoutState!;
   }
 
@@ -407,6 +422,8 @@ class DataModel extends ChangeNotifier {
     if (workoutState!.isEmpty && isCancel) {
       print("Deleting this temporary workout");
       var db = await getDB();
+      NewrelicMobile.instance
+          .recordCustomEvent("Major", eventName: "workout_temp_cancel");
       await db.rawQuery(
         "DELETE from workout WHERE workoutId = '${workoutState!.workout.workoutId}'",
       );

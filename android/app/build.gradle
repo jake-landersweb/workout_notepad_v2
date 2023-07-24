@@ -27,6 +27,8 @@ apply plugin: 'com.google.gms.google-services'
 // END: FlutterFire Configuration
 apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+// NEW RELIC
+apply plugin: 'newrelic'
 
 android {
     compileSdkVersion flutter.compileSdkVersion
@@ -54,6 +56,7 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        minSdkVersion 28
     }
 
     buildTypes {

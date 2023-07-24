@@ -15,6 +15,7 @@ class ExerciseLog {
   late ExerciseType type;
   late int sets;
   String? note;
+  late bool isSuperSet;
   late String created;
   late String updated;
 
@@ -30,6 +31,7 @@ class ExerciseLog {
     required this.sets,
     required this.type,
     this.note,
+    required this.isSuperSet,
     required this.created,
     required this.updated,
   });
@@ -42,6 +44,7 @@ class ExerciseLog {
     sets = exercise.sets;
     type = exercise.type;
     note = "";
+    isSuperSet = false;
     created = "";
     updated = "";
     metadata = [];
@@ -60,6 +63,7 @@ class ExerciseLog {
     sets = exercise.sets;
     type = exercise.type;
     note = "";
+    isSuperSet = false;
     created = "";
     updated = "";
     metadata = [];
@@ -89,6 +93,7 @@ class ExerciseLog {
     sets = exercise.sets;
     type = exercise.type;
     note = "";
+    isSuperSet = true;
     created = "";
     updated = "";
     metadata = [];
@@ -116,6 +121,7 @@ class ExerciseLog {
       type: exerciseTypeFromJson(json['type']),
       sets: json['sets'],
       note: json['note'],
+      isSuperSet: (json['isSuperSet'] ?? 0) == 0 ? false : true,
       created: json['created'],
       updated: json['updated'],
     );
@@ -160,6 +166,7 @@ class ExerciseLog {
         "workoutLogId": workoutLogId,
         "title": title,
         "type": exerciseTypeToJson(type),
+        "isSuperSet": isSuperSet ? 1 : 0,
         "sets": sets,
         "note": note,
       };

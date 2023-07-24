@@ -24,7 +24,7 @@ class LogsCategoryDistribution extends StatefulWidget {
 
 class _LogsCategoryDistributionState extends State<LogsCategoryDistribution> {
   final List<Tuple2<Category, int>> _distribution = [];
-  final List<Tuple3<Category, String, int>> _mostLogged = [];
+  final List<Tuple4<Category, String, String, int>> _mostLogged = [];
   bool _isLoading = true;
 
   @override
@@ -116,39 +116,52 @@ class _LogsCategoryDistributionState extends State<LogsCategoryDistribution> {
     );
   }
 
-  Widget _cell(BuildContext context, Tuple3<Category, String, int> item) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.cell(context),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-        child: Row(
-          children: [
-            getImageIcon(item.v1.icon, size: 40),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(item.v1.title.capitalize(), style: ttcaption(context)),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          item.v2,
-                          style: ttLabel(context),
+  Widget _cell(
+      BuildContext context, Tuple4<Category, String, String, int> item) {
+    return Clickable(
+      onTap: () {
+        cupertinoSheet(
+          context: context,
+          builder: (context) => ExerciseLogs(
+            exerciseId: item.v3,
+            isInteractive: false,
+          ),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.cell(context),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+          child: Row(
+            children: [
+              getImageIcon(item.v1.icon, size: 40),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(item.v1.title.capitalize(), style: ttcaption(context)),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item.v2,
+                            style: ttLabel(context),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: 8),
-            Text("${item.v3} Logs", style: ttLargeLabel(context)),
-          ],
+              const SizedBox(width: 8),
+              Text("${item.v4} Logs",
+                  style: ttBody(context, fontWeight: FontWeight.w700)),
+            ],
+          ),
         ),
       ),
     );
@@ -210,7 +223,8 @@ class _LogsCategoryDistributionState extends State<LogsCategoryDistribution> {
       var c = widget.categories
           .firstWhereOrNull((element) => element.categoryId == i['category']);
       if (c != null) {
-        _mostLogged.add(Tuple3(c, i['title'] as String, i['log_count'] as int));
+        _mostLogged.add(Tuple4(c, i['title'] as String,
+            i['exerciseId'] as String, i['log_count'] as int));
       }
     }
 

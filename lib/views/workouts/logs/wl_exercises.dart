@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
+import 'package:workout_notepad_v2/components/section.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 
 import 'package:workout_notepad_v2/components/root.dart' as comp;
@@ -35,27 +36,31 @@ class _WLExercisesState extends State<WLExercises> {
   @override
   Widget build(BuildContext context) {
     return HeaderBar.sheet(
-      title: "Exericse Logs",
+      title: "Exercise Logs",
       leading: const [comp.CloseButton2()],
       children: [
         const SizedBox(height: 16),
         if (_workoutLog != null)
           for (var i = 0; i < _workoutLog!.exerciseLogs.length; i++)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _workoutLog!.exerciseLogs[i].title,
-                  style: ttSubTitle(context),
+            if (_workoutLog!.exerciseLogs[i].isSuperSet)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(32, 0, 0, 16),
+                child: Section(
+                  "- ${_workoutLog!.exerciseLogs[i].title}",
+                  child: ELCell(
+                    log: _workoutLog!.exerciseLogs[i],
+                    showDate: false,
+                  ),
                 ),
-                const SizedBox(height: 8),
-                ELCell(
+              )
+            else
+              Section(
+                _workoutLog!.exerciseLogs[i].title,
+                child: ELCell(
                   log: _workoutLog!.exerciseLogs[i],
                   showDate: false,
                 ),
-                const SizedBox(height: 16),
-              ],
-            ),
+              ),
       ],
     );
   }

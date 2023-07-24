@@ -85,48 +85,59 @@ class _LogsTypeDistributionState extends State<LogsTypeDistribution> {
   }
 
   Widget _mostLoggedCell(BuildContext context, Tuple2<Exercise, int> item) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.cell(context),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 1,
-              child: Column(
-                children: [
-                  Image.asset(
-                    exerciseTypeIcon(item.v1.type),
-                    height: 40,
-                    width: 40,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    exerciseTypeTitle(item.v1.type),
-                    style: ttcaption(context),
-                  ),
-                ],
+    return Clickable(
+      onTap: () {
+        cupertinoSheet(
+          context: context,
+          builder: (context) => ExerciseLogs(
+            exerciseId: item.v1.exerciseId,
+            isInteractive: false,
+          ),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.cell(context),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: [
+                    Image.asset(
+                      exerciseTypeIcon(item.v1.type),
+                      height: 40,
+                      width: 40,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      exerciseTypeTitle(item.v1.type),
+                      style: ttcaption(context),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Expanded(
-              flex: 3,
-              child: Column(
-                children: [
-                  Text(
-                    item.v1.title,
-                    style: ttcaption(context),
-                  ),
-                  Text(
-                    "${item.v2} Logs",
-                    style: ttTitle(context),
-                  ),
-                ],
+              Expanded(
+                flex: 3,
+                child: Column(
+                  children: [
+                    Text(
+                      item.v1.title,
+                      style: ttcaption(context),
+                    ),
+                    Text(
+                      "${item.v2} Logs",
+                      style: ttTitle(context),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

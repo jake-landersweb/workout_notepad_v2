@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/components/contained_list.dart';
+import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
 import 'package:workout_notepad_v2/components/field.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
 
@@ -11,6 +12,7 @@ import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/components/time_picker.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/views/exercises/create_edit_exercise/cee_details.dart';
 import 'package:workout_notepad_v2/views/exercises/create_edit_exercise/cee_type.dart';
 import 'package:workout_notepad_v2/views/exercises/create_edit_exercise/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -87,6 +89,18 @@ class _CEERootState extends State<CEERoot> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: _title(context, cemodel),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: comp.WrappedButton(
+            title: "Exercise Details",
+            icon: Icons.info_outline_rounded,
+            rowAxisSize: MainAxisSize.max,
+            onTap: () => cupertinoSheet(
+              context: context,
+              builder: (context) => CEEDetails(cemodel: cemodel),
+            ),
+          ),
         ),
         comp.Section(
           "Category",
@@ -174,7 +188,7 @@ class _CEERootState extends State<CEERoot> {
 
   Widget _title(BuildContext context, CreateExerciseModel cemodel) {
     return ContainedList<Widget>(
-      childPadding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+      childPadding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
       leadingPadding: 0,
       trailingPadding: 0,
       children: [
@@ -187,18 +201,6 @@ class _CEERootState extends State<CEERoot> {
           onChanged: (val) {
             setState(() {
               cemodel.exercise.title = val;
-            });
-          },
-        ),
-        Field(
-          labelText: "Note",
-          charLimit: 100,
-          maxLines: 3,
-          value: cemodel.exercise.description,
-          showCharacters: true,
-          onChanged: (val) {
-            setState(() {
-              cemodel.exercise.description = val;
             });
           },
         ),
@@ -219,9 +221,8 @@ class _CEERootState extends State<CEERoot> {
         children: [
           Clickable(
             onTap: () {
-              comp.showFloatingSheet(
+              comp.cupertinoSheet(
                 context: context,
-                useRootNavigator: true,
                 builder: (context) => CreateCategory(
                   categories: dmodel.categories.map((e) => e.title).toList(),
                   onCompletion: (val, icon) async {

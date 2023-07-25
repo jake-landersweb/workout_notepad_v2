@@ -188,17 +188,10 @@ class _HomeState extends State<Home> {
                     ),
                   ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 16, 0, 8),
+                  padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      _barRow(
-                        context,
-                        dmodel,
-                        LineIcons.barChartAlt,
-                        "Logs",
-                        HomeScreen.logs,
-                      ),
                       // _barRow(
                       //   context,
                       //   dmodel,
@@ -219,6 +212,13 @@ class _HomeState extends State<Home> {
                         LineIcons.dumbbell,
                         "Exercises",
                         HomeScreen.exercises,
+                      ),
+                      _barRow(
+                        context,
+                        dmodel,
+                        LineIcons.barChartAlt,
+                        "Logs",
+                        HomeScreen.logs,
                       ),
                       _barRow(
                         context,

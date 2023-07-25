@@ -8,6 +8,7 @@ import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/logs/no_logs.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 
 class LogsCategoryDistribution extends StatefulWidget {
@@ -46,53 +47,7 @@ class _LogsCategoryDistributionState extends State<LogsCategoryDistribution> {
             padding: const EdgeInsets.all(16.0),
             child: AspectRatio(
               aspectRatio: 1,
-              child: _isLoading || _distribution.isEmpty
-                  ? LoadingWrapper(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.cell(context),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    )
-                  : RadarChart(
-                      RadarChartData(
-                        tickBorderData: BorderSide.none,
-                        gridBorderData: BorderSide.none,
-                        radarBorderData: BorderSide.none,
-                        titlePositionPercentageOffset: 0.1,
-                        borderData: FlBorderData(
-                          show: false,
-                        ),
-                        tickCount: 1,
-                        ticksTextStyle: const TextStyle(
-                            color: Colors.transparent, fontSize: 10),
-                        dataSets: [
-                          RadarDataSet(
-                            fillColor: Theme.of(context)
-                                .colorScheme
-                                .primary
-                                .withOpacity(0.3),
-                            borderColor: Theme.of(context).colorScheme.primary,
-                            dataEntries: [
-                              for (var i in _distribution)
-                                RadarEntry(value: i.v2.toDouble()),
-                            ],
-                          ),
-                        ],
-                        getTitle: (index, angle) {
-                          return RadarChartTitle(
-                            text:
-                                "${_distribution[index].v2}\n${_distribution[index].v1.title.capitalize()}",
-                            angle:
-                                angle < 270 && angle > 90 ? angle - 180 : angle,
-                          );
-                        },
-                      ),
-                      swapAnimationDuration:
-                          Duration(milliseconds: 150), // Optional
-                      swapAnimationCurve: Curves.linear, // Optional
-                    ),
+              child: _child(context),
             ),
           ),
           if (_mostLogged.isNotEmpty)
@@ -114,6 +69,54 @@ class _LogsCategoryDistributionState extends State<LogsCategoryDistribution> {
         ],
       ),
     );
+  }
+
+  Widget _child(BuildContext context) {
+    if (_isLoading) {
+      return LoadingWrapper(
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.cell(context),
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+    } else if (_distribution.isEmpty || _distribution.length < 3) {
+      return const NoLogs();
+    } else {
+      return RadarChart(
+        RadarChartData(
+          tickBorderData: BorderSide.none,
+          gridBorderData: BorderSide.none,
+          radarBorderData: BorderSide.none,
+          titlePositionPercentageOffset: 0.1,
+          borderData: FlBorderData(
+            show: false,
+          ),
+          tickCount: 1,
+          ticksTextStyle:
+              const TextStyle(color: Colors.transparent, fontSize: 10),
+          dataSets: [
+            RadarDataSet(
+              fillColor: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+              borderColor: Theme.of(context).colorScheme.primary,
+              dataEntries: [
+                for (var i in _distribution) RadarEntry(value: i.v2.toDouble()),
+              ],
+            ),
+          ],
+          getTitle: (index, angle) {
+            return RadarChartTitle(
+              text:
+                  "${_distribution[index].v2}\n${_distribution[index].v1.title.capitalize()}",
+              angle: angle < 270 && angle > 90 ? angle - 180 : angle,
+            );
+          },
+        ),
+        swapAnimationDuration: Duration(milliseconds: 150), // Optional
+        swapAnimationCurve: Curves.linear, // Optional
+      );
+    }
   }
 
   Widget _cell(

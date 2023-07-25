@@ -120,12 +120,12 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
   Widget _body(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
     var lmodel = Provider.of<LaunchWorkoutModel>(context);
-    return comp.InteractiveSheet(
-      header: (context) => _header(context, dmodel, lmodel),
-      headerPadding: const EdgeInsets.fromLTRB(16, 0, 0, 16),
-      builder: (context) {
-        return Scaffold(
-          body: PageView(
+    return Scaffold(
+      body: comp.InteractiveSheet(
+        header: (context) => _header(context, dmodel, lmodel),
+        headerPadding: const EdgeInsets.fromLTRB(16, 0, 0, 16),
+        builder: (context) {
+          return PageView(
             onPageChanged: (value) => lmodel.setIndex(value),
             controller: lmodel.state.pageController,
             children: [
@@ -134,9 +134,9 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
                   LWExerciseDetail(index: i),
               const LWEnd(),
             ],
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 

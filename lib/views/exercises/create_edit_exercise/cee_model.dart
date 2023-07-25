@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/exercise_detail.dart';
 import 'package:workout_notepad_v2/data/root.dart';
@@ -36,8 +37,24 @@ class CreateExerciseModel extends ChangeNotifier {
     int response;
     if (update) {
       response = await exercise.update();
+      await NewrelicMobile.instance.recordCustomEvent(
+        "WN_Metric",
+        eventName: "exercise_update",
+        eventAttributes: {
+          "exerciseId": exercise.exerciseId,
+          "title": exercise.title,
+        },
+      );
     } else {
       response = await exercise.insert();
+      await NewrelicMobile.instance.recordCustomEvent(
+        "WN_Metric",
+        eventName: "exercise_create",
+        eventAttributes: {
+          "exerciseId": exercise.exerciseId,
+          "title": exercise.title,
+        },
+      );
     }
     if (response == 0) {
       return null;

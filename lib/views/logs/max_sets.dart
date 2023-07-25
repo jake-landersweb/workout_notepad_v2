@@ -7,6 +7,7 @@ import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/logs/no_logs.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 
 class LogsMaxSets extends StatefulWidget {
@@ -36,21 +37,22 @@ class _LogsMaxSetsState extends State<LogsMaxSets> {
         leading: const [BackButton2()],
         children: [
           const SizedBox(height: 16),
-          SegmentedPicker(
-              titles: ["Weight", "Time", "Reps"],
-              style: SegmentedPickerStyle(
-                backgroundColor: AppColors.cell(context),
-              ),
-              onSelection: (v) async {
-                setState(() {
-                  _type = v as String;
-                });
-                await _fetchData();
-              },
-              selection: _type),
           if (_items.isNotEmpty)
             Column(
               children: [
+                SegmentedPicker(
+                  titles: ["Weight", "Time", "Reps"],
+                  style: SegmentedPickerStyle(
+                    backgroundColor: AppColors.cell(context),
+                  ),
+                  onSelection: (v) async {
+                    setState(() {
+                      _type = v as String;
+                    });
+                    await _fetchData();
+                  },
+                  selection: _type,
+                ),
                 for (var i in _items)
                   Section(
                     i.v1.title,
@@ -62,7 +64,9 @@ class _LogsMaxSetsState extends State<LogsMaxSets> {
                     ),
                   ),
               ],
-            ),
+            )
+          else
+            const NoLogs(),
         ],
       ),
     );

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
@@ -179,12 +180,26 @@ class _ConfigureCategoriesState extends State<ConfigureCategories> {
         setState(() {
           _isLoading = false;
         });
+        await NewrelicMobile.instance.recordCustomEvent(
+          "WN_Metric",
+          eventName: "category_configure",
+          eventAttributes: {
+            "length": _categories.length,
+          },
+        );
         Navigator.of(context).pop();
       }
     } catch (e) {
+      NewrelicMobile.instance.recordError(
+        e,
+        StackTrace.current,
+        attributes: {"err_code": "category_save"},
+      );
       print(e);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("There was an issue saving your categories"),
+        content: Text(
+          "There was an issue saving your categories",
+        ),
         backgroundColor: Colors.red[300],
       ));
     }

@@ -70,15 +70,19 @@ class _SigninAppleState extends State<SigninApple> {
           await FirebaseAuth.instance.signInWithProvider(appleProvider);
       if (credential.user == null) {
         print("There was an error signing in with apple");
-
         return;
       }
+      await NewrelicMobile.instance.recordCustomEvent(
+        "WN_Metric",
+        eventName: "login_apple",
+        eventAttributes: {"userId": credential.user?.uid},
+      );
       widget.onSignIn(credential);
     } catch (error) {
       NewrelicMobile.instance.recordError(
         error,
         StackTrace.current,
-        attributes: {"err_code": "signin_apple"},
+        attributes: {"err_code": "login_apple"},
       );
       print(error);
     }

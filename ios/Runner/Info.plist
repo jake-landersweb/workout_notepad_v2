@@ -2,12 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>The exercise context also allows for recording videos, which inherently comes with sound access. This will be used to allow for videos to be attached to exercises for context.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>If the user would like to take a new picture with the camera for exercise context, then they should be free to do so.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app will request photos from the user if they would like to attach an image to an exercise to allow for better context when performing a given exercise.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -44,6 +38,12 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>If the user would like to take a new picture with the camera for exercise context, then they should be free to do so.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>The exercise context also allows for recording videos, which inherently comes with sound access. This will be used to allow for videos to be attached to exercises for context.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app will request photos from the user if they would like to attach an image to an exercise to allow for better context when performing a given exercise.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -53,15 +53,14 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>

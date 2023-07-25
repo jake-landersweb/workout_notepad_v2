@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:workout_notepad_v2/data/exercise_set.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
@@ -172,8 +173,22 @@ class CEWModel extends ChangeNotifier {
       });
       // update the data
       await dmodel.refreshWorkouts();
+      await NewrelicMobile.instance.recordCustomEvent(
+        "WN_Metric",
+        eventName: "workout_create",
+        eventAttributes: {
+          "workoutId": workout.workoutId,
+          "exercises": exercises.length,
+          "title": workout.title,
+        },
+      );
       return workout;
     } catch (e) {
+      NewrelicMobile.instance.recordError(
+        e,
+        StackTrace.current,
+        attributes: {"err_code": "workout_create"},
+      );
       if (kDebugMode) {
         print(e);
       }
@@ -242,12 +257,27 @@ class CEWModel extends ChangeNotifier {
       });
       // update the data
       await dmodel.fetchData();
+      await NewrelicMobile.instance.recordCustomEvent(
+        "WN_Metric",
+        eventName: "workout_update",
+        eventAttributes: {
+          "workoutId": workout.workoutId,
+          "exercises": exercises.length,
+          "title": workout.title,
+        },
+      );
       notifyListeners();
       return workout;
     } catch (e) {
+      NewrelicMobile.instance.recordError(
+        e,
+        StackTrace.current,
+        attributes: {"err_code": "workout_update"},
+      );
       if (kDebugMode) {
         print(e);
       }
+
       return null;
     }
   }

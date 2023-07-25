@@ -329,27 +329,18 @@ class LaunchWorkoutModel extends ChangeNotifier {
 
         // insert the workout
         await txn.insert("workout_log", state.wl.toMap());
-        NewrelicMobile.instance.recordCustomEvent(
-          "Major",
-          eventName: "workout_end",
-          eventAttributes: state.wl.toMap(),
-        );
       });
     } catch (error) {
-      var errorId = const Uuid().v4();
       NewrelicMobile.instance.recordError(
         error,
         StackTrace.current,
-        attributes: {
-          "err_code": "saving_workout",
-          "workout_log": state.wl.toMap(),
-          "error_id": errorId
-        },
+        attributes: {"err_code": "workout_save"},
+        isFatal: true,
       );
       print(error);
       return Tuple2(
         false,
-        "We are so sorry, but there was an unknown issue saving this workout. A snapshot has been taken and set to support. They have been notified and will be reaching out to you on steps to preserve this workout data. Reference code: $errorId",
+        "We are so sorry, but there was an unknown issue saving this workout. Support has been notified and will be reaching out to you on steps to preserve this workout data.",
       );
     }
 
@@ -364,19 +355,16 @@ class LaunchWorkoutModel extends ChangeNotifier {
           conflictAlgorithm: ConflictAlgorithm.replace,
         );
       } catch (error) {
-        var errorId = const Uuid().v4();
         NewrelicMobile.instance.recordError(
           error,
           StackTrace.current,
           attributes: {
             "err_code": "attaching_collection",
-            "workout_log": state.wl.toMap(),
-            "error_id": errorId
           },
         );
         print(error);
         return Tuple2(false,
-            "Your workout was successfully saved, but there was an issue attaching this workout to the apporpriate collection. You can safely cancel this workout and not lose progress. Reference code: $errorId");
+            "Your workout was successfully saved, but there was an issue attaching this workout to the apporpriate collection. You can safely cancel this workout and not lose progress.");
       }
     }
 
@@ -386,19 +374,16 @@ class LaunchWorkoutModel extends ChangeNotifier {
       var snp = await state.workout.toSnapshot();
       await db.insert("workout_snapshot", snp.toMap());
     } catch (error) {
-      var errorId = const Uuid().v4();
       NewrelicMobile.instance.recordError(
         error,
         StackTrace.current,
         attributes: {
           "err_code": "workout_snapshot",
-          "workout_log": state.wl.toMap(),
-          "error_id": errorId
         },
       );
       print(error);
       return Tuple2(false,
-          "Your workout was successfully saved, but there was an issue creating a snapshot of the workout. You can safely cancel this workout and not lose progress. Reference code: $errorId");
+          "Your workout was successfully saved, but there was an issue creating a snapshot of the workout. You can safely cancel this workout and not lose progress.");
     }
 
     await dmodel.stopWorkout();

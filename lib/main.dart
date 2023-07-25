@@ -46,7 +46,7 @@ void main() async {
     // Optional: Enable or disable agent logging.
     loggingEnabled: true,
     // Optional: Enable or disable print statements as Analytics Events.
-    printStatementAsEventsEnabled: true,
+    printStatementAsEventsEnabled: false,
     // Optional: Enable or disable automatic instrumentation of HTTP requests.
     httpInstrumentationEnabled: true,
   );
@@ -65,7 +65,12 @@ void main() async {
 
     runApp(const MyApp());
   }, (Object error, StackTrace stackTrace) {
-    NewrelicMobile.instance.recordError(error, stackTrace);
+    NewrelicMobile.instance.recordError(
+      error,
+      stackTrace,
+      attributes: {"err_code": "launch_app"},
+      isFatal: true,
+    );
   });
 }
 

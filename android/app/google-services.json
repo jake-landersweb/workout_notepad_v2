@@ -14,7 +14,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "993769836789-gapmp94k2c8n9gfkmed3dmveojd71p74.apps.googleusercontent.com",
+          "client_id": "993769836789-g7suogji2860ce7enav3g3mps7ms9616.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.landersweb.workout_notepad_v2",
+            "certificate_hash": "bcd727dca3f31f27e132eedb8c0ebec2ee7161e5"
+          }
+        },
+        {
+          "client_id": "993769836789-e614gf7untnrc9dljh3vo1djamch2m0c.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -27,14 +35,14 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "993769836789-gapmp94k2c8n9gfkmed3dmveojd71p74.apps.googleusercontent.com",
+              "client_id": "993769836789-e614gf7untnrc9dljh3vo1djamch2m0c.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "993769836789-o52cpd11lc4kkccfhqtgftmut6s7ph34.apps.googleusercontent.com",
+              "client_id": "993769836789-52u5tgqoti6b2729jtvvnphhijoksbe8.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.landersweb.workoutNotepadV2"
+                "bundle_id": "com.landersweb.workout-notepad-v2"
               }
             }
           ]

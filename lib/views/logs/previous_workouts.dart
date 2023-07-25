@@ -6,6 +6,7 @@ import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/logs/no_logs.dart';
 import 'dart:math' as math;
 
 import 'package:workout_notepad_v2/views/workouts/logs/root.dart';
@@ -41,101 +42,7 @@ class _LogsPreviousWorkoutsState extends State<LogsPreviousWorkouts> {
             "Workout Duration By Day",
             child: AspectRatio(
               aspectRatio: 1,
-              child: _isLoading
-                  ? LoadingWrapper(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.cell(context),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    )
-                  : Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.cell(context),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: BarChart(
-                          BarChartData(
-                            gridData: FlGridData(show: false),
-                            borderData: FlBorderData(show: false),
-                            barTouchData: BarTouchData(
-                              enabled: true,
-                              touchTooltipData: BarTouchTooltipData(
-                                tooltipBgColor: Theme.of(context)
-                                    .colorScheme
-                                    .surfaceVariant
-                                    .withOpacity(0.7),
-                                getTooltipItem: (group, a, rod, b) {
-                                  return BarTooltipItem(
-                                    "${formatHHMMSS(rod.toY.toInt())}\n${formatDateTime(DateTime.fromMillisecondsSinceEpoch(group.x))}",
-                                    const TextStyle(),
-                                  );
-                                },
-                              ),
-                            ),
-                            maxY: _workoutDurationDays
-                                    .reduce((a, b) => a.v2 > b.v2 ? a : b)
-                                    .v2 *
-                                1.3,
-                            barGroups: [
-                              for (var i in _workoutDurationDays)
-                                BarChartGroupData(
-                                  x: i.v1.millisecondsSinceEpoch,
-                                  barRods: [
-                                    BarChartRodData(
-                                      toY: i.v2,
-                                      width:
-                                          (MediaQuery.of(context).size.width /
-                                                  7) -
-                                              32,
-                                      color:
-                                          Theme.of(context).colorScheme.primary,
-                                    ),
-                                  ],
-                                ),
-                            ],
-                            titlesData: FlTitlesData(
-                              rightTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false)),
-                              topTitles: AxisTitles(
-                                  sideTitles: SideTitles(showTitles: false)),
-                              leftTitles: AxisTitles(
-                                sideTitles: SideTitles(
-                                  showTitles: true,
-                                  reservedSize: 50,
-                                  getTitlesWidget: (value, meta) {
-                                    return Text(
-                                      formatHHMMSS(value.toInt()),
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: AppColors.subtext(context),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                              bottomTitles: AxisTitles(
-                                sideTitles: SideTitles(
-                                  showTitles: false,
-                                  getTitlesWidget: (value, meta) {
-                                    return Text(
-                                      "Set #${value.round() + 1}",
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        color: AppColors.subtext(context),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+              child: _child(context),
             ),
           ),
           const SizedBox(height: 16),
@@ -188,6 +95,104 @@ class _LogsPreviousWorkoutsState extends State<LogsPreviousWorkouts> {
         ],
       ),
     );
+  }
+
+  Widget _child(BuildContext context) {
+    if (_isLoading) {
+      return LoadingWrapper(
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.cell(context),
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+    } else if (_workoutLogs.isEmpty) {
+      return const NoLogs();
+    } else {
+      return Container(
+        decoration: BoxDecoration(
+          color: AppColors.cell(context),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: BarChart(
+            BarChartData(
+              gridData: FlGridData(show: false),
+              borderData: FlBorderData(show: false),
+              barTouchData: BarTouchData(
+                enabled: true,
+                touchTooltipData: BarTouchTooltipData(
+                  tooltipBgColor: Theme.of(context)
+                      .colorScheme
+                      .surfaceVariant
+                      .withOpacity(0.7),
+                  getTooltipItem: (group, a, rod, b) {
+                    return BarTooltipItem(
+                      "${formatHHMMSS(rod.toY.toInt())}\n${formatDateTime(DateTime.fromMillisecondsSinceEpoch(group.x))}",
+                      const TextStyle(),
+                    );
+                  },
+                ),
+              ),
+              maxY: _workoutDurationDays
+                      .reduce((a, b) => a.v2 > b.v2 ? a : b)
+                      .v2 *
+                  1.3,
+              barGroups: [
+                for (var i in _workoutDurationDays)
+                  BarChartGroupData(
+                    x: i.v1.millisecondsSinceEpoch,
+                    barRods: [
+                      BarChartRodData(
+                        toY: i.v2,
+                        width: (MediaQuery.of(context).size.width / 7) - 32,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ],
+                  ),
+              ],
+              titlesData: FlTitlesData(
+                rightTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                topTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 50,
+                    getTitlesWidget: (value, meta) {
+                      return Text(
+                        formatHHMMSS(value.toInt()),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.subtext(context),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: false,
+                    getTitlesWidget: (value, meta) {
+                      return Text(
+                        "Set #${value.round() + 1}",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: AppColors.subtext(context),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
   }
 
   Future<void> _fetchData() async {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/model/root.dart';
@@ -125,6 +126,11 @@ class _LoginState extends State<Login> {
         });
         return;
       }
+      await NewrelicMobile.instance.recordCustomEvent(
+        "WN_Metric",
+        eventName: "login_email",
+        eventAttributes: {"userId": credential.user?.uid},
+      );
       await dmodel.loginUser(context, credential);
       Navigator.of(context).pop();
     } on FirebaseAuthException catch (e) {

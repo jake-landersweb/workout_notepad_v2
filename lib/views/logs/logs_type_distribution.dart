@@ -6,6 +6,7 @@ import 'package:workout_notepad_v2/data/exercise_base.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/logs/no_logs.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 
 class LogsTypeDistribution extends StatefulWidget {
@@ -35,50 +36,54 @@ class _LogsTypeDistributionState extends State<LogsTypeDistribution> {
         leading: const [BackButton2()],
         children: [
           const SizedBox(height: 32),
-          AspectRatio(
-            aspectRatio: 1,
-            child: PieChart(
-              PieChartData(
-                sections: [
-                  for (var i in _logDistribution)
-                    PieChartSectionData(
-                      value: i.v2.toDouble(),
-                      color: exerciseTypeColor(i.v1),
-                      radius: 100,
-                      title: "${i.v2}\n${exerciseTypeTitle(i.v1)}",
-                      badgeWidget: Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.cell(context),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(2.0),
-                          child: Image.asset(
-                            exerciseTypeIcon(i.v1),
-                            height: 30,
-                            width: 30,
+          if (_logDistribution.isEmpty)
+            const NoLogs()
+          else
+            AspectRatio(
+              aspectRatio: 1,
+              child: PieChart(
+                PieChartData(
+                  sections: [
+                    for (var i in _logDistribution)
+                      PieChartSectionData(
+                        value: i.v2.toDouble(),
+                        color: exerciseTypeColor(i.v1),
+                        radius: 100,
+                        title: "${i.v2}\n${exerciseTypeTitle(i.v1)}",
+                        badgeWidget: Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.cell(context),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(2.0),
+                            child: Image.asset(
+                              exerciseTypeIcon(i.v1),
+                              height: 30,
+                              width: 30,
+                            ),
                           ),
                         ),
+                        badgePositionPercentageOffset: .98,
                       ),
-                      badgePositionPercentageOffset: .98,
+                  ],
+                ),
+              ),
+            ),
+          const SizedBox(height: 16),
+          if (_topExercises.isNotEmpty)
+            Section(
+              "Most Logged By Type",
+              child: Column(
+                children: [
+                  for (var i in _topExercises)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: _mostLoggedCell(context, i),
                     ),
                 ],
               ),
             ),
-          ),
-          const SizedBox(height: 16),
-          Section(
-            "Most Logged By Type",
-            child: Column(
-              children: [
-                for (var i in _topExercises)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: _mostLoggedCell(context, i),
-                  ),
-              ],
-            ),
-          ),
         ],
       ),
     );

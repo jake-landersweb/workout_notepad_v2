@@ -1,7 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages, avoid_print, prefer_const_constructors, use_build_context_synchronously
 
 import 'dart:convert';
-
 import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/foundation.dart' as foundation;
@@ -37,6 +36,7 @@ class DataModel extends ChangeNotifier {
   LoadStatus loadStatus = LoadStatus.init;
   Color color = const Color(0xFF418a2f);
   List<SnapshotMetadataItem> currentMetadata = [];
+  bool _loadLatestSnapshot = false;
 
   DataModel() {
     init();
@@ -54,6 +54,11 @@ class DataModel extends ChangeNotifier {
       );
       return;
     }
+    await NewrelicMobile.instance.recordCustomEvent(
+      "WN_Metric",
+      eventName: "login_anon",
+      eventAttributes: {"userId": u.userId},
+    );
     prefs.setString("user", jsonEncode(u.toMap()));
     await init(u: u);
   }
@@ -62,6 +67,7 @@ class DataModel extends ChangeNotifier {
     BuildContext context,
     auth.UserCredential credential,
   ) async {
+    _loadLatestSnapshot = true;
     var prefs = await SharedPreferences.getInstance();
     var u = await User.loginAuth(credential, convertFromAnon: user != null);
     if (u == null) {
@@ -72,6 +78,13 @@ class DataModel extends ChangeNotifier {
         ),
       );
       return;
+    }
+    if (user != null) {
+      await NewrelicMobile.instance.recordCustomEvent(
+        "WN_Metric",
+        eventName: "anon_convert",
+        eventAttributes: {"new_user_id": u.userId, "old_user_id": user!.userId},
+      );
     }
     prefs.setString("user", jsonEncode(u.toMap()));
     await init(u: u);
@@ -128,6 +141,13 @@ class DataModel extends ChangeNotifier {
     _currentTabScreen = HomeScreen.overview;
     notifyListeners();
 
+    var db = await getDB();
+    // var response = await db.rawUpdate(
+    //     "UPDATE workout_log SET duration = '6304' WHERE workoutLogId = '64b8ffb2-0005-4746-b27c-8f6744d5da82'");
+    // var response = await db.rawDelete(
+    //     "DELETE FROM workout_log WHERE workoutLogId = '3131a94e-7712-48cb-8f4c-7adbcd2c37de'");
+    // print(response);
+    // return;
     // TODO delete and re-create
     // await importData();
 
@@ -151,8 +171,8 @@ class DataModel extends ChangeNotifier {
     }
 
     print("[INIT] app state is valid. Fetching user in background to ensure");
-    getUser(); // run non-asynchonously to allow for no internet
     await fetchData();
+    getUser(); // run non-asynchonously to allow for no internet
     loadStatus = LoadStatus.done;
     notifyListeners();
   }
@@ -257,8 +277,8 @@ class DataModel extends ChangeNotifier {
       print(
         "last snapshot is older than 8 hours, creating a new snapshot",
       );
-      var sn = await Snapshot.snapshotDatabase(user!.userId);
-      if (sn == null) {
+      var response = await snapshotData();
+      if (!response) {
         print("There was an error snapshotting the data");
         return;
       }
@@ -275,6 +295,11 @@ class DataModel extends ChangeNotifier {
       _snapshots = snp;
       notifyListeners();
     }
+    if (_loadLatestSnapshot) {
+      print("Loading user's latest snapshot");
+      await importSnapshot(snp.first);
+      _loadLatestSnapshot = false;
+    }
   }
 
   Future<bool> snapshotData() async {
@@ -286,13 +311,22 @@ class DataModel extends ChangeNotifier {
     if (user!.isAnon) {
       return true;
     }
-    // snapshot the data for the first time
+    // snapshot the data
     var snps = await Snapshot.snapshotDatabase(user!.userId);
     if (snps == null) {
+      NewrelicMobile.instance.recordError(
+        "There was an issue snapshotting the database",
+        StackTrace.current,
+        attributes: {"err_code": "snapshot_create"},
+      );
       // TODO -- handle errors
       print("There was an issue creating the snapshot");
       return false;
     }
+    await NewrelicMobile.instance.recordCustomEvent(
+      "WN_Metric",
+      eventName: "snapshot_create",
+    );
     _snapshots = snps;
     notifyListeners();
     return true;
@@ -326,9 +360,9 @@ class DataModel extends ChangeNotifier {
 
   Future<void> logout(BuildContext context) async {
     // create a snapshot of their data
-    var sn = await Snapshot.snapshotDatabase(user!.userId);
+    var response = await snapshotData();
     var cont = true;
-    if (sn == null) {
+    if (!response) {
       await showAlert(
         context: context,
         title: "An Error Occured",
@@ -349,6 +383,7 @@ class DataModel extends ChangeNotifier {
     if (cont) {
       await deleteDB();
       await clearData();
+      auth.FirebaseAuth.instance.signOut();
       notifyListeners();
     }
   }
@@ -411,9 +446,12 @@ class DataModel extends ChangeNotifier {
       }
     }
     await NewrelicMobile.instance.recordCustomEvent(
-      "Major",
-      eventName: "create_workout_state",
-      eventAttributes: workoutState?.toMap(),
+      "WN_Metric",
+      eventName: "workout_start",
+      eventAttributes: {
+        "workoutId": workoutState!.workout.workoutId,
+        "title": workoutState!.workout.title,
+      },
     );
     return workoutState!;
   }
@@ -422,8 +460,6 @@ class DataModel extends ChangeNotifier {
     if (workoutState!.isEmpty && isCancel) {
       print("Deleting this temporary workout");
       var db = await getDB();
-      NewrelicMobile.instance
-          .recordCustomEvent("Major", eventName: "workout_temp_cancel");
       await db.rawQuery(
         "DELETE from workout WHERE workoutId = '${workoutState!.workout.workoutId}'",
       );
@@ -431,6 +467,15 @@ class DataModel extends ChangeNotifier {
     if (!isCancel) {
       // create a snapshot of the database in background
       snapshotData();
+      NewrelicMobile.instance.recordCustomEvent(
+        "WN_Metric",
+        eventName: "workout_finish",
+      );
+    } else {
+      NewrelicMobile.instance.recordCustomEvent(
+        "WN_Metric",
+        eventName: "workout_cancel",
+      );
     }
     workoutState = null;
     await fetchData();
@@ -483,6 +528,8 @@ class DataModel extends ChangeNotifier {
   }) async {
     try {
       print("IMPORTING DATA");
+      loadStatus = LoadStatus.init;
+      notifyListeners();
       if (delete) {
         String path = join(await getDatabasesPath(), 'workout_notepad.db');
         await databaseFactory.deleteDatabase(path);
@@ -502,6 +549,9 @@ class DataModel extends ChangeNotifier {
       if (data == null) {
         print("There was an issue importing the data");
         return false;
+      }
+      if (data.containsKey("android_metadata")) {
+        data.remove("android_metadata");
       }
 
       for (var key in data.keys) {

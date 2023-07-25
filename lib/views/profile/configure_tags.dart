@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sql.dart';
 import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
@@ -144,8 +145,20 @@ class _ConfigureTagsState extends State<ConfigureTags> {
       });
       var dmodel = context.read<DataModel>();
       await dmodel.fetchData();
+      await NewrelicMobile.instance.recordCustomEvent(
+        "WN_Metric",
+        eventName: "tag_configure",
+        eventAttributes: {
+          "length": _tags.length,
+        },
+      );
       Navigator.of(context).pop();
     } catch (e) {
+      NewrelicMobile.instance.recordError(
+        e,
+        StackTrace.current,
+        attributes: {"err_code": "tag_save"},
+      );
       print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

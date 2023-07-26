@@ -1,4 +1,7 @@
+import 'package:animated_list_plus/animated_list_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
@@ -37,6 +40,7 @@ class _ConfigureCategoriesState extends State<ConfigureCategories> {
     return comp.HeaderBar.sheet(
       title: "Categories",
       leading: const [comp.CloseButton2()],
+      horizontalSpacing: 0,
       trailing: [
         _isLoading
             ? const comp.LoadingIndicator()
@@ -55,103 +59,162 @@ class _ConfigureCategoriesState extends State<ConfigureCategories> {
       ],
       children: [
         const SizedBox(height: 16),
-        for (var i in _categories)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: _itemCell(context, i),
-          ),
-        const SizedBox(height: 8),
-        WrappedButton(
-          title: "Create A New Category",
-          onTap: () {
-            cupertinoSheet(
-              context: context,
-              builder: (context) => CreateCategory(
-                categories: _categories.map((e) => e.title).toList(),
-                onCompletion: (val, icon) {
-                  setState(() {
-                    _categories.add(
-                      Category.init(title: val, icon: icon),
+        Padding(
+          padding: const EdgeInsets.only(right: 16),
+          child: Column(
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(10),
+                  bottomRight: Radius.circular(10),
+                ),
+                child: comp.RawReorderableList<Category>(
+                  items: _categories,
+                  areItemsTheSame: (p0, p1) => p0.categoryId == p1.categoryId,
+                  onReorderFinished: (item, from, to, newItems) {
+                    setState(() {
+                      _categories
+                        ..clear()
+                        ..addAll(newItems);
+                    });
+                  },
+                  slideBuilder: (item, index) {
+                    return ActionPane(
+                      extentRatio: 0.3,
+                      motion: const DrawerMotion(),
+                      children: [
+                        Expanded(
+                          child: Row(children: [
+                            SlidableAction(
+                              onPressed: (context) async {
+                                await Future.delayed(
+                                  const Duration(milliseconds: 100),
+                                );
+                                setState(() {
+                                  _categories.removeAt(index);
+                                });
+                              },
+                              icon: LineIcons.alternateTrash,
+                              label: "Delete",
+                              foregroundColor:
+                                  Theme.of(context).colorScheme.onError,
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.error,
+                            ),
+                          ]),
+                        ),
+                      ],
                     );
-                  });
-                },
+                  },
+                  builder: (item, index, handle, inDrag) {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 16),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: inDrag
+                              ? AppColors.cell(context)[100]
+                              : AppColors.cell(context),
+                          borderRadius: BorderRadius.only(
+                              topLeft: index == 0
+                                  ? const Radius.circular(10)
+                                  : const Radius.circular(0),
+                              bottomLeft: index == _categories.length - 1
+                                  ? const Radius.circular(10)
+                                  : const Radius.circular(0)),
+                        ),
+                        child: _itemCell(context, item, handle),
+                      ),
+                    );
+                  },
+                ),
               ),
-            );
-          },
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: WrappedButton(
+            title: "Add a New Category",
+            type: WrappedButtonType.main,
+            onTap: () {
+              cupertinoSheet(
+                context: context,
+                builder: (context) => CreateCategory(
+                  categories: _categories.map((e) => e.title).toList(),
+                  onCompletion: (val, icon) {
+                    setState(() {
+                      _categories.add(
+                        Category.init(title: val, icon: icon),
+                      );
+                    });
+                  },
+                ),
+              );
+            },
+          ),
         ),
       ],
     );
   }
 
-  Widget _itemCell(BuildContext context, Category item) {
-    return Row(
-      children: [
-        comp.Clickable(
-          onTap: () {
-            showIconPicker(
-              context: context,
-              initialIcon: item.icon,
-              closeOnSelection: true,
-              onSelection: (icon) {
-                setState(() {
-                  item.icon = icon;
-                });
-              },
-            );
-          },
-          child: Stack(
-            alignment: Alignment.bottomRight,
-            children: [
-              getImageIcon(item.icon, size: 50),
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.cell(context)[700],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child: Icon(
-                    Icons.edit_rounded,
-                    color: AppColors.cell(context),
-                    size: 18,
+  Widget _itemCell(BuildContext context, Category item, Handle handle) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 4, 16, 4),
+      child: Row(
+        children: [
+          comp.Clickable(
+            onTap: () {
+              showIconPicker(
+                context: context,
+                initialIcon: item.icon,
+                closeOnSelection: true,
+                onSelection: (icon) {
+                  setState(() {
+                    item.icon = icon;
+                  });
+                },
+              );
+            },
+            child: Stack(
+              alignment: Alignment.bottomRight,
+              children: [
+                getImageIcon(item.icon, size: 50),
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.cell(context)[700],
                   ),
-                ),
-              )
-            ],
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(
-                  color: AppColors.cell(context)[600]!,
-                ),
-              ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: Icon(
+                      Icons.edit_rounded,
+                      color: AppColors.cell(context),
+                      size: 18,
+                    ),
+                  ),
+                )
+              ],
             ),
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.cell(context),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 16.0),
-                child: comp.Field(
-                  labelText: "Title",
-                  value: item.title.capitalize(),
-                  isLabeled: false,
-                  onChanged: (val) {
-                    setState(() {
-                      item.title = val;
-                    });
-                  },
-                ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: comp.Field(
+                labelText: "Title",
+                value: item.title.capitalize(),
+                isLabeled: false,
+                onChanged: (val) {
+                  setState(() {
+                    item.title = val;
+                  });
+                },
               ),
             ),
           ),
-        ),
-      ],
+          handle,
+        ],
+      ),
     );
   }
 

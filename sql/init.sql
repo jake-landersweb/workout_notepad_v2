@@ -194,42 +194,6 @@ CREATE TABLE exercise_log_meta_tag(
 --
 CREATE INDEX exercise_log_meta_tag_tagid ON exercise_log_meta_tag(tagId);
 --
-CREATE TABLE collection(
-    collectionId TEXT PRIMARY KEY,
-    title TEXT NOT NULL,
-    collectionType INTEGER NOT NULL,
-    description TEXT NOT NULL,
-    startDate INTEGER NOT NULL,
-    numRepeats INTEGER NOT NULL,
-    created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
---
-CREATE TRIGGER collection_update AFTER UPDATE ON collection
-BEGIN
-    UPDATE collection SET updated = CURRENT_TIMESTAMP;
-END;
---
-CREATE TABLE collection_item(
-    collectionItemId TEXT PRIMARY KEY,
-    collectionId TEXT NOT NULL,
-    workoutId TEXT NOT NULL,
-    date INTEGER NOT NULL,
-    daysBreak INTEGER NOT NULL,
-    day INTEGER NOT NULL,
-    workoutLogId TEXT,
-    created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-
-    FOREIGN KEY (collectionId) REFERENCES collection(collectionId),
-    FOREIGN KEY (workoutId) REFERENCES workout(workoutId)
-);
--- 
-CREATE TRIGGER collection_item_update AFTER UPDATE ON collection_item
-BEGIN
-    UPDATE collection SET updated = CURRENT_TIMESTAMP;
-END;
---
 CREATE TABLE workout_snapshot(
     workoutSnapshotId TEXT PRIMARY KEY,
     workoutId TEXT NOT NULL,
@@ -242,3 +206,33 @@ CREATE TABLE workout_snapshot(
 --
 CREATE INDEX workout_snapshot_workoutid ON workout_snapshot(workoutId);
 --
+CREATE TABLE device(
+    deviceId TEXT PRIMARY KEY,
+    deviceMake TEXT,
+    deviceModel TEXT,
+    deviveOs TEXT,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    lastUsed DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+/*
+CREATE TABLE sync_log(
+    syncId TEXT PRIMARY KEY,
+    deviceId TEXT NOT NULL,
+    syncStart DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    syncEnd DATETIME,
+    syncStatus TEXT CHECK(syncStatus IN ('PENDING', 'SUCCESS', 'ERROR')) DEFAULT 'PENDING',
+    errorDetails TEXT,
+    numberOfTables INTEGER,
+    numberOfRecords INTEGER,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+
+    FOREIGN KEY (deviceId) REFERENCES device(deviceId)
+);
+CREATE TABLE deletion_log(
+    deletionLogId TEXT PRIMARY KEY,
+    tableName TEXT NOT NULL,
+    recordId TEXT NOT NULL,
+    deletedAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+CREATE INDEX deletion_log_deletedat ON deletion_log(deletedAt);
+*/

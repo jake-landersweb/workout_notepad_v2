@@ -5,7 +5,6 @@ import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
@@ -35,8 +34,6 @@ class DataModel extends ChangeNotifier {
   User? expiredAnonUser;
   LoadStatus loadStatus = LoadStatus.init;
   Color color = const Color(0xFF418a2f);
-  List<SnapshotMetadataItem> currentMetadata = [];
-  bool _loadLatestSnapshot = false;
 
   DataModel() {
     init();
@@ -67,7 +64,6 @@ class DataModel extends ChangeNotifier {
     BuildContext context,
     auth.UserCredential credential,
   ) async {
-    _loadLatestSnapshot = true;
     var prefs = await SharedPreferences.getInstance();
     var u = await User.loginAuth(credential, convertFromAnon: user != null);
     if (u == null) {
@@ -87,52 +83,15 @@ class DataModel extends ChangeNotifier {
       );
     }
     prefs.setString("user", jsonEncode(u.toMap()));
+    // check if there are snapshots for this user
+    var serverSnapshots = await Snapshot.getList(u.userId);
+    // import the first snapshot as the user's data
+    if (serverSnapshots != null && serverSnapshots.isNotEmpty) {
+      // sorted by first = latest on server
+      await importSnapshot(serverSnapshots.first);
+    }
     await init(u: u);
   }
-
-  List<Category> _categories = [];
-  List<Category> get categories => _categories;
-  Future<void> refreshCategories() async {
-    _categories = await Category.getList();
-    notifyListeners();
-  }
-
-  List<Workout> _workouts = [];
-  List<Workout> get workouts => _workouts;
-  Future<void> refreshWorkouts() async {
-    _workouts = await Workout.getList();
-    notifyListeners();
-  }
-
-  List<Exercise> _exercises = [];
-  List<Exercise> get exercises => _exercises;
-  Future<void> refreshExercises() async {
-    _exercises = await Exercise.getList();
-    notifyListeners();
-  }
-
-  List<Tag> _tags = [];
-  List<Tag> get tags => _tags;
-  Future<void> refreshTags() async {
-    _tags = await Tag.getList();
-    notifyListeners();
-  }
-
-  List<Collection> _collections = [];
-  List<Collection> get collections => _collections;
-  Future<void> refreshCollections() async {
-    // _collections = await Collection.getList();
-  }
-
-  CollectionItem? _nextWorkout;
-  CollectionItem? get nextWorkout => _nextWorkout;
-  Future<void> refreshNextWorkout() async {
-    // _getNextWorkout();
-    // notifyListeners();
-  }
-
-  List<Snapshot> _snapshots = [];
-  List<Snapshot> get snapshots => _snapshots;
 
   Future<void> init({User? u}) async {
     var prefs = await SharedPreferences.getInstance();
@@ -141,7 +100,6 @@ class DataModel extends ChangeNotifier {
     _currentTabScreen = HomeScreen.overview;
     notifyListeners();
 
-    var db = await getDB();
     // var response = await db.rawUpdate(
     //     "UPDATE workout_log SET duration = '6304' WHERE workoutLogId = '64b8ffb2-0005-4746-b27c-8f6744d5da82'");
     // var response = await db.rawDelete(
@@ -259,18 +217,18 @@ class DataModel extends ChangeNotifier {
   // on init
   Future<void> handleSnapshotInit() async {
     // get the user snapshots
-    var snp = await Snapshot.getList(user!.userId);
-    if (snp == null) {
+    var serverSnapshots = await Snapshot.getList(user!.userId);
+    if (serverSnapshots == null) {
       print("There was an issue fetching all snapshots");
       // TODO -- handle errors
       return;
     }
-    if (snp.isEmpty) {
+    if (serverSnapshots.isEmpty) {
       await snapshotData();
       return;
     }
 
-    if (snp.first.created <
+    if (serverSnapshots.first.created <
         DateTime.now()
             .subtract(const Duration(hours: 8))
             .millisecondsSinceEpoch) {
@@ -282,23 +240,18 @@ class DataModel extends ChangeNotifier {
         print("There was an error snapshotting the data");
         return;
       }
-      var snp = await Snapshot.getList(user!.userId);
-      if (snp == null) {
+      var newSnapshots = await Snapshot.getList(user!.userId);
+      if (newSnapshots == null) {
         print("There was an issue getting the new snapshot list");
         return;
       }
-      _snapshots = snp;
+      _snapshots = newSnapshots;
       notifyListeners();
     } else {
       print("The user's snapshots are up to date");
       // snapshots are up to date
-      _snapshots = snp;
+      _snapshots = serverSnapshots;
       notifyListeners();
-    }
-    if (_loadLatestSnapshot) {
-      print("Loading user's latest snapshot");
-      await importSnapshot(snp.first);
-      _loadLatestSnapshot = false;
     }
   }
 
@@ -338,16 +291,14 @@ class DataModel extends ChangeNotifier {
     var getW = Workout.getList(db: db);
     var getE = Exercise.getList(db: db);
     var getT = Tag.getList(db: db);
-    var getMD = currentDataMetadata(db: db);
 
     // run all asynchronously at the same time
-    List<dynamic> results = await Future.wait([getC, getW, getE, getT, getMD]);
+    List<dynamic> results = await Future.wait([getC, getW, getE, getT]);
 
     _categories = results[0];
     _workouts = results[1];
     _exercises = results[2];
     _tags = results[3];
-    currentMetadata = results[4];
     notifyListeners();
   }
 
@@ -358,6 +309,50 @@ class DataModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  List<Category> _categories = [];
+  List<Category> get categories => _categories;
+  Future<void> refreshCategories() async {
+    _categories = await Category.getList();
+    notifyListeners();
+  }
+
+  List<Workout> _workouts = [];
+  List<Workout> get workouts => _workouts;
+  Future<void> refreshWorkouts() async {
+    _workouts = await Workout.getList();
+    notifyListeners();
+  }
+
+  List<Exercise> _exercises = [];
+  List<Exercise> get exercises => _exercises;
+  Future<void> refreshExercises() async {
+    _exercises = await Exercise.getList();
+    notifyListeners();
+  }
+
+  List<Tag> _tags = [];
+  List<Tag> get tags => _tags;
+  Future<void> refreshTags() async {
+    _tags = await Tag.getList();
+    notifyListeners();
+  }
+
+  List<Collection> _collections = [];
+  List<Collection> get collections => _collections;
+  Future<void> refreshCollections() async {
+    // _collections = await Collection.getList();
+  }
+
+  CollectionItem? _nextWorkout;
+  CollectionItem? get nextWorkout => _nextWorkout;
+  Future<void> refreshNextWorkout() async {
+    // _getNextWorkout();
+    // notifyListeners();
+  }
+
+  List<Snapshot> _snapshots = [];
+  List<Snapshot> get snapshots => _snapshots;
+
   Future<void> logout(BuildContext context) async {
     // create a snapshot of their data
     var response = await snapshotData();
@@ -367,7 +362,7 @@ class DataModel extends ChangeNotifier {
         context: context,
         title: "An Error Occured",
         body: Text(
-            "There was an issue creating a snapshot of your exercise data, if you logout now, you may lose your workout information."),
+            "There was an issue creating a snapshot of your exercise data, if you logout now, you may lose some data."),
         cancelText: "Cancel",
         cancelBolded: true,
         onCancel: () {
@@ -482,58 +477,13 @@ class DataModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<CollectionItem?> _getNextWorkout({Database? db}) async {
-    db ??= await getDB();
-    CollectionItem? nextWorkout;
-
-    // next workout
-    var yesterday = DateTime.now().subtract(const Duration(days: 1));
-    var response = await db.rawQuery("""
-      SELECT ci.*, c.title
-      FROM collection_item ci
-      JOIN collection c ON ci.collectionId = c.collectionId
-      WHERE ci.date > '${yesterday.millisecondsSinceEpoch}'
-      AND ci.workoutLogId IS NULL
-      ORDER BY ci.date LIMIT 1
-    """);
-    if (response.isNotEmpty) {
-      nextWorkout = await CollectionItem.fromJson(response[0]);
-    }
-
-    return nextWorkout;
-  }
-
-  /// a list of metadata objects that reflect the current state of the database
-  Future<List<SnapshotMetadataItem>> currentDataMetadata({Database? db}) async {
-    db ??= await getDB();
-    // get all table names
-    var response =
-        await db.rawQuery("SELECT name FROM sqlite_master WHERE type='table'");
-
-    List<SnapshotMetadataItem> data = [];
-
-    for (var i in response) {
-      var r = await db.query(i['name'] as String);
-      data.add(
-        SnapshotMetadataItem(table: i['name'] as String, length: r.length),
-      );
-    }
-    return data;
-  }
-
-  //
-  Future<bool> importSnapshot(
-    Snapshot snapshot, {
-    bool delete = true,
-  }) async {
+  Future<bool> importSnapshot(Snapshot snapshot) async {
     try {
       print("IMPORTING DATA");
       loadStatus = LoadStatus.init;
       notifyListeners();
-      if (delete) {
-        String path = join(await getDatabasesPath(), 'workout_notepad.db');
-        await databaseFactory.deleteDatabase(path);
-      }
+      String path = join(await getDatabasesPath(), 'workout_notepad.db');
+      await databaseFactory.deleteDatabase(path);
       // load / create database
       var db = await getDB();
 
@@ -544,23 +494,29 @@ class DataModel extends ChangeNotifier {
       // data.remove("id");
       // data.remove("created");
 
+      // compose list of valid tables
+      var tableResponse = await db.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table'",
+      );
+      var validTables = [for (var i in tableResponse) i['name']];
+      var invalidTables = ["android_metadata"];
+
       // get the snapshot file data
       var data = await snapshot.getFileData();
       if (data == null) {
         print("There was an issue importing the data");
         return false;
       }
-      if (data.containsKey("android_metadata")) {
-        data.remove("android_metadata");
-      }
 
       for (var key in data.keys) {
-        for (var i in data[key]) {
-          await db.insert(
-            key,
-            i,
-            conflictAlgorithm: ConflictAlgorithm.replace,
-          );
+        if (validTables.contains(key) && !invalidTables.contains(key)) {
+          for (var i in data[key]) {
+            await db.insert(
+              key,
+              i,
+              conflictAlgorithm: ConflictAlgorithm.replace,
+            );
+          }
         }
       }
 

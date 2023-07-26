@@ -5,6 +5,9 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
 import 'package:workout_notepad_v2/components/alert.dart';
+import 'package:workout_notepad_v2/components/blurred_container.dart';
+import 'package:workout_notepad_v2/components/clickable.dart';
+import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/data/collection.dart';
 import 'package:workout_notepad_v2/data/root.dart';
@@ -12,9 +15,10 @@ import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/workouts/launch/lw_reorder.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
 
-enum PopupState { minimize, finish, cancel }
+enum PopupState { minimize, finish, cancel, reorder }
 
 Future<void> launchWorkout(
   BuildContext context,
@@ -125,14 +129,77 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
         header: (context) => _header(context, dmodel, lmodel),
         headerPadding: const EdgeInsets.fromLTRB(16, 0, 0, 16),
         builder: (context) {
-          return PageView(
-            onPageChanged: (value) => lmodel.setIndex(value),
-            controller: lmodel.state.pageController,
+          return Stack(
+            alignment: Alignment.bottomCenter,
             children: [
-              if (lmodel.state.exerciseChildren.isNotEmpty)
-                for (int i = 0; i < lmodel.state.exercises.length; i++)
-                  LWExerciseDetail(index: i),
-              const LWEnd(),
+              PageView(
+                onPageChanged: (value) => lmodel.setIndex(value),
+                controller: lmodel.state.pageController,
+                children: [
+                  if (lmodel.state.exerciseChildren.isNotEmpty)
+                    for (int i = 0; i < lmodel.state.exercises.length; i++)
+                      LWExerciseDetail(index: i),
+                  const LWEnd(),
+                ],
+              ),
+              SafeArea(
+                top: false,
+                bottom: true,
+                left: false,
+                right: false,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Clickable(
+                        onTap: () {
+                          if (lmodel.state.workoutIndex > 0) {
+                            lmodel.setPage(lmodel.state.workoutIndex - 1);
+                          }
+                        },
+                        child: BlurredContainer(
+                          borderRadius: BorderRadius.circular(100),
+                          opacity: 0.05,
+                          blur: 5,
+                          backgroundColor: AppColors.light(context),
+                          height: 50,
+                          width: 50,
+                          child: Center(
+                              child: Icon(
+                            Icons.chevron_left_rounded,
+                            size: 30,
+                            color: AppColors.cell(context),
+                          )),
+                        ),
+                      ),
+                      const Spacer(),
+                      Clickable(
+                        onTap: () {
+                          if (lmodel.state.workoutIndex <
+                              lmodel.state.exercises.length) {
+                            lmodel.setPage(lmodel.state.workoutIndex + 1);
+                          }
+                        },
+                        child: BlurredContainer(
+                          borderRadius: BorderRadius.circular(100),
+                          opacity: 0.15,
+                          blur: 5,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          height: 50,
+                          width: 50,
+                          child: Center(
+                              child: Icon(
+                            Icons.chevron_right_rounded,
+                            size: 30,
+                            color: AppColors.cell(context),
+                          )),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           );
         },
@@ -198,6 +265,11 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
                       },
                     );
                     break;
+                  case PopupState.reorder:
+                    cupertinoSheet(
+                      context: context,
+                      builder: (context) => const LWReorder(),
+                    );
                 }
               },
               itemBuilder: (BuildContext context) =>
@@ -241,11 +313,24 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
                     ],
                   ),
                 ),
+                // PopupMenuItem<PopupState>(
+                //   value: PopupState.reorder,
+                //   child: Row(
+                //     children: [
+                //       Icon(
+                //         Icons.toc_rounded,
+                //         color: Theme.of(context).colorScheme.primary,
+                //       ),
+                //       const SizedBox(width: 8),
+                //       const Text("Re-Order"),
+                //     ],
+                //   ),
+                // ),
               ],
             ),
           ],
         ),
-        if (lmodel.state.workout.description != null)
+        if (lmodel.state.workout.description?.isNotEmpty ?? false)
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: Text(
@@ -269,11 +354,23 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
                 ),
               ),
               const Spacer(),
-              Text(
-                "${lmodel.state.workoutIndex + 1 > lmodel.state.exercises.length ? '-' : lmodel.state.workoutIndex + 1}/${lmodel.state.exercises.length}",
-                style: ttLabel(
-                  context,
-                  color: AppColors.text(context),
+              Container(
+                decoration: BoxDecoration(
+                  color: AppColors.cell(context),
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                width: 75,
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    child: Text(
+                      "${lmodel.state.workoutIndex + 1 > lmodel.state.exercises.length ? '-' : lmodel.state.workoutIndex + 1}/${lmodel.state.exercises.length}",
+                      style: ttLabel(
+                        context,
+                        color: AppColors.text(context),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ],

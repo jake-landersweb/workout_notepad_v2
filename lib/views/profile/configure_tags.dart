@@ -1,5 +1,8 @@
+import 'package:animated_list_plus/animated_list_plus.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sql.dart';
@@ -40,6 +43,7 @@ class _ConfigureTagsState extends State<ConfigureTags> {
     return HeaderBar.sheet(
       title: "Configure Tags",
       leading: const [CloseButton2()],
+      horizontalSpacing: 0,
       trailing: [
         _isLoading
             ? const LoadingIndicator()
@@ -58,63 +62,150 @@ class _ConfigureTagsState extends State<ConfigureTags> {
       ],
       children: [
         const SizedBox(height: 16),
-        Section(
-          "Default - ${_tags.firstWhereOrNull((element) => element.isDefault)?.title ?? 'None'} ",
-          child: ContainedList<Tag>(
-            children: _tags,
-            leadingPadding: 0,
-            trailingPadding: 0,
-            childPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-            childBuilder: (context, item, index) {
-              return _cell(context, item);
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 0, 8),
+            child: Text(
+              "Default - ${_tags.firstWhereOrNull((element) => element.isDefault)?.title ?? 'None'} ",
+              textAlign: TextAlign.start,
+              style: ttcaption(context),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: 16),
+          child: Column(
+            children: [
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(10),
+                  bottomRight: Radius.circular(10),
+                ),
+                child: RawReorderableList<Tag>(
+                  items: _tags,
+                  areItemsTheSame: (p0, p1) => p0.tagId == p1.tagId,
+                  onReorderFinished: (item, from, to, newItems) {
+                    setState(() {
+                      _tags
+                        ..clear()
+                        ..addAll(newItems);
+                    });
+                  },
+                  slideBuilder: (item, index) {
+                    return ActionPane(
+                      extentRatio: 0.3,
+                      motion: const DrawerMotion(),
+                      children: [
+                        Expanded(
+                          child: Row(children: [
+                            SlidableAction(
+                              onPressed: (context) async {
+                                await Future.delayed(
+                                  const Duration(milliseconds: 100),
+                                );
+                                setState(() {
+                                  _tags.removeAt(index);
+                                });
+                              },
+                              icon: LineIcons.alternateTrash,
+                              label: "Delete",
+                              foregroundColor:
+                                  Theme.of(context).colorScheme.onError,
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.error,
+                            ),
+                          ]),
+                        ),
+                      ],
+                    );
+                  },
+                  builder: (item, index, handle, inDrag) {
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 16),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: inDrag
+                              ? AppColors.cell(context)[100]
+                              : AppColors.cell(context),
+                          borderRadius: BorderRadius.only(
+                              topLeft: index == 0
+                                  ? const Radius.circular(10)
+                                  : const Radius.circular(0),
+                              bottomLeft: index == _tags.length - 1
+                                  ? const Radius.circular(10)
+                                  : const Radius.circular(0)),
+                        ),
+                        child: _cell(context, item, handle),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: WrappedButton(
+            title: "Add a New Tag",
+            type: WrappedButtonType.main,
+            onTap: () {
+              setState(() {
+                _tags.add(Tag.init(title: ""));
+              });
             },
           ),
-        )
+        ),
       ],
     );
   }
 
-  Widget _cell(BuildContext context, Tag tag) {
-    return Row(
-      children: [
-        GestureDetector(
-          onTap: () {
-            if (tag.isDefault) {
-              for (var e in _tags) {
-                e.isDefault = false;
+  Widget _cell(BuildContext context, Tag tag, Handle handle) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () {
+              if (tag.isDefault) {
+                for (var e in _tags) {
+                  e.isDefault = false;
+                }
+                setState(() {});
+              } else {
+                for (var e in _tags) {
+                  e.isDefault = false;
+                }
+                setState(() {
+                  tag.isDefault = true;
+                });
               }
-              setState(() {});
-            } else {
-              for (var e in _tags) {
-                e.isDefault = false;
-              }
-              setState(() {
-                tag.isDefault = true;
-              });
-            }
-          },
-          child: Icon(
-            tag.isDefault ? Icons.check_box : Icons.check_box_outline_blank,
-            color: tag.isDefault
-                ? Theme.of(context).colorScheme.primary
-                : AppColors.cell(context)[600],
-            size: 30,
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Field(
-            labelText: "title",
-            value: tag.title,
-            isLabeled: false,
-            onChanged: (v) {
-              setState(() {
-                tag.title = v;
-              });
             },
+            child: Icon(
+              tag.isDefault ? Icons.check_box : Icons.check_box_outline_blank,
+              color: tag.isDefault
+                  ? Theme.of(context).colorScheme.primary
+                  : AppColors.cell(context)[600],
+              size: 30,
+            ),
           ),
-        ),
-      ],
+          const SizedBox(width: 16),
+          Expanded(
+            child: Field(
+              labelText: "Title",
+              value: tag.title,
+              isLabeled: false,
+              onChanged: (v) {
+                setState(() {
+                  tag.title = v;
+                });
+              },
+            ),
+          ),
+          handle,
+        ],
+      ),
     );
   }
 
@@ -135,6 +226,7 @@ class _ConfigureTagsState extends State<ConfigureTags> {
     try {
       var db = await getDB();
       await db.transaction((txn) async {
+        await txn.rawDelete("DELETE FROM tag");
         for (var i in _tags) {
           await txn.insert(
             "tag",

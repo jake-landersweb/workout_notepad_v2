@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
+import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/cell_wrapper.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
@@ -42,114 +43,112 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
           const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // exercise utils
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: Row(
-                    children: [
-                      _actionCell(
-                        context,
-                        "Configure",
-                        Icons.settings_outlined,
-                        () {
-                          cupertinoSheet(
-                            context: context,
-                            builder: (context) => LWConfigureExercise(
-                              index: widget.index,
-                              onCompletion: (sets) {
-                                lmodel.handleSuperSets(widget.index, sets);
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                      const SizedBox(width: 8),
-                      _actionCell(context, "Swap", LineIcons.syncIcon, () {
-                        cupertinoSheet(
-                          context: context,
-                          builder: (context) => SelectExercise(
-                            title: "Swap Exercise",
-                            onSelect: (exercise) {
-                              lmodel.addExercise(exercise, widget.index);
-                            },
-                          ),
-                        );
-                      }),
-                      const SizedBox(width: 8),
-                      _actionCell(context, "Add Next", Icons.new_label_outlined,
-                          () {
-                        cupertinoSheet(
-                          context: context,
-                          builder: (context) => SelectExercise(
-                            title: "Add Exercise Next",
-                            onSelect: (exercise) async {
-                              lmodel.addExercise(
-                                exercise,
-                                widget.index + 1,
-                                push: true,
-                              );
-                              await Future.delayed(
-                                const Duration(milliseconds: 700),
-                              );
-                              lmodel.state.pageController.animateToPage(
-                                widget.index + 1,
-                                duration: const Duration(milliseconds: 500),
-                                curve: Sprung.overDamped,
-                              );
-                            },
-                          ),
-                        );
-                      }),
-                    ],
-                  ),
-                ),
-                if (lmodel.state.exercises[widget.index].note.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: CellWrapper(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            const Icon(LineIcons.infoCircle),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Text(
-                                  lmodel.state.exercises[widget.index].note,
-                                  style: ttLabel(context)),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                Text(
-                  lmodel.state.exercises[widget.index].title,
-                  style: ttSubTitle(context),
-                ),
-                if (lmodel.state.exercises[widget.index].description.isNotEmpty)
-                  Text(
-                    lmodel.state.exercises[widget.index].description,
-                    style: ttBody(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // exercise utils
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Row(
+                  children: [
+                    _actionCell(
                       context,
-                      color: AppColors.subtext(context),
+                      "Configure",
+                      Icons.settings_outlined,
+                      () {
+                        cupertinoSheet(
+                          context: context,
+                          builder: (context) => LWConfigureExercise(
+                            index: widget.index,
+                            onCompletion: (sets) {
+                              lmodel.handleSuperSets(
+                                  context, widget.index, sets);
+                            },
+                          ),
+                        );
+                      },
                     ),
-                  ),
-                const SizedBox(height: 8),
-                _getCell(
-                  context,
-                  lmodel.state.exercises[widget.index],
-                  lmodel.state.exerciseLogs[widget.index],
-                  lmodel,
+                    _actionCell(context, "Swap", LineIcons.syncIcon, () {
+                      cupertinoSheet(
+                        context: context,
+                        builder: (context) => SelectExercise(
+                          title: "Swap Exercise",
+                          onSelect: (exercise) {
+                            lmodel.addExercise(context, exercise, widget.index);
+                          },
+                        ),
+                      );
+                    }),
+                    _actionCell(context, "Delete", LineIcons.trash, () async {
+                      showAlert(
+                        context: context,
+                        title: "Delete Exercise",
+                        body: Text(
+                          "Are you sure? You can re-add this at any time.",
+                        ),
+                        cancelText: "Cancel",
+                        onCancel: () {},
+                        cancelBolded: true,
+                        submitText: "Delete",
+                        submitColor: Colors.red,
+                        onSubmit: () async {
+                          lmodel.state.pageController.animateToPage(
+                            widget.index - 1,
+                            duration: const Duration(milliseconds: 500),
+                            curve: Sprung.overDamped,
+                          );
+                          await lmodel.removeExercise(context, widget.index);
+                        },
+                      );
+                    }),
+                    _actionCell(context, "Add Next", Icons.new_label_outlined,
+                        () {
+                      cupertinoSheet(
+                        context: context,
+                        builder: (context) => SelectExercise(
+                          title: "Add Exercise Next",
+                          onSelect: (exercise) async {
+                            lmodel.addExercise(
+                              context,
+                              exercise,
+                              widget.index + 1,
+                              push: true,
+                            );
+                            await Future.delayed(
+                              const Duration(milliseconds: 700),
+                            );
+                            lmodel.state.pageController.animateToPage(
+                              widget.index + 1,
+                              duration: const Duration(milliseconds: 500),
+                              curve: Sprung.overDamped,
+                            );
+                          },
+                        ),
+                      );
+                    }),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      lmodel.state.exercises[widget.index].title,
+                      style: ttSubTitle(context),
+                    ),
+                    const SizedBox(height: 8),
+                    _getCell(
+                      context,
+                      lmodel.state.exercises[widget.index],
+                      lmodel.state.exerciseLogs[widget.index],
+                      lmodel,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
           if (lmodel.state.exerciseChildLogs[widget.index].isNotEmpty)
             Padding(
@@ -326,20 +325,20 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                 },
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(8, 8, 0, 0),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.info_outline_rounded,
-                        color: AppColors.cell(context)[600],
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.cell(context)[600],
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(4, 2, 4, 2),
+                      child: Text(
                         "Previous Logs",
                         style: TextStyle(
                           color: AppColors.subtext(context),
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -348,7 +347,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
               Row(
                 children: [
                   Expanded(
-                    flex: 3,
+                    flex: 4,
                     child: Container(),
                   ),
                   Clickable(
@@ -539,20 +538,20 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                 },
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(8, 8, 0, 0),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.info_outline_rounded,
-                        color: AppColors.cell(context)[600],
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.cell(context)[600],
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(4, 2, 4, 2),
+                      child: Text(
                         "Previous Logs",
                         style: TextStyle(
                           color: AppColors.subtext(context),
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
@@ -561,7 +560,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
               Row(
                 children: [
                   Expanded(
-                    flex: 3,
+                    flex: 4,
                     child: Container(),
                   ),
                   Clickable(
@@ -660,23 +659,35 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
         child: Container(
           decoration: BoxDecoration(
             color: AppColors.cell(context),
-            borderRadius: BorderRadius.circular(5),
+            border: Border(
+              right: BorderSide(
+                color: AppColors.light(context),
+              ),
+              top: BorderSide(
+                color: AppColors.light(context),
+              ),
+              bottom: BorderSide(
+                color: AppColors.light(context),
+              ),
+            ),
           ),
-          height: 60,
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(icon, color: AppColors.cell(context)[700]),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: AppColors.subtext(context),
-                  ),
-                )
-              ],
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(icon, color: AppColors.cell(context)[700]),
+                  // Text(
+                  //   title,
+                  //   style: TextStyle(
+                  //     fontSize: 14,
+                  //     fontWeight: FontWeight.w400,
+                  //     color: AppColors.subtext(context),
+                  //   ),
+                  // )
+                ],
+              ),
             ),
           ),
         ),
@@ -958,26 +969,26 @@ class _CellLogState extends State<_CellLog> {
               spacing: 8,
               runSpacing: 8,
               children: [
-                Clickable(
-                  onTap: () => setState(() {
-                    //
-                  }),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.cell(context),
-                      border: Border.all(color: AppColors.cell(context)),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    height: 40,
-                    child: const Padding(
-                      padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [Icon(Icons.add)],
-                      ),
-                    ),
-                  ),
-                ),
+                // Clickable(
+                //   onTap: () => setState(() {
+                //     //
+                //   }),
+                //   child: Container(
+                //     decoration: BoxDecoration(
+                //       color: AppColors.cell(context),
+                //       border: Border.all(color: AppColors.cell(context)),
+                //       borderRadius: BorderRadius.circular(10),
+                //     ),
+                //     height: 40,
+                //     child: const Padding(
+                //       padding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+                //       child: Row(
+                //         mainAxisSize: MainAxisSize.min,
+                //         children: [Icon(Icons.add)],
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 for (int i = 0; i < dmodel.tags.length; i++)
                   _tagCell(context, dmodel.tags[i]),
               ],

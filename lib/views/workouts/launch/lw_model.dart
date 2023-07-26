@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
+import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
@@ -405,7 +407,22 @@ class LaunchWorkoutModel extends ChangeNotifier {
     }
   }
 
+  Future<void> removeExercise(BuildContext context, int index) async {
+    var resp = await state.exercises[index].delete(state.workout.workoutId);
+    if (!resp) {
+      print("There was an error deleting the exercise");
+      notifyListeners();
+      return;
+    }
+    state.exercises.removeAt(index);
+    state.exerciseChildren.removeAt(index);
+    state.exerciseLogs.removeAt(index);
+    state.exerciseChildLogs.removeAt(index);
+    notifyListeners();
+  }
+
   Future<void> addExercise(
+    BuildContext context,
     Exercise exercise,
     int index, {
     bool push = false,
@@ -420,6 +437,10 @@ class LaunchWorkoutModel extends ChangeNotifier {
       eid: we.exerciseId,
       wlid: state.wl.workoutLogId,
       exercise: we,
+      defaultTag: context
+          .read<DataModel>()
+          .tags
+          .firstWhereOrNull((element) => element.isDefault),
     );
 
     if (index >= state.exercises.length) {
@@ -455,6 +476,7 @@ class LaunchWorkoutModel extends ChangeNotifier {
   }
 
   Future<void> handleSuperSets(
+    BuildContext context,
     int index,
     List<ExerciseSet> sets,
   ) async {
@@ -477,6 +499,10 @@ class LaunchWorkoutModel extends ChangeNotifier {
         parentEid: sets[i].parentId,
         wlid: state.wl.workoutLogId,
         exercise: sets[i],
+        defaultTag: context
+            .read<DataModel>()
+            .tags
+            .firstWhereOrNull((element) => element.isDefault),
       );
       logs.add(log);
     }

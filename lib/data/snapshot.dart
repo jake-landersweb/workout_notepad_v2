@@ -103,8 +103,9 @@ class Snapshot {
       // get the database
       var db = await getDB();
       // get all table names
-      var response = await db
-          .rawQuery("SELECT name FROM sqlite_master WHERE type='table'");
+      var response = await db.rawQuery(
+        "SELECT name FROM sqlite_master WHERE type='table'",
+      );
 
       Map<String, dynamic> data = {};
 

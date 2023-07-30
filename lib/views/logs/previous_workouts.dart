@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
@@ -37,67 +38,171 @@ class _LogsPreviousWorkoutsState extends State<LogsPreviousWorkouts> {
         isLarge: true,
         leading: const [BackButton2()],
         children: [
+          // const SizedBox(height: 8),
+          // Section(
+          //   "Workout Duration By Day",
+          //   child: AspectRatio(
+          //     aspectRatio: 1,
+          //     child: _child(context),
+          //   ),
+          // ),
           const SizedBox(height: 8),
           Section(
-            "Workout Duration By Day",
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: _child(context),
-            ),
+            "All Workouts - ${_workoutLogs.length}",
+            child: _child(context),
           ),
-          const SizedBox(height: 16),
-          if (_workoutLogs.isNotEmpty)
-            Section(
-              "All Workouts - ${_workoutLogs.length}",
-              child: ContainedList<WorkoutLog>(
-                leadingPadding: 0,
-                trailingPadding: 0,
-                childPadding: const EdgeInsets.fromLTRB(16, 8, 10, 8),
-                children: _workoutLogs,
-                onChildTap: (context, item, index) {
-                  print(item.workoutLogId);
-                  cupertinoSheet(
-                    context: context,
-                    builder: (context) => WLExercises(workoutLog: item),
-                  );
-                },
-                childBuilder: (context, item, index) {
-                  return Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              item.getCreatedFormatted(),
-                              style: ttcaption(context),
-                            ),
-                            Text(
-                              item.title,
-                              style: ttLabel(context),
-                            ),
-                            Text(item.getDuration()),
-                          ],
-                        ),
-                      ),
-                      Transform.rotate(
-                        angle: math.pi / 2,
-                        child: Icon(
-                          Icons.chevron_left_rounded,
-                          color: AppColors.subtext(context),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            )
         ],
       ),
     );
   }
 
   Widget _child(BuildContext context) {
+    if (_isLoading) {
+      return LoadingWrapper(
+        child: ContainedList<int>(
+          leadingPadding: 0,
+          trailingPadding: 0,
+          childPadding: const EdgeInsets.fromLTRB(16, 8, 10, 8),
+          children: List.generate(15, (index) => index),
+          childBuilder: (context, item, index) => Row(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: AppColors.divider(context)),
+                  borderRadius: BorderRadius.circular(7),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(7),
+                  child: Column(
+                    children: [
+                      Container(
+                        color: AppColors.cell(context)[600],
+                        height: 20,
+                        width: 50,
+                        child: Center(
+                          child: Text(
+                            "  ",
+                            style: TextStyle(
+                              color: AppColors.subtext(context),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        color: AppColors.cell(context)[300],
+                        height: 30,
+                        width: 50,
+                        child: Center(
+                          child: Text(
+                            "  ",
+                            style:
+                                ttLabel(context, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(child: Container()),
+            ],
+          ),
+        ),
+      );
+      ;
+    } else if (_workoutLogs.isEmpty) {
+      return const NoLogs();
+    } else {
+      return ContainedList<WorkoutLog>(
+        leadingPadding: 0,
+        trailingPadding: 0,
+        childPadding: const EdgeInsets.fromLTRB(16, 8, 10, 8),
+        children: _workoutLogs,
+        onChildTap: (context, item, index) {
+          print(item.workoutLogId);
+          cupertinoSheet(
+            context: context,
+            builder: (context) => WLExercises(workoutLog: item),
+          );
+        },
+        childBuilder: (context, item, index) => _workoutCell(context, item),
+      );
+    }
+  }
+
+  Widget _workoutCell(BuildContext context, WorkoutLog item) {
+    return Row(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            border: Border.all(color: AppColors.divider(context)),
+            borderRadius: BorderRadius.circular(7),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(7),
+            child: Column(
+              children: [
+                Container(
+                  color: AppColors.cell(context)[600],
+                  height: 20,
+                  width: 50,
+                  child: Center(
+                    child: Text(
+                      DateFormat('MMM').format(
+                        item.getCreated(),
+                      ),
+                      style: TextStyle(
+                        color: AppColors.subtext(context),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  color: AppColors.cell(context)[300],
+                  height: 30,
+                  width: 50,
+                  child: Center(
+                    child: Text(
+                      item.getCreated().day.toString(),
+                      style: ttLabel(context, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                item.title,
+                style: ttLabel(context),
+              ),
+              Text(
+                item.getDuration(),
+                style: ttBody(
+                  context,
+                  color: AppColors.subtext(context),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Transform.rotate(
+          angle: math.pi / 2,
+          child: Icon(
+            Icons.chevron_left_rounded,
+            color: AppColors.subtext(context),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _childttt(BuildContext context) {
     if (_isLoading) {
       return LoadingWrapper(
         child: Container(

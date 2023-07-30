@@ -6,3 +6,4 @@ export 'exercise_item_cell.dart';
 export 'exercise_item_group.dart';
 export 'logs/root.dart';
 export 'category_cell.dart';
+export 'exercise_details_page.dart';

@@ -27,12 +27,13 @@ void main() async {
 
   Config config = Config(
     accessToken: appToken,
+
     // Android specific option
     // Optional: Enable or disable collection of event data.
     analyticsEventEnabled: true,
     // iOS specific option
     // Optional: Enable or disable automatic instrumentation of WebViews.
-    webViewInstrumentation: true,
+    webViewInstrumentation: false,
     // Optional: Enable or disable reporting successful HTTP requests to the MobileRequest event type.
     networkErrorRequestEnabled: true,
     // Optional: Enable or disable reporting network and HTTP request errors to the MobileRequestError event type.
@@ -40,7 +41,7 @@ void main() async {
     // Optional: Enable or disable crash reporting.
     crashReportingEnabled: true,
     // Optional: Enable or disable interaction tracing. Trace instrumentation still occurs, but no traces are harvested. This will disable default and custom interactions.
-    interactionTracingEnabled: true,
+    interactionTracingEnabled: false,
     // Optional: Enable or disable capture of HTTP response bodies for HTTP error traces, and MobileRequestError events.
     httpResponseBodyCaptureEnabled: true,
     // Optional: Enable or disable agent logging.
@@ -57,7 +58,7 @@ void main() async {
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
     FlutterError.onError = NewrelicMobile.onError;
-    await NewrelicMobile.instance.startAgent(config);
+    // await NewrelicMobile.instance.startAgent(config);
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );

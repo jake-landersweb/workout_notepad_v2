@@ -148,7 +148,7 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
                 left: false,
                 right: false,
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
                   child: Row(
                     children: [
                       Clickable(

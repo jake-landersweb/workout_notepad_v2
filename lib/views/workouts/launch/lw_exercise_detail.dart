@@ -47,6 +47,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // exercise utils
+              const SizedBox(height: 8),
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: Row(
@@ -126,6 +127,7 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
                         ),
                       );
                     }),
+                    const SizedBox(width: 8),
                   ],
                 ),
               ),
@@ -312,34 +314,66 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Clickable(
-                onTap: () {
-                  cupertinoSheet(
-                    context: context,
-                    builder: (context) => ExerciseLogs(
-                      exerciseId:
-                          lmodel.state.exercises[widget.index].exerciseId,
-                      isInteractive: false,
-                    ),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 8, 0, 0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.cell(context)[600],
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(4, 2, 4, 2),
-                      child: Text(
-                        "Previous Logs",
-                        style: TextStyle(
-                          color: AppColors.subtext(context),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                child: Row(
+                  children: [
+                    Clickable(
+                      onTap: () {
+                        cupertinoSheet(
+                          context: context,
+                          builder: (context) => ExerciseLogs(
+                            exerciseId:
+                                lmodel.state.exercises[widget.index].exerciseId,
+                            isInteractive: false,
+                          ),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.cell(context)[600],
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(4, 2, 4, 2),
+                          child: Text(
+                            "Previous Logs",
+                            style: TextStyle(
+                              color: AppColors.subtext(context),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                    const Spacer(),
+                    Clickable(
+                      onTap: () {
+                        cupertinoSheet(
+                          context: context,
+                          builder: (context) => ExerciseDetailsPage(
+                            exerciseId:
+                                lmodel.state.exercises[widget.index].exerciseId,
+                          ),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(2),
+                          child: Icon(
+                            Icons.info_outline,
+                            color: AppColors.cell(context),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               _default(context, e, lmodel),
@@ -525,34 +559,70 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Clickable(
-                onTap: () {
-                  cupertinoSheet(
-                    context: context,
-                    builder: (context) => ExerciseLogs(
-                      exerciseId: lmodel.state
-                          .exerciseChildren[widget.index][childIndex].childId,
-                      isInteractive: false,
-                    ),
-                  );
-                },
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(8, 8, 0, 0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.cell(context)[600],
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(4, 2, 4, 2),
-                      child: Text(
-                        "Previous Logs",
-                        style: TextStyle(
-                          color: AppColors.subtext(context),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                child: Row(
+                  children: [
+                    Clickable(
+                      onTap: () {
+                        cupertinoSheet(
+                          context: context,
+                          builder: (context) => ExerciseLogs(
+                            exerciseId: lmodel
+                                .state
+                                .exerciseChildren[widget.index][childIndex]
+                                .childId,
+                            isInteractive: false,
+                          ),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: AppColors.cell(context)[600],
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(4, 2, 4, 2),
+                          child: Text(
+                            "Previous Logs",
+                            style: TextStyle(
+                              color: AppColors.subtext(context),
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
+                    const Spacer(),
+                    Clickable(
+                      onTap: () {
+                        cupertinoSheet(
+                          context: context,
+                          builder: (context) => ExerciseDetailsPage(
+                            exerciseId: lmodel
+                                .state
+                                .exerciseChildren[widget.index][childIndex]
+                                .childId,
+                          ),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(2),
+                          child: Icon(
+                            Icons.info_outline,
+                            color: AppColors.cell(context),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               _child(context, childIndex, e, lmodel),
@@ -654,39 +724,32 @@ class _LWExerciseDetailState extends State<LWExerciseDetail> {
   Widget _actionCell(
       BuildContext context, String title, IconData icon, VoidCallback onTap) {
     return Expanded(
-      child: Clickable(
-        onTap: onTap,
-        child: Container(
-          decoration: BoxDecoration(
-            color: AppColors.cell(context),
-            border: Border(
-              right: BorderSide(
-                color: AppColors.light(context),
-              ),
-              top: BorderSide(
-                color: AppColors.light(context),
-              ),
-              bottom: BorderSide(
-                color: AppColors.light(context),
-              ),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 8),
+        child: Clickable(
+          onTap: onTap,
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.cell(context),
+              borderRadius: BorderRadius.circular(15),
             ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(icon, color: AppColors.cell(context)[700]),
-                  // Text(
-                  //   title,
-                  //   style: TextStyle(
-                  //     fontSize: 14,
-                  //     fontWeight: FontWeight.w400,
-                  //     color: AppColors.subtext(context),
-                  //   ),
-                  // )
-                ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(icon, color: AppColors.cell(context)[700]),
+                    // Text(
+                    //   title,
+                    //   style: TextStyle(
+                    //     fontSize: 14,
+                    //     fontWeight: FontWeight.w400,
+                    //     color: AppColors.subtext(context),
+                    //   ),
+                    // )
+                  ],
+                ),
               ),
             ),
           ),

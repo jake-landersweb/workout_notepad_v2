@@ -79,25 +79,33 @@ class _VideoRenderderState extends State<VideoRenderder> {
                 : Container(),
           ),
         ),
-        Clickable(
-          onTap: () {
-            _playPause();
-          },
+        const SizedBox(height: 8),
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.cell(context),
+            borderRadius: BorderRadius.circular(10),
+          ),
           child: Row(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Icon(
-                  _controller.value.isPlaying
-                      ? Icons.pause_rounded
-                      : Icons.play_arrow_rounded,
-                  color: Theme.of(context).colorScheme.primary,
-                  size: 30,
+              Clickable(
+                onTap: () {
+                  _playPause();
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Icon(
+                    _controller.value.isPlaying
+                        ? Icons.pause_rounded
+                        : Icons.play_arrow_rounded,
+                    color: Theme.of(context).colorScheme.primary,
+                    size: 30,
+                  ),
                 ),
               ),
               Expanded(
                 child: VideoProgressIndicator(
                   _controller,
+                  padding: EdgeInsets.zero,
                   colors: VideoProgressColors(
                     playedColor: Theme.of(context).colorScheme.primary,
                     backgroundColor: Colors.black.withOpacity(0.1),
@@ -107,6 +115,7 @@ class _VideoRenderderState extends State<VideoRenderder> {
                   allowScrubbing: true,
                 ),
               ),
+              const SizedBox(width: 16),
             ],
           ),
         ),

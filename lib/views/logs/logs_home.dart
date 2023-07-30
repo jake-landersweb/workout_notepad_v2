@@ -24,60 +24,99 @@ class _LogsHomeState extends State<LogsHome> {
       children: [
         const SizedBox(height: 16),
         // most logged for all types (2x2)
-        ContainedList<Tuple4<String, IconData, Color, Widget>>(
-          childPadding: EdgeInsets.zero,
-          children: [
-            Tuple4(
-              "Previous Workouts",
-              Icons.calendar_month_rounded,
-              Colors.green[200]!,
-              const LogsPreviousWorkouts(),
-            ),
-            Tuple4(
-              "My Max Sets",
-              Icons.speed_rounded,
-              Colors.red[200]!,
-              const LogsMaxSets(),
-            ),
-            Tuple4(
-              "Exercise Type Distribution",
-              Icons.donut_small_rounded,
-              Colors.blue[200]!,
-              const LogsTypeDistribution(),
-            ),
-            Tuple4(
-              "Category Distribution",
-              Icons.donut_small_rounded,
-              Colors.orange[200]!,
-              LogsCategoryDistribution(categories: dmodel.categories),
-            ),
-            Tuple4(
-              "Recently Logged",
-              Icons.update_rounded,
-              Colors.purple[200]!,
-              Container(),
-            ),
-          ],
-          onChildTap: (context, item, index) =>
-              navigate(context: context, builder: (context) => item.v4),
-          childBuilder: (context, item, index) {
-            return Row(
-              children: [
-                Expanded(
-                  child: WrappedButton(
-                    title: item.v1,
-                    icon: item.v2,
-                    iconBg: item.v3,
+        Section(
+          "Basic",
+          headerPadding: const EdgeInsets.fromLTRB(32, 8, 0, 4),
+          child: ContainedList<Tuple4<String, IconData, Color, Widget>>(
+            childPadding: EdgeInsets.zero,
+            children: [
+              Tuple4(
+                "Workout Logs",
+                Icons.calendar_month_rounded,
+                Colors.green[200]!,
+                const LogsPreviousWorkouts(),
+              ),
+              Tuple4(
+                "Recent Exercises",
+                Icons.update_rounded,
+                Colors.purple[200]!,
+                Container(),
+              ),
+            ],
+            onChildTap: (context, item, index) =>
+                navigate(context: context, builder: (context) => item.v4),
+            childBuilder: (context, item, index) {
+              return Row(
+                children: [
+                  Expanded(
+                    child: WrappedButton(
+                      title: item.v1,
+                      icon: item.v2,
+                      iconBg: item.v3,
+                    ),
                   ),
-                ),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  color: AppColors.subtext(context),
-                ),
-                const SizedBox(width: 4),
-              ],
-            );
-          },
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: AppColors.subtext(context),
+                  ),
+                  const SizedBox(width: 4),
+                ],
+              );
+            },
+          ),
+        ),
+        Section(
+          "Advanced",
+          headerPadding: const EdgeInsets.fromLTRB(32, 8, 0, 4),
+          child: ContainedList<Tuple4<String, IconData, Color, Widget>>(
+            childPadding: EdgeInsets.zero,
+            children: [
+              Tuple4(
+                "Workouts Breakdown",
+                Icons.analytics_rounded,
+                Colors.deepOrange[200]!,
+                const LogsWorkoutsBreakdown(),
+              ),
+              Tuple4(
+                "My Max Sets",
+                Icons.speed_rounded,
+                Colors.red[200]!,
+                const LogsMaxSets(),
+              ),
+              Tuple4(
+                "Exercise Type Distribution",
+                Icons.donut_small_rounded,
+                Colors.blue[200]!,
+                const LogsTypeDistribution(),
+              ),
+              Tuple4(
+                "Category Distribution",
+                Icons.donut_small_rounded,
+                Colors.orange[200]!,
+                LogsCategoryDistribution(categories: dmodel.categories),
+              ),
+            ],
+            onChildTap: (context, item, index) =>
+                navigate(context: context, builder: (context) => item.v4),
+            childBuilder: (context, item, index) {
+              return Row(
+                children: [
+                  Expanded(
+                    child: WrappedButton(
+                      title: item.v1,
+                      icon: item.v2,
+                      iconBg: item.v3,
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right_rounded,
+                    color: AppColors.subtext(context),
+                  ),
+                  const SizedBox(width: 4),
+                ],
+              );
+            },
+          ),
         ),
 
         SizedBox(

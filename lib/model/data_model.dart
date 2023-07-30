@@ -100,10 +100,9 @@ class DataModel extends ChangeNotifier {
     _currentTabScreen = HomeScreen.overview;
     notifyListeners();
 
+    // var db = await getDB();
     // var response = await db.rawUpdate(
-    //     "UPDATE workout_log SET duration = '6304' WHERE workoutLogId = '64b8ffb2-0005-4746-b27c-8f6744d5da82'");
-    // var response = await db.rawDelete(
-    //     "DELETE FROM workout_log WHERE workoutLogId = '3131a94e-7712-48cb-8f4c-7adbcd2c37de'");
+    //     "UPDATE workout_log SET duration = '7163' WHERE workoutLogId = '994d577b-22d4-4e9b-ac85-9456d03f0e6a'");
     // print(response);
     // return;
     // TODO delete and re-create

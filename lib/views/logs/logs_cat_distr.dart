@@ -220,7 +220,7 @@ class _LogsCategoryDistributionState extends State<LogsCategoryDistribution> {
         title,
         log_count
       FROM ranked_exercises
-      WHERE rn = 1;
+      WHERE rn = 1
     """);
     for (var i in topCatExerciseResponse) {
       var c = widget.categories

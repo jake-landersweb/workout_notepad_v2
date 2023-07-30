@@ -7,10 +7,12 @@ import 'package:workout_notepad_v2/components/contained_list.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/components/labeled_cell.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
+import 'package:workout_notepad_v2/data/exercise_details.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
+import 'package:workout_notepad_v2/utils/image.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
@@ -28,6 +30,25 @@ class ExerciseDetail extends StatefulWidget {
 }
 
 class _ExerciseDetailState extends State<ExerciseDetail> {
+  ExerciseDetails? details;
+
+  @override
+  void initState() {
+    _fetchDetails();
+    super.initState();
+  }
+
+  Future<void> _fetchDetails() async {
+    var db = await getDB();
+    var response = await db.rawQuery(
+      "SELECT * FROM exercise_detail WHERE exerciseId = '${widget.exercise.exerciseId}'",
+    );
+    if (response.isNotEmpty) {
+      details = await ExerciseDetails.fromJson(response[0]);
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
@@ -38,31 +59,30 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
     return HeaderBar.sheet(
       title: widget.exercise.title,
       crossAxisAlignment: CrossAxisAlignment.center,
-      isFluid: true,
+      isFluid: false,
       itemSpacing: 16,
       horizontalSpacing: 0,
       leading: const [comp.CloseButton2()],
       children: [
-        _actions(context, dmodel),
-        Padding(
-          padding: const EdgeInsets.only(left: 32.0),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              "About",
-              style: ttLargeLabel(context),
+        const SizedBox(height: 16),
+        if (details != null && details?.file.type != AppFileType.none)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height / 3,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: details!.file.getRenderer(),
+              ),
             ),
           ),
-        )
-            .animate(delay: (50 * 1).ms)
-            .slideY(
-                begin: 0.25,
-                curve: Sprung(36),
-                duration: const Duration(milliseconds: 500))
-            .fadeIn(),
+        _actions(context, dmodel),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: ExerciseItemGoup(exercise: widget.exercise),
+          child: comp.Section("About",
+              child: ExerciseItemGoup(exercise: widget.exercise)),
         )
             .animate(delay: (50 * 2).ms)
             .slideY(
@@ -70,6 +90,7 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
                 curve: Sprung(36),
                 duration: const Duration(milliseconds: 500))
             .fadeIn(),
+        const SizedBox(height: 16),
         ContainedList<Widget>(
           childPadding: const EdgeInsets.symmetric(horizontal: 16),
           children: [
@@ -89,14 +110,6 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
                   ],
                 ),
               ),
-            if (widget.exercise.description.isNotEmpty)
-              LabeledCell(
-                label: "Description",
-                child: Text(
-                  widget.exercise.description.capitalize(),
-                  style: ttLabel(context),
-                ),
-              ),
           ],
         )
             .animate(delay: (50 * 3).ms)
@@ -105,12 +118,64 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
                 curve: Sprung(36),
                 duration: const Duration(milliseconds: 500))
             .fadeIn(),
+        if (details != null)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: comp.Section(
+              "Details",
+              child: Column(
+                children: [
+                  if (details!.description.isNotEmpty)
+                    _detailWrapper(
+                      context,
+                      "Desc",
+                      details!.description,
+                    ),
+                  if (details!.difficultyLevel.isNotEmpty)
+                    _detailWrapper(
+                      context,
+                      "Difficulty",
+                      details!.difficultyLevel,
+                    ),
+                  if (details!.equipmentNeeded.isNotEmpty)
+                    _detailWrapper(
+                      context,
+                      "Equipment",
+                      details!.equipmentNeeded,
+                    ),
+                  // if (details!.restTime.isNotEmpty)
+                  //   _detailWrapper(context, "RestTime", details!.description),
+                  if (details!.cues.isNotEmpty)
+                    _detailWrapper(
+                      context,
+                      "Cues",
+                      details!.cues,
+                    ),
+                ],
+              ),
+            ),
+          ),
       ],
     );
   }
 
-  Widget _icon(BuildContext context) {
-    return getImageIcon(widget.exercise.icon, size: 100);
+  Widget _detailWrapper(BuildContext context, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.cell(context),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: comp.LabeledCell(
+            label: label,
+            child: Text(value),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _actions(BuildContext context, DataModel dmodel) {

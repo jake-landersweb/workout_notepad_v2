@@ -32,6 +32,25 @@ BEGIN
     UPDATE exercise SET updated = CURRENT_TIMESTAMP;
 END;
 --
+CREATE TABLE exercise_detail(
+    exerciseId TEXT PRIMARY KEY,
+    objectId TEXT NOT NULL,
+    description TEXT NOT NULL,
+    difficultyLevel TEXT NOT NULL,
+    equipmentNeeded TEXT NOT NULL,
+    restTime INTEGER DEFAULT 60 NOT NULL,
+    cues TEXT NOT NULL,
+    created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
+
+    FOREIGN KEY (exerciseId) REFERENCES exercise(exerciseId) ON DELETE CASCADE
+);
+--
+CREATE TRIGGER exercise_detail_update AFTER UPDATE ON exercise_detail
+BEGIN
+    UPDATE exercise_detail SET updated = CURRENT_TIMESTAMP;
+END;
+--
 CREATE TABLE exercise_set(
     exerciseSetId TEXT PRIMARY KEY,
     workoutId TEXT NOT NULL,
@@ -110,7 +129,7 @@ CREATE TABLE workout_log(
     created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
-    FOREIGN KEY (workoutId) REFERENCES workout(workoutId) ON DELETE CASCADE
+    FOREIGN KEY (workoutId) REFERENCES workout(workoutId) ON DELETE SET NULL
 );
 --
 CREATE INDEX workout_log_workoutid ON workout_log(workoutId);
@@ -123,6 +142,7 @@ END;
 CREATE TABLE exercise_log(
     exerciseLogId TEXT PRIMARY KEY,
     title TEXT NOT NULL,
+    category TEXT NOT NULL DEFAULT "",
     exerciseId TEXT NOT NULL,
     parentId TEXT,
     workoutLogId TEXT,

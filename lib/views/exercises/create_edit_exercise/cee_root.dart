@@ -36,6 +36,7 @@ class CEERoot extends StatefulWidget {
 }
 
 class _CEERootState extends State<CEERoot> {
+  bool _isLoading = false;
   @override
   void initState() {
     super.initState();
@@ -65,9 +66,14 @@ class _CEERootState extends State<CEERoot> {
         comp.ModelCreateButton(
           title: widget.isCreate ? "Create" : "Save",
           isValid: cemodel.isValid(),
+          isLoading: _isLoading,
           onTap: () async {
             if (widget.runPostAction) {
-              Exercise? response = await cemodel.post(dmodel, !widget.isCreate);
+              setState(() {
+                _isLoading = true;
+              });
+              Exercise? response =
+                  await cemodel.post(context, dmodel, !widget.isCreate);
               if (response != null) {
                 if (widget.runPostAction) {
                   await dmodel.refreshExercises();
@@ -76,8 +82,12 @@ class _CEERootState extends State<CEERoot> {
                 if (widget.onAction != null) {
                   widget.onAction!(cemodel.exercise);
                 }
+                Navigator.of(context).pop();
+              } else {
+                setState(() {
+                  _isLoading = false;
+                });
               }
-              Navigator.of(context).pop();
             } else {
               widget.onAction!(cemodel.exercise);
             }

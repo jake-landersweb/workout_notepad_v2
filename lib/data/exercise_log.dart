@@ -12,6 +12,7 @@ class ExerciseLog {
   String? parentId;
   String? workoutLogId;
   late String title;
+  late String category;
   late ExerciseType type;
   late int sets;
   String? note;
@@ -28,6 +29,7 @@ class ExerciseLog {
     this.parentId,
     this.workoutLogId,
     required this.title,
+    required this.category,
     required this.sets,
     required this.type,
     this.note,
@@ -41,6 +43,7 @@ class ExerciseLog {
     exerciseLogId = uuid.v4();
     exerciseId = eid;
     title = exercise.title;
+    category = exercise.category;
     sets = exercise.sets;
     type = exercise.type;
     note = "";
@@ -60,6 +63,7 @@ class ExerciseLog {
     exerciseId = eid;
     workoutLogId = wlid;
     title = exercise.title;
+    category = exercise.category;
     sets = exercise.sets;
     type = exercise.type;
     note = "";
@@ -90,6 +94,7 @@ class ExerciseLog {
     parentId = parentEid;
     workoutLogId = wlid;
     title = exercise.title;
+    category = exercise.category;
     sets = exercise.sets;
     type = exercise.type;
     note = "";
@@ -118,6 +123,7 @@ class ExerciseLog {
       parentId: json['parentId'],
       workoutLogId: json['workoutLogId'],
       title: json['title'],
+      category: json['category'] ?? "",
       type: exerciseTypeFromJson(json['type']),
       sets: json['sets'],
       note: json['note'],
@@ -165,6 +171,7 @@ class ExerciseLog {
         "parentId": parentId,
         "workoutLogId": workoutLogId,
         "title": title,
+        "category": category,
         "type": exerciseTypeToJson(type),
         "isSuperSet": isSuperSet ? 1 : 0,
         "sets": sets,

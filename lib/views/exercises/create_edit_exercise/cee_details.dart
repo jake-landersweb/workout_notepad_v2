@@ -1,25 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:provider/provider.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:workout_notepad_v2/components/clickable.dart';
-import 'package:workout_notepad_v2/components/contained_list.dart';
-import 'package:workout_notepad_v2/components/field.dart';
-import 'package:workout_notepad_v2/components/header_bar.dart';
-
 import 'package:workout_notepad_v2/components/root.dart';
-import 'package:workout_notepad_v2/components/time_picker.dart';
-import 'package:workout_notepad_v2/data/root.dart';
-import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/image.dart';
-import 'package:workout_notepad_v2/views/exercises/create_edit_exercise/cee_type.dart';
 import 'package:workout_notepad_v2/views/exercises/create_edit_exercise/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:workout_notepad_v2/views/icon_picker.dart';
 
 class CEEDetails extends StatefulWidget {
   const CEEDetails({
@@ -67,13 +52,13 @@ class _CEEDetailsState extends State<CEEDetails> {
                   child: _getAssetWidget(context),
                 ),
               ),
-              if (widget.cemodel.image != null || widget.cemodel.video != null)
+              if (widget.cemodel.exerciseDetails.file.file != null)
                 Clickable(
                   onTap: () {
                     setState(() {
-                      widget.cemodel.image = null;
-                      widget.cemodel.video = null;
+                      widget.cemodel.exerciseDetails.file.deleteFile();
                     });
+                    widget.cemodel.deleteFile = true;
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -103,12 +88,12 @@ class _CEEDetailsState extends State<CEEDetails> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Field(
-                value: widget.cemodel.exerciseDetail.description,
+                value: widget.cemodel.exerciseDetails.description,
                 labelText:
                     "Break down the exercise into steps to make it easier to follow.",
                 onChanged: (v) {
                   setState(() {
-                    widget.cemodel.exerciseDetail.description = v;
+                    widget.cemodel.exerciseDetails.description = v;
                   });
                 },
                 isLabeled: false,
@@ -129,11 +114,11 @@ class _CEEDetailsState extends State<CEEDetails> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Field(
-                value: widget.cemodel.exerciseDetail.difficultyLevel,
+                value: widget.cemodel.exerciseDetails.difficultyLevel,
                 labelText: "Beginner | Intermediate | Advanced",
                 onChanged: (v) {
                   setState(() {
-                    widget.cemodel.exerciseDetail.difficultyLevel = v;
+                    widget.cemodel.exerciseDetails.difficultyLevel = v;
                   });
                 },
                 isLabeled: false,
@@ -152,11 +137,11 @@ class _CEEDetailsState extends State<CEEDetails> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Field(
-                value: widget.cemodel.exerciseDetail.difficultyLevel,
+                value: widget.cemodel.exerciseDetails.equipmentNeeded,
                 labelText: "Barbells, bands, free-weights, etc.",
                 onChanged: (v) {
                   setState(() {
-                    widget.cemodel.exerciseDetail.difficultyLevel = v;
+                    widget.cemodel.exerciseDetails.equipmentNeeded = v;
                   });
                 },
                 isLabeled: false,
@@ -170,12 +155,12 @@ class _CEEDetailsState extends State<CEEDetails> {
         Section(
           "Rest Time",
           child: TimePicker(
-            hours: widget.cemodel.exerciseDetail.getHours(),
-            minutes: widget.cemodel.exerciseDetail.getMinutes(),
-            seconds: widget.cemodel.exerciseDetail.getSeconds(),
+            hours: widget.cemodel.exerciseDetails.getHours(),
+            minutes: widget.cemodel.exerciseDetails.getMinutes(),
+            seconds: widget.cemodel.exerciseDetails.getSeconds(),
             onChanged: (v) {
               setState(() {
-                widget.cemodel.exerciseDetail.restTime = v;
+                widget.cemodel.exerciseDetails.restTime = v;
               });
             },
           ),
@@ -191,12 +176,12 @@ class _CEEDetailsState extends State<CEEDetails> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Field(
-                value: widget.cemodel.exerciseDetail.cues,
+                value: widget.cemodel.exerciseDetails.cues,
                 labelText:
                     "Reminders on form and technique, e.g., \"keep your back straight,\" \"engage your core,\" etc.",
                 onChanged: (v) {
                   setState(() {
-                    widget.cemodel.exerciseDetail.cues = v;
+                    widget.cemodel.exerciseDetails.cues = v;
                   });
                 },
                 isLabeled: false,
@@ -212,36 +197,23 @@ class _CEEDetailsState extends State<CEEDetails> {
   }
 
   Widget _getAssetWidget(BuildContext context) {
-    if (widget.cemodel.image != null) {
-      return Image.file(
-        widget.cemodel.image!,
-        fit: BoxFit.fitHeight,
-      );
-    } else if (widget.cemodel.video != null) {
-      return VideoRenderder(videoFile: widget.cemodel.video!);
-    } else {
+    if (widget.cemodel.exerciseDetails.file.file == null) {
       return Clickable(
         onTap: () async {
-          await promptMedia(context, "1234", (file) {
-            if (file.v1 == null) {
-              print("There was no selected file.");
-            } else {
-              switch (file.v2) {
-                case PickedFileType.video:
-                  setState(() {
-                    widget.cemodel.image = null;
-                    widget.cemodel.video = file.v1;
-                  });
-                  break;
-                case PickedFileType.image:
-                  setState(() {
-                    widget.cemodel.video = null;
-                    widget.cemodel.image = file.v1;
-                  });
-                  break;
+          await promptMedia(
+            context: context,
+            onSelected: (file) {
+              if (file == null) {
+                print("There was an issue picking the file");
               }
-            }
-          });
+              setState(() {
+                widget.cemodel.exerciseDetails.file.setFile(
+                  objectId: widget.cemodel.fileObjectId,
+                  file: file!,
+                );
+              });
+            },
+          );
         },
         child: Container(
           decoration: BoxDecoration(
@@ -268,5 +240,6 @@ class _CEEDetailsState extends State<CEEDetails> {
         ),
       );
     }
+    return widget.cemodel.exerciseDetails.file.getRenderer();
   }
 }

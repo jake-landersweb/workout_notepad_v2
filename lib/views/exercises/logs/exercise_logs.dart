@@ -9,6 +9,9 @@ import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/exercises/logs/el_distribution.dart';
+import 'package:workout_notepad_v2/views/exercises/logs/el_sets.dart';
+import 'package:workout_notepad_v2/views/exercises/logs/el_tags.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 
 class ExerciseLogs extends StatefulWidget {
@@ -153,6 +156,7 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
     Icons.dashboard_rounded,
     Icons.stacked_line_chart_rounded,
     Icons.bar_chart_rounded,
+    Icons.pie_chart,
   ];
 
   Widget _navigation(BuildContext context, ELModel elmodel) {
@@ -196,10 +200,11 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
                 child: Text("No Logs!"),
               )
             ]
-          : const [
-              ELOverview(),
-              ELWeightChart(),
-              ELBarChart(),
+          : [
+              const ELOverview(),
+              ELDistribution(exercise: elmodel.exercise),
+              ELSets(exercise: elmodel.exercise),
+              ELTags(exercise: elmodel.exercise),
             ],
     );
   }

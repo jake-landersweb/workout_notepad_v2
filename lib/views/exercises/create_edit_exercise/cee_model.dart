@@ -43,9 +43,6 @@ class CreateExerciseModel extends ChangeNotifier {
     var response = await db.rawQuery(
       "SELECT * FROM exercise_detail WHERE exerciseId = '${exercise.exerciseId}'",
     );
-    print(response);
-    var r2 = await db.rawQuery("SELECT * FROM exercise_detail");
-    print(r2);
     // exerciseDetails = ExerciseDetails.init(exerciseId: exercise.exerciseId);
     if (response.isEmpty) {
       exerciseDetails = ExerciseDetails.init(exerciseId: exercise.exerciseId);

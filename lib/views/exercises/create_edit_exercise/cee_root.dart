@@ -100,25 +100,6 @@ class _CEERootState extends State<CEERoot> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: _title(context, cemodel),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: comp.WrappedButton(
-            title: "Exercise Details",
-            icon: Icons.info_outline_rounded,
-            rowAxisSize: MainAxisSize.max,
-            onTap: () => cupertinoSheet(
-              context: context,
-              builder: (context) => CEEDetails(cemodel: cemodel),
-            ),
-          ),
-        ),
-        comp.Section(
-          "Category",
-          initOpen: true,
-          allowsCollapse: true,
-          headerPadding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-          child: _category(context, cemodel, dmodel),
-        ),
         if (widget.isCreate)
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -164,6 +145,13 @@ class _CEERootState extends State<CEERoot> {
               ),
             ),
           ),
+        comp.Section(
+          "Category",
+          initOpen: true,
+          allowsCollapse: true,
+          headerPadding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+          child: _category(context, cemodel, dmodel),
+        ),
         for (var i in _setBody(context, cemodel)) i
       ],
     );
@@ -198,21 +186,33 @@ class _CEERootState extends State<CEERoot> {
 
   Widget _title(BuildContext context, CreateExerciseModel cemodel) {
     return ContainedList<Widget>(
-      childPadding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+      childPadding: EdgeInsets.zero,
       leadingPadding: 0,
       trailingPadding: 0,
       children: [
-        Field(
-          labelText: "Title",
-          hintText: "Title (ex. Bicep Curls)",
-          charLimit: 40,
-          value: cemodel.exercise.title,
-          showCharacters: true,
-          onChanged: (val) {
-            setState(() {
-              cemodel.exercise.title = val;
-            });
-          },
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+          child: Field(
+            labelText: "Title",
+            hintText: "Title (ex. Bicep Curls)",
+            charLimit: 40,
+            value: cemodel.exercise.title,
+            showCharacters: true,
+            onChanged: (val) {
+              setState(() {
+                cemodel.exercise.title = val;
+              });
+            },
+          ),
+        ),
+        comp.WrappedButton(
+          title: "Exercise Details",
+          icon: Icons.info_outline_rounded,
+          rowAxisSize: MainAxisSize.max,
+          onTap: () => cupertinoSheet(
+            context: context,
+            builder: (context) => CEEDetails(cemodel: cemodel),
+          ),
         ),
       ],
     );

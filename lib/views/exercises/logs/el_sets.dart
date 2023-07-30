@@ -79,6 +79,9 @@ class _ELSetsState extends State<ELSets> {
                   ),
                 ],
               ),
+              const SizedBox(height: 16),
+              _legend(context),
+              const SizedBox(height: 16),
               Expanded(
                 child: LineChart(
                   LineChartData(
@@ -95,10 +98,16 @@ class _ELSetsState extends State<ELSets> {
                         tooltipBgColor: AppColors.cell(context),
                         getTooltipItems: (touchedSpots) {
                           List<LineTooltipItem> items = [];
+                          items.add(
+                            LineTooltipItem(
+                              "Set #${touchedSpots[0].x.round()}",
+                              ttcaption(context),
+                            ),
+                          );
                           for (var i in touchedSpots) {
                             items.add(
                               LineTooltipItem(
-                                "${_getTitleFromIndex(i.barIndex)}: ${i.y.toStringAsFixed(2)}",
+                                "${_getTitleFromIndex(i.barIndex)}: ${_getHoverTitle(i.y)}",
                                 ttBody(
                                   context,
                                   color: i.bar.color,
@@ -118,13 +127,13 @@ class _ELSetsState extends State<ELSets> {
                       leftTitles: AxisTitles(
                         sideTitles: SideTitles(
                           showTitles: true,
-                          reservedSize: 40,
+                          reservedSize: 50,
                           getTitlesWidget: (value, meta) {
                             if (meta.max == value || meta.min == value) {
                               return Container();
                             }
                             return Text(
-                              "${value.round()}",
+                              _getHoverTitle(value),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 12,
@@ -153,6 +162,59 @@ class _ELSetsState extends State<ELSets> {
           ),
         ),
       );
+    }
+  }
+
+  Widget _legend(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        _legendItem(context, Colors.red[300]!, "max"),
+        _legendItem(context, Colors.green[300]!, "avg"),
+        _legendItem(context, Colors.blue[300]!, "min"),
+      ],
+    );
+  }
+
+  Widget _legendItem(BuildContext context, Color color, String title) {
+    return Expanded(
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
+            height: 30,
+            width: 30,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            title.toUpperCase(),
+            style: ttcaption(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getHoverTitle(double val) {
+    switch (widget.exercise.type) {
+      case ExerciseType.bw:
+      case ExerciseType.weight:
+        return val.toStringAsFixed(2);
+      case ExerciseType.timed:
+      case ExerciseType.duration:
+        switch (_type) {
+          case ELSetsType.weight:
+            return formatHHMMSS(val.round());
+          case ELSetsType.reps:
+            return val.toStringAsFixed(2);
+          case ELSetsType.time:
+            return formatHHMMSS(val.round());
+        }
     }
   }
 

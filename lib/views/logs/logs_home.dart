@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
+import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/logs/logs_cat_indiv.dart';
 import 'package:workout_notepad_v2/views/logs/root.dart';
 
 class LogsHome extends StatefulWidget {
@@ -90,7 +93,7 @@ class _LogsHomeState extends State<LogsHome> {
                 const LogsTypeDistribution(),
               ),
               Tuple4(
-                "Category Distribution",
+                "Categories Overview",
                 Icons.donut_small_rounded,
                 Colors.orange[200]!,
                 LogsCategoryDistribution(categories: dmodel.categories),
@@ -114,6 +117,51 @@ class _LogsHomeState extends State<LogsHome> {
                   ),
                   const SizedBox(width: 4),
                 ],
+              );
+            },
+          ),
+        ),
+        Section(
+          "Category",
+          headerPadding: const EdgeInsets.fromLTRB(32, 8, 0, 4),
+          child: ContainedList<Category>(
+            childPadding: const EdgeInsets.only(left: 16),
+            children: dmodel.categories,
+            onChildTap: (context, item, index) => navigate(
+              context: context,
+              builder: (context) => LogsCategoryIndividual(category: item),
+            ),
+            childBuilder: (context, item, index) {
+              return ConstrainedBox(
+                constraints: BoxConstraints(minHeight: 40),
+                child: Row(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.cell(context)[500],
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      height: 30,
+                      width: 30,
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: getImageIcon(item.icon),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        item.title.capitalize(),
+                        style: ttLabel(context),
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      color: AppColors.subtext(context),
+                    ),
+                    const SizedBox(width: 4),
+                  ],
+                ),
               );
             },
           ),

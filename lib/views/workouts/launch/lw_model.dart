@@ -278,13 +278,18 @@ class LaunchWorkoutModel extends ChangeNotifier {
           // insert workout exercise
           state.exerciseLogs[i].isSuperSet = false;
           if (state.exerciseLogs[i].metadata.isNotEmpty) {
-            await txn.insert("exercise_log", state.exerciseLogs[i].toMap());
+            await txn.insert(
+              "exercise_log",
+              state.exerciseLogs[i].toMap(),
+              conflictAlgorithm: ConflictAlgorithm.replace,
+            );
 
             // insert metadata
             for (int m = 0; m < state.exerciseLogs[i].metadata.length; m++) {
               await txn.insert(
                 "exercise_log_meta",
                 state.exerciseLogs[i].metadata[m].toMap(),
+                conflictAlgorithm: ConflictAlgorithm.replace,
               );
               // insert tags
               for (int c = 0;
@@ -293,6 +298,7 @@ class LaunchWorkoutModel extends ChangeNotifier {
                 await txn.insert(
                   "exercise_log_meta_tag",
                   state.exerciseLogs[i].metadata[m].tags[c].toMap(),
+                  conflictAlgorithm: ConflictAlgorithm.replace,
                 );
               }
             }
@@ -305,6 +311,7 @@ class LaunchWorkoutModel extends ChangeNotifier {
               await txn.insert(
                 "exercise_log",
                 state.exerciseChildLogs[i][j].toMap(),
+                conflictAlgorithm: ConflictAlgorithm.replace,
               );
 
               // insert metadata
@@ -314,6 +321,7 @@ class LaunchWorkoutModel extends ChangeNotifier {
                 await txn.insert(
                   "exercise_log_meta",
                   state.exerciseChildLogs[i][j].metadata[m].toMap(),
+                  conflictAlgorithm: ConflictAlgorithm.replace,
                 );
                 // insert tags
                 for (int c = 0;
@@ -322,6 +330,7 @@ class LaunchWorkoutModel extends ChangeNotifier {
                   await txn.insert(
                     "exercise_log_meta_tag",
                     state.exerciseChildLogs[i][j].metadata[m].tags[c].toMap(),
+                    conflictAlgorithm: ConflictAlgorithm.replace,
                   );
                 }
               }
@@ -330,7 +339,11 @@ class LaunchWorkoutModel extends ChangeNotifier {
         }
 
         // insert the workout
-        await txn.insert("workout_log", state.wl.toMap());
+        await txn.insert(
+          "workout_log",
+          state.wl.toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
       });
     } catch (error) {
       NewrelicMobile.instance.recordError(

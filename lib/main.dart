@@ -45,7 +45,7 @@ void main() async {
     // Optional: Enable or disable capture of HTTP response bodies for HTTP error traces, and MobileRequestError events.
     httpResponseBodyCaptureEnabled: true,
     // Optional: Enable or disable agent logging.
-    loggingEnabled: true,
+    loggingEnabled: false,
     // Optional: Enable or disable print statements as Analytics Events.
     printStatementAsEventsEnabled: false,
     // Optional: Enable or disable automatic instrumentation of HTTP requests.
@@ -58,7 +58,7 @@ void main() async {
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
     FlutterError.onError = NewrelicMobile.onError;
-    // await NewrelicMobile.instance.startAgent(config);
+    await NewrelicMobile.instance.startAgent(config);
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );

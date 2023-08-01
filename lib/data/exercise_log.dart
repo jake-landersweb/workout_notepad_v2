@@ -322,6 +322,7 @@ class ExerciseLogMeta {
   ExerciseLogMeta.from(ExerciseLogMeta m) {
     exerciseLogMetaId = const Uuid().v4();
     exerciseLogId = m.exerciseLogId;
+    exerciseId = m.exerciseId;
     exerciseLogMetaId = m.exerciseLogMetaId;
     reps = m.reps;
     time = m.time;
@@ -386,7 +387,7 @@ class ExerciseLogMeta {
   Map<String, dynamic> toMap() => {
         "exerciseLogMetaId": exerciseLogMetaId,
         "exerciseLogId": exerciseLogId,
-        "exerciseId": exerciseId,
+        "exerciseId": "",
         "reps": reps,
         "time": time,
         "weight": weight,

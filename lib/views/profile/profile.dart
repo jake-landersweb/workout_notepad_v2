@@ -7,6 +7,7 @@ import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/components/wrapped_button.dart';
+import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/snapshot.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
@@ -19,6 +20,7 @@ import 'package:intl/intl.dart';
 import 'dart:math' as math;
 
 import 'package:workout_notepad_v2/views/profile/manage_data.dart';
+import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -84,6 +86,21 @@ class _ProfileState extends State<Profile> {
                 cupertinoSheet(
                   context: context,
                   builder: (context) => const CreateAccount(),
+                );
+              },
+            ),
+          )
+        else if (dmodel.user!.subscriptionStatus == SubscriptionStatus.none)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: WrappedButton(
+              title: "Explore Premium",
+              icon: Icons.star,
+              iconBg: Colors.amber[700],
+              onTap: () {
+                cupertinoSheet(
+                  context: context,
+                  builder: (context) => const Subscriptions(),
                 );
               },
             ),

@@ -10,6 +10,26 @@ import 'package:workout_notepad_v2/model/client.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:http/http.dart' as http;
 
+enum SubscriptionStatus { none, premium }
+
+SubscriptionStatus subStatusFromJson(String? status) {
+  switch (status) {
+    case "premium":
+      return SubscriptionStatus.premium;
+    default:
+      return SubscriptionStatus.none;
+  }
+}
+
+String subStatusToJson(SubscriptionStatus status) {
+  switch (status) {
+    case SubscriptionStatus.premium:
+      return "premium";
+    default:
+      return "none";
+  }
+}
+
 class User {
   late String userId;
   String? email;
@@ -22,6 +42,7 @@ class User {
   int? created;
   int? updated;
   bool offline = false;
+  late SubscriptionStatus subscriptionStatus = SubscriptionStatus.none;
 
   User({
     required this.userId,
@@ -71,6 +92,7 @@ class User {
     if (json.containsKey("updated")) {
       updated = json['updated'].round();
     }
+    subscriptionStatus = subStatusFromJson(json['subscriptionStatus']);
   }
 
   Map<String, dynamic> toMap() {
@@ -83,6 +105,7 @@ class User {
       "sync": sync,
       "isAnon": isAnon,
       "expireEpoch": expireEpoch,
+      "subscriptionStatus": subStatusToJson(subscriptionStatus),
     };
   }
 

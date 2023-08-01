@@ -1,8 +1,11 @@
 // ignore_for_file: depend_on_referenced_packages, avoid_print, prefer_const_constructors, use_build_context_synchronously
 
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
+import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
@@ -15,14 +18,20 @@ import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/snapshot.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:path/path.dart';
+import 'package:workout_notepad_v2/model/client.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/views/home.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:http/http.dart' as http;
 
 enum LoadStatus { init, noUser, done, expired }
 
+enum LoadingStatus { loading, error, done }
+
 class DataModel extends ChangeNotifier {
+  late StreamSubscription<List<PurchaseDetails>> _subscription;
+
   HomeScreen _currentTabScreen = HomeScreen.overview;
   HomeScreen get currentTabScreen => _currentTabScreen;
   void setTabScreen(HomeScreen screen) {
@@ -36,7 +45,104 @@ class DataModel extends ChangeNotifier {
   Color color = const Color(0xFF418a2f);
 
   DataModel() {
+    // create the subscription
+    _subscription =
+        InAppPurchase.instance.purchaseStream.listen((purchaseDetailsList) {
+      _listenToPurchaseUpdated(purchaseDetailsList);
+    }, onDone: () {
+      _subscription.cancel();
+    }, onError: (error) {
+      // handle error here.
+    });
     init();
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
+
+  void _listenToPurchaseUpdated(
+      List<PurchaseDetails> purchaseDetailsList) async {
+    for (var purchaseDetails in purchaseDetailsList) {
+      if (purchaseDetails.status == PurchaseStatus.pending) {
+        print("purchase pending");
+      } else {
+        if (purchaseDetails.status == PurchaseStatus.error) {
+          print("There was an error in the purchase");
+        } else if (purchaseDetails.status == PurchaseStatus.purchased ||
+            purchaseDetails.status == PurchaseStatus.restored) {
+          var valid = await _verifyPurchase(purchaseDetails);
+
+          if (valid) {
+            var assignResponse = await _assignPurchase(purchaseDetails);
+            if (assignResponse) {
+              print("Successfully attached purchase");
+              if (purchaseDetails.pendingCompletePurchase) {
+                await InAppPurchase.instance.completePurchase(purchaseDetails);
+                print("completed purchase");
+              }
+            } else {
+              print("There was an error assigning the purchase");
+              return;
+            }
+          } else {
+            print("There was an error verifying the purchase");
+            return;
+          }
+        }
+      }
+    }
+    ;
+  }
+
+  Future<bool> _verifyPurchase(PurchaseDetails details) async {
+    var client = Client(client: http.Client());
+
+    var response = await client.put(
+      "/users/${user!.userId}/verifyPurchase",
+      {},
+      jsonEncode({
+        "platform": Platform.isIOS ? "ios" : "android",
+        "productId": details.productID,
+        "token": details.verificationData.serverVerificationData,
+        "isSandbox": foundation.kDebugMode,
+      }),
+    );
+    if (response.statusCode == 200) {
+      print("Successfully verified purchase"); // TODO
+      return true;
+    } else {
+      print("There was error verifying the purchase"); // TODO
+      print(response.body);
+      return false;
+    }
+  }
+
+  Future<bool> _assignPurchase(PurchaseDetails details) async {
+    return true;
+    var client = Client(client: http.Client());
+
+    var response = await client.put(
+      "/users/${user!.userId}/verifyPurchase",
+      {},
+      jsonEncode({
+        "productId": details.productID,
+        "transactionDate": int.parse(details.transactionDate!),
+        "purchaseId": details.purchaseID,
+        "expireEpoch":
+            DateTime.now().add(const Duration(days: 30)).millisecondsSinceEpoch,
+      }),
+    );
+    if (response.statusCode == 200) {
+      print("Successfully attached purchase"); // TODO
+      return true;
+    } else {
+      print("There was error attaching the purchase"); // TODO
+      print(response.body);
+      return false;
+    }
   }
 
   Future<void> createAnonymousUser(BuildContext context) async {
@@ -94,6 +200,20 @@ class DataModel extends ChangeNotifier {
   }
 
   Future<void> init({User? u}) async {
+    // const Set<String> _kIds = <String>{'wn_premium'};
+    // final ProductDetailsResponse response =
+    //     await InAppPurchase.instance.queryProductDetails(_kIds);
+    // for (var i in response.productDetails) {
+    //   print(i.id);
+    //   print(i.description);
+    // }
+    // final PurchaseParam purchaseParam = PurchaseParam(
+    //   productDetails: response.productDetails[0],
+    // );
+    // var purchaseResponse = await InAppPurchase.instance
+    //     .buyNonConsumable(purchaseParam: purchaseParam);
+    // print(purchaseResponse);
+
     var prefs = await SharedPreferences.getInstance();
 
     // set to index page
@@ -102,7 +222,7 @@ class DataModel extends ChangeNotifier {
 
     // var db = await getDB();
     // var response = await db.rawUpdate(
-    //     "UPDATE workout_log SET duration = '7163' WHERE workoutLogId = '994d577b-22d4-4e9b-ac85-9456d03f0e6a'");
+    //     "UPDATE workout_log SET duration = '6944' WHERE workoutLogId = '91a1e334-ca18-4a53-b7be-0c8fe6bc71da'");
     // print(response);
     // return;
     // TODO delete and re-create

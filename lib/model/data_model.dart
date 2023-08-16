@@ -29,6 +29,8 @@ enum LoadStatus { init, noUser, done, expired }
 
 enum LoadingStatus { loading, error, done }
 
+enum PaymentLoadStatus { none, loading, complete, error }
+
 class DataModel extends ChangeNotifier {
   late StreamSubscription<List<PurchaseDetails>> _subscription;
 
@@ -43,6 +45,7 @@ class DataModel extends ChangeNotifier {
   User? expiredAnonUser;
   LoadStatus loadStatus = LoadStatus.init;
   Color color = const Color(0xFF418a2f);
+  PaymentLoadStatus paymentLoadStatus = PaymentLoadStatus.none;
 
   DataModel() {
     // create the subscription
@@ -52,7 +55,11 @@ class DataModel extends ChangeNotifier {
     }, onDone: () {
       _subscription.cancel();
     }, onError: (error) {
-      // handle error here.
+      NewrelicMobile.instance.recordError(
+        error,
+        StackTrace.current,
+        attributes: {"err_code": "payment_exception"},
+      );
     });
     init();
   }
@@ -64,37 +71,120 @@ class DataModel extends ChangeNotifier {
   }
 
   void _listenToPurchaseUpdated(
-      List<PurchaseDetails> purchaseDetailsList) async {
+    List<PurchaseDetails> purchaseDetailsList,
+  ) async {
     for (var purchaseDetails in purchaseDetailsList) {
-      if (purchaseDetails.status == PurchaseStatus.pending) {
-        print("purchase pending");
-      } else {
-        if (purchaseDetails.status == PurchaseStatus.error) {
-          print("There was an error in the purchase");
-        } else if (purchaseDetails.status == PurchaseStatus.purchased ||
-            purchaseDetails.status == PurchaseStatus.restored) {
-          var valid = await _verifyPurchase(purchaseDetails);
+      await _handlePurchaseRecord(purchaseDetails);
+    }
+  }
 
-          if (valid) {
-            var assignResponse = await _assignPurchase(purchaseDetails);
-            if (assignResponse) {
-              print("Successfully attached purchase");
-              if (purchaseDetails.pendingCompletePurchase) {
-                await InAppPurchase.instance.completePurchase(purchaseDetails);
-                print("completed purchase");
+  Future<void> _handlePurchaseRecord(PurchaseDetails details) async {
+    print("[PURCHASE] Handling Purchase with productID: ${details.productID}");
+    try {
+      if (details.status == PurchaseStatus.pending) {
+        print("[PURCHASE] purchase pending");
+        paymentLoadStatus = PaymentLoadStatus.loading;
+        notifyListeners();
+      } else {
+        if (details.status == PurchaseStatus.error) {
+          _recordPaymentError(
+            "There was an error in the purchase itself",
+            details,
+            "purchase_error",
+          );
+          paymentLoadStatus = PaymentLoadStatus.error;
+          notifyListeners();
+        } else if (details.status == PurchaseStatus.purchased ||
+            details.status == PurchaseStatus.restored) {
+          if (user!.subscriptionType == SubscriptionType.wn_premium) {
+            print("[PURCHASE] duplicate event found, completing and ignoring.");
+            await InAppPurchase.instance.completePurchase(details);
+            print("[PURCHASE] duplicate purchaseId = ${details.purchaseID}");
+            return;
+          } else {
+            var valid = await _verifyPurchase(details);
+            if (valid) {
+              var assignResponse = await _assignPurchase(details);
+              if (assignResponse) {
+                await NewrelicMobile.instance.recordCustomEvent(
+                  "WN_Metric",
+                  eventName: "payment_complete",
+                  eventAttributes: {
+                    "userId": user!.userId,
+                    "transactionDate": details.transactionDate,
+                  },
+                );
+                print("[PURCHASE] Successfully assigned purchase");
+                paymentLoadStatus = PaymentLoadStatus.complete;
+                await init();
+                notifyListeners();
+              } else {
+                _recordPaymentError(
+                  "There was an error assigning the payment",
+                  details,
+                  "payment_assign",
+                );
+                paymentLoadStatus = PaymentLoadStatus.error;
+                notifyListeners();
               }
             } else {
-              print("There was an error assigning the purchase");
+              _recordPaymentError(
+                "There was an error verifying the purchase",
+                details,
+                "purchase_verify",
+              );
+              paymentLoadStatus = PaymentLoadStatus.error;
+              notifyListeners();
+              // if there was an error verifying, escape the function because it SHOULD NOT be verrified
               return;
             }
-          } else {
-            print("There was an error verifying the purchase");
-            return;
           }
         }
       }
+    } catch (error) {
+      _recordPaymentError(
+        error,
+        details,
+        "payment_unknown",
+      );
+      paymentLoadStatus = PaymentLoadStatus.error;
+      notifyListeners();
     }
-    ;
+    // complete the purchase NO MATTER WHAT
+    if (details.pendingCompletePurchase) {
+      await InAppPurchase.instance.completePurchase(details);
+      print("[PURCHASE] Successfully acknowledged purchase");
+      print("-- DETAILS --");
+      print("productID: ${details.productID}");
+      print("purchaseID: ${details.purchaseID}");
+      print("transactionDate: ${details.transactionDate}");
+      print("source: ${details.verificationData.source}");
+    }
+  }
+
+  void _recordPaymentError(
+    dynamic error,
+    PurchaseDetails details,
+    String errCode,
+  ) {
+    NewrelicMobile.instance.recordError(
+      error,
+      StackTrace.current,
+      attributes: {
+        "err_code": errCode,
+        "productID": details.productID,
+        "purchaseID": details.purchaseID ?? "",
+        "transactionDate": details.transactionDate ?? "",
+        "source": details.verificationData.source,
+        "serverVerificationData":
+            details.verificationData.serverVerificationData,
+        "localVerificationData": details.verificationData.localVerificationData,
+        "pendingCompletePurchase":
+            details.pendingCompletePurchase ? "true" : "false",
+      },
+    );
+    print("[PURCHASE] **ERROR**");
+    print(error);
   }
 
   Future<bool> _verifyPurchase(PurchaseDetails details) async {
@@ -121,22 +211,21 @@ class DataModel extends ChangeNotifier {
   }
 
   Future<bool> _assignPurchase(PurchaseDetails details) async {
-    return true;
     var client = Client(client: http.Client());
 
     var response = await client.put(
-      "/users/${user!.userId}/verifyPurchase",
+      "/users/${user!.userId}/assignPurchase",
       {},
       jsonEncode({
         "productId": details.productID,
         "transactionDate": int.parse(details.transactionDate!),
         "purchaseId": details.purchaseID,
-        "expireEpoch":
-            DateTime.now().add(const Duration(days: 30)).millisecondsSinceEpoch,
       }),
     );
     if (response.statusCode == 200) {
-      print("Successfully attached purchase"); // TODO
+      print("Successfully attached purchase");
+      // update the user record to reflect this
+      await getUser();
       return true;
     } else {
       print("There was error attaching the purchase"); // TODO
@@ -200,6 +289,8 @@ class DataModel extends ChangeNotifier {
   }
 
   Future<void> init({User? u}) async {
+    loadStatus = LoadStatus.done;
+    notifyListeners();
     // const Set<String> _kIds = <String>{'wn_premium'};
     // final ProductDetailsResponse response =
     //     await InAppPurchase.instance.queryProductDetails(_kIds);
@@ -245,6 +336,20 @@ class DataModel extends ChangeNotifier {
       print("[INIT] The anon user has expired");
       await clearData(ls: LoadStatus.expired);
       return;
+    }
+
+    // check if the premium estimated expire epoch is overdue
+    if (user!.subscriptionEstimatedExpireEpoch != null) {
+      print("Checking to make sure user still has a valid subscription ...");
+      print("User epoch:   ${user!.subscriptionEstimatedExpireEpoch!}");
+      print("Client epoch: ${DateTime.now().millisecondsSinceEpoch}");
+      if (user!.subscriptionEstimatedExpireEpoch! <
+          DateTime.now().millisecondsSinceEpoch) {
+        print("The user's subscription has expired");
+        user!.subscriptionType = SubscriptionType.none;
+      } else {
+        print("User has a valid subscription");
+      }
     }
 
     print("[INIT] app state is valid. Fetching user in background to ensure");
@@ -383,6 +488,12 @@ class DataModel extends ChangeNotifier {
     if (user!.isAnon) {
       return true;
     }
+
+    // snapshots are only supported for premium users
+    if (user!.subscriptionType != SubscriptionType.wn_premium) {
+      return true;
+    }
+
     // snapshot the data
     var snps = await Snapshot.snapshotDatabase(user!.userId);
     if (snps == null) {

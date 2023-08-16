@@ -38,6 +38,9 @@ class _HomeState extends State<Home> {
   }
 
   Widget _getBody(DataModel dmodel) {
+    if (dmodel.user == null) {
+      return Container();
+    }
     switch (dmodel.currentTabScreen) {
       case HomeScreen.collections:
         return const CollectionHome();
@@ -71,7 +74,7 @@ class _HomeState extends State<Home> {
             top: false,
             child: Column(
               children: [
-                if (dmodel.user!.offline)
+                if (dmodel.user?.offline ?? false)
                   Container(
                     color: AppColors.divider(context),
                     child: Padding(

@@ -10,21 +10,21 @@ import 'package:workout_notepad_v2/model/client.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:http/http.dart' as http;
 
-enum SubscriptionStatus { none, premium }
+enum SubscriptionType { none, wn_premium }
 
-SubscriptionStatus subStatusFromJson(String? status) {
+SubscriptionType subStatusFromJson(String? status) {
   switch (status) {
-    case "premium":
-      return SubscriptionStatus.premium;
+    case "wn_premium":
+      return SubscriptionType.wn_premium;
     default:
-      return SubscriptionStatus.none;
+      return SubscriptionType.none;
   }
 }
 
-String subStatusToJson(SubscriptionStatus status) {
+String subStatusToJson(SubscriptionType status) {
   switch (status) {
-    case SubscriptionStatus.premium:
-      return "premium";
+    case SubscriptionType.wn_premium:
+      return "wn_premium";
     default:
       return "none";
   }
@@ -42,7 +42,10 @@ class User {
   int? created;
   int? updated;
   bool offline = false;
-  late SubscriptionStatus subscriptionStatus = SubscriptionStatus.none;
+  late SubscriptionType subscriptionType = SubscriptionType.none;
+  int? subscriptionEstimatedExpireEpoch;
+  String? subscriptionPurchaseId;
+  int? subscriptionTransactionEpoch;
 
   User({
     required this.userId,
@@ -92,7 +95,12 @@ class User {
     if (json.containsKey("updated")) {
       updated = json['updated'].round();
     }
-    subscriptionStatus = subStatusFromJson(json['subscriptionStatus']);
+    subscriptionType = subStatusFromJson(json['subscriptionType']);
+    subscriptionEstimatedExpireEpoch =
+        json['subscriptionEstimatedExpireEpoch']?.round();
+    subscriptionPurchaseId = json['subscriptionPurchaseId'];
+    subscriptionTransactionEpoch =
+        json['subscriptionTransactionEpoch']?.round();
   }
 
   Map<String, dynamic> toMap() {
@@ -105,7 +113,10 @@ class User {
       "sync": sync,
       "isAnon": isAnon,
       "expireEpoch": expireEpoch,
-      "subscriptionStatus": subStatusToJson(subscriptionStatus),
+      "subscriptionType": subStatusToJson(subscriptionType),
+      "subscriptionEstimatedExpireEpoch": subscriptionEstimatedExpireEpoch,
+      "subscriptionPurchaseId": subscriptionPurchaseId,
+      "subscriptionTransactionEpoch": subscriptionTransactionEpoch,
     };
   }
 
@@ -200,7 +211,7 @@ class User {
       var client = Client(client: http.Client());
       var response = await client.fetch("/users/$uid");
       if (response.statusCode != 200) {
-        print("ERROR - There was an error with the request $response");
+        print("ERROR - There was an error with the request ${response.body}");
         return null;
       }
       Map<String, dynamic> body = jsonDecode(response.body);

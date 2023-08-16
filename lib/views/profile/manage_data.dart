@@ -26,10 +26,13 @@ class _ManageDataState extends State<ManageData> {
 
     return Scaffold(
       body: HeaderBar(
-        title: "Manage Data",
+        title: "Manage Syncs",
         isLarge: true,
         leading: const [BackButton2()],
         children: [
+          const Text(
+            "Note: Snapshots will be created for you automatically every 8 hours on app launch.",
+          ),
           Section(
             "Data Snapshots",
             child: Column(

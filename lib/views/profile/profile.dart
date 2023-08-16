@@ -61,19 +61,52 @@ class _ProfileState extends State<Profile> {
       children: [
         const SizedBox(height: 16),
         Padding(
-            padding: const EdgeInsets.only(bottom: 16.0),
-            child: dmodel.user!.avatar(context, size: 125)),
-        if (dmodel.user!.displayName != null)
-          Text(
-            dmodel.user!.displayName!,
-            style: ttSubTitle(context),
-            textAlign: TextAlign.center,
+          padding: const EdgeInsets.only(bottom: 16.0),
+          child: dmodel.user!.avatar(context, size: 125),
+        ),
+        Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (dmodel.user!.displayName != null)
+                Text(
+                  dmodel.user!.displayName ?? "Unknown User",
+                  style: ttSubTitle(context),
+                  textAlign: TextAlign.center,
+                ),
+              if (dmodel.user!.isAnon)
+                Text(
+                  "Anonymous User",
+                  style: ttSubTitle(context),
+                  textAlign: TextAlign.center,
+                ),
+              if (dmodel.user!.subscriptionType != SubscriptionType.none)
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.amber[700],
+                      shape: BoxShape.circle,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: Icon(
+                        Icons.star_rounded,
+                        color: AppColors.cell(context),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
           ),
-        if (dmodel.user!.isAnon)
-          Text(
-            "Anonymous User",
-            style: ttSubTitle(context),
-            textAlign: TextAlign.center,
+        ),
+        if (dmodel.user!.subscriptionType == SubscriptionType.wn_premium &&
+            dmodel.snapshots.isNotEmpty)
+          Center(
+            child: Text(
+              "Last sync: ${formatDateTime(DateTime.fromMillisecondsSinceEpoch(dmodel.snapshots.first.created.round()))}",
+              style: ttcaption(context),
+            ),
           ),
         const SizedBox(height: 32),
         if (dmodel.user!.isAnon)
@@ -90,7 +123,7 @@ class _ProfileState extends State<Profile> {
               },
             ),
           )
-        else if (dmodel.user!.subscriptionStatus == SubscriptionStatus.none)
+        else if (dmodel.user!.subscriptionType == SubscriptionType.none)
           Padding(
             padding: const EdgeInsets.only(bottom: 16.0),
             child: WrappedButton(
@@ -139,8 +172,8 @@ class _ProfileState extends State<Profile> {
               },
             ),
             ProfileItem(
-              title: "Manage Data",
-              icon: Icons.tag_rounded,
+              title: "Manage Syncs",
+              icon: Icons.sync_rounded,
               color: Colors.green[300]!,
               postType: 2,
               onTap: () async {

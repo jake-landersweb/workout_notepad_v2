@@ -57,6 +57,7 @@ void main() async {
   // });
   runZonedGuarded(() async {
     WidgetsFlutterBinding.ensureInitialized();
+
     FlutterError.onError = NewrelicMobile.onError;
     await NewrelicMobile.instance.startAgent(config);
     await Firebase.initializeApp(

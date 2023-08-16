@@ -7,6 +7,7 @@ import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/logs/logs_cat_indiv.dart';
 import 'package:workout_notepad_v2/views/logs/root.dart';
+import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
 
 class LogsHome extends StatefulWidget {
   const LogsHome({super.key});
@@ -99,8 +100,17 @@ class _LogsHomeState extends State<LogsHome> {
                 LogsCategoryDistribution(categories: dmodel.categories),
               ),
             ],
-            onChildTap: (context, item, index) =>
-                navigate(context: context, builder: (context) => item.v4),
+            onChildTap: (context, item, index) {
+              if (dmodel.user!.subscriptionType ==
+                  SubscriptionType.wn_premium) {
+                navigate(context: context, builder: (context) => item.v4);
+              } else {
+                cupertinoSheet(
+                  context: context,
+                  builder: (context) => const Subscriptions(),
+                );
+              }
+            },
             childBuilder: (context, item, index) {
               return Row(
                 children: [
@@ -112,7 +122,9 @@ class _LogsHomeState extends State<LogsHome> {
                     ),
                   ),
                   Icon(
-                    Icons.chevron_right_rounded,
+                    dmodel.user!.subscriptionType == SubscriptionType.wn_premium
+                        ? Icons.chevron_right_rounded
+                        : Icons.lock_rounded,
                     color: AppColors.subtext(context),
                   ),
                   const SizedBox(width: 4),
@@ -127,13 +139,23 @@ class _LogsHomeState extends State<LogsHome> {
           child: ContainedList<Category>(
             childPadding: const EdgeInsets.only(left: 16),
             children: dmodel.categories,
-            onChildTap: (context, item, index) => navigate(
-              context: context,
-              builder: (context) => LogsCategoryIndividual(category: item),
-            ),
+            onChildTap: (context, item, index) {
+              if (dmodel.user!.subscriptionType ==
+                  SubscriptionType.wn_premium) {
+                navigate(
+                  context: context,
+                  builder: (context) => LogsCategoryIndividual(category: item),
+                );
+              } else {
+                cupertinoSheet(
+                  context: context,
+                  builder: (context) => const Subscriptions(),
+                );
+              }
+            },
             childBuilder: (context, item, index) {
               return ConstrainedBox(
-                constraints: BoxConstraints(minHeight: 40),
+                constraints: const BoxConstraints(minHeight: 40),
                 child: Row(
                   children: [
                     Container(
@@ -156,7 +178,10 @@ class _LogsHomeState extends State<LogsHome> {
                       ),
                     ),
                     Icon(
-                      Icons.chevron_right_rounded,
+                      dmodel.user!.subscriptionType ==
+                              SubscriptionType.wn_premium
+                          ? Icons.chevron_right_rounded
+                          : Icons.lock_rounded,
                       color: AppColors.subtext(context),
                     ),
                     const SizedBox(width: 4),

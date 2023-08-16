@@ -4,8 +4,10 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
+import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
 class SigninGoogle extends StatefulWidget {
@@ -27,13 +29,14 @@ class _SigninGoogleState extends State<SigninGoogle> {
     // The OAuth client id of your app. This is required.
     clientId:
         "993769836789-o52cpd11lc4kkccfhqtgftmut6s7ph34.apps.googleusercontent.com",
-        // "993769836789-e614gf7untnrc9dljh3vo1djamch2m0c.apps.googleusercontent.com",
+    // "993769836789-e614gf7untnrc9dljh3vo1djamch2m0c.apps.googleusercontent.com",
     // If you need to authenticate to a backend server, specify its OAuth client. This is optional.
     // serverClientId: ...,
   );
 
   @override
   Widget build(BuildContext context) {
+    var dmodel = Provider.of<DataModel>(context);
     return Clickable(
       onTap: () async {
         if (_isLoading) {
@@ -62,7 +65,7 @@ class _SigninGoogleState extends State<SigninGoogle> {
               child: Image.asset("assets/images/google.png"),
             ),
             Center(
-              child: _isLoading
+              child: _isLoading || dmodel.loadStatus == LoadStatus.init
                   ? LoadingIndicator(color: AppColors.subtext(context))
                   : Text(
                       "Sign in with Google",

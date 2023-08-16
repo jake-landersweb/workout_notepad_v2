@@ -28,8 +28,7 @@ class Subscriptions extends StatefulWidget {
 }
 
 class _SubscriptionsState extends State<Subscriptions> {
-  LoadingStatus _loadingStatus = LoadingStatus.loading;
-  late ProductDetails _premiumDetails;
+  ProductDetails? _premiumDetails;
   final PageController _pageController = PageController();
   int _pageIndex = 0;
 
@@ -53,12 +52,13 @@ class _SubscriptionsState extends State<Subscriptions> {
             const SizedBox(height: 100),
           ],
         ),
-        if (_loadingStatus == LoadingStatus.done) _overlay(context),
+        _overlay(context),
       ],
     );
   }
 
   Widget _overlay(BuildContext context) {
+    var dmodel = Provider.of<DataModel>(context);
     return Container(
       decoration: BoxDecoration(
         color: AppColors.cell(context)[100],
@@ -79,7 +79,7 @@ class _SubscriptionsState extends State<Subscriptions> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "${_premiumDetails.price}/month",
+                "${_premiumDetails?.price ?? '-'}/month",
                 style: ttBody(
                   context,
                   fontWeight: FontWeight.bold,
@@ -91,6 +91,8 @@ class _SubscriptionsState extends State<Subscriptions> {
                 bg: Colors.amber[600],
                 center: true,
                 rowAxisSize: MainAxisSize.max,
+                isLoading:
+                    dmodel.paymentLoadStatus == PaymentLoadStatus.loading,
                 onTap: () async {
                   print("Attemting to purchase premium");
                   var response = await _purchase(context);
@@ -108,132 +110,123 @@ class _SubscriptionsState extends State<Subscriptions> {
   }
 
   Widget _content(BuildContext context) {
-    switch (_loadingStatus) {
-      case LoadingStatus.loading:
-        return LoadingIndicator(
-          color: Theme.of(context).colorScheme.primary,
-        );
-      case LoadingStatus.error:
-        return Text("There was an error"); // TODO
-      case LoadingStatus.done:
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Supercharge your app with",
+                style: ttLabel(
+                  context,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              Text(
+                "Workout Notepad Premium",
+                style: ttLabel(
+                  context,
+                  fontWeight: FontWeight.w800,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        // show sliding screenshots of premium features
+        ConstrainedBox(
+          constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.6),
+          child: PageView(
+            controller: _pageController,
+            onPageChanged: (value) {
+              setState(() {
+                _pageIndex = value;
+              });
+            },
+            children: [
+              Container(
+                color: Colors.red[300],
+                width: double.infinity,
+              ),
+              Container(
+                color: Colors.blue[300],
+                width: double.infinity,
+              ),
+              Container(
+                color: Colors.green[300],
+                width: double.infinity,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 4),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Supercharge your app with",
-                    style: ttLabel(
-                      context,
-                      fontWeight: FontWeight.w800,
-                    ),
+            for (int i = 0; i < 3; i++)
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: i == _pageIndex
+                        ? AppColors.subtext(context)
+                        : AppColors.light(context),
+                    shape: BoxShape.circle,
                   ),
-                  Text(
-                    "Workout Notepad Premium",
-                    style: ttLabel(
-                      context,
-                      fontWeight: FontWeight.w800,
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                ],
+                  height: 7,
+                  width: 7,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            // show sliding screenshots of premium features
-            ConstrainedBox(
-              constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height * 0.6),
-              child: PageView(
-                controller: _pageController,
-                onPageChanged: (value) {
-                  setState(() {
-                    _pageIndex = value;
-                  });
-                },
-                children: [
-                  Container(
-                    color: Colors.red[300],
-                    width: double.infinity,
-                  ),
-                  Container(
-                    color: Colors.blue[300],
-                    width: double.infinity,
-                  ),
-                  Container(
-                    color: Colors.green[300],
-                    width: double.infinity,
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 4),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                for (int i = 0; i < 3; i++)
-                  Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: i == _pageIndex
-                            ? AppColors.subtext(context)
-                            : AppColors.light(context),
-                        shape: BoxShape.circle,
-                      ),
-                      height: 7,
-                      width: 7,
-                    ),
-                  ),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  Section(
-                    "Advanced Logging Features",
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        for (var i in _loggingFeatures)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: _featureCell(
-                              context: context,
-                              feature: i,
-                              iconBg: Theme.of(context).colorScheme.primary,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                  Section(
-                    "Additional Features",
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        for (var i in _moreFeatures)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 8.0),
-                            child: _featureCell(
-                              context: context,
-                              feature: i,
-                              iconBg: AppColors.cell(context)[700]!,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
           ],
-        );
-    }
+        ),
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Section(
+                "Advanced Logging Features",
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (var i in _loggingFeatures)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: _featureCell(
+                          context: context,
+                          feature: i,
+                          iconBg: Theme.of(context).colorScheme.primary,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              Section(
+                "Additional Features",
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (var i in _moreFeatures)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: _featureCell(
+                          context: context,
+                          feature: i,
+                          iconBg: AppColors.cell(context)[700]!,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _featureCell({
@@ -298,35 +291,26 @@ class _SubscriptionsState extends State<Subscriptions> {
   }
 
   Future<void> _fetchSubscriptions() async {
-    setState(() {
-      _loadingStatus = LoadingStatus.loading;
-    });
     const Set<String> _kIds = <String>{'wn_premium'};
     final ProductDetailsResponse response =
         await InAppPurchase.instance.queryProductDetails(_kIds);
     if (response.error != null) {
       print(response.error!.message); // TODO
-      setState(() {
-        _loadingStatus = LoadingStatus.error;
-      });
+
       return;
     }
     if (response.productDetails.isEmpty) {
       print("The product details was empty"); // TODO
-      setState(() {
-        _loadingStatus = LoadingStatus.error;
-      });
       return;
     }
-    _premiumDetails = response.productDetails[0];
     setState(() {
-      _loadingStatus = LoadingStatus.done;
+      _premiumDetails = response.productDetails[0];
     });
   }
 
   Future<bool> _purchase(BuildContext context) async {
     final PurchaseParam purchaseParam = PurchaseParam(
-      productDetails: _premiumDetails,
+      productDetails: _premiumDetails!,
     );
 
     return await InAppPurchase.instance

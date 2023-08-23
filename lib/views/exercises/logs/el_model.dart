@@ -5,6 +5,7 @@ import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/exercise_base.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
+import 'package:workout_notepad_v2/data/root.dart';
 
 enum AccumulateType { avg, max, min }
 
@@ -25,16 +26,16 @@ class ELModel extends ChangeNotifier {
   final List<num> _allReps = [];
   double minReps = double.infinity;
 
-  ELModel({required this.exercise}) {
+  ELModel({required this.exercise, required User user}) {
     pageController = PageController();
-    init();
+    init(user: user);
   }
 
-  Future<void> init() async {
+  Future<void> init({required User user}) async {
     isLoading = true;
     notifyListeners();
     // get logs
-    logs = await exercise.getLogs(exercise.exerciseId);
+    logs = await exercise.getLogs(exercise.exerciseId, user);
     // create dashboard data from these logs
     await compose();
     isLoading = false;

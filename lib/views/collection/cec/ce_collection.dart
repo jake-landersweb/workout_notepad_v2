@@ -78,12 +78,7 @@ class _CECollectionState extends State<CECollection> {
             Clickable(
               onTap: () async {
                 if (!isValid.v1) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(isValid.v2),
-                      backgroundColor: Colors.red[300],
-                    ),
-                  );
+                  snackbarErr(context, isValid.v2);
                 } else {
                   setState(() {
                     _isLoading = true;
@@ -96,12 +91,7 @@ class _CECollectionState extends State<CECollection> {
                     }
                     Navigator.of(context, rootNavigator: true).pop();
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(response.v2),
-                        backgroundColor: Colors.red[300],
-                      ),
-                    );
+                    snackbarErr(context, response.v2);
                     setState(() {
                       _isLoading = false;
                     });

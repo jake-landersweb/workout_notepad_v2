@@ -69,13 +69,8 @@ class _ManageDataState extends State<ManageData> {
                       onSubmit: () async {
                         var response = await dmodel.importSnapshot(item.v1);
                         if (!response) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                  "There was an issue loading this snapshot"),
-                              backgroundColor: Colors.red[300],
-                            ),
-                          );
+                          snackbarErr(context,
+                              "There was an issue loading this snapshot.");
                           setState(() {
                             _loadingIndex = -1;
                           });
@@ -128,19 +123,10 @@ class _ManageDataState extends State<ManageData> {
                     });
                     var response = await dmodel.snapshotData();
                     if (response) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Successfully created snapshot!"),
-                        ),
-                      );
+                      snackbarStatus(context, "Successfully created snapshot!");
                     } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                              "There was an issue uploading your data to the cloud"),
-                          backgroundColor: Colors.red[300],
-                        ),
-                      );
+                      snackbarErr(context,
+                          "There was an issue uploading your data to the cloud.");
                     }
                     setState(() {
                       _loadingIndex = -1;

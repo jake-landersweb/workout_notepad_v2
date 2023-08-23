@@ -126,12 +126,7 @@ class _SigninGoogleState extends State<SigninGoogle> {
         attributes: {"err_code": "login_google"},
       );
       log(error.toString());
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red[300],
-          content: const Text("There was an unknown error."),
-        ),
-      );
+      snackbarErr(context, "There was an unknown error.");
     }
   }
 }

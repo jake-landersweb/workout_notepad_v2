@@ -229,44 +229,45 @@ class _CEERootState extends State<CEERoot> {
         spacing: 8,
         runSpacing: 8,
         children: [
-          Clickable(
-            onTap: () {
-              comp.cupertinoSheet(
-                context: context,
-                builder: (context) => CreateCategory(
-                  categories: dmodel.categories.map((e) => e.title).toList(),
-                  onCompletion: (val, icon) async {
-                    var c = Category.init(
-                      title: val,
-                      icon: icon,
-                    );
-                    await c.insert(
-                      conflictAlgorithm: ConflictAlgorithm.replace,
-                    );
-                    await dmodel.refreshCategories();
-                    setState(() {
-                      cemodel.exercise.category = c.categoryId;
-                    });
-                  },
+          if (dmodel.user!.subscriptionType != SubscriptionType.none)
+            Clickable(
+              onTap: () {
+                comp.cupertinoSheet(
+                  context: context,
+                  builder: (context) => CreateCategory(
+                    categories: dmodel.categories.map((e) => e.title).toList(),
+                    onCompletion: (val, icon) async {
+                      var c = Category.init(
+                        title: val,
+                        icon: icon,
+                      );
+                      await c.insert(
+                        conflictAlgorithm: ConflictAlgorithm.replace,
+                      );
+                      await dmodel.refreshCategories();
+                      setState(() {
+                        cemodel.exercise.category = c.categoryId;
+                      });
+                    },
+                  ),
+                );
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.cell(context),
+                  borderRadius: BorderRadius.circular(100),
                 ),
-              );
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColors.cell(context),
-                borderRadius: BorderRadius.circular(100),
-              ),
-              height: 40,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
-                child: Icon(
-                  LineIcons.plus,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  size: 20,
+                height: 40,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                  child: Icon(
+                    LineIcons.plus,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    size: 20,
+                  ),
                 ),
               ),
             ),
-          ),
           for (int i = 0; i < dmodel.categories.length; i++)
             _categoryCell(context, dmodel.categories[i], cemodel),
         ],

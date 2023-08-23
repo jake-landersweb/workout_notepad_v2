@@ -259,12 +259,7 @@ class _ConfigureCategoriesState extends State<ConfigureCategories> {
         attributes: {"err_code": "category_save"},
       );
       print(e);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          "There was an issue saving your categories",
-        ),
-        backgroundColor: Colors.red[300],
-      ));
+      snackbarErr(context, "There was an issue saving your categories.");
     }
   }
 }

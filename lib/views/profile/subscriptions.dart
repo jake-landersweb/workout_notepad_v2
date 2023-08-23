@@ -1,24 +1,12 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:provider/provider.dart';
 
-import 'package:workout_notepad_v2/components/alert.dart';
-import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
-import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/components/root.dart';
-import 'package:workout_notepad_v2/components/wrapped_button.dart';
-import 'package:workout_notepad_v2/data/root.dart';
-import 'package:workout_notepad_v2/data/snapshot.dart';
+import 'package:workout_notepad_v2/main.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:workout_notepad_v2/utils/tuple.dart';
-import 'package:workout_notepad_v2/views/account/root.dart';
-import 'package:workout_notepad_v2/views/profile/config_categories.dart';
-import 'package:workout_notepad_v2/views/profile/configure_tags.dart';
-import 'package:intl/intl.dart';
-import 'dart:math' as math;
 
 class Subscriptions extends StatefulWidget {
   const Subscriptions({super.key});
@@ -59,6 +47,10 @@ class _SubscriptionsState extends State<Subscriptions> {
 
   Widget _overlay(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
+    if (dmodel.paymentLoadStatus == PaymentLoadStatus.complete) {
+      // restart the app for the changes to take effect
+      RestartWidget.restartApp(context);
+    }
     return Container(
       decoration: BoxDecoration(
         color: AppColors.cell(context)[100],
@@ -78,13 +70,16 @@ class _SubscriptionsState extends State<Subscriptions> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                "${_premiumDetails?.price ?? '-'}/month",
-                style: ttBody(
-                  context,
-                  fontWeight: FontWeight.bold,
+              if (_premiumDetails == null)
+                LoadingIndicator(color: dmodel.color)
+              else
+                Text(
+                  _premiumDetails!.price,
+                  style: ttBody(
+                    context,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
               const SizedBox(height: 16),
               WrappedButton(
                 title: "Continue",
@@ -126,7 +121,7 @@ class _SubscriptionsState extends State<Subscriptions> {
                 ),
               ),
               Text(
-                "Workout Notepad Premium",
+                "Workout Notepad Unlocked",
                 style: ttLabel(
                   context,
                   fontWeight: FontWeight.w800,
@@ -291,16 +286,19 @@ class _SubscriptionsState extends State<Subscriptions> {
   }
 
   Future<void> _fetchSubscriptions() async {
-    const Set<String> _kIds = <String>{'wn_premium'};
+    const Set<String> _kIds = <String>{'wn_unlocked'};
     final ProductDetailsResponse response =
         await InAppPurchase.instance.queryProductDetails(_kIds);
     if (response.error != null) {
       print(response.error!.message); // TODO
-
+      snackbarErr(context, "There was an unknown error");
+      Navigator.of(context).pop();
       return;
     }
     if (response.productDetails.isEmpty) {
       print("The product details was empty"); // TODO
+      snackbarErr(context, "This product does not exist");
+      Navigator.of(context).pop();
       return;
     }
     setState(() {

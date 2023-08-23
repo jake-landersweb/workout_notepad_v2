@@ -6,7 +6,6 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/foundation.dart' as foundation;
-import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +19,7 @@ import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:path/path.dart';
 import 'package:workout_notepad_v2/model/client.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/home.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
@@ -96,10 +96,13 @@ class DataModel extends ChangeNotifier {
           notifyListeners();
         } else if (details.status == PurchaseStatus.purchased ||
             details.status == PurchaseStatus.restored) {
-          if (user!.subscriptionType == SubscriptionType.wn_premium) {
-            print("[PURCHASE] duplicate event found, completing and ignoring.");
+          if (user!.isPremiumUser()) {
+            print(
+              "[PURCHASE] duplicate event found, completing and ignoring. This event will be handled by the server",
+            );
             await InAppPurchase.instance.completePurchase(details);
             print("[PURCHASE] duplicate purchaseId = ${details.purchaseID}");
+            // TODO - add this to the user_purchaseId table
             return;
           } else {
             var valid = await _verifyPurchase(details);
@@ -238,12 +241,7 @@ class DataModel extends ChangeNotifier {
     var prefs = await SharedPreferences.getInstance();
     var u = await User.loginAnon();
     if (u == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red[300],
-          content: const Text("There was an issue getting your account."),
-        ),
-      );
+      snackbarErr(context, "There was an issue getting your account.");
       return;
     }
     await NewrelicMobile.instance.recordCustomEvent(
@@ -262,12 +260,7 @@ class DataModel extends ChangeNotifier {
     var prefs = await SharedPreferences.getInstance();
     var u = await User.loginAuth(credential, convertFromAnon: user != null);
     if (u == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red[300],
-          content: const Text("There was an issue getting your account."),
-        ),
-      );
+      snackbarErr(context, "There was an issue getting your account.");
       return;
     }
     if (user != null) {
@@ -338,19 +331,19 @@ class DataModel extends ChangeNotifier {
       return;
     }
 
-    // check if the premium estimated expire epoch is overdue
-    if (user!.subscriptionEstimatedExpireEpoch != null) {
-      print("Checking to make sure user still has a valid subscription ...");
-      print("User epoch:   ${user!.subscriptionEstimatedExpireEpoch!}");
-      print("Client epoch: ${DateTime.now().millisecondsSinceEpoch}");
-      if (user!.subscriptionEstimatedExpireEpoch! <
-          DateTime.now().millisecondsSinceEpoch) {
-        print("The user's subscription has expired");
-        user!.subscriptionType = SubscriptionType.none;
-      } else {
-        print("User has a valid subscription");
-      }
-    }
+    // // check if the premium estimated expire epoch is overdue
+    // if (user!.subscriptionEstimatedExpireEpoch != null) {
+    //   print("Checking to make sure user still has a valid subscription ...");
+    //   print("User epoch:   ${user!.subscriptionEstimatedExpireEpoch!}");
+    //   print("Client epoch: ${DateTime.now().millisecondsSinceEpoch}");
+    //   if (user!.subscriptionEstimatedExpireEpoch! <
+    //       DateTime.now().millisecondsSinceEpoch) {
+    //     print("The user's subscription has expired");
+    //     user!.subscriptionType = SubscriptionType.none;
+    //   } else {
+    //     print("User has a valid subscription");
+    //   }
+    // }
 
     print("[INIT] app state is valid. Fetching user in background to ensure");
     await fetchData();
@@ -489,11 +482,6 @@ class DataModel extends ChangeNotifier {
       return true;
     }
 
-    // snapshots are only supported for premium users
-    if (user!.subscriptionType != SubscriptionType.wn_premium) {
-      return true;
-    }
-
     // snapshot the data
     var snps = await Snapshot.snapshotDatabase(user!.userId);
     if (snps == null) {
@@ -611,6 +599,16 @@ class DataModel extends ChangeNotifier {
       auth.FirebaseAuth.instance.signOut();
       notifyListeners();
     }
+  }
+
+  Future<void> delete(BuildContext context) async {
+    // create a snapshot of their data
+    await snapshotData();
+    await user!.delete();
+    await deleteDB();
+    await clearData();
+    auth.FirebaseAuth.instance.signOut();
+    notifyListeners();
   }
 
   Future<void> clearData({LoadStatus ls = LoadStatus.noUser}) async {

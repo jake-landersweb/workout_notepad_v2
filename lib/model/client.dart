@@ -54,4 +54,13 @@ class Client {
 
     return response;
   }
+
+  Future<http.Response> delete(String path) async {
+    // start the response
+    final response = await client.delete(
+      Uri.parse("$HOST$path"),
+      headers: defaultHeaders,
+    );
+    return response;
+  }
 }

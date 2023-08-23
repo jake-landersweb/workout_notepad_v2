@@ -13,6 +13,7 @@ import 'package:workout_notepad_v2/data/exercise_set.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/utils/tuple.dart';
 
 class TimerInstance {
@@ -384,21 +385,23 @@ class LaunchWorkoutModel extends ChangeNotifier {
     }
 
     // create a snapshot of the workout
-    try {
-      var db = await getDB();
-      var snp = await state.workout.toSnapshot();
-      await db.insert("workout_snapshot", snp.toMap());
-    } catch (error) {
-      NewrelicMobile.instance.recordError(
-        error,
-        StackTrace.current,
-        attributes: {
-          "err_code": "workout_snapshot",
-        },
-      );
-      print(error);
-      return Tuple2(false,
-          "Your workout was successfully saved, but there was an issue creating a snapshot of the workout. You can safely cancel this workout and not lose progress.");
+    if (dmodel.user!.subscriptionType != SubscriptionType.none) {
+      try {
+        var db = await getDB();
+        var snp = await state.workout.toSnapshot();
+        await db.insert("workout_snapshot", snp.toMap());
+      } catch (error) {
+        NewrelicMobile.instance.recordError(
+          error,
+          StackTrace.current,
+          attributes: {
+            "err_code": "workout_snapshot",
+          },
+        );
+        print(error);
+        return Tuple2(false,
+            "Your workout was successfully saved, but there was an issue creating a snapshot of the workout. You can safely cancel this workout and not lose progress.");
+      }
     }
 
     await dmodel.stopWorkout();
@@ -413,10 +416,7 @@ class LaunchWorkoutModel extends ChangeNotifier {
     if (response.v1) {
       Navigator.of(context, rootNavigator: true).pop();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(response.v2),
-        backgroundColor: Colors.red[300],
-      ));
+      snackbarErr(context, response.v2);
     }
   }
 

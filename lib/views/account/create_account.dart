@@ -112,14 +112,7 @@ class _CreateAccountState extends State<CreateAccount> {
         password: _pass.text,
       );
       if (credential.user == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red[200],
-            content: const Text(
-              "There was an issue getting your credentials",
-            ),
-          ),
-        );
+        snackbarErr(context, "There was an issue getting your credentials.");
         return;
       }
       await NewrelicMobile.instance.recordCustomEvent(
@@ -132,27 +125,12 @@ class _CreateAccountState extends State<CreateAccount> {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         print('The password provided is too weak.');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red[300],
-            content: const Text("Your password is too weak."),
-          ),
-        );
+        snackbarErr(context, "Your password is too weak.");
       } else if (e.code == 'email-already-in-use') {
         print('The account already exists for that email.');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red[200],
-            content: const Text("An account already exists for that email."),
-          ),
-        );
+        snackbarErr(context, "An account already exists for that email.");
       } else if (e.code == "invalid-email") {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red[200],
-            content: const Text("Invalid email."),
-          ),
-        );
+        snackbarErr(context, "Invalid email.");
       } else {
         NewrelicMobile.instance.recordError(
           e,
@@ -160,12 +138,7 @@ class _CreateAccountState extends State<CreateAccount> {
           attributes: {"err_code": "login_error"},
         );
         print(e.code);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red[300],
-            content: Text("There was an unknown error: ${e.code}"),
-          ),
-        );
+        snackbarErr(context, "There was an unknown error: ${e.code}");
       }
     } catch (e) {
       print(e);

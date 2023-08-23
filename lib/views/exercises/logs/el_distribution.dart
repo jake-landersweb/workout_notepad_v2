@@ -1,10 +1,13 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/exercises/logs/el_premium.dart';
+import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
 
 enum ELDistributionType { weight, reps, time }
 
@@ -46,6 +49,7 @@ class _ELDistributionState extends State<ELDistribution> {
 
   @override
   Widget build(BuildContext context) {
+    var dmodel = Provider.of<DataModel>(context);
     if (_isLoading) {
       return LoadingIndicator(
         color: Theme.of(context).colorScheme.primary,
@@ -57,115 +61,122 @@ class _ELDistributionState extends State<ELDistribution> {
     if (_maxData.isEmpty || _minData.isEmpty || _avgData.isEmpty) {
       return Text("No Data"); // TODO -- PRETTY
     } else {
-      return SafeArea(
-        top: false,
-        left: false,
-        right: false,
-        bottom: true,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
+      return Stack(
+        children: [
+          SafeArea(
+            top: false,
+            left: false,
+            right: false,
+            bottom: true,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  _toggleButton(context),
-                  Expanded(
-                    child: Text(
-                      " Distribution By Workout",
-                      style: ttLabel(context, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              _legend(context),
-              const SizedBox(height: 16),
-              Expanded(
-                child: LineChart(
-                  LineChartData(
-                    maxY:
-                        _maxData.reduce((a, b) => a.v2 > b.v2 ? a : b).v2 * 1.2,
-                    minY: 0,
-                    gridData: FlGridData(show: false),
-                    borderData: FlBorderData(show: false),
-                    lineTouchData: LineTouchData(
-                      enabled: true,
-                      touchTooltipData: LineTouchTooltipData(
-                        fitInsideHorizontally: true,
-                        fitInsideVertically: true,
-                        tooltipBgColor: AppColors.cell(context),
-                        getTooltipItems: (touchedSpots) {
-                          List<LineTooltipItem> items = [];
-                          items.add(
-                            LineTooltipItem(
-                              formatDateTime(
-                                DateTime.fromMillisecondsSinceEpoch(
-                                  touchedSpots[0].x.round(),
-                                ),
-                              ),
-                              ttcaption(context),
-                            ),
-                          );
-                          for (var i in touchedSpots) {
-                            items.add(
-                              LineTooltipItem(
-                                "${_getTitleFromIndex(i.barIndex)}: ${_getHoverTitle(i.y)}",
-                                ttBody(
-                                  context,
-                                  color: i.bar.color,
-                                ),
-                              ),
-                            );
-                          }
-
-                          return items;
-                        },
-                      ),
-                    ),
-                    titlesData: FlTitlesData(
-                      rightTitles:
-                          AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                      topTitles:
-                          AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                      leftTitles: AxisTitles(
-                        sideTitles: SideTitles(
-                          showTitles: true,
-                          reservedSize: 50,
-                          getTitlesWidget: (value, meta) {
-                            if (meta.max == value || meta.min == value) {
-                              return Container();
-                            }
-                            return Text(
-                              _getHoverTitle(value),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: AppColors.subtext(context),
-                              ),
-                            );
-                          },
+                  Row(
+                    children: [
+                      _toggleButton(context),
+                      Expanded(
+                        child: Text(
+                          " Distribution By Workout",
+                          style: ttLabel(context, fontWeight: FontWeight.bold),
                         ),
                       ),
-                      bottomTitles: AxisTitles(
-                        sideTitles: SideTitles(showTitles: false),
-                      ),
-                    ),
-                    lineBarsData: [
-                      _getLineData(Colors.red[300]!, _maxData),
-                      _getLineData(Colors.green[300]!, _avgData),
-                      _getLineData(Colors.blue[300]!, _minData),
                     ],
                   ),
-                  swapAnimationCurve: Curves.easeInOutSine,
-                  swapAnimationDuration: const Duration(milliseconds: 500),
-                ),
+                  const SizedBox(height: 16),
+                  _legend(context),
+                  const SizedBox(height: 16),
+                  Expanded(
+                    child: LineChart(
+                      LineChartData(
+                        maxY:
+                            _maxData.reduce((a, b) => a.v2 > b.v2 ? a : b).v2 *
+                                1.2,
+                        minY: 0,
+                        gridData: FlGridData(show: false),
+                        borderData: FlBorderData(show: false),
+                        lineTouchData: LineTouchData(
+                          enabled: true,
+                          touchTooltipData: LineTouchTooltipData(
+                            fitInsideHorizontally: true,
+                            fitInsideVertically: true,
+                            tooltipBgColor: AppColors.cell(context),
+                            getTooltipItems: (touchedSpots) {
+                              List<LineTooltipItem> items = [];
+                              items.add(
+                                LineTooltipItem(
+                                  formatDateTime(
+                                    DateTime.fromMillisecondsSinceEpoch(
+                                      touchedSpots[0].x.round(),
+                                    ),
+                                  ),
+                                  ttcaption(context),
+                                ),
+                              );
+                              for (var i in touchedSpots) {
+                                items.add(
+                                  LineTooltipItem(
+                                    "${_getTitleFromIndex(i.barIndex)}: ${_getHoverTitle(i.y)}",
+                                    ttBody(
+                                      context,
+                                      color: i.bar.color,
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              return items;
+                            },
+                          ),
+                        ),
+                        titlesData: FlTitlesData(
+                          rightTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
+                          topTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
+                          leftTitles: AxisTitles(
+                            sideTitles: SideTitles(
+                              showTitles: true,
+                              reservedSize: 50,
+                              getTitlesWidget: (value, meta) {
+                                if (meta.max == value || meta.min == value) {
+                                  return Container();
+                                }
+                                return Text(
+                                  _getHoverTitle(value),
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: AppColors.subtext(context),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          bottomTitles: AxisTitles(
+                            sideTitles: SideTitles(showTitles: false),
+                          ),
+                        ),
+                        lineBarsData: [
+                          _getLineData(Colors.red[300]!, _maxData),
+                          _getLineData(Colors.green[300]!, _avgData),
+                          _getLineData(Colors.blue[300]!, _minData),
+                        ],
+                      ),
+                      swapAnimationCurve: Curves.easeInOutSine,
+                      swapAnimationDuration: const Duration(milliseconds: 500),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
               ),
-              const SizedBox(height: 16),
-            ],
+            ),
           ),
-        ),
+          if (dmodel.user!.subscriptionType == SubscriptionType.none)
+            const ELPremiumOverlay(),
+        ],
       );
     }
   }

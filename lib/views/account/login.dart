@@ -113,14 +113,7 @@ class _LoginState extends State<Login> {
         password: _pass.text,
       );
       if (credential.user == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red[200],
-            content: const Text(
-              "There was an issue getting your credentials",
-            ),
-          ),
-        );
+        snackbarErr(context, "There was an issue getting your credentials.");
         setState(() {
           _isLoading = false;
         });
@@ -136,28 +129,13 @@ class _LoginState extends State<Login> {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found' || e.code == 'wrong-password') {
         print('Your username or password was incorrect.');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red[300],
-            content: const Text("Your username or password was incorrect."),
-          ),
-        );
+        snackbarErr(context, "Your username or password was incorrect.");
       } else {
         print(e.code);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.red[300],
-            content: Text("There was an unknown error: ${e.code}"),
-          ),
-        );
+        snackbarErr(context, "There was an unknown error: ${e.code}");
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.red[300],
-          content: const Text("There was an unknown error."),
-        ),
-      );
+      snackbarErr(context, "There was an unknown error.");
     }
   }
 }

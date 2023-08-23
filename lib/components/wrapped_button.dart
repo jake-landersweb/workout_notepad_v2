@@ -53,10 +53,12 @@ class WrappedButton extends StatelessWidget {
         color: getBg(context),
         borderRadius: BorderRadius.circular(10),
       ),
-      height: height,
-      child: Padding(
-        padding: padding,
-        child: _content(context),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: height ?? 50),
+        child: Padding(
+          padding: padding,
+          child: _content(context),
+        ),
       ),
     );
   }
@@ -86,9 +88,11 @@ class WrappedButton extends StatelessWidget {
           ),
         isLoading
             ? LoadingIndicator(color: fg)
-            : Text(
-                title,
-                style: ttLabel(context, color: getFg(context)),
+            : Expanded(
+                child: Text(
+                  title,
+                  style: ttLabel(context, color: getFg(context)),
+                ),
               ),
       ],
     );

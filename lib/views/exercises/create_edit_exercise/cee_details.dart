@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
+import 'package:workout_notepad_v2/data/root.dart';
+import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/image.dart';
 import 'package:workout_notepad_v2/views/exercises/create_edit_exercise/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
 
 class CEEDetails extends StatefulWidget {
   const CEEDetails({
@@ -197,23 +201,31 @@ class _CEEDetailsState extends State<CEEDetails> {
   }
 
   Widget _getAssetWidget(BuildContext context) {
+    var dmodel = Provider.of<DataModel>(context);
     if (widget.cemodel.exerciseDetails.file.file == null) {
       return Clickable(
         onTap: () async {
-          await promptMedia(
-            context: context,
-            onSelected: (file) {
-              if (file == null) {
-                print("There was an issue picking the file");
-              }
-              setState(() {
-                widget.cemodel.exerciseDetails.file.setFile(
-                  objectId: widget.cemodel.fileObjectId,
-                  file: file!,
-                );
-              });
-            },
-          );
+          if (dmodel.user!.subscriptionType == SubscriptionType.none) {
+            cupertinoSheet(
+              context: context,
+              builder: (context) => const Subscriptions(),
+            );
+          } else {
+            await promptMedia(
+              context: context,
+              onSelected: (file) {
+                if (file == null) {
+                  print("There was an issue picking the file");
+                }
+                setState(() {
+                  widget.cemodel.exerciseDetails.file.setFile(
+                    objectId: widget.cemodel.fileObjectId,
+                    file: file!,
+                  );
+                });
+              },
+            );
+          }
         },
         child: Container(
           decoration: BoxDecoration(

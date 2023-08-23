@@ -1,10 +1,12 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/exercises/logs/el_premium.dart';
 
 class ELTags extends StatefulWidget {
   const ELTags({
@@ -30,6 +32,7 @@ class _ELTagsState extends State<ELTags> {
 
   @override
   Widget build(BuildContext context) {
+    var dmodel = Provider.of<DataModel>(context);
     if (_isLoading) {
       return LoadingIndicator(
         color: Theme.of(context).colorScheme.primary,
@@ -39,32 +42,38 @@ class _ELTagsState extends State<ELTags> {
     } else if (_tagData.isEmpty) {
       return Text("No data"); // TODO
     } else {
-      return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              "Tag distribution",
-              style: ttLabel(context, fontWeight: FontWeight.bold),
-            ),
-            Expanded(
-              child: PieChart(
-                PieChartData(
-                  sections: [
-                    for (var i in _tagData)
-                      PieChartSectionData(
-                        value: i.v2.toDouble(),
-                        color: ColorUtil.random(i.v1),
-                        radius: 100,
-                        title: "${i.v2}\n${i.v1}",
-                      ),
-                  ],
+      return Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Tag distribution",
+                  style: ttLabel(context, fontWeight: FontWeight.bold),
                 ),
-              ),
+                Expanded(
+                  child: PieChart(
+                    PieChartData(
+                      sections: [
+                        for (var i in _tagData)
+                          PieChartSectionData(
+                            value: i.v2.toDouble(),
+                            color: ColorUtil.random(i.v1),
+                            radius: 100,
+                            title: "${i.v2}\n${i.v1}",
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          if (dmodel.user!.subscriptionType == SubscriptionType.none)
+            const ELPremiumOverlay(),
+        ],
       );
     }
   }

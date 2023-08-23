@@ -269,11 +269,12 @@ abstract class ExerciseBase {
     time = duration.inSeconds;
   }
 
-  Future<List<ExerciseLog>> getLogs(String exerciseId) async {
+  Future<List<ExerciseLog>> getLogs(String exerciseId, User user) async {
     var db = await getDB();
     String sql = """
       SELECT * FROM exercise_log WHERE exerciseId = '$exerciseId'
       ORDER BY created DESC
+      ${user.isPremiumUser() ? '' : 'LIMIT 7'}
     """;
     var response = await db.rawQuery(sql);
     List<ExerciseLog> items = [];

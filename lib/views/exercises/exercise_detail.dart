@@ -65,7 +65,8 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
       leading: const [comp.CloseButton2()],
       children: [
         const SizedBox(height: 16),
-        if (details != null && details?.file.type != AppFileType.none)
+        if ((details != null && details?.file.type != AppFileType.none) &&
+            dmodel.user!.subscriptionType != SubscriptionType.none)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
             child: ConstrainedBox(

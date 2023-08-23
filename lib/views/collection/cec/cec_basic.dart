@@ -187,13 +187,8 @@ class _CECBasicState extends State<CECBasic> {
                         (element) => element.workout!.workoutId == w.workoutId);
                   } else {
                     if (cmodel.collection.items.length >= 10) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: const Text(
-                              "You can only have a maximum of 10 workouts in a collection."),
-                          backgroundColor: Colors.red[300],
-                        ),
-                      );
+                      snackbarErr(context,
+                          "You can only have a maximum of 10 workouts in a collection.");
                       return;
                     }
                     cmodel.collection.items.add(

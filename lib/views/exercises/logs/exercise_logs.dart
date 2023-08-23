@@ -61,6 +61,7 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
 
   @override
   Widget build(BuildContext context) {
+    var dmodel = Provider.of<DataModel>(context);
     if (_error) {
       return const Center(
         child: Text("There was an error"),
@@ -73,7 +74,10 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
     }
     if (widget.isInteractive) {
       return ChangeNotifierProvider(
-        create: ((context) => ELModel(exercise: _exercise!)),
+        create: ((context) => ELModel(
+              exercise: _exercise!,
+              user: dmodel.user!,
+            )),
         builder: ((context, child) {
           return Navigator(
             onGenerateRoute: (settings) {
@@ -87,7 +91,10 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
       );
     } else {
       return ChangeNotifierProvider(
-        create: ((context) => ELModel(exercise: _exercise!)),
+        create: ((context) => ELModel(
+              exercise: _exercise!,
+              user: dmodel.user!,
+            )),
         builder: ((context, child) {
           return _body(context);
         }),

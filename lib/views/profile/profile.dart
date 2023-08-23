@@ -21,6 +21,7 @@ import 'dart:math' as math;
 
 import 'package:workout_notepad_v2/views/profile/manage_data.dart';
 import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
+import 'package:workout_notepad_v2/views/profile/support.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -100,8 +101,7 @@ class _ProfileState extends State<Profile> {
             ],
           ),
         ),
-        if (dmodel.user!.subscriptionType == SubscriptionType.wn_premium &&
-            dmodel.snapshots.isNotEmpty)
+        if (dmodel.user!.isPremiumUser() && dmodel.snapshots.isNotEmpty)
           Center(
             child: Text(
               "Last sync: ${formatDateTime(DateTime.fromMillisecondsSinceEpoch(dmodel.snapshots.first.created.round()))}",
@@ -127,7 +127,7 @@ class _ProfileState extends State<Profile> {
           Padding(
             padding: const EdgeInsets.only(bottom: 16.0),
             child: WrappedButton(
-              title: "Explore Premium",
+              title: "Workout Notepad Unlocked",
               icon: Icons.star,
               iconBg: Colors.amber[700],
               onTap: () {
@@ -136,6 +136,16 @@ class _ProfileState extends State<Profile> {
                   builder: (context) => const Subscriptions(),
                 );
               },
+            ),
+          )
+        else if (dmodel.user!.isPremiumUser())
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: WrappedButton(
+              title: "Manage Purchases",
+              icon: Icons.credit_card_rounded,
+              iconBg: Colors.teal[400],
+              onTap: () {},
             ),
           ),
         ContainedList<ProfileItem>(
@@ -149,12 +159,19 @@ class _ProfileState extends State<Profile> {
               color: Colors.blue[300]!,
               postType: 1,
               onTap: () async {
-                cupertinoSheet(
-                  context: context,
-                  builder: (context) => ConfigureCategories(
-                    categories: dmodel.categories,
-                  ),
-                );
+                if (dmodel.user!.isPremiumUser()) {
+                  cupertinoSheet(
+                    context: context,
+                    builder: (context) => ConfigureCategories(
+                      categories: dmodel.categories,
+                    ),
+                  );
+                } else {
+                  cupertinoSheet(
+                    context: context,
+                    builder: (context) => const Subscriptions(),
+                  );
+                }
               },
             ),
             ProfileItem(
@@ -163,12 +180,19 @@ class _ProfileState extends State<Profile> {
               color: Colors.deepOrange[300]!,
               postType: 1,
               onTap: () async {
-                cupertinoSheet(
-                  context: context,
-                  builder: (context) => ConfigureTags(
-                    tags: dmodel.tags,
-                  ),
-                );
+                if (dmodel.user!.isPremiumUser()) {
+                  cupertinoSheet(
+                    context: context,
+                    builder: (context) => ConfigureTags(
+                      tags: dmodel.tags,
+                    ),
+                  );
+                } else {
+                  cupertinoSheet(
+                    context: context,
+                    builder: (context) => const Subscriptions(),
+                  );
+                }
               },
             ),
             ProfileItem(
@@ -177,10 +201,36 @@ class _ProfileState extends State<Profile> {
               color: Colors.green[300]!,
               postType: 2,
               onTap: () async {
-                navigate(
-                  context: context,
-                  builder: (context) => const ManageData(),
-                );
+                if (dmodel.user!.isPremiumUser()) {
+                  navigate(
+                    context: context,
+                    builder: (context) => const ManageData(),
+                  );
+                } else {
+                  cupertinoSheet(
+                    context: context,
+                    builder: (context) => const Subscriptions(),
+                  );
+                }
+              },
+            ),
+            ProfileItem(
+              title: "Export Data",
+              icon: Icons.download_rounded,
+              color: Colors.purple[300]!,
+              postType: 1,
+              onTap: () async {
+                if (dmodel.user!.isPremiumUser()) {
+                  cupertinoSheet(
+                    context: context,
+                    builder: (context) => const Support(),
+                  );
+                } else {
+                  cupertinoSheet(
+                    context: context,
+                    builder: (context) => const Subscriptions(),
+                  );
+                }
               },
             ),
           ],
@@ -207,57 +257,198 @@ class _ProfileState extends State<Profile> {
                 if (item.postType > 0)
                   Padding(
                     padding: const EdgeInsets.only(right: 8.0),
-                    child: Transform.rotate(
-                      angle: item.postType == 1 ? math.pi / -2 : 0,
-                      child: Icon(
-                        Icons.chevron_right_rounded,
-                        color: AppColors.subtext(context),
-                      ),
-                    ),
+                    child: dmodel.user!.isPremiumUser()
+                        ? Transform.rotate(
+                            angle: item.postType == 1 ? math.pi / -2 : 0,
+                            child: Icon(
+                              Icons.chevron_right_rounded,
+                              color: AppColors.subtext(context),
+                            ),
+                          )
+                        : Icon(
+                            Icons.lock_rounded,
+                            color: AppColors.subtext(context),
+                          ),
                   ),
               ],
             );
           },
         ),
-        const SizedBox(height: 32),
-        WrappedButton(
-          title: "Logout",
-          rowAxisSize: MainAxisSize.max,
-          onTap: () async {
-            if (dmodel.user!.isAnon) {
-              await showAlert(
-                context: context,
-                title: "WARNING!",
-                body: const Text(
-                    "As an anonymous user, once you logout, your exercise data will be UNRECOVERABLE. If you want to switch accounts, it is recommended that you first create an account under this user."),
-                cancelText: "Cancel",
-                onCancel: () {},
-                cancelBolded: true,
-                submitText: "Delete Data",
-                submitColor: Colors.red,
-                onSubmit: () async {
-                  await dmodel.logout(context);
-                },
-              );
-            } else {
-              await showAlert(
-                context: context,
-                title: "Are You Sure?",
-                body: const Text(
-                    "Your exercise data will be removed from your phone on logout. If you are online, a snapshot will be automatically created for you."),
-                cancelText: "Cancel",
-                onCancel: () {},
-                cancelBolded: true,
-                submitText: "Logout",
-                submitColor: Colors.red,
-                onSubmit: () async {
-                  await dmodel.logout(context);
-                },
-              );
-            }
+        const SizedBox(height: 16),
+        ContainedList<ProfileItem>(
+          leadingPadding: 0,
+          trailingPadding: 0,
+          childPadding: EdgeInsets.zero,
+          children: [
+            ProfileItem(
+              title: "Contact Support",
+              icon: Icons.call_rounded,
+              color: Colors.grey[500]!,
+              postType: 1,
+              onTap: () async {
+                cupertinoSheet(
+                  context: context,
+                  builder: (context) => const Support(),
+                );
+              },
+            ),
+            ProfileItem(
+              title: "Leave Feedback",
+              icon: Icons.chat_rounded,
+              color: Colors.amber[700]!,
+              postType: 1,
+              onTap: () async {
+                cupertinoSheet(
+                  context: context,
+                  builder: (context) => const Support(),
+                );
+              },
+            ),
+          ],
+          onChildTap: (context, item, index) async {
+            setState(() {
+              _loadingIndex = index + 100;
+            });
+            await item.onTap();
+            setState(() {
+              _loadingIndex = -1;
+            });
+          },
+          childBuilder: (context, item, index) {
+            return Row(
+              children: [
+                Expanded(
+                  child: WrappedButton(
+                    title: item.title,
+                    icon: item.icon,
+                    iconBg: item.color,
+                    isLoading: _loadingIndex == index,
+                  ),
+                ),
+                if (item.postType > 0)
+                  Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Transform.rotate(
+                        angle: item.postType == 1 ? math.pi / -2 : 0,
+                        child: Icon(
+                          Icons.chevron_right_rounded,
+                          color: AppColors.subtext(context),
+                        ),
+                      )),
+              ],
+            );
           },
         ),
         const SizedBox(height: 32),
+        ContainedList<ProfileItem>(
+          leadingPadding: 0,
+          trailingPadding: 0,
+          childPadding: EdgeInsets.zero,
+          children: [
+            ProfileItem(
+              title: "Logout",
+              icon: Icons.logout_rounded,
+              color: Colors.grey[500]!,
+              postType: 0,
+              onTap: () async {
+                if (dmodel.user!.isAnon) {
+                  await showAlert(
+                    context: context,
+                    title: "WARNING!",
+                    body: const Text(
+                        "As an anonymous user, once you logout, your exercise data will be UNRECOVERABLE. If you want to switch accounts, it is recommended that you first create an account under this user."),
+                    cancelText: "Cancel",
+                    onCancel: () {},
+                    cancelBolded: true,
+                    submitText: "Delete Data",
+                    submitColor: Colors.red,
+                    onSubmit: () async {
+                      await dmodel.logout(context);
+                    },
+                  );
+                } else {
+                  await showAlert(
+                    context: context,
+                    title: "Are You Sure?",
+                    body: const Text(
+                        "Your exercise data will be removed from your phone on logout. If you are online, a snapshot will be automatically created for you."),
+                    cancelText: "Cancel",
+                    onCancel: () {},
+                    cancelBolded: true,
+                    submitText: "Logout",
+                    submitColor: Colors.red,
+                    onSubmit: () async {
+                      await dmodel.logout(context);
+                    },
+                  );
+                }
+              },
+            ),
+            ProfileItem(
+              title: "Delete Account",
+              icon: Icons.delete_forever_rounded,
+              color: Colors.red[400]!,
+              postType: 0,
+              onTap: () async {
+                await showAlert(
+                  context: context,
+                  title: "WARNING!",
+                  body: const Column(
+                    children: [
+                      Text(
+                          "Your account will be submitted for deletion. If there is no activity for 30 days, the account will be permanently deleted."),
+                      SizedBox(height: 4),
+                      Text(
+                          "If you change your mind, logging into this account will reverse this process."),
+                    ],
+                  ),
+                  cancelText: "Cancel",
+                  onCancel: () {},
+                  cancelBolded: true,
+                  submitText: "Delete",
+                  submitColor: Colors.red,
+                  onSubmit: () async {
+                    await dmodel.delete(context);
+                  },
+                );
+              },
+            ),
+          ],
+          onChildTap: (context, item, index) async {
+            setState(() {
+              _loadingIndex = index + 100;
+            });
+            await item.onTap();
+            setState(() {
+              _loadingIndex = -1;
+            });
+          },
+          childBuilder: (context, item, index) {
+            return Row(
+              children: [
+                Expanded(
+                  child: WrappedButton(
+                    title: item.title,
+                    icon: item.icon,
+                    iconBg: item.color,
+                    isLoading: _loadingIndex == index,
+                  ),
+                ),
+                if (item.postType > 0)
+                  Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Transform.rotate(
+                        angle: item.postType == 1 ? math.pi / -2 : 0,
+                        child: Icon(
+                          Icons.chevron_right_rounded,
+                          color: AppColors.subtext(context),
+                        ),
+                      )),
+              ],
+            );
+          },
+        ),
+        const SizedBox(height: 100),
       ],
     );
   }

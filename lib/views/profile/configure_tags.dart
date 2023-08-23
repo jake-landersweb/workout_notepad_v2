@@ -215,12 +215,7 @@ class _ConfigureTagsState extends State<ConfigureTags> {
 
   Future<void> _onSave(BuildContext context) async {
     if (!_isValid()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Titles cannot be empty"),
-          backgroundColor: Colors.red[300],
-        ),
-      );
+      snackbarErr(context, "Titles cannot be empty.");
       return;
     }
     try {
@@ -252,12 +247,7 @@ class _ConfigureTagsState extends State<ConfigureTags> {
         attributes: {"err_code": "tag_save"},
       );
       print(e);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("There was an issue updating the tags"),
-          backgroundColor: Colors.red[300],
-        ),
-      );
+      snackbarErr(context, "There was an issue updating the tags.");
     }
   }
 }

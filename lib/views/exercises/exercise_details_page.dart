@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/cancel_button.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/components/loading_indicator.dart';
@@ -58,6 +59,7 @@ class _ExerciseDetailsPageState extends State<ExerciseDetailsPage> {
   }
 
   Widget _child(BuildContext context) {
+    var dmodel = Provider.of<DataModel>(context);
     if (_isLoading) {
       return Center(
         child: LoadingIndicator(
@@ -67,7 +69,8 @@ class _ExerciseDetailsPageState extends State<ExerciseDetailsPage> {
     } else if (details != null) {
       return Column(
         children: [
-          if (details!.file.type != AppFileType.none)
+          if ((details!.file.type != AppFileType.none) &&
+              dmodel.user!.subscriptionType != SubscriptionType.none)
             Padding(
               padding: const EdgeInsets.only(bottom: 16.0),
               child: ConstrainedBox(

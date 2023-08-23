@@ -14,6 +14,7 @@ import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/workouts/clone_workout.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
@@ -205,10 +206,17 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
               title: "Snapshots",
               description: "View previous versions",
               onTap: () {
-                cupertinoSheet(
-                  context: context,
-                  builder: (context) => WorkoutSnapshots(workout: _workout),
-                );
+                if (dmodel.user!.subscriptionType == SubscriptionType.none) {
+                  cupertinoSheet(
+                    context: context,
+                    builder: (context) => const Subscriptions(),
+                  );
+                } else {
+                  cupertinoSheet(
+                    context: context,
+                    builder: (context) => WorkoutSnapshots(workout: _workout),
+                  );
+                }
               },
               index: 3,
             ),

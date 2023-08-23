@@ -368,13 +368,8 @@ class _CECConfigureState extends State<CECConfigure> {
                 onSelect(w)!;
               } else {
                 if (cmodel.collection.items.length >= 10) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: const Text(
-                          "You can only have a maximum of 10 workouts in a collection."),
-                      backgroundColor: Colors.red[300],
-                    ),
-                  );
+                  snackbarErr(context,
+                      "You can only have a maximum of 10 workouts in a collection.");
                   return;
                 }
                 cmodel.collection.items.add(
@@ -438,13 +433,8 @@ class __DayOfWeekPickerState extends State<_DayOfWeekPicker> {
                     builder: (context) => SelectWorkouts(
                       onSelect: (w) {
                         if (cmodel.collection.items.length >= 10) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: const Text(
-                                  "You can only have a maximum of 10 workouts in a collection."),
-                              backgroundColor: Colors.red[300],
-                            ),
-                          );
+                          snackbarErr(context,
+                              "You can only have a maximum of 10 workouts in a collection.");
                           return;
                         }
                         var c = CollectionItem.fromWorkout(

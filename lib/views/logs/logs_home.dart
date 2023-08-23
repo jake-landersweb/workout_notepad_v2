@@ -101,8 +101,7 @@ class _LogsHomeState extends State<LogsHome> {
               ),
             ],
             onChildTap: (context, item, index) {
-              if (dmodel.user!.subscriptionType ==
-                  SubscriptionType.wn_premium) {
+              if (dmodel.user!.isPremiumUser()) {
                 navigate(context: context, builder: (context) => item.v4);
               } else {
                 cupertinoSheet(
@@ -122,7 +121,7 @@ class _LogsHomeState extends State<LogsHome> {
                     ),
                   ),
                   Icon(
-                    dmodel.user!.subscriptionType == SubscriptionType.wn_premium
+                    dmodel.user!.isPremiumUser()
                         ? Icons.chevron_right_rounded
                         : Icons.lock_rounded,
                     color: AppColors.subtext(context),
@@ -140,8 +139,7 @@ class _LogsHomeState extends State<LogsHome> {
             childPadding: const EdgeInsets.only(left: 16),
             children: dmodel.categories,
             onChildTap: (context, item, index) {
-              if (dmodel.user!.subscriptionType ==
-                  SubscriptionType.wn_premium) {
+              if (dmodel.user!.isPremiumUser()) {
                 navigate(
                   context: context,
                   builder: (context) => LogsCategoryIndividual(category: item),
@@ -178,8 +176,7 @@ class _LogsHomeState extends State<LogsHome> {
                       ),
                     ),
                     Icon(
-                      dmodel.user!.subscriptionType ==
-                              SubscriptionType.wn_premium
+                      dmodel.user!.isPremiumUser()
                           ? Icons.chevron_right_rounded
                           : Icons.lock_rounded,
                       color: AppColors.subtext(context),

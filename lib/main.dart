@@ -30,7 +30,7 @@ void main() async {
 
     // Android specific option
     // Optional: Enable or disable collection of event data.
-    analyticsEventEnabled: true,
+    analyticsEventEnabled: false,
     // iOS specific option
     // Optional: Enable or disable automatic instrumentation of WebViews.
     webViewInstrumentation: false,
@@ -76,19 +76,56 @@ void main() async {
   });
 }
 
+// for allowing absoute reset when needed
+class RestartWidget extends StatefulWidget {
+  const RestartWidget({
+    Key? key,
+    required this.child,
+  }) : super(key: key);
+
+  final Widget child;
+
+  static void restartApp(BuildContext context) {
+    context.findAncestorStateOfType<_RestartWidgetState>()?.restartApp();
+  }
+
+  @override
+  _RestartWidgetState createState() => _RestartWidgetState();
+}
+
+class _RestartWidgetState extends State<RestartWidget> {
+  Key key = UniqueKey();
+
+  void restartApp() {
+    setState(() {
+      key = UniqueKey();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return KeyedSubtree(
+      key: key,
+      child: widget.child,
+    );
+  }
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => DataModel()),
-      ],
-      builder: (context, child) {
-        return _body(context);
-      },
+    return RestartWidget(
+      child: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (context) => DataModel()),
+        ],
+        builder: (context, child) {
+          return _body(context);
+        },
+      ),
     );
   }
 

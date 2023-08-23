@@ -10,12 +10,12 @@ import 'package:workout_notepad_v2/model/client.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:http/http.dart' as http;
 
-enum SubscriptionType { none, wn_premium }
+enum SubscriptionType { none, wn_unlocked }
 
 SubscriptionType subStatusFromJson(String? status) {
   switch (status) {
-    case "wn_premium":
-      return SubscriptionType.wn_premium;
+    case "wn_unlocked":
+      return SubscriptionType.wn_unlocked;
     default:
       return SubscriptionType.none;
   }
@@ -23,8 +23,8 @@ SubscriptionType subStatusFromJson(String? status) {
 
 String subStatusToJson(SubscriptionType status) {
   switch (status) {
-    case SubscriptionType.wn_premium:
-      return "wn_premium";
+    case SubscriptionType.wn_unlocked:
+      return "wn_unlocked";
     default:
       return "none";
   }
@@ -44,7 +44,6 @@ class User {
   bool offline = false;
   late SubscriptionType subscriptionType = SubscriptionType.none;
   int? subscriptionEstimatedExpireEpoch;
-  String? subscriptionPurchaseId;
   int? subscriptionTransactionEpoch;
 
   User({
@@ -98,7 +97,6 @@ class User {
     subscriptionType = subStatusFromJson(json['subscriptionType']);
     subscriptionEstimatedExpireEpoch =
         json['subscriptionEstimatedExpireEpoch']?.round();
-    subscriptionPurchaseId = json['subscriptionPurchaseId'];
     subscriptionTransactionEpoch =
         json['subscriptionTransactionEpoch']?.round();
   }
@@ -115,7 +113,6 @@ class User {
       "expireEpoch": expireEpoch,
       "subscriptionType": subStatusToJson(subscriptionType),
       "subscriptionEstimatedExpireEpoch": subscriptionEstimatedExpireEpoch,
-      "subscriptionPurchaseId": subscriptionPurchaseId,
       "subscriptionTransactionEpoch": subscriptionTransactionEpoch,
     };
   }
@@ -235,6 +232,26 @@ class User {
     }
   }
 
+  Future<bool> delete() async {
+    try {
+      var client = Client(client: http.Client());
+      var response = await client.delete("/users/$userId");
+      if (response.statusCode != 200) {
+        print("ERROR - There was an error with the request ${response.body}");
+        return false;
+      }
+      return true;
+    } catch (error) {
+      NewrelicMobile.instance.recordError(
+        error,
+        StackTrace.current,
+        attributes: {"err_code": "user_delete"},
+      );
+      print("UNKNOWN ERROR - $error");
+      return false;
+    }
+  }
+
   Widget avatar(BuildContext context, {double size = 120}) {
     if (offline) {
       return Container(
@@ -264,7 +281,9 @@ class User {
         return LoadingIndicator(color: Theme.of(context).colorScheme.primary);
       },
     );
-    if (imgUrl == null || imgUrl == "") {
+    if (imgUrl == null ||
+        imgUrl == "" ||
+        (imgUrl?.contains("default") ?? false)) {
       return Container(
         width: size,
         height: size,
@@ -300,6 +319,15 @@ class User {
           ),
         ),
       );
+    }
+  }
+
+  bool isPremiumUser() {
+    switch (subscriptionType) {
+      case SubscriptionType.none:
+        return false;
+      case SubscriptionType.wn_unlocked:
+        return true;
     }
   }
 

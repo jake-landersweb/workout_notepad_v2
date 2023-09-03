@@ -331,6 +331,14 @@ class User {
     }
   }
 
+  String getName() {
+    if (displayName == null || displayName == "") {
+      return "Unknown User";
+    } else {
+      return displayName!;
+    }
+  }
+
   @override
   String toString() {
     return toMap().toString();

@@ -69,12 +69,11 @@ class _ProfileState extends State<Profile> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (dmodel.user!.displayName != null)
-                Text(
-                  dmodel.user!.displayName ?? "Unknown User",
-                  style: ttSubTitle(context),
-                  textAlign: TextAlign.center,
-                ),
+              Text(
+                dmodel.user!.getName(),
+                style: ttSubTitle(context),
+                textAlign: TextAlign.center,
+              ),
               if (dmodel.user!.isAnon)
                 Text(
                   "Anonymous User",
@@ -379,6 +378,7 @@ class _ProfileState extends State<Profile> {
                     submitColor: Colors.red,
                     onSubmit: () async {
                       await dmodel.logout(context);
+                      setState(() {});
                     },
                   );
                 }

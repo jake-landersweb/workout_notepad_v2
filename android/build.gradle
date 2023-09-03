@@ -6,11 +6,10 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.1.2'
-        // START: FlutterFire Configuration
-        classpath 'com.google.gms:google-services:4.3.10'
-        // END: FlutterFire Configuration
+        classpath 'com.android.tools.build:gradle:7.3.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        // FlutterFire Configuration
+        classpath 'com.google.gms:google-services:4.3.14'
         // NEW RELIC
         classpath "com.newrelic.agent.android:agent-gradle-plugin:6.10.0"
     }

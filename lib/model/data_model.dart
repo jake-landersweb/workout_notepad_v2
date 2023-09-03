@@ -79,6 +79,9 @@ class DataModel extends ChangeNotifier {
   }
 
   Future<void> _handlePurchaseRecord(PurchaseDetails details) async {
+    if ((details.purchaseID?.isEmpty ?? true) || details.productID.isEmpty) {
+      return;
+    }
     print("[PURCHASE] Handling Purchase with productID: ${details.productID}");
     try {
       if (details.status == PurchaseStatus.pending) {
@@ -105,7 +108,14 @@ class DataModel extends ChangeNotifier {
             // TODO - add this to the user_purchaseId table
             return;
           } else {
-            var valid = await _verifyPurchase(details);
+            late bool valid;
+            if (Platform.isAndroid) {
+              // TODO -- fix this for android. Follow this trail:
+              // https://stackoverflow.com/questions/43536904/google-play-developer-api-the-current-user-has-insufficient-permissions-to-pe
+              valid = true;
+            } else {
+              await _verifyPurchase(details);
+            }
             if (valid) {
               var assignResponse = await _assignPurchase(details);
               if (assignResponse) {
@@ -257,6 +267,8 @@ class DataModel extends ChangeNotifier {
     BuildContext context,
     auth.UserCredential credential,
   ) async {
+    loadStatus = LoadStatus.init;
+    notifyListeners();
     var prefs = await SharedPreferences.getInstance();
     var u = await User.loginAuth(credential, convertFromAnon: user != null);
     if (u == null) {
@@ -599,6 +611,7 @@ class DataModel extends ChangeNotifier {
       auth.FirebaseAuth.instance.signOut();
       notifyListeners();
     }
+    notifyListeners();
   }
 
   Future<void> delete(BuildContext context) async {

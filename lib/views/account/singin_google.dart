@@ -31,7 +31,8 @@ class _SigninGoogleState extends State<SigninGoogle> {
         "993769836789-o52cpd11lc4kkccfhqtgftmut6s7ph34.apps.googleusercontent.com",
     // "993769836789-e614gf7untnrc9dljh3vo1djamch2m0c.apps.googleusercontent.com",
     // If you need to authenticate to a backend server, specify its OAuth client. This is optional.
-    // serverClientId: ...,
+    serverClientId:
+        "993769836789-e614gf7untnrc9dljh3vo1djamch2m0c.apps.googleusercontent.com",
   );
 
   @override
@@ -82,43 +83,63 @@ class _SigninGoogleState extends State<SigninGoogle> {
 
   Future<void> _signIn() async {
     try {
-      if (Platform.isAndroid) {
-        final googleProvider = GoogleAuthProvider();
-        googleProvider.addScope('https://www.googleapis.com/auth/email');
-        var credential =
-            await FirebaseAuth.instance.signInWithProvider(googleProvider);
-        if (credential.user == null) {
-          print("There was an error signing in with google");
-          return;
-        }
-        await NewrelicMobile.instance.recordCustomEvent(
-          "WN_Metric",
-          eventName: "login_google",
-          eventAttributes: {"userId": credential.user?.uid},
-        );
-        widget.onSignIn(credential);
-      } else {
-        var googleUser = await _googleSignIn.signIn();
-        if (googleUser == null) {
-          print("Unable to sign in");
-          return;
-        }
-
-        final GoogleSignInAuthentication googleAuth =
-            await googleUser.authentication;
-        final oauthCredential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
-        var credential =
-            await FirebaseAuth.instance.signInWithCredential(oauthCredential);
-        await NewrelicMobile.instance.recordCustomEvent(
-          "WN_Metric",
-          eventName: "login_google",
-          eventAttributes: {"userId": credential.user?.uid},
-        );
-        widget.onSignIn(credential);
+      var googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        print("Unable to sign in");
+        return;
       }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final oauthCredential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      var credential =
+          await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+      await NewrelicMobile.instance.recordCustomEvent(
+        "WN_Metric",
+        eventName: "login_google",
+        eventAttributes: {"userId": credential.user?.uid},
+      );
+      widget.onSignIn(credential);
+      // if (Platform.isAndroid) {
+      //   final googleProvider = GoogleAuthProvider();
+      //   googleProvider.addScope('https://www.googleapis.com/auth/email');
+      //   var credential =
+      //       await FirebaseAuth.instance.signInWithProvider(googleProvider);
+      //   if (credential.user == null) {
+      //     print("There was an error signing in with google");
+      //     return;
+      //   }
+      //   await NewrelicMobile.instance.recordCustomEvent(
+      //     "WN_Metric",
+      //     eventName: "login_google",
+      //     eventAttributes: {"userId": credential.user?.uid},
+      //   );
+      //   widget.onSignIn(credential);
+      // } else {
+      //   var googleUser = await _googleSignIn.signIn();
+      //   if (googleUser == null) {
+      //     print("Unable to sign in");
+      //     return;
+      //   }
+
+      //   final GoogleSignInAuthentication googleAuth =
+      //       await googleUser.authentication;
+      //   final oauthCredential = GoogleAuthProvider.credential(
+      //     accessToken: googleAuth.accessToken,
+      //     idToken: googleAuth.idToken,
+      //   );
+      //   var credential =
+      //       await FirebaseAuth.instance.signInWithCredential(oauthCredential);
+      //   await NewrelicMobile.instance.recordCustomEvent(
+      //     "WN_Metric",
+      //     eventName: "login_google",
+      //     eventAttributes: {"userId": credential.user?.uid},
+      //   );
+      //   widget.onSignIn(credential);
+      // }
     } catch (error) {
       NewrelicMobile.instance.recordError(
         error,

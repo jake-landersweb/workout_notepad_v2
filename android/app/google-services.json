@@ -14,11 +14,27 @@
       },
       "oauth_client": [
         {
+          "client_id": "993769836789-a38q9jt1l007l18lfck3ah2fkgvadibq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.landersweb.workout_notepad_v2",
+            "certificate_hash": "a98b5d63a4182655f38368543cad9d69860ae08c"
+          }
+        },
+        {
           "client_id": "993769836789-g7suogji2860ce7enav3g3mps7ms9616.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.landersweb.workout_notepad_v2",
             "certificate_hash": "bcd727dca3f31f27e132eedb8c0ebec2ee7161e5"
+          }
+        },
+        {
+          "client_id": "993769836789-koc0lha2ppc67l3u6q93cckue8mgu6h3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.landersweb.workout_notepad_v2",
+            "certificate_hash": "724aa14b3da65f3a769c06aade65b896d57b6508"
           }
         },
         {

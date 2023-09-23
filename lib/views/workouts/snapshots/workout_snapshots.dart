@@ -72,15 +72,15 @@ class _WorkoutSnapshotsState extends State<WorkoutSnapshots> {
                   showAlert(
                     context: context,
                     title: "Confirm",
-                    body: Text(
+                    body: const Text(
                         "Are you sure you want to create a snapshot of the workout at this time?"),
                     cancelText: "Cancel",
                     onCancel: () {},
                     submitText: "Confirm",
                     submitBolded: true,
                     onSubmit: () async {
-                      var snp = await widget.workout.toSnapshot();
-                      var db = await getDB();
+                      var db = await DatabaseProvider().database;
+                      var snp = await widget.workout.toSnapshot(db);
                       await db.insert("workout_snapshot", snp.toMap());
                       await _getSnapshots();
                     },
@@ -127,7 +127,7 @@ class _WorkoutSnapshotsState extends State<WorkoutSnapshots> {
     });
     // TODO -- dev for creating a snapshot
     // var snp = await widget.workout.toSnapshot();
-    // var db = await getDB();
+    // var db = await DatabaseProvider().database;
     // await db.delete("workout_snapshot");
     // var response = await db.insert("workout_snapshot", snp.toMap());
     // print(response);

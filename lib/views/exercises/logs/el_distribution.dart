@@ -7,7 +7,6 @@ import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/exercises/logs/el_premium.dart';
-import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
 
 enum ELDistributionType { weight, reps, time }
 
@@ -341,7 +340,7 @@ class _ELDistributionState extends State<ELDistribution> {
     _avgData.clear();
     _minData.clear();
     try {
-      var db = await getDB();
+      var db = await DatabaseProvider().database;
       var response = await db.rawQuery("""
       SELECT 
           el.created,

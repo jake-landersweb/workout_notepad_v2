@@ -42,7 +42,7 @@ class Tag {
     ConflictAlgorithm? conflictAlgorithm,
     Database? db,
   }) async {
-    db ??= await getDB();
+    db ??= await DatabaseProvider().database;
     var response = await db.insert(
       'tag',
       toMap(),
@@ -52,7 +52,7 @@ class Tag {
   }
 
   static Future<List<Tag>> getList({Database? db}) async {
-    db ??= await getDB();
+    db ??= await DatabaseProvider().database;
     var response = await db.rawQuery("SELECT * FROM tag");
     List<Tag> t = [];
     for (var i in response) {

@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/color_schemes.dart';
 import 'package:workout_notepad_v2/env.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/model/search_model.dart';
 import 'package:workout_notepad_v2/views/account/root.dart';
 import 'package:workout_notepad_v2/views/home.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -121,6 +122,7 @@ class MyApp extends StatelessWidget {
       child: MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) => DataModel()),
+          ChangeNotifierProvider(create: (context) => SearchModel()),
         ],
         builder: (context, child) {
           return _body(context);
@@ -165,7 +167,42 @@ class Index extends StatefulWidget {
   State<Index> createState() => _IndexState();
 }
 
-class _IndexState extends State<Index> {
+class _IndexState extends State<Index> with WidgetsBindingObserver {
+  DateTime? _closedTime;
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    switch (state) {
+      case AppLifecycleState.resumed:
+        print("[STATE] resumed");
+
+        DataModel dmodel = Provider.of<DataModel>(context, listen: false);
+
+        // check if enough time has passed
+        if (_closedTime
+                ?.isBefore(DateTime.now().subtract(const Duration(hours: 1))) ??
+            false) {
+          // fetch the user information
+          dmodel.init();
+        }
+
+        break;
+      case AppLifecycleState.inactive:
+        print("[STATE] inactive");
+        break;
+      case AppLifecycleState.paused:
+        print("[STATE] paused");
+        _closedTime = DateTime.now();
+        break;
+      case AppLifecycleState.detached:
+        print("[STATE] detached");
+        break;
+      case AppLifecycleState.hidden:
+        print("[STATE] hidden");
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

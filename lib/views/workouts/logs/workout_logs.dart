@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
-import 'package:workout_notepad_v2/components/fluid_scroll_view.dart';
+import 'package:workout_notepad_v2/components/loading_indicator.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
+import 'package:workout_notepad_v2/views/logs/no_logs.dart';
 import 'package:workout_notepad_v2/views/workouts/logs/root.dart';
 import 'package:workout_notepad_v2/views/workouts/logs/wl_model.dart';
 
@@ -59,7 +60,6 @@ class _WorkoutLogsState extends State<WorkoutLogs> {
                 widget.workout.title,
                 style: ttTitle(
                   context,
-                  color: Theme.of(context).colorScheme.onBackground,
                 ),
               ),
               if (widget.workout.description?.isNotEmpty ?? false)
@@ -67,7 +67,6 @@ class _WorkoutLogsState extends State<WorkoutLogs> {
                   widget.workout.description!,
                   style: ttLabel(
                     context,
-                    color: Theme.of(context).colorScheme.onBackground,
                   ),
                 ),
             ],
@@ -77,10 +76,15 @@ class _WorkoutLogsState extends State<WorkoutLogs> {
       builder: (context) {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 16),
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              const SizedBox(height: 16),
+              if (!lmodel.loaded)
+                const Center(child: LoadingIndicator())
+              else if (lmodel.logs.isEmpty)
+                const NoLogs()
+              else
                 for (var i in lmodel.logs)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
@@ -97,8 +101,7 @@ class _WorkoutLogsState extends State<WorkoutLogs> {
                             },
                     ),
                   ),
-              ],
-            ),
+            ],
           ),
         );
       },

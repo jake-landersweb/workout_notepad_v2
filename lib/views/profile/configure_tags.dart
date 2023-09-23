@@ -6,16 +6,11 @@ import 'package:line_icons/line_icons.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sql.dart';
-import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
-import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/components/root.dart';
-import 'package:workout_notepad_v2/components/wrapped_button.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:workout_notepad_v2/views/icon_picker.dart';
-import 'package:workout_notepad_v2/views/root.dart';
 
 class ConfigureTags extends StatefulWidget {
   const ConfigureTags({
@@ -219,7 +214,7 @@ class _ConfigureTagsState extends State<ConfigureTags> {
       return;
     }
     try {
-      var db = await getDB();
+      var db = await DatabaseProvider().database;
       await db.transaction((txn) async {
         await txn.rawDelete("DELETE FROM tag");
         for (var i in _tags) {

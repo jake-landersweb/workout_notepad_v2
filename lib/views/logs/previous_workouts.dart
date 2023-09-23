@@ -38,14 +38,6 @@ class _LogsPreviousWorkoutsState extends State<LogsPreviousWorkouts> {
         isLarge: true,
         leading: const [BackButton2()],
         children: [
-          // const SizedBox(height: 8),
-          // Section(
-          //   "Workout Duration By Day",
-          //   child: AspectRatio(
-          //     aspectRatio: 1,
-          //     child: _child(context),
-          //   ),
-          // ),
           const SizedBox(height: 8),
           Section(
             "All Workouts - ${_workoutLogs.length}",
@@ -109,7 +101,6 @@ class _LogsPreviousWorkoutsState extends State<LogsPreviousWorkouts> {
           ),
         ),
       );
-      ;
     } else if (_workoutLogs.isEmpty) {
       return const NoLogs();
     } else {
@@ -122,7 +113,12 @@ class _LogsPreviousWorkoutsState extends State<LogsPreviousWorkouts> {
           print(item.workoutLogId);
           cupertinoSheet(
             context: context,
-            builder: (context) => WLExercises(workoutLog: item),
+            builder: (context) => WLExercises(
+              workoutLog: item,
+              onSave: (wl) => setState(() {
+                _workoutLogs[index] = wl;
+              }),
+            ),
           );
         },
         childBuilder: (context, item, index) => _workoutCell(context, item),
@@ -304,7 +300,7 @@ class _LogsPreviousWorkoutsState extends State<LogsPreviousWorkouts> {
     setState(() {
       _isLoading = true;
     });
-    var db = await getDB();
+    var db = await DatabaseProvider().database;
     var response = await db.rawQuery("""
       WITH dates AS (
         SELECT DISTINCT DATE(wl.created) as log_date

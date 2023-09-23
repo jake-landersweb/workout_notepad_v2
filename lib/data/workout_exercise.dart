@@ -1,138 +1,127 @@
-import 'package:sqflite/sql.dart';
 import 'package:uuid/uuid.dart';
-import 'package:workout_notepad_v2/data/exercise_set.dart';
 import 'package:workout_notepad_v2/data/root.dart';
-import 'package:workout_notepad_v2/model/root.dart';
 
-class WorkoutExercise extends ExerciseBase {
+class WorkoutExercise extends Exercise {
   late String workoutExerciseId;
   late String workoutId;
-  late String exerciseId;
   late int exerciseOrder;
-  late String note;
-  late int superSetOrdering;
-  late String created;
-  late String updated;
+  late String supersetId;
+  late int supersetOrder;
 
   WorkoutExercise({
     required this.workoutExerciseId,
     required this.workoutId,
-    required this.exerciseId,
     required this.exerciseOrder,
-    required this.note,
-    required this.superSetOrdering,
-    required this.created,
-    required this.updated,
+    required this.supersetId,
+    required this.supersetOrder,
+    required super.exerciseId,
     required super.title,
     required super.category,
     required super.description,
+    required super.difficulty,
     required super.icon,
     required super.type,
     required super.sets,
     required super.reps,
     required super.time,
+    super.filename,
   });
 
-  WorkoutExercise.init(Workout w, Exercise e, ExerciseChildArgs args)
-      : super(
-          title: e.title,
-          category: e.category,
-          description: e.description,
-          icon: e.icon,
-          type: e.type,
-          sets: args.sets ?? e.sets,
-          reps: args.reps ?? e.reps,
-          time: args.time ?? e.time,
-        ) {
-    var uuid = const Uuid();
-    workoutExerciseId = uuid.v4();
-    workoutId = w.workoutId;
-    exerciseId = e.exerciseId;
-    exerciseOrder = args.order;
-    note = "";
-    superSetOrdering = 0;
-    created = "";
-    updated = "";
-  }
+  // WorkoutExercise.init(Workout w, Exercise e, ExerciseChildArgs args)
+  //     : super(
+  //         exerciseId: e.exerciseId,
+  //         title: e.title,
+  //         category: e.category,
+  //         description: e.description,
+  //         icon: e.icon,
+  //         type: e.type,
+  //         sets: args.sets ?? e.sets,
+  //         reps: args.reps ?? e.reps,
+  //         time: args.time ?? e.time,
+  //       ) {
+  //   var uuid = const Uuid();
+  //   workoutExerciseId = uuid.v4();
+  //   workoutId = w.workoutId;
+  //   supersetId = uuid.v4();
+  //   exerciseOrder = args.order;
+  // }
 
   WorkoutExercise.fromExercise(Workout w, Exercise e) : super.fromSelf(e) {
     var uuid = const Uuid();
     workoutExerciseId = uuid.v4();
     workoutId = w.workoutId;
-    exerciseId = e.exerciseId;
     exerciseOrder = 0;
-    note = "";
-    superSetOrdering = 0;
-    created = "";
-    updated = "";
+    supersetId = uuid.v4();
+    supersetOrder = 0;
   }
 
+  @override
   WorkoutExercise copy() => WorkoutExercise(
         workoutExerciseId: workoutExerciseId,
         workoutId: workoutId,
+        exerciseOrder: 0,
+        supersetId: supersetId,
+        supersetOrder: supersetOrder,
+        // exercise fields
         exerciseId: exerciseId,
-        exerciseOrder: exerciseOrder,
-        note: note,
-        superSetOrdering: superSetOrdering,
-        created: created,
-        updated: updated,
         title: title,
         category: category,
         description: description,
+        difficulty: difficulty,
         icon: icon,
         type: type,
         reps: reps,
         sets: sets,
         time: time,
+        filename: filename,
       );
 
   WorkoutExercise clone(Workout workout) => WorkoutExercise(
         workoutExerciseId: const Uuid().v4(),
         workoutId: workout.workoutId,
-        exerciseId: exerciseId,
         exerciseOrder: exerciseOrder,
-        note: note,
-        superSetOrdering: superSetOrdering,
-        created: created,
-        updated: updated,
+        supersetId: supersetId,
+        supersetOrder: supersetOrder,
+        // exercise fields
+        exerciseId: exerciseId,
         title: title,
         category: category,
         description: description,
+        difficulty: difficulty,
         icon: icon,
         type: type,
         reps: reps,
         sets: sets,
         time: time,
+        filename: filename,
       );
 
   WorkoutExercise.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
     workoutExerciseId = json['workoutExerciseId'];
     workoutId = json['workoutId'];
-    exerciseId = json['exerciseId'];
     exerciseOrder = json['exerciseOrder'];
-    note = json['note'] ?? "";
-    superSetOrdering = json['superSetOrdering'] ?? 0;
-    created = json['created'] ?? "";
-    updated = json['updated'] ?? "";
+    supersetId = json['supersetId'];
+    supersetOrder = json['supersetOrder'];
   }
 
   /// for creating map objects for workout snapshots
   Map<String, dynamic> toMapRAW() {
     return {
+      "workoutExerciseId": workoutExerciseId,
+      "workoutId": workoutId,
+      "exerciseOrder": exerciseOrder,
+      "supersetId": supersetId,
+      "supersetOrder": supersetOrder,
+      // exercise fields
+      "exerciseId": exerciseId,
       "title": title,
       "category": category,
       "description": description,
       "icon": icon,
       "type": exerciseTypeToJson(type),
-      "workoutExerciseId": workoutExerciseId,
-      "workoutId": workoutId,
-      "exerciseId": exerciseId,
-      "exerciseOrder": exerciseOrder,
       "sets": sets,
       "reps": reps,
       "time": time,
-      "note": note,
-      "superSetOrdering": superSetOrdering,
     };
   }
 
@@ -141,63 +130,46 @@ class WorkoutExercise extends ExerciseBase {
     return {
       "workoutExerciseId": workoutExerciseId,
       "workoutId": workoutId,
-      "exerciseId": exerciseId,
       "exerciseOrder": exerciseOrder,
+      "supersetId": supersetId,
+      "supersetOrder": supersetOrder,
+      // exercise fields saved on workout exercises
+      "exerciseId": exerciseId,
       "sets": sets,
       "reps": reps,
       "time": time,
-      "note": note,
-      "superSetOrdering": superSetOrdering,
     };
   }
 
-  Future<List<ExerciseSet>> getChildren(String workoutId) async {
-    final db = await getDB();
-    String query = """
-      SELECT * FROM exercise e
-      JOIN exercise_set es ON e.exerciseId = es.childId
-      WHERE es.parentId = '$exerciseId' AND es.workoutId = '$workoutId' AND es.workoutExerciseId = '$workoutExerciseId'
-      ORDER BY es.exerciseOrder
-    """;
-    final List<Map<String, dynamic>> response = await db.rawQuery(query.trim());
-    List<ExerciseSet> e = [];
-    for (var i in response) {
-      e.add(ExerciseSet.fromJson(i));
-    }
-    return e;
-  }
+  // Future<bool> delete(String workoutId) async {
+  //   try {
+  //     final db = await DatabaseProvider().database;
+  //     // delete exercise
+  //     String query = """
+  //       DELETE FROM workout_exercise
+  //       WHERE workoutExerciseId = '$workoutExerciseId'
+  //     """;
+  //     await db.rawQuery(query.trim());
 
-  Future<bool> delete(String workoutId) async {
-    try {
-      final db = await getDB();
-      // delete exercise
-      String query = """
-        DELETE FROM workout_exercise
-        WHERE workoutExerciseId = '$workoutExerciseId'
-      """;
-      await db.rawQuery(query.trim());
+  //     return true;
+  //   } catch (e) {
+  //     print(e);
+  //     return false;
+  //   }
+  // }
 
-      return true;
-    } catch (e) {
-      print(e);
-      return false;
-    }
-  }
+  // Future<int> insert({ConflictAlgorithm? conflictAlgorithm}) async {
+  //   final db = await DatabaseProvider().database;
+  //   var response = await db.insert(
+  //     'workout_exercise',
+  //     toMap(),
+  //     conflictAlgorithm: conflictAlgorithm ?? ConflictAlgorithm.abort,
+  //   );
+  //   return response;
+  // }
 
-  @override
-  Future<int> insert({ConflictAlgorithm? conflictAlgorithm}) async {
-    final db = await getDB();
-    var response = await db.insert(
-      'workout_exercise',
-      toMap(),
-      conflictAlgorithm: conflictAlgorithm ?? ConflictAlgorithm.abort,
-    );
-    return response;
-  }
-
-  @override
-  Future<int> update() {
-    // TODO: implement update
-    throw UnimplementedError();
-  }
+  // Future<int> update() {
+  //   // TODO: implement update
+  //   throw UnimplementedError();
+  // }
 }

@@ -1,19 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 
-void snackbarErr(BuildContext context, String message) {
+void snackbarErr(
+  BuildContext context,
+  String message, {
+  Duration? duration,
+}) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
+      duration: duration ?? const Duration(seconds: 4),
       content: Text(message),
-      backgroundColor: Colors.red[300],
+      backgroundColor: AppColors.error(),
     ),
   );
 }
 
-void snackbarStatus(BuildContext context, String message) {
+void snackbarStatus(
+  BuildContext context,
+  String message, {
+  Duration? duration,
+}) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
-      content: Text(message),
-      backgroundColor: Colors.red[300],
+      duration: duration ?? const Duration(seconds: 4),
+      content: Text(
+        message,
+        style: TextStyle(
+          color: AppColors.text(context),
+        ),
+      ),
+      backgroundColor: AppColors.cell(context)[100],
     ),
   );
 }

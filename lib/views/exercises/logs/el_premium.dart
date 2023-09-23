@@ -13,29 +13,32 @@ class ELPremiumOverlay extends StatelessWidget {
       backgroundColor: AppColors.background(context),
       blur: 10,
       borderRadius: BorderRadius.circular(0),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              "Looking for more logging capabilities?",
-              style: ttTitle(context),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            WrappedButton(
-              title: "Explore Premium",
-              icon: Icons.star,
-              iconBg: Colors.amber[700],
-              onTap: () {
-                cupertinoSheet(
-                  context: context,
-                  builder: (context) => const Subscriptions(),
-                );
-              },
-            ),
-            const SizedBox(height: 100),
-          ],
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Looking for more logging capabilities?",
+                style: ttTitle(context),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              WrappedButton(
+                title: "Explore Premium",
+                icon: Icons.star,
+                iconBg: Colors.amber[700],
+                onTap: () {
+                  cupertinoSheet(
+                    context: context,
+                    builder: (context) => const Subscriptions(),
+                  );
+                },
+              ),
+              const SizedBox(height: 100),
+            ],
+          ),
         ),
       ),
     );

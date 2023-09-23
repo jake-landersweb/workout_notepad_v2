@@ -50,3 +50,5 @@ ideas.md
 *.jks
 build.sh
 .vscode
+
+GoogleService-Info.plist

@@ -101,7 +101,7 @@ class Snapshot {
   static Future<List<Snapshot>?> snapshotDatabase(String userId) async {
     try {
       // get the database
-      var db = await getDB();
+      var db = await DatabaseProvider().database;
       // get all table names
       var response = await db.rawQuery(
         "SELECT name FROM sqlite_master WHERE type='table'",
@@ -115,7 +115,7 @@ class Snapshot {
         data[i['name'] as String] = r;
       }
 
-      //encode to json
+      // encode to json
       String encoded = jsonEncode(data);
 
       var client = Client(client: http.Client());
@@ -138,6 +138,31 @@ class Snapshot {
       print(e);
       return null;
     }
+  }
+
+  // gets the metadata that can be used to determine if the current snapshot metadata matches
+  // another
+  static Future<Snapshot> databaseSignature(String userId) async {
+    // get the database
+    var db = await DatabaseProvider().database;
+    // get all table names
+    var response = await db.rawQuery(
+      "SELECT name FROM sqlite_master WHERE type='table'",
+    );
+
+    List<SnapshotMetadataItem> items = [];
+
+    // compose the data for dynamodb
+    for (var i in response) {
+      var r = await db.query(i['name'] as String);
+      items.add(
+          SnapshotMetadataItem(table: i['name'] as String, length: r.length));
+    }
+
+    var s =
+        Snapshot(userId: userId, created: 0, createdStr: "", s3FileName: "");
+    s.metadata = items;
+    return s;
   }
 
   int get workoutLength {
@@ -167,6 +192,30 @@ class Snapshot {
         "s3FileName": s3FileName,
         "metadata": [for (var i in metadata) i.toMap()],
       };
+
+  // checks if the snapshot signature is equal to another
+  bool compareMetadata(Snapshot other) {
+    if (other.metadata.length != metadata.length) {
+      print("metadata length does not match");
+      return false;
+    }
+
+    for (SnapshotMetadataItem metaItem in metadata) {
+      if (!other.metadata.any((element) => element.table == metaItem.table)) {
+        print("other does not contain: ${metaItem.table}");
+        return false;
+      }
+      var tmpItem = other.metadata
+          .firstWhere((element) => element.table == metaItem.table);
+      if (tmpItem.length != metaItem.length) {
+        print(
+            "table: ${metaItem.table} tmpItem.length (${tmpItem.length}) != metaItem.length (${metaItem.length})");
+        return false;
+      }
+    }
+
+    return true;
+  }
 
   @override
   String toString() => toMap().toString();

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/root.dart';
@@ -24,14 +23,7 @@ class CEEDetails extends StatefulWidget {
 class _CEEDetailsState extends State<CEEDetails> {
   @override
   Widget build(BuildContext context) {
-    return Navigator(
-      onGenerateRoute: (settings) {
-        return MaterialWithModalsPageRoute(
-          settings: settings,
-          builder: (context) => _body(context),
-        );
-      },
-    );
+    return _body(context);
   }
 
   Widget _body(BuildContext context) {
@@ -40,7 +32,7 @@ class _CEEDetailsState extends State<CEEDetails> {
       trailing: const [
         CancelButton(
           title: "Done",
-          useRoot: true,
+          useRoot: false,
         )
       ],
       children: [
@@ -56,24 +48,28 @@ class _CEEDetailsState extends State<CEEDetails> {
                   child: _getAssetWidget(context),
                 ),
               ),
-              if (widget.cemodel.exerciseDetails.file.file != null)
-                Clickable(
-                  onTap: () {
-                    setState(() {
-                      widget.cemodel.exerciseDetails.file.deleteFile();
-                    });
-                    widget.cemodel.deleteFile = true;
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.cell(context),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Icon(
-                        Icons.close_rounded,
-                        color: AppColors.subtext(context),
+              if (widget.cemodel.file.file != null)
+                Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: Clickable(
+                    onTap: () {
+                      setState(() {
+                        widget.cemodel.file.deleteFile();
+                      });
+                      widget.cemodel.deleteFile = true;
+                      widget.cemodel.fileChanged = true;
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.cell(context),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Icon(
+                          Icons.close_rounded,
+                          color: AppColors.subtext(context),
+                        ),
                       ),
                     ),
                   ),
@@ -92,12 +88,12 @@ class _CEEDetailsState extends State<CEEDetails> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Field(
-                value: widget.cemodel.exerciseDetails.description,
+                value: widget.cemodel.exercise.description,
                 labelText:
                     "Break down the exercise into steps to make it easier to follow.",
                 onChanged: (v) {
                   setState(() {
-                    widget.cemodel.exerciseDetails.description = v;
+                    widget.cemodel.exercise.description = v;
                   });
                 },
                 isLabeled: false,
@@ -118,79 +114,14 @@ class _CEEDetailsState extends State<CEEDetails> {
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Field(
-                value: widget.cemodel.exerciseDetails.difficultyLevel,
+                value: widget.cemodel.exercise.difficulty,
                 labelText: "Beginner | Intermediate | Advanced",
                 onChanged: (v) {
                   setState(() {
-                    widget.cemodel.exerciseDetails.difficultyLevel = v;
+                    widget.cemodel.exercise.difficulty = v;
                   });
                 },
                 isLabeled: false,
-              ),
-            ),
-          ),
-        ),
-        // quipment Needed: Specify the equipment required to perform the exercise, such as dumbbells, resistance bands, pull-up bars, etc.
-        Section(
-          "Equipment Needed",
-          child: Container(
-            decoration: BoxDecoration(
-              color: AppColors.cell(context),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Field(
-                value: widget.cemodel.exerciseDetails.equipmentNeeded,
-                labelText: "Barbells, bands, free-weights, etc.",
-                onChanged: (v) {
-                  setState(() {
-                    widget.cemodel.exerciseDetails.equipmentNeeded = v;
-                  });
-                },
-                isLabeled: false,
-                maxLines: 3,
-                minLines: 3,
-              ),
-            ),
-          ),
-        ),
-        // Rest Time: Suggest an optimal rest time between sets based on the exercise's intensity.
-        Section(
-          "Rest Time",
-          child: TimePicker(
-            hours: widget.cemodel.exerciseDetails.getHours(),
-            minutes: widget.cemodel.exerciseDetails.getMinutes(),
-            seconds: widget.cemodel.exerciseDetails.getSeconds(),
-            onChanged: (v) {
-              setState(() {
-                widget.cemodel.exerciseDetails.restTime = v;
-              });
-            },
-          ),
-        ),
-        // Cues: These are reminders on form and technique during the exercise, e.g., "keep your back straight," "engage your core," etc.
-        Section(
-          "Cues",
-          child: Container(
-            decoration: BoxDecoration(
-              color: AppColors.cell(context),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Field(
-                value: widget.cemodel.exerciseDetails.cues,
-                labelText:
-                    "Reminders on form and technique, e.g., \"keep your back straight,\" \"engage your core,\" etc.",
-                onChanged: (v) {
-                  setState(() {
-                    widget.cemodel.exerciseDetails.cues = v;
-                  });
-                },
-                isLabeled: false,
-                maxLines: 3,
-                minLines: 3,
               ),
             ),
           ),
@@ -202,7 +133,7 @@ class _CEEDetailsState extends State<CEEDetails> {
 
   Widget _getAssetWidget(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
-    if (widget.cemodel.exerciseDetails.file.file == null) {
+    if (widget.cemodel.file.file == null) {
       return Clickable(
         onTap: () async {
           if (dmodel.user!.subscriptionType == SubscriptionType.none) {
@@ -218,10 +149,7 @@ class _CEEDetailsState extends State<CEEDetails> {
                   print("There was an issue picking the file");
                 }
                 setState(() {
-                  widget.cemodel.exerciseDetails.file.setFile(
-                    objectId: widget.cemodel.fileObjectId,
-                    file: file!,
-                  );
+                  widget.cemodel.file.setFile(file: file!);
                 });
               },
             );
@@ -252,6 +180,9 @@ class _CEEDetailsState extends State<CEEDetails> {
         ),
       );
     }
-    return widget.cemodel.exerciseDetails.file.getRenderer();
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: widget.cemodel.file.getRenderer(),
+    );
   }
 }

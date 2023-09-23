@@ -1,15 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:workout_notepad_v2/components/cancel_button.dart';
-import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 
 import 'package:workout_notepad_v2/data/workout_snapshot.dart';
-import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:workout_notepad_v2/views/workouts/workout_exercise_cell.dart';
+import 'package:workout_notepad_v2/views/root.dart';
 
 class WorkoutSnapshotDetail extends StatefulWidget {
   const WorkoutSnapshotDetail({
@@ -40,12 +36,35 @@ class _WorkoutSnapshotDetailState extends State<WorkoutSnapshotDetail> {
       leading: const [BackButton2()],
       children: [
         const SizedBox(height: 16),
-        for (var i in _snp.exercises)
-          WorkoutExerciseCell(
-            workoutId: widget.snapshot.workoutId,
-            exercise: i.v1,
-            children: i.v2,
-          ),
+        for (int i = 0; i < _snp.exercises.length; i++)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.cell(context),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  children: [
+                    for (int j = 0; j < _snp.exercises[i].length; j++)
+                      Column(
+                        children: [
+                          ExerciseCell(
+                            exercise: _snp.exercises[i][j],
+                            padding: EdgeInsets.zero,
+                            showBackground: false,
+                          ),
+                          if (j < _snp.exercises[i].length - 1)
+                            Container(
+                              color: AppColors.divider(context),
+                              height: 1,
+                              width: double.infinity,
+                            ),
+                        ],
+                      ),
+                  ],
+                )),
+          )
       ],
     );
   }

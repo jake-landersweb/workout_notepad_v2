@@ -6,10 +6,9 @@ import 'package:workout_notepad_v2/model/root.dart';
 
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/views/root.dart';
-import 'package:workout_notepad_v2/views/workouts/launch/launch_workout.dart';
-import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
+import 'package:workout_notepad_v2/views/workouts/launch/launch_workout.dart';
 
 class WorkoutCell extends StatefulWidget {
   const WorkoutCell({

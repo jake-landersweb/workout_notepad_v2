@@ -16,6 +16,8 @@ CREATE TABLE exercise(
     category TEXT DEFAULT "" NOT NULL,
     title TEXT NOT NULL,
     description TEXT,
+    difficulty TEXT,
+    fname TEXT,
     icon TEXT NOT NULL DEFAULT "",
     type INTEGER DEFAULT 0 NOT NULL,
     sets INTEGER NOT NULL,
@@ -32,60 +34,12 @@ BEGIN
     UPDATE exercise SET updated = CURRENT_TIMESTAMP;
 END;
 --
-CREATE TABLE exercise_detail(
-    exerciseId TEXT PRIMARY KEY,
-    objectId TEXT NOT NULL,
-    description TEXT NOT NULL,
-    difficultyLevel TEXT NOT NULL,
-    equipmentNeeded TEXT NOT NULL,
-    restTime INTEGER DEFAULT 60 NOT NULL,
-    cues TEXT NOT NULL,
-    created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-
-    FOREIGN KEY (exerciseId) REFERENCES exercise(exerciseId) ON DELETE CASCADE
-);
---
-CREATE TRIGGER exercise_detail_update AFTER UPDATE ON exercise_detail
-BEGIN
-    UPDATE exercise_detail SET updated = CURRENT_TIMESTAMP;
-END;
---
-CREATE TABLE exercise_set(
-    exerciseSetId TEXT PRIMARY KEY,
-    workoutId TEXT NOT NULL,
-    workoutExerciseId TEXT NOT NULL,
-    parentId TEXT NOT NULL,
-    childId TEXT NOT NULL,
-    exerciseOrder INTEGER NOT NULL,
-    sets INTEGER NOT NULL,
-    reps INTEGER DEFAULT 0 NOT NULL,
-    time INTEGER DEFAULT 0 NOT NULL,
-    created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-
-    FOREIGN KEY (workoutId) REFERENCES workout(workoutId) ON DELETE CASCADE,
-    FOREIGN KEY (workoutExerciseId) REFERENCES workout_exercise(workoutExerciseId) ON DELETE CASCADE,
-    FOREIGN KEY (parentId) REFERENCES exercise(exerciseId) ON DELETE CASCADE,
-    FOREIGN KEY (childId) REFERENCES exercise(exerciseId) ON DELETE CASCADE
-);
---
-CREATE INDEX exercise_set_workout ON exercise_set(workoutId);
---
-CREATE INDEX exercise_set_we ON exercise_set(workoutExerciseId);
---
-CREATE INDEX exercise_set_parent ON exercise_set(parentId);
---
-CREATE TRIGGER exercise_set_update AFTER UPDATE ON exercise_set
-BEGIN
-    UPDATE exercise_set SET updated = CURRENT_TIMESTAMP;
-END;
---
 CREATE TABLE workout(
     workoutId TEXT PRIMARY KEY,
     title TEXT NOT NULL,
     description TEXT,
     icon TEXT NOT NULL DEFAULT "",
+    template BOOLEAN NOT NULL DEFAULT 0,
     created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
@@ -98,13 +52,14 @@ END;
 CREATE TABLE workout_exercise(
     workoutExerciseId TEXT PRIMARY KEY,
     workoutId TEXT NOT NULL,
-    exerciseId TEXT NOT NULL,
     exerciseOrder INTEGER NOT NULL,
+    supersetId TEXT NOT NULL,
+    supersetOrder INTEGER NOT NULL,
+
+    exerciseId TEXT NOT NULL,
     sets INTEGER NOT NULL,
     reps INTEGER DEFAULT 0 NOT NULL,
     time INTEGER DEFAULT 0 NOT NULL,
-    note TEXT,
-    superSetOrdering INTEGER DEFAULT 0 NOT NULL,
     created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
@@ -141,15 +96,18 @@ END;
 --
 CREATE TABLE exercise_log(
     exerciseLogId TEXT PRIMARY KEY,
+    exerciseId TEXT NOT NULL,
+    workoutExerciseId TEXT,
+    exerciseOrder INTEGER DEFAULT 0,
+    supersetId TEXT,
+    supersetOrder INTEGER DEFAULT 0,
+    workoutLogId TEXT,
+    
     title TEXT NOT NULL,
     category TEXT NOT NULL DEFAULT "",
-    exerciseId TEXT NOT NULL,
-    parentId TEXT,
-    workoutLogId TEXT,
     type INTEGER DEFAULT 0 NOT NULL,
     sets INTEGER NOT NULL,
     note TEXT,
-    isSuperSet BOOLEAN NOT NULL DEFAULT 0,
     created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
@@ -225,34 +183,3 @@ CREATE TABLE workout_snapshot(
 );
 --
 CREATE INDEX workout_snapshot_workoutid ON workout_snapshot(workoutId);
---
-CREATE TABLE device(
-    deviceId TEXT PRIMARY KEY,
-    deviceMake TEXT,
-    deviceModel TEXT,
-    deviveOs TEXT,
-    created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    lastUsed DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-/*
-CREATE TABLE sync_log(
-    syncId TEXT PRIMARY KEY,
-    deviceId TEXT NOT NULL,
-    syncStart DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    syncEnd DATETIME,
-    syncStatus TEXT CHECK(syncStatus IN ('PENDING', 'SUCCESS', 'ERROR')) DEFAULT 'PENDING',
-    errorDetails TEXT,
-    numberOfTables INTEGER,
-    numberOfRecords INTEGER,
-    created DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
-
-    FOREIGN KEY (deviceId) REFERENCES device(deviceId)
-);
-CREATE TABLE deletion_log(
-    deletionLogId TEXT PRIMARY KEY,
-    tableName TEXT NOT NULL,
-    recordId TEXT NOT NULL,
-    deletedAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-CREATE INDEX deletion_log_deletedat ON deletion_log(deletedAt);
-*/

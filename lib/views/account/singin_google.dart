@@ -1,13 +1,10 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
-import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
 class SigninGoogle extends StatefulWidget {
@@ -37,7 +34,6 @@ class _SigninGoogleState extends State<SigninGoogle> {
 
   @override
   Widget build(BuildContext context) {
-    var dmodel = Provider.of<DataModel>(context);
     return Clickable(
       onTap: () async {
         if (_isLoading) {
@@ -66,7 +62,7 @@ class _SigninGoogleState extends State<SigninGoogle> {
               child: Image.asset("assets/images/google.png"),
             ),
             Center(
-              child: _isLoading || dmodel.loadStatus == LoadStatus.init
+              child: _isLoading
                   ? LoadingIndicator(color: AppColors.subtext(context))
                   : Text(
                       "Sign in with Google",

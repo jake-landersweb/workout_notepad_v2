@@ -1,22 +1,26 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sql.dart';
 import 'package:uuid/uuid.dart';
-import 'package:workout_notepad_v2/data/exercise_base.dart';
+import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/root.dart';
+import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:intl/intl.dart';
 
 class ExerciseLog {
   late String exerciseLogId;
   late String exerciseId;
-  String? parentId;
+  String? workoutExerciseId;
+  late int exerciseOrder;
+  late String supersetId;
+  late int supersetOrder;
   String? workoutLogId;
+
   late String title;
   late String category;
   late ExerciseType type;
   late int sets;
   String? note;
-  late bool isSuperSet;
   late String created;
   late String updated;
 
@@ -26,79 +30,52 @@ class ExerciseLog {
   ExerciseLog({
     required this.exerciseLogId,
     required this.exerciseId,
-    this.parentId,
+    this.workoutExerciseId,
+    required this.exerciseOrder,
+    required this.supersetId,
+    required this.supersetOrder,
     this.workoutLogId,
     required this.title,
     required this.category,
     required this.sets,
     required this.type,
     this.note,
-    required this.isSuperSet,
     required this.created,
     required this.updated,
   });
 
-  ExerciseLog.init(String eid, ExerciseBase exercise) {
+  ExerciseLog.init(String eid, Exercise exercise) {
     var uuid = const Uuid();
     exerciseLogId = uuid.v4();
     exerciseId = eid;
+    exerciseOrder = 0;
     title = exercise.title;
     category = exercise.category;
     sets = exercise.sets;
     type = exercise.type;
     note = "";
-    isSuperSet = false;
     created = "";
     updated = "";
     metadata = [];
   }
 
   ExerciseLog.workoutInit({
-    required String eid,
-    required String wlid,
-    required ExerciseBase exercise,
+    required WorkoutLog workoutLog,
+    required WorkoutExercise exercise,
     Tag? defaultTag,
   }) {
     exerciseLogId = const Uuid().v4();
-    exerciseId = eid;
-    workoutLogId = wlid;
+    exerciseId = exercise.exerciseId;
+    supersetId = exercise.supersetId;
+    workoutExerciseId = exercise.workoutExerciseId;
+    exerciseOrder = 0;
+    supersetOrder = exercise.supersetOrder;
+    workoutLogId = workoutLog.workoutLogId;
     title = exercise.title;
     category = exercise.category;
     sets = exercise.sets;
     type = exercise.type;
     note = "";
-    isSuperSet = false;
-    created = "";
-    updated = "";
-    metadata = [];
-    for (int i = 0; i < exercise.sets; i++) {
-      metadata.add(
-        ExerciseLogMeta.init(
-          log: this,
-          exercise: exercise,
-          defaultTag: defaultTag,
-        ),
-      );
-    }
-  }
-
-  ExerciseLog.exerciseSetInit({
-    required String eid,
-    required String parentEid,
-    required String wlid,
-    required ExerciseBase exercise,
-    Tag? defaultTag,
-  }) {
-    exerciseLogId = const Uuid().v4();
-    exerciseId = eid;
-    parentId = parentEid;
-    workoutLogId = wlid;
-    title = exercise.title;
-    category = exercise.category;
-    sets = exercise.sets;
-    type = exercise.type;
-    note = "";
-    isSuperSet = true;
     created = "";
     updated = "";
     metadata = [];
@@ -120,14 +97,16 @@ class ExerciseLog {
     var el = ExerciseLog(
       exerciseLogId: json['exerciseLogId'],
       exerciseId: json['exerciseId'],
-      parentId: json['parentId'],
+      exerciseOrder: json['exerciseOrder'],
+      workoutExerciseId: json['workoutExerciseId'],
+      supersetId: json['supersetId'],
+      supersetOrder: json['supersetOrder'] ?? 0,
       workoutLogId: json['workoutLogId'],
       title: json['title'],
       category: json['category'] ?? "",
       type: exerciseTypeFromJson(json['type']),
       sets: json['sets'],
       note: json['note'],
-      isSuperSet: (json['isSuperSet'] ?? 0) == 0 ? false : true,
       created: json['created'],
       updated: json['updated'],
     );
@@ -168,19 +147,21 @@ class ExerciseLog {
   Map<String, dynamic> toMap() => {
         "exerciseLogId": exerciseLogId,
         "exerciseId": exerciseId,
-        "parentId": parentId,
+        "supersetId": supersetId,
+        "workoutExerciseId": workoutExerciseId,
+        "exerciseOrder": exerciseOrder,
+        "supersetOrder": supersetOrder,
         "workoutLogId": workoutLogId,
         "title": title,
         "category": category,
         "type": exerciseTypeToJson(type),
-        "isSuperSet": isSuperSet ? 1 : 0,
         "sets": sets,
         "note": note,
       };
 
   Future<bool> insert({ConflictAlgorithm? conflictAlgorithm}) async {
     try {
-      final db = await getDB();
+      final db = await DatabaseProvider().database;
       // insert under transaction
       await db.transaction((txn) async {
         // insert the exercise log
@@ -211,7 +192,7 @@ class ExerciseLog {
 
   Future<List<ExerciseLogMeta>?> getMetadata({Database? db}) async {
     try {
-      db ??= await getDB();
+      db ??= await DatabaseProvider().database;
       var response = await db.rawQuery("""
       SELECT * FROM exercise_log_meta
       WHERE exerciseLogId = '$exerciseLogId'
@@ -272,7 +253,7 @@ class ExerciseLogMeta {
 
   ExerciseLogMeta.init({
     required ExerciseLog log,
-    required ExerciseBase exercise,
+    required Exercise exercise,
     Tag? defaultTag,
   }) {
     exerciseLogMetaId = const Uuid().v4();
@@ -367,7 +348,7 @@ class ExerciseLogMeta {
 
   Future<List<ExerciseLogMetaTag>?> getTags({Database? db}) async {
     try {
-      db ??= await getDB();
+      db ??= await DatabaseProvider().database;
       var response = await db.rawQuery("""
       SELECT * from exercise_log_meta_tag et
       JOIN tag t ON t.tagId = et.tagId

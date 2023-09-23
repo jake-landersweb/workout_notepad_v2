@@ -196,6 +196,7 @@ class _CEERootState extends State<CEERoot> {
             labelText: "Title",
             hintText: "Title (ex. Bicep Curls)",
             charLimit: 40,
+            textCapitalization: TextCapitalization.words,
             value: cemodel.exercise.title,
             showCharacters: true,
             onChanged: (val) {

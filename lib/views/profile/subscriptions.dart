@@ -1,9 +1,11 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 
 import 'package:workout_notepad_v2/components/root.dart';
-import 'package:workout_notepad_v2/main.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -19,6 +21,13 @@ class _SubscriptionsState extends State<Subscriptions> {
   ProductDetails? _premiumDetails;
   final PageController _pageController = PageController();
   int _pageIndex = 0;
+  bool _isloading = false;
+
+  final List<String> _images = [
+    "assets/images/RAW-categories.png",
+    "assets/images/RAW-category.png",
+    "assets/images/RAW-reps-graph.png",
+  ];
 
   @override
   void initState() {
@@ -47,19 +56,15 @@ class _SubscriptionsState extends State<Subscriptions> {
 
   Widget _overlay(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
-    if (dmodel.paymentLoadStatus == PaymentLoadStatus.complete) {
-      // restart the app for the changes to take effect
-      RestartWidget.restartApp(context);
-    }
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.cell(context)[100],
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(10),
-          topRight: Radius.circular(10),
-        ),
+
+    return Material(
+      color: AppColors.cell(context)[100],
+      borderRadius: const BorderRadius.only(
+        topLeft: Radius.circular(10),
+        topRight: Radius.circular(10),
       ),
-      width: double.infinity,
+      elevation: 20,
+      shadowColor: Colors.black,
       child: SafeArea(
         top: false,
         left: false,
@@ -82,19 +87,26 @@ class _SubscriptionsState extends State<Subscriptions> {
                 ),
               const SizedBox(height: 16),
               WrappedButton(
-                title: "Continue",
+                title: "Purchase",
                 bg: Colors.amber[600],
                 center: true,
                 rowAxisSize: MainAxisSize.max,
-                isLoading:
+                isLoading: _isloading ||
                     dmodel.paymentLoadStatus == PaymentLoadStatus.loading,
                 onTap: () async {
                   print("Attemting to purchase premium");
+                  setState(() {
+                    _isloading = true;
+                  });
                   var response = await _purchase(context);
                   if (!response) {
-                    // TODO
                     print("There was an error making the purchase");
+                    snackbarErr(
+                        context, "There was an error making the purchase");
                   }
+                  setState(() {
+                    _isloading = true;
+                  });
                 },
               ),
             ],
@@ -135,7 +147,7 @@ class _SubscriptionsState extends State<Subscriptions> {
         // show sliding screenshots of premium features
         ConstrainedBox(
           constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.6),
+              maxHeight: MediaQuery.of(context).size.height * 0.5),
           child: PageView(
             controller: _pageController,
             onPageChanged: (value) {
@@ -144,18 +156,21 @@ class _SubscriptionsState extends State<Subscriptions> {
               });
             },
             children: [
-              Container(
-                color: Colors.red[300],
-                width: double.infinity,
-              ),
-              Container(
-                color: Colors.blue[300],
-                width: double.infinity,
-              ),
-              Container(
-                color: Colors.green[300],
-                width: double.infinity,
-              ),
+              for (int i = 0; i < 3; i++)
+                SizedBox(
+                  width: double.infinity,
+                  child: Center(
+                    child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(26),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: Image.asset(_images[i]),
+                        )),
+                  ),
+                ),
             ],
           ),
         ),
@@ -286,17 +301,25 @@ class _SubscriptionsState extends State<Subscriptions> {
   }
 
   Future<void> _fetchSubscriptions() async {
-    const Set<String> _kIds = <String>{'wn_unlocked'};
+    const Set<String> kIds = <String>{'wn_unlocked'};
     final ProductDetailsResponse response =
-        await InAppPurchase.instance.queryProductDetails(_kIds);
+        await InAppPurchase.instance.queryProductDetails(kIds);
     if (response.error != null) {
-      print(response.error!.message); // TODO
+      NewrelicMobile.instance.recordError(
+        "the query to google/apple failed when querying purchases",
+        null,
+        attributes: {"err_code": "purchase_query_fail"},
+      );
       snackbarErr(context, "There was an unknown error");
       Navigator.of(context).pop();
       return;
     }
     if (response.productDetails.isEmpty) {
-      print("The product details was empty"); // TODO
+      NewrelicMobile.instance.recordError(
+        "the product does not exist",
+        null,
+        attributes: {"err_code": "purchase_null"},
+      );
       snackbarErr(context, "This product does not exist");
       Navigator.of(context).pop();
       return;

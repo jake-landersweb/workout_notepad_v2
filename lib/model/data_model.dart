@@ -7,6 +7,7 @@ import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
@@ -16,14 +17,13 @@ import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/snapshot.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
-import 'package:path/path.dart';
 import 'package:workout_notepad_v2/model/client.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/home.dart';
-import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:http/http.dart' as http;
+import 'package:workout_notepad_v2/views/workouts/launch/lw_model.dart';
 
 enum LoadStatus { init, noUser, done, expired }
 
@@ -46,6 +46,7 @@ class DataModel extends ChangeNotifier {
   LoadStatus loadStatus = LoadStatus.init;
   Color color = const Color(0xFF418a2f);
   PaymentLoadStatus paymentLoadStatus = PaymentLoadStatus.none;
+  bool hasNoData = false;
 
   DataModel() {
     // create the subscription
@@ -114,7 +115,9 @@ class DataModel extends ChangeNotifier {
               // https://stackoverflow.com/questions/43536904/google-play-developer-api-the-current-user-has-insufficient-permissions-to-pe
               valid = true;
             } else {
-              await _verifyPurchase(details);
+              // now this is also broken for ios
+              // valid = await _verifyPurchase(details);
+              valid = true;
             }
             if (valid) {
               var assignResponse = await _assignPurchase(details);
@@ -129,7 +132,6 @@ class DataModel extends ChangeNotifier {
                 );
                 print("[PURCHASE] Successfully assigned purchase");
                 paymentLoadStatus = PaymentLoadStatus.complete;
-                await init();
                 notifyListeners();
               } else {
                 _recordPaymentError(
@@ -294,35 +296,15 @@ class DataModel extends ChangeNotifier {
   }
 
   Future<void> init({User? u}) async {
+    // await importOldData();
     loadStatus = LoadStatus.done;
     notifyListeners();
-    // const Set<String> _kIds = <String>{'wn_premium'};
-    // final ProductDetailsResponse response =
-    //     await InAppPurchase.instance.queryProductDetails(_kIds);
-    // for (var i in response.productDetails) {
-    //   print(i.id);
-    //   print(i.description);
-    // }
-    // final PurchaseParam purchaseParam = PurchaseParam(
-    //   productDetails: response.productDetails[0],
-    // );
-    // var purchaseResponse = await InAppPurchase.instance
-    //     .buyNonConsumable(purchaseParam: purchaseParam);
-    // print(purchaseResponse);
 
     var prefs = await SharedPreferences.getInstance();
 
     // set to index page
     _currentTabScreen = HomeScreen.overview;
     notifyListeners();
-
-    // var db = await getDB();
-    // var response = await db.rawUpdate(
-    //     "UPDATE workout_log SET duration = '6944' WHERE workoutLogId = '91a1e334-ca18-4a53-b7be-0c8fe6bc71da'");
-    // print(response);
-    // return;
-    // TODO delete and re-create
-    // await importData();
 
     // check for saved userId
     if (!prefs.containsKey("user")) {
@@ -457,13 +439,11 @@ class DataModel extends ChangeNotifier {
       return;
     }
 
-    if (serverSnapshots.first.created <
-        DateTime.now()
-            .subtract(const Duration(hours: 8))
-            .millisecondsSinceEpoch) {
-      print(
-        "last snapshot is older than 8 hours, creating a new snapshot",
-      );
+    // check if there is a need for a snapshot
+    var currSnap = await Snapshot.databaseSignature(user!.userId);
+    if (!currSnap.compareMetadata(serverSnapshots.first)) {
+      print("snapshot signatures do not match, snapshotting data");
+
       var response = await snapshotData();
       if (!response) {
         print("There was an error snapshotting the data");
@@ -477,7 +457,7 @@ class DataModel extends ChangeNotifier {
       _snapshots = newSnapshots;
       notifyListeners();
     } else {
-      print("The user's snapshots are up to date");
+      print("The current snapshot signature matches the current data");
       // snapshots are up to date
       _snapshots = serverSnapshots;
       notifyListeners();
@@ -515,20 +495,32 @@ class DataModel extends ChangeNotifier {
     return true;
   }
 
-  Future<void> fetchData() async {
-    var db = await getDB();
+  Future<void> fetchData({bool checkData = true}) async {
+    var db = await DatabaseProvider().database;
     var getC = Category.getList(db: db);
     var getW = Workout.getList(db: db);
+    var getWt = Workout.getTemplates(db: db);
     var getE = Exercise.getList(db: db);
     var getT = Tag.getList(db: db);
 
     // run all asynchronously at the same time
-    List<dynamic> results = await Future.wait([getC, getW, getE, getT]);
+    List<dynamic> results = await Future.wait([getC, getW, getWt, getE, getT]);
 
     _categories = results[0];
     _workouts = results[1];
-    _exercises = results[2];
-    _tags = results[3];
+    _workoutTemplates = results[2];
+    _exercises = results[3];
+    _tags = results[4];
+
+    // check if the user has data
+    if (checkData) {
+      if (workouts.isEmpty && exercises.isEmpty) {
+        print("user has no data, adding basic data");
+        // add some base categories and tags
+        await importDefaults();
+        hasNoData = true;
+      }
+    }
     notifyListeners();
   }
 
@@ -550,6 +542,13 @@ class DataModel extends ChangeNotifier {
   List<Workout> get workouts => _workouts;
   Future<void> refreshWorkouts() async {
     _workouts = await Workout.getList();
+    notifyListeners();
+  }
+
+  List<Workout> _workoutTemplates = [];
+  List<Workout> get workoutTemplates => _workoutTemplates;
+  Future<void> refreshWorkoutTemplates() async {
+    _workoutTemplates = await Workout.getTemplates();
     notifyListeners();
   }
 
@@ -614,7 +613,7 @@ class DataModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> delete(BuildContext context) async {
+  Future<void> delete() async {
     // create a snapshot of their data
     await snapshotData();
     await user!.delete();
@@ -648,39 +647,29 @@ class DataModel extends ChangeNotifier {
       startTime: DateTime.now(),
       collectionItem: collectionItem,
       isEmpty: isEmpty,
+      userId: user!.userId,
     );
     if (workoutState!.exercises.isEmpty) {
       // get the exercise children
       workoutState!.exercises = await workoutState!.workout.getChildren();
     }
-    for (int i = 0; i < workoutState!.exercises.length; i++) {
-      var tmp = await workoutState!.exercises[i]
-          .getChildren(workoutState!.workout.workoutId);
-      workoutState!.exerciseChildren.add(tmp);
-      // create the log group for each exercise
-      workoutState!.exerciseLogs.add(
-        ExerciseLog.workoutInit(
-          eid: workoutState!.exercises[i].exerciseId,
-          wlid: workoutState!.wl.workoutLogId,
-          exercise: workoutState!.exercises[i],
-          defaultTag: tags.firstWhereOrNull((element) => element.isDefault),
-        ),
-      );
 
-      // create the logs for the children as well
-      workoutState!.exerciseChildLogs.add([]);
-      for (var j in tmp) {
-        workoutState!.exerciseChildLogs[i].add(
-          ExerciseLog.exerciseSetInit(
-            eid: j.childId,
-            parentEid: j.parentId,
-            wlid: workoutState!.wl.workoutLogId,
-            exercise: j,
+    // create the exercise log state
+    for (int i = 0; i < workoutState!.exercises.length; i++) {
+      List<ExerciseLog> logs = [];
+      for (int j = 0; j < workoutState!.exercises[i].length; j++) {
+        // create the log group for each exercise
+        logs.add(
+          ExerciseLog.workoutInit(
+            workoutLog: workoutState!.wl,
+            exercise: workoutState!.exercises[i][j],
             defaultTag: tags.firstWhereOrNull((element) => element.isDefault),
           ),
         );
       }
+      workoutState!.exerciseLogs.add(logs);
     }
+
     await NewrelicMobile.instance.recordCustomEvent(
       "WN_Metric",
       eventName: "workout_start",
@@ -695,7 +684,7 @@ class DataModel extends ChangeNotifier {
   Future<void> stopWorkout({bool isCancel = false}) async {
     if (workoutState!.isEmpty && isCancel) {
       print("Deleting this temporary workout");
-      var db = await getDB();
+      var db = await DatabaseProvider().database;
       await db.rawQuery(
         "DELETE from workout WHERE workoutId = '${workoutState!.workout.workoutId}'",
       );
@@ -723,17 +712,13 @@ class DataModel extends ChangeNotifier {
       print("IMPORTING DATA");
       loadStatus = LoadStatus.init;
       notifyListeners();
-      String path = join(await getDatabasesPath(), 'workout_notepad.db');
-      await databaseFactory.deleteDatabase(path);
-      // load / create database
-      var db = await getDB();
-
-      // read file
-      // String json = await rootBundle.loadString("sql/init.json");
-      // Map<String, dynamic> data = const JsonDecoder().convert(json);
-      // // remove dynamodb fields
-      // data.remove("id");
-      // data.remove("created");
+      var dbProvider = DatabaseProvider();
+      var r = await dbProvider.delete();
+      if (!r) {
+        print("there was an issue deleting the database");
+        return false;
+      }
+      var db = await DatabaseProvider().database;
 
       // compose list of valid tables
       var tableResponse = await db.rawQuery(
@@ -749,17 +734,20 @@ class DataModel extends ChangeNotifier {
         return false;
       }
 
-      for (var key in data.keys) {
-        if (validTables.contains(key) && !invalidTables.contains(key)) {
-          for (var i in data[key]) {
-            await db.insert(
-              key,
-              i,
-              conflictAlgorithm: ConflictAlgorithm.replace,
-            );
+      print("performing transaction");
+      await db.transaction((txn) async {
+        for (var key in data.keys) {
+          if (validTables.contains(key) && !invalidTables.contains(key)) {
+            for (var i in data[key]) {
+              await txn.insert(
+                key,
+                i,
+                conflictAlgorithm: ConflictAlgorithm.replace,
+              );
+            }
           }
         }
-      }
+      });
 
       await init();
       notifyListeners();
@@ -770,8 +758,90 @@ class DataModel extends ChangeNotifier {
     }
   }
 
+  Future<bool> importTests() async {
+    try {
+      await deleteDB();
+      await importDefaults();
+      String json = await rootBundle.loadString("sql/templates.json");
+      Map<String, dynamic> data = const JsonDecoder().convert(json);
+
+      var db = await DatabaseProvider().database;
+
+      for (var key in data.keys) {
+        if (key != "exercise") continue;
+        for (var i in data[key]) {
+          await db.insert(
+            key,
+            i,
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+        }
+      }
+
+      print("successfully added testing data");
+      await fetchData(checkData: false);
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> importOldData() async {
+    try {
+      await deleteDB();
+      // await importDefaults();
+      String json = await rootBundle.loadString("sql/new-data.json");
+      Map<String, dynamic> data = const JsonDecoder().convert(json);
+
+      var db = await DatabaseProvider().database;
+
+      for (var key in data.keys) {
+        for (var i in data[key]) {
+          await db.insert(
+            key,
+            i,
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+        }
+      }
+
+      print("successfully added testing data");
+      await fetchData(checkData: false);
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> importDefaults() async {
+    try {
+      String json = await rootBundle.loadString("sql/pre-init.json");
+      Map<String, dynamic> data = const JsonDecoder().convert(json);
+
+      var db = await DatabaseProvider().database;
+
+      for (var key in data.keys) {
+        for (var i in data[key]) {
+          await db.insert(
+            key,
+            i,
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+        }
+      }
+
+      print("successfully added default data");
+      await fetchData(checkData: false);
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
   Future<void> deleteDB() async {
-    String path = join(await getDatabasesPath(), 'workout_notepad.db');
-    await databaseFactory.deleteDatabase(path);
+    await DatabaseProvider().delete();
   }
 }

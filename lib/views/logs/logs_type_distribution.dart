@@ -2,7 +2,6 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
-import 'package:workout_notepad_v2/data/exercise_base.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -36,7 +35,9 @@ class _LogsTypeDistributionState extends State<LogsTypeDistribution> {
         leading: const [BackButton2()],
         children: [
           const SizedBox(height: 32),
-          if (_logDistribution.isEmpty)
+          if (_isLoading)
+            const Center(child: LoadingIndicator())
+          else if (_logDistribution.isEmpty)
             const NoLogs()
           else
             AspectRatio(
@@ -152,7 +153,7 @@ class _LogsTypeDistributionState extends State<LogsTypeDistribution> {
     setState(() {
       _isLoading = true;
     });
-    var db = await getDB();
+    var db = await DatabaseProvider().database;
     var response = await db.rawQuery("""
       WITH logged_exercises AS (
         SELECT *, COUNT(*) AS log_count

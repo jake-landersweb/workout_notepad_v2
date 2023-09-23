@@ -35,7 +35,7 @@ class Category {
   }
 
   Future<void> insert({ConflictAlgorithm? conflictAlgorithm}) async {
-    final db = await getDB();
+    final db = await DatabaseProvider().database;
     await db.insert(
       'category',
       toMap(),
@@ -44,7 +44,7 @@ class Category {
   }
 
   static Future<List<Category>> getList({Database? db}) async {
-    db ??= await getDB();
+    db ??= await DatabaseProvider().database;
     final List<Map<String, dynamic>> response = await db.query('category');
     List<Category> w = [];
     for (var i in response) {

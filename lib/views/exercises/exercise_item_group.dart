@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:workout_notepad_v2/components/time_picker.dart';
-import 'package:workout_notepad_v2/data/exercise_base.dart';
+import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 
@@ -11,7 +11,7 @@ class ExerciseItemGoup extends StatelessWidget {
     super.key,
     required this.exercise,
   });
-  final ExerciseBase exercise;
+  final Exercise exercise;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +45,7 @@ class ExerciseItemGoup extends StatelessWidget {
       case ExerciseType.timed:
       case ExerciseType.duration:
         return ExerciseItemCell(
-          label: "TIME", // TODO
+          label: "TIME",
           val: exercise.getTime(),
         );
     }
@@ -60,7 +60,7 @@ class EditableExerciseItemGroup extends StatefulWidget {
     this.flex2 = 4,
     this.onChanged,
   });
-  final ExerciseBase exercise;
+  final Exercise exercise;
   final int flex1;
   final int flex2;
   final VoidCallback? onChanged;
@@ -129,7 +129,7 @@ class _EditableExerciseItemGroupState extends State<EditableExerciseItemGroup> {
     }
   }
 
-  Widget _time(BuildContext context, ExerciseBase e) {
+  Widget _time(BuildContext context, Exercise e) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.cell(context),

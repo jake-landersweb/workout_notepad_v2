@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
 
 import 'package:workout_notepad_v2/model/root.dart';
-import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/model/search_model.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 
@@ -19,10 +19,10 @@ class ExerciseHome extends StatefulWidget {
 }
 
 class _ExerciseHomeState extends State<ExerciseHome> {
-  String _searchText = "";
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
+    var searchModel = Provider.of<SearchModel>(context);
     return Scaffold(
       body: HeaderBar(
         title: "Exercises",
@@ -37,19 +37,13 @@ class _ExerciseHomeState extends State<ExerciseHome> {
         ],
         children: [
           const SizedBox(height: 16),
-          comp.SearchBar(
-            onChanged: (val) {
-              setState(() {
-                _searchText = val.toLowerCase();
-              });
-            },
-            initText: _searchText,
-            labelText: "Search",
-            hintText: "Search by title or category",
+          searchModel.header(
+            context: context,
+            dmodel: dmodel,
+            labelText: "Search ...",
           ),
           const SizedBox(height: 16),
-          for (var i
-              in filteredExercises(dmodel, dmodel.exercises, _searchText))
+          for (var i in searchModel.search(dmodel.exercises))
             ExerciseCell(
               exercise: i,
               padding: const EdgeInsets.only(bottom: 8),

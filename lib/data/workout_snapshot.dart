@@ -1,10 +1,8 @@
 import 'dart:convert';
 
 import 'package:uuid/uuid.dart';
-import 'package:workout_notepad_v2/data/exercise_set.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout.dart';
-import 'package:workout_notepad_v2/utils/tuple.dart';
 
 class WorkoutSnapshot {
   late String workoutSnapshotId;
@@ -52,17 +50,18 @@ class WorkoutSnapshot {
       icon: jsonData['icon'],
       created: "",
       updated: "",
+      template: false,
       categories: [],
       exercises: [],
     );
-    List<Tuple2<WorkoutExercise, List<ExerciseSet>>> items = [];
+    List<List<WorkoutExercise>> items = [];
     for (var i in jsonData['children']) {
-      var we = WorkoutExercise.fromJson(i);
-      List<ExerciseSet> c = [];
-      for (var j in i['children']) {
-        c.add(ExerciseSet.fromJson(j));
+      List<WorkoutExercise> tmp = [];
+      for (var j in i) {
+        var we = WorkoutExercise.fromJson(j);
+        tmp.add(we);
       }
-      items.add(Tuple2(we, c));
+      items.add(tmp);
     }
     return WorkoutCloneObject(workout: w, exercises: items);
   }

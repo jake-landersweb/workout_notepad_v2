@@ -1,32 +1,25 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
-import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:workout_notepad_v2/components/alert.dart';
-import 'package:workout_notepad_v2/data/exercise.dart';
-import 'package:workout_notepad_v2/data/exercise_details.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/image.dart';
 
 class CreateExerciseModel extends ChangeNotifier {
   late Exercise exercise;
-  late ExerciseDetails exerciseDetails;
   late String fileObjectId;
+  late AppFile file;
   bool deleteFile = false;
   bool initWithFile = false;
-  bool existingDetail = false;
+  bool fileChanged = true;
 
   CreateExerciseModel.create(DataModel dmodel, String uid) {
-    exercise = Exercise.empty(uid);
-    exerciseDetails = ExerciseDetails.init(exerciseId: exercise.exerciseId);
+    exercise = Exercise.empty();
     fileObjectId = "${dmodel.user!.userId}-${exercise.exerciseId}";
+    file = AppFile.init(objectId: fileObjectId);
   }
 
   CreateExerciseModel.update(
@@ -34,24 +27,22 @@ class CreateExerciseModel extends ChangeNotifier {
     Exercise exercise,
   ) {
     this.exercise = exercise.copy();
-    fileObjectId = "${dmodel.user!.userId}-${exercise.exerciseId}";
-    updateInit();
+
+    if (this.exercise.filename?.isEmpty ?? true) {
+      file = AppFile.init(
+          objectId: "${dmodel.user!.userId}-${exercise.exerciseId}");
+    } else {
+      file = AppFile.fromFilenameSync(filename: this.exercise.filename!);
+      updateInit();
+    }
   }
 
   Future<void> updateInit() async {
-    var db = await getDB();
-    var response = await db.rawQuery(
-      "SELECT * FROM exercise_detail WHERE exerciseId = '${exercise.exerciseId}'",
-    );
-    // exerciseDetails = ExerciseDetails.init(exerciseId: exercise.exerciseId);
-    if (response.isEmpty) {
-      exerciseDetails = ExerciseDetails.init(exerciseId: exercise.exerciseId);
-    } else {
-      exerciseDetails = await ExerciseDetails.fromJson(response[0]);
-      if (exerciseDetails.objectId.isNotEmpty) {
-        initWithFile = true;
-      }
-      existingDetail = true;
+    // check if file exists in remote
+    await file.getCached();
+    if (file.file?.existsSync() ?? false) {
+      initWithFile = true;
+      fileChanged = false;
     }
     notifyListeners();
   }
@@ -73,12 +64,12 @@ class CreateExerciseModel extends ChangeNotifier {
     }
 
     // try to upload the exercise detail asset first if applicable
-    if (exerciseDetails.file.file != null) {
+    if (file.file != null && fileChanged) {
       print("uploading image for this exercise detail ...");
       // upload every time the user updates. Sometimes this will result in duplicate uploads, but they get handled
 
       // compress the file
-      var response = await exerciseDetails.file.upload(dmodel.user!.userId);
+      var response = await file.upload(dmodel.user!.userId);
       if (!response) {
         print("There was an issue uploading the image");
         var cont = false;
@@ -99,15 +90,15 @@ class CreateExerciseModel extends ChangeNotifier {
         }
       } else {
         print("Successfully uploaded");
-        exerciseDetails.objectId = exerciseDetails.file.objectId;
+        exercise.filename = file.filename;
       }
     } else if (deleteFile && initWithFile) {
-      await exerciseDetails.file.deleteAWS();
-      exerciseDetails.objectId = "";
+      await file.deleteAWS();
+      exercise.filename = "";
     }
 
     // create in transaction
-    var db = await getDB();
+    var db = await DatabaseProvider().database;
 
     if (update) {
       try {
@@ -119,17 +110,6 @@ class CreateExerciseModel extends ChangeNotifier {
             whereArgs: [exercise.exerciseId],
             conflictAlgorithm: ConflictAlgorithm.replace,
           );
-          if (existingDetail) {
-            await txn.update(
-              "exercise_detail",
-              exerciseDetails.toMap(),
-              where: "exerciseId = ?",
-              whereArgs: [exerciseDetails.exerciseId],
-              conflictAlgorithm: ConflictAlgorithm.replace,
-            );
-          } else {
-            await txn.insert("exercise_detail", exerciseDetails.toMap());
-          }
         });
 
         return exercise;
@@ -146,7 +126,6 @@ class CreateExerciseModel extends ChangeNotifier {
       try {
         await db.transaction((txn) async {
           await txn.insert("exercise", exercise.toMap());
-          await txn.insert("exercise_detail", exerciseDetails.toMap());
         });
 
         return exercise;

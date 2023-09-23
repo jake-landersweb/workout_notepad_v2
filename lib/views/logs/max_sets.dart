@@ -1,8 +1,9 @@
+// ignore_for_file: unused_field
+
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
-import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
@@ -37,22 +38,27 @@ class _LogsMaxSetsState extends State<LogsMaxSets> {
         leading: const [BackButton2()],
         children: [
           const SizedBox(height: 16),
-          if (_items.isNotEmpty)
-            Column(
-              children: [
-                SegmentedPicker(
-                  titles: ["Weight", "Time", "Reps"],
-                  style: SegmentedPickerStyle(
-                    backgroundColor: AppColors.cell(context),
-                  ),
-                  onSelection: (v) async {
-                    setState(() {
-                      _type = v as String;
-                    });
-                    await _fetchData();
-                  },
-                  selection: _type,
+          Column(
+            children: [
+              SegmentedPicker(
+                titles: ["Weight", "Time", "Reps"],
+                style: SegmentedPickerStyle(
+                  backgroundColor: AppColors.cell(context),
                 ),
+                onSelection: (v) async {
+                  setState(() {
+                    _type = v as String;
+                  });
+                  await _fetchData();
+                },
+                selection: _type,
+              ),
+              if (_items.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.only(top: 8.0),
+                  child: NoLogs(),
+                )
+              else
                 for (var i in _items)
                   Section(
                     i.v1.title,
@@ -63,10 +69,8 @@ class _LogsMaxSetsState extends State<LogsMaxSets> {
                       i.v3,
                     ),
                   ),
-              ],
-            )
-          else
-            const NoLogs(),
+            ],
+          )
         ],
       ),
     );
@@ -104,7 +108,8 @@ class _LogsMaxSetsState extends State<LogsMaxSets> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      formatDateTime(DateTime.parse(exercise.created)),
+                      // formatDateTime(DateTime.parse(exercise.created)),
+                      "TODO",
                       style: ttcaption(context),
                     ),
                     Text(
@@ -127,7 +132,7 @@ class _LogsMaxSetsState extends State<LogsMaxSets> {
       _isLoading = true;
     });
     _items = [];
-    var db = await getDB();
+    var db = await DatabaseProvider().database;
     var response = await db.rawQuery(query);
     var dmodel = context.read<DataModel>();
     for (var i in response) {

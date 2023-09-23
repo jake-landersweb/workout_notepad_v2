@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/root.dart';
@@ -83,7 +84,7 @@ class _ELTagsState extends State<ELTags> {
       _isLoading = true;
     });
     try {
-      var db = await getDB();
+      var db = await DatabaseProvider().database;
       var response = await db.rawQuery("""
         SELECT 
           t.tagId,
@@ -106,7 +107,12 @@ class _ELTagsState extends State<ELTags> {
         );
       }
     } catch (e) {
-      print(e); // TODO
+      print(e);
+      NewrelicMobile.instance.recordError(
+        e,
+        StackTrace.current,
+        attributes: {"err_code": "log_tags"},
+      );
       _hasError = true;
     }
     setState(() {

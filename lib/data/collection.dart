@@ -86,7 +86,7 @@ class Collection {
   static Future<List<Collection>> getList({
     Database? db,
   }) async {
-    db ??= await getDB();
+    db ??= await DatabaseProvider().database;
 
     var response = await db.rawQuery("""
       SELECT * FROM collection
@@ -103,7 +103,7 @@ class Collection {
   /// get all collection items for this collection
   Future<List<CollectionItem>?> fetchItems({Database? db}) async {
     try {
-      db ??= await getDB();
+      db ??= await DatabaseProvider().database;
 
       var response = await db.rawQuery(
         """
@@ -250,7 +250,7 @@ class CollectionItem {
 
   Future<Workout?> getWorkout({Database? db}) async {
     try {
-      db ??= await getDB();
+      db ??= await DatabaseProvider().database;
       var response = await db.rawQuery("""
         SELECT * FROM workout
         WHERE workoutId = '$workoutId'
@@ -276,7 +276,7 @@ class CollectionItem {
       };
 
   Future<int> insert({ConflictAlgorithm? conflictAlgorithm}) async {
-    final db = await getDB();
+    final db = await DatabaseProvider().database;
     var response = await db.insert(
       'collection_item',
       toMap(),

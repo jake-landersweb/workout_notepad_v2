@@ -17,7 +17,7 @@ class ExerciseCell extends StatelessWidget {
     this.showBackground = true,
     this.padding = const EdgeInsets.only(bottom: 8),
   });
-  final ExerciseBase exercise;
+  final Exercise exercise;
   final VoidCallback? onTap;
   final IconData? trailingIcon;
   final Widget? trailingWidget;

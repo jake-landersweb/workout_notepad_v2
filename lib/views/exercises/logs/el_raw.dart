@@ -37,7 +37,7 @@ class ELRaw extends StatelessWidget {
                 style: ttLabel(context),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 2),
               WrappedButton(
                 title: "Explore Premium",
                 icon: Icons.star,

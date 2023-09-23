@@ -20,11 +20,36 @@ enum AppFileType { video, image, none }
 
 class AppFile {
   File? _file;
-  late String objectId;
+  late String _objectId;
   bool _cached = false;
+  String _extension = "";
 
-  AppFile({required this.objectId, File? file}) {
+  String get filename => _objectId + _extension;
+
+  // when the file needs to be created
+  AppFile.init({required String objectId}) {
+    _objectId = objectId;
+  }
+
+  // init from an existing file
+  AppFile.fromFile({required File file}) {
     _file = file;
+    _objectId = path.basenameWithoutExtension(file.path);
+    _extension = path.extension(file.path);
+  }
+
+  // for creating from an object and extension
+  AppFile.fromFilenameSync({required String filename}) {
+    var tmp = filename.split(".");
+    _extension = ".${tmp.removeLast()}";
+    _objectId = tmp.join(".");
+  }
+  static Future<AppFile> fromFilename({
+    required String filename,
+  }) async {
+    var af = AppFile.fromFilenameSync(filename: filename);
+    await af.getCached();
+    return af;
   }
 
   /// ONLY USE METHOD IF SURE FILE EXISTS
@@ -33,34 +58,42 @@ class AppFile {
   }
 
   void setFile({
-    required String objectId,
     required File file,
   }) async {
     _cached = false;
     _file = file;
     // add extension onto the passed object id
-    this.objectId = "$objectId${path.extension(_file!.path)}";
+    _extension = path.extension(_file!.path);
 
     // delete from cache
-    await _deleteCached(this.objectId);
+    await _deleteCached(filename);
   }
 
   Future<File?> getCached() async {
-    if (objectId.isEmpty) {
+    if (_objectId.isEmpty || _extension.isEmpty) {
       return null;
     }
     if (_file == null || !await _file!.exists() || !_cached) {
-      _file = await _getCachedFile(objectId);
+      _file = await _getCachedFile(filename);
     }
 
     return _file;
   }
 
   Future<void> deleteFile() async {
+    if (_file == null) {
+      print("file doesnt exist");
+      return;
+    }
     print("Deleting file");
+    // create an image provider and evict this file from the cache
+    final imageProvider = FileImage(_file!);
+    imageProvider.evict();
+
+    // clear from memory
     _file = null;
     _cached = false;
-    await _deleteCached(objectId);
+    await _deleteCached(filename);
   }
 
   AppFileType get type {
@@ -68,14 +101,14 @@ class AppFile {
       print("The file is null");
       return AppFileType.none;
     }
-    if (objectId.isEmpty) {
+    if (_objectId.isEmpty) {
       print("The object Id is empty");
       return AppFileType.none;
     }
-    var extension = path.extension(_file!.path).toLowerCase();
-    if (imageExtensions.contains(extension)) {
+
+    if (imageExtensions.contains(_extension)) {
       return AppFileType.image;
-    } else if (videoExtensions.contains(extension)) {
+    } else if (videoExtensions.contains(_extension)) {
       return AppFileType.video;
     } else {
       return AppFileType.none;
@@ -89,13 +122,12 @@ class AppFile {
     if (compress) {
       await this.compress();
     }
-    if (_file == null || objectId.isEmpty) {
+    if (_file == null || _objectId.isEmpty || _extension.isEmpty) {
       return false;
     }
     return _uploadFile(
       _file!,
-      userId,
-      objectId,
+      filename,
     );
   }
 
@@ -144,7 +176,7 @@ class AppFile {
   }
 
   Future<bool> deleteAWS() async {
-    return await _deleteFileAWS(objectId);
+    return await _deleteFileAWS(filename);
   }
 
   Widget getRenderer() {
@@ -156,12 +188,8 @@ class AppFile {
         return VideoRenderder(videoFile: file!);
       case AppFileType.image:
         final imageProvider = FileImage(file!);
-        imageProvider.evict();
         return Image(
           image: imageProvider,
-          key: ValueKey<String>(
-            DateTime.now().toIso8601String(),
-          ), // bypass flutter image chaching
           fit: BoxFit.fitHeight,
         );
       case AppFileType.none:
@@ -341,7 +369,7 @@ Future<String> _getPresignedUrl(String objectKey) async {
 /// it downloads from s3. If the file does not exist in s3,
 /// an exception will be raised
 Future<File?> _getCachedFile(String objectKey) async {
-  print("fetching file from cache");
+  print("fetching file from cache with id: $objectKey");
   // Construct the file path under the cache directory
   Directory tempDir = await getTemporaryDirectory();
   String tempPath = tempDir.path;
@@ -397,13 +425,12 @@ Future<void> _deleteCached(String objectId) async {
 
 Future<bool> _uploadFile(
   File file,
-  String userId,
-  String objectId,
+  String filename,
 ) async {
   try {
     final fileStream = file.openRead();
     final uploadRequest = AWSStreamedHttpRequest.put(
-      Uri.https(AWS_S3_BUCKET, objectId),
+      Uri.https(AWS_S3_BUCKET, filename),
       body: fileStream,
       headers: {
         AWSHeaders.host: AWS_S3_BUCKET,

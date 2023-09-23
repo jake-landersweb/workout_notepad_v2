@@ -335,7 +335,7 @@ class _ELSetsState extends State<ELSets> {
     _avgData.clear();
     _minData.clear();
     try {
-      var db = await getDB();
+      var db = await DatabaseProvider().database;
       var response = await db.rawQuery("""
         WITH RankedMeta AS (
           SELECT

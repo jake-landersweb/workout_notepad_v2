@@ -1,24 +1,34 @@
-import 'package:collection/collection.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:workout_notepad_v2/components/root.dart';
-import 'package:workout_notepad_v2/data/exercise.dart';
-import 'package:workout_notepad_v2/data/exercise_base.dart';
-import 'package:workout_notepad_v2/data/root.dart';
-import 'package:workout_notepad_v2/model/root.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:workout_notepad_v2/views/root.dart';
 
 class NoLogs extends StatelessWidget {
   const NoLogs({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Text(
-        "There are not enough logs to show anything useful yet! Come back later once you have more data",
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("Oh No!", style: ttTitle(context)),
+        Text(
+          "You do not have enough logged exercises to show anything useful here yet. Use the app, get your workouts in, then come back later!",
+          style: ttLabel(
+            context,
+            color: AppColors.subtext(context),
+          ),
+        ),
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height / 2,
+          ),
+          child: SvgPicture.asset(
+            "assets/svg/graph2.svg",
+            semanticsLabel: 'Empty Screen',
+          ),
+        ),
+      ],
     );
   }
 }

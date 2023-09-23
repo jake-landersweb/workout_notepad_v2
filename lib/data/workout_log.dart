@@ -20,7 +20,7 @@ class WorkoutLog {
   CollectionItem? collectionItem;
 
   // not stored in database
-  late List<ExerciseLog> exerciseLogs;
+  late List<List<ExerciseLog>> exerciseLogs;
 
   WorkoutLog({
     required this.workoutLogId,
@@ -86,7 +86,7 @@ class WorkoutLog {
   }
 
   Future<int> insert({ConflictAlgorithm? conflictAlgorithm}) async {
-    final db = await getDB();
+    final db = await DatabaseProvider().database;
     var response = await db.insert(
       'workout_log',
       toMap(),
@@ -95,22 +95,35 @@ class WorkoutLog {
     return response;
   }
 
-  Future<List<ExerciseLog>?> getExercises({
+  Future<List<List<ExerciseLog>>?> getExercises({
     bool forceReload = false,
     Database? db,
   }) async {
     try {
-      db ??= await getDB();
-      String sql = """
+      db ??= await DatabaseProvider().database;
+      String query = """
         SELECT * FROM exercise_log WHERE workoutLogId = '$workoutLogId'
-        ORDER BY created DESC
+        ORDER BY exerciseOrder
       """;
-      var response = await db.rawQuery(sql);
-      List<ExerciseLog> logs = [];
-      for (var i in response) {
-        logs.add(await ExerciseLog.fromJson(i, db: db));
+      final List<Map<String, dynamic>> results =
+          await db.rawQuery(query.trim());
+
+      final Map<String, List<ExerciseLog>> groupedData = {};
+
+      // group by the supersetId
+      for (final Map<String, dynamic> result in results) {
+        final exercise = await ExerciseLog.fromJson(result);
+        groupedData[exercise.supersetId] = groupedData.putIfAbsent(
+            exercise.supersetId, () => [])
+          ..add(exercise);
       }
-      return logs;
+
+      // Sort each group by supersetOrder
+      for (final List<ExerciseLog> exercises in groupedData.values) {
+        exercises.sort((a, b) => a.supersetOrder.compareTo(b.supersetOrder));
+      }
+
+      return groupedData.values.toList();
     } catch (e) {
       print(e);
       return null;
@@ -118,7 +131,7 @@ class WorkoutLog {
   }
 
   static Future<List<WorkoutLog>> getRecentLogs() async {
-    var db = await getDB();
+    var db = await DatabaseProvider().database;
     String sql = """
       SELECT * FROM workout_log
       ORDER BY CREATED DESC

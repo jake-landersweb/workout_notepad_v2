@@ -1,5 +1,5 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:workout_notepad_v2/components/clickable.dart';
 
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/components/wrapped_button.dart';
@@ -22,6 +22,13 @@ class WorkoutLogCell extends StatefulWidget {
 }
 
 class _WorkoutLogCellState extends State<WorkoutLogCell> {
+  late WorkoutLog _wl;
+  @override
+  void initState() {
+    super.initState();
+    _wl = widget.workoutLog;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -30,50 +37,48 @@ class _WorkoutLogCellState extends State<WorkoutLogCell> {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.workoutLog.getCreatedFormatted(),
+              _wl.getCreatedFormatted(),
               style: ttBody(
                 context,
                 fontWeight: FontWeight.w600,
               ),
             ),
             Text(
-              widget.workoutLog.getDuration(),
-              style: ttBody(context, color: AppColors.subtext(context)),
+              _wl.getDuration(),
+              style: ttcaption(context, fontWeight: FontWeight.w500),
+            ),
+            Text(
+              "${_wl.exerciseLogs.map((e) => e.length).sum} Total Exercises",
+              style: ttcaption(context, fontWeight: FontWeight.w500),
             ),
             const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
                   child: WrappedButton(
-                    title: "View Info",
-                    bg: AppColors.cell(context)[600],
+                    title: "View Exercises",
+                    type: WrappedButtonType.main,
                     rowAxisSize: MainAxisSize.max,
                     center: true,
                     onTap: () {
                       comp.cupertinoSheet(
                         context: context,
-                        builder: (context) =>
-                            WLExercises(workoutLog: widget.workoutLog),
+                        builder: (context) => WLExercises(
+                          workoutLog: _wl,
+                          onSave: (wl) async {
+                            _wl = wl;
+                            _wl.exerciseLogs = await _wl.getExercises() ?? [];
+                            setState(() {});
+                          },
+                        ),
                       );
                     },
                   ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: widget.onSelect == null
-                      ? Container()
-                      : WrappedButton(
-                          title: "Select",
-                          type: WrappedButtonType.main,
-                          rowAxisSize: MainAxisSize.max,
-                          center: true,
-                          onTap: () => widget.onSelect!(),
-                        ),
                 ),
               ],
             ),

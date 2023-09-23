@@ -12,6 +12,7 @@ import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/exercises/logs/el_distribution.dart';
 import 'package:workout_notepad_v2/views/exercises/logs/el_sets.dart';
 import 'package:workout_notepad_v2/views/exercises/logs/el_tags.dart';
+import 'package:workout_notepad_v2/views/logs/no_logs.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 
 class ExerciseLogs extends StatefulWidget {
@@ -39,7 +40,7 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
 
   Future<void> _init() async {
     try {
-      var db = await getDB();
+      var db = await DatabaseProvider().database;
       var resp = await db.rawQuery(
           "SELECT * FROM exercise WHERE exerciseId = '${widget.exerciseId}'");
       if (resp.isEmpty) {
@@ -202,10 +203,10 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
       onPageChanged: (value) => elmodel.setIndex(value),
       children: elmodel.logs.isEmpty
           ? [
-              // TODO!! MAKE BETTER
-              const Center(
-                child: Text("No Logs!"),
-              )
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: NoLogs(),
+              ),
             ]
           : [
               const ELOverview(),

@@ -67,6 +67,7 @@ dependencies:
   flutter_image_compress: ^2.0.4
   video_compress: 3.1.1
   in_app_purchase: ^3.1.7
+  url_launcher: ^6.1.14
 
 dev_dependencies:
   flutter_test:
@@ -92,8 +93,7 @@ flutter:
 
   assets:
     - sql/init.sql
-    - sql/tests.json
-    - sql/init.json
+    - sql/pre-init.json
     
     - assets/icons/unavailable-96.png
     - assets/icons/bench-press-96.png
@@ -158,9 +158,14 @@ flutter:
 
     - assets/svg/workout.svg
     - assets/svg/default_profile.svg
+    - assets/svg/graph1.svg
+    - assets/svg/graph2.svg
 
     - assets/images/apple.png
     - assets/images/google.png
+    - assets/images/RAW-categories.png
+    - assets/images/RAW-category.png
+    - assets/images/RAW-reps-graph.png
 
   # fonts:
   #   - family: Schyler

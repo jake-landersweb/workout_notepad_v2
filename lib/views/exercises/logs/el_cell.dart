@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:workout_notepad_v2/components/timer.dart';
-import 'package:workout_notepad_v2/data/exercise_base.dart';
+import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -39,31 +39,28 @@ class _ELCellLargeState extends State<ELCellLarge> {
   }
 }
 
-class ELCell extends StatefulWidget {
+class ELCell extends StatelessWidget {
   const ELCell({
     super.key,
     required this.log,
     this.showDate = true,
+    this.backgroundColor,
   });
   final ExerciseLog log;
   final bool showDate;
+  final Color? backgroundColor;
 
-  @override
-  State<ELCell> createState() => _ELCellState();
-}
-
-class _ELCellState extends State<ELCell> {
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        if (widget.showDate)
+        if (showDate)
           Align(
             alignment: Alignment.centerLeft,
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 0, 4),
               child: Text(
-                widget.log.getCreatedFormatted(),
+                log.getCreatedFormatted(),
                 style: TextStyle(
                   fontWeight: FontWeight.w600,
                   fontSize: 12,
@@ -74,7 +71,7 @@ class _ELCellState extends State<ELCell> {
           ),
         Container(
           decoration: BoxDecoration(
-            color: AppColors.cell(context),
+            color: backgroundColor ?? AppColors.cell(context),
             borderRadius: BorderRadius.circular(10),
           ),
           child: Padding(
@@ -82,10 +79,10 @@ class _ELCellState extends State<ELCell> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                for (int i = 0; i < widget.log.metadata.length; i++)
+                for (int i = 0; i < log.metadata.length; i++)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8.0),
-                    child: _cell(context, i, widget.log.metadata[i]),
+                    child: _cell(context, i, log.metadata[i]),
                   ),
               ],
             ),
@@ -112,7 +109,11 @@ class _ELCellState extends State<ELCell> {
                 ),
               ),
               // assume single tag for now
-              for (var i in meta.tags) TagCell(title: i.title),
+              for (var i in meta.tags)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 2.0),
+                  child: TagCell(title: i.title),
+                ),
             ],
           ),
         ),
@@ -125,7 +126,7 @@ class _ELCellState extends State<ELCell> {
   }
 
   Widget _post(BuildContext context, ExerciseLogMeta meta) {
-    switch (widget.log.type) {
+    switch (log.type) {
       case ExerciseType.weight:
         return Row(
           children: [

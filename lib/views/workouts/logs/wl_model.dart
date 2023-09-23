@@ -6,6 +6,7 @@ class WorkoutLogModel extends ChangeNotifier {
   final Workout workout;
 
   List<WorkoutLog> logs = [];
+  bool loaded = false;
 
   WorkoutLogModel({required this.workout}) {
     _init();
@@ -13,5 +14,7 @@ class WorkoutLogModel extends ChangeNotifier {
 
   Future<void> _init() async {
     logs = await workout.getLogs();
+    loaded = true;
+    notifyListeners();
   }
 }

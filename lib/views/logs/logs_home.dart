@@ -5,6 +5,7 @@ import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/exercises/logs/recent_exercises.dart';
 import 'package:workout_notepad_v2/views/logs/logs_cat_indiv.dart';
 import 'package:workout_notepad_v2/views/logs/root.dart';
 import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
@@ -44,7 +45,7 @@ class _LogsHomeState extends State<LogsHome> {
                 "Recent Exercises",
                 Icons.update_rounded,
                 Colors.purple[200]!,
-                Container(),
+                const RecentExercises(),
               ),
             ],
             onChildTap: (context, item, index) =>

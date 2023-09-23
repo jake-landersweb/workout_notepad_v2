@@ -232,7 +232,7 @@ class _ConfigureCategoriesState extends State<ConfigureCategories> {
           _isLoading = true;
         });
         var dmodel = context.read<DataModel>();
-        var db = await getDB();
+        var db = await DatabaseProvider().database;
         await db.transaction((txn) async {
           await txn.delete("category");
           for (var i in _categories) {

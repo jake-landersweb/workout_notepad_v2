@@ -18,7 +18,7 @@ class TimePicker extends StatefulWidget {
   });
 
   TimePicker.fromExercise(
-    ExerciseBase exercise, {
+    Exercise exercise, {
     super.key,
     required this.onChanged,
     this.label,

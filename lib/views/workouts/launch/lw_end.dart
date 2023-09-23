@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -5,8 +7,8 @@ import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:workout_notepad_v2/views/root.dart';
-import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
+import 'package:workout_notepad_v2/views/exercises/select_exercise.dart';
+import 'package:workout_notepad_v2/views/workouts/launch/lw_model.dart';
 
 class LWEnd extends StatefulWidget {
   const LWEnd({super.key});
@@ -37,13 +39,8 @@ class _LWEndState extends State<LWEnd> {
                   cupertinoSheet(
                     context: context,
                     builder: (context) => SelectExercise(
-                      title: "Add Another",
-                      onSelect: (exercise) {
-                        lmodel.addExercise(
-                          context,
-                          exercise,
-                          lmodel.state.exercises.length,
-                        );
+                      onSelect: (e) {
+                        lmodel.addExercise(lmodel.state.exercises.length, 0, e);
                       },
                     ),
                   );
@@ -86,7 +83,16 @@ class _LWEndState extends State<LWEnd> {
                     submitBolded: true,
                     submitText: "Finish",
                     onSubmit: () async {
-                      await lmodel.handleWorkoutFinish(context, dmodel);
+                      var response = await lmodel.finishWorkout(dmodel);
+                      if (response.isEmpty) {
+                        Navigator.of(context, rootNavigator: true).pop();
+                      } else {
+                        snackbarErr(
+                          context,
+                          response,
+                          duration: const Duration(seconds: 6),
+                        );
+                      }
                     },
                   );
                 },

@@ -91,6 +91,7 @@ class WrappedButton extends StatelessWidget {
             : Expanded(
                 child: Text(
                   title,
+                  textAlign: center ? TextAlign.center : TextAlign.left,
                   style: ttLabel(context, color: getFg(context)),
                 ),
               ),

@@ -17,10 +17,10 @@ import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/workouts/clone_workout.dart';
-import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:workout_notepad_v2/views/workouts/create_edit/root.dart';
+import 'package:workout_notepad_v2/views/workouts/launch/launch_workout.dart';
 import 'package:workout_notepad_v2/views/workouts/logs/root.dart';
-import 'package:workout_notepad_v2/views/workouts/workout_exercise_cell.dart';
 import 'package:workout_notepad_v2/views/workouts/snapshots/workout_snapshots.dart';
 
 class WorkoutDetail extends StatefulWidget {
@@ -48,34 +48,21 @@ class WorkoutDetail extends StatefulWidget {
 
 class _WorkoutDetailState extends State<WorkoutDetail> {
   late Workout _workout;
-  List<WorkoutExercise> _exercises = [];
 
   @override
   void initState() {
     _workout = widget.workout.copy();
-    _init();
     super.initState();
-  }
-
-  Future<void> _init() async {
-    var tmp = await _workout.getChildren();
-    setState(() {
-      _exercises = [];
-      _exercises = tmp;
-    });
   }
 
   Future<void> _postUpdate(Workout w) async {
     setState(() {
       _workout = w;
-      _exercises = [];
     });
     // wait for db to load
     await Future.delayed(const Duration(milliseconds: 100));
-    var tmp = await w.getChildren();
-    setState(() {
-      _exercises = tmp;
-    });
+    w.exercises = await w.getChildren();
+    setState(() {});
   }
 
   @override
@@ -104,10 +91,13 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
                 showMaterialModalBottomSheet(
                   context: context,
                   enableDrag: false,
-                  builder: (context) => CEWRoot(
-                    isCreate: false,
+                  builder: (context) => CEW(
                     workout: _workout,
-                    onAction: (workout) async => _postUpdate(workout),
+                    onAction: (workout) {
+                      setState(() {
+                        _workout = workout;
+                      });
+                    },
                   ),
                 );
               },
@@ -147,18 +137,41 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
                 const SizedBox(height: 16),
               ],
             ),
-          for (int i = 0; i < _exercises.length; i++)
+          for (int i = 0; i < _workout.exercises.length; i++)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: WorkoutExerciseCell(
-                  workoutId: widget.workout.workoutId, exercise: _exercises[i]),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+              child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.cell(context),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    children: [
+                      for (int j = 0; j < _workout.exercises[i].length; j++)
+                        Column(
+                          children: [
+                            ExerciseCell(
+                              exercise: _workout.exercises[i][j],
+                              padding: EdgeInsets.zero,
+                              showBackground: false,
+                            ),
+                            if (j < _workout.exercises[i].length - 1)
+                              Container(
+                                color: AppColors.divider(context),
+                                height: 1,
+                                width: double.infinity,
+                              ),
+                          ],
+                        ),
+                    ],
+                  )),
             )
-                .animate(delay: (25 * i).ms)
+                .animate(delay: (50 * i).ms)
                 .slideX(
                     begin: 0.25,
                     curve: Sprung(36),
                     duration: const Duration(milliseconds: 500))
-                .fadeIn()
+                .fadeIn(),
         ],
       ),
     ];

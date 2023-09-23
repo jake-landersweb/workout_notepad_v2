@@ -15,10 +15,13 @@ import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:workout_notepad_v2/views/workouts/launch/lw_reorder.dart';
-import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
+import 'package:workout_notepad_v2/views/workouts/launch/lw_cell.dart';
+import 'package:workout_notepad_v2/views/workouts/launch/lw_configure.dart';
+import 'package:workout_notepad_v2/views/workouts/launch/lw_end.dart';
+import 'package:workout_notepad_v2/views/workouts/launch/lw_model.dart';
+import 'package:workout_notepad_v2/views/workouts/launch/lw_time.dart';
 
-enum PopupState { minimize, finish, cancel, reorder }
+enum PopupState { minimize, finish, cancel, configure }
 
 Future<void> launchWorkout(
   BuildContext context,
@@ -107,7 +110,7 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => LaunchWorkoutModel(widget.state),
+      create: (context) => LaunchWorkoutModel(state: widget.state),
       builder: ((context, child) {
         return Navigator(
           onGenerateRoute: (settings) {
@@ -136,9 +139,8 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
                 onPageChanged: (value) => lmodel.setIndex(value),
                 controller: lmodel.state.pageController,
                 children: [
-                  if (lmodel.state.exerciseChildren.isNotEmpty)
-                    for (int i = 0; i < lmodel.state.exercises.length; i++)
-                      LWExerciseDetail(index: i),
+                  for (int i = 0; i < lmodel.state.exerciseLogs.length; i++)
+                    LWCell(i: i),
                   const LWEnd(),
                 ],
               ),
@@ -244,7 +246,16 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
                       submitBolded: true,
                       submitText: "Finish",
                       onSubmit: () async {
-                        await lmodel.handleWorkoutFinish(context, dmodel);
+                        var response = await lmodel.finishWorkout(dmodel);
+                        if (response.isEmpty) {
+                          Navigator.of(context, rootNavigator: true).pop();
+                        } else {
+                          snackbarErr(
+                            context,
+                            response,
+                            duration: const Duration(seconds: 6),
+                          );
+                        }
                       },
                     );
                     break;
@@ -265,10 +276,21 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
                       },
                     );
                     break;
-                  case PopupState.reorder:
+                  case PopupState.configure:
                     cupertinoSheet(
                       context: context,
-                      builder: (context) => const LWReorder(),
+                      builder: (context) => LWConfigure(
+                        exercises: lmodel.state.exercises,
+                        exerciseLogs: lmodel.state.exerciseLogs,
+                        workout: lmodel.state.workout,
+                        workoutLog: lmodel.state.wl,
+                        onSave: (exercises, logs) async {
+                          lmodel.state.exercises = exercises;
+                          lmodel.state.exerciseLogs = logs;
+                          lmodel.refresh();
+                          return true;
+                        },
+                      ),
                     );
                 }
               },
@@ -313,19 +335,19 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
                     ],
                   ),
                 ),
-                // PopupMenuItem<PopupState>(
-                //   value: PopupState.reorder,
-                //   child: Row(
-                //     children: [
-                //       Icon(
-                //         Icons.toc_rounded,
-                //         color: Theme.of(context).colorScheme.primary,
-                //       ),
-                //       const SizedBox(width: 8),
-                //       const Text("Re-Order"),
-                //     ],
-                //   ),
-                // ),
+                PopupMenuItem<PopupState>(
+                  value: PopupState.configure,
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.settings_rounded,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      const Text("Configure"),
+                    ],
+                  ),
+                ),
               ],
             ),
           ],

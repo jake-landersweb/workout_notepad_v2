@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
 class TagCell extends StatelessWidget {
@@ -20,11 +21,7 @@ class TagCell extends StatelessWidget {
         child: Text(
           title,
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: AppColors.subtext(context),
-          ),
+          style: ttcaption(context),
         ),
       ),
     );

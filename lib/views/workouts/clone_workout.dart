@@ -67,17 +67,17 @@ class _CloneWorkoutState extends State<CloneWorkout> {
             });
             var cloned = await widget.workout.clone(_title);
             // insert in transaction
-            var db = await getDB();
+            var db = await DatabaseProvider().database;
             await db.transaction((txn) async {
               await txn.insert("workout", cloned.workout.toMap());
               for (var i in cloned.exercises) {
-                await txn.insert("workout_exercise", i.v1.toMap());
-                for (var j in i.v2) {
-                  await txn.insert("exercise_set", j.toMap());
+                for (var j in i) {
+                  await txn.insert("workout_exercise", j.toMap());
                 }
               }
             });
             await dmodel.refreshWorkouts();
+            await dmodel.refreshWorkoutTemplates();
             setState(() {
               _isLoading = false;
             });

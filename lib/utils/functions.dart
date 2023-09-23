@@ -1,3 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:workout_notepad_v2/data/root.dart';
+import 'root.dart';
+
 List<List<T>> chunkList<T>(List<T> list, int n) {
   List<List<T>> chunks = [];
   int length = list.length;
@@ -32,5 +37,13 @@ String intToDay(int v) {
       return "Saturday";
     default:
       throw "Invalid date";
+  }
+}
+
+Future<void> launchSupportPage(
+    BuildContext context, User user, String type) async {
+  if (!await launchUrl(Uri.parse(
+      "https://workoutnotepad.co/support?email=${user.email}&userId=${user.userId}&type=$type"))) {
+    snackbarErr(context, "There was an issue opening the support page.");
   }
 }

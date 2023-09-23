@@ -9,6 +9,7 @@ import 'package:workout_notepad_v2/views/root.dart';
 import 'package:intl/intl.dart';
 
 import 'package:workout_notepad_v2/components/root.dart' as comp;
+import 'package:workout_notepad_v2/views/workouts/create_edit/root.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/launch_workout.dart';
 
 class WorkoutsHome extends StatefulWidget {
@@ -38,12 +39,7 @@ class _WorkoutsHomeState extends State<WorkoutsHome> {
               showMaterialModalBottomSheet(
                 context: context,
                 enableDrag: false,
-                builder: (context) => CEWRoot(
-                  isCreate: true,
-                  onAction: (w) {
-                    print(w);
-                  },
-                ),
+                builder: (context) => const CEW(),
               );
             },
           )
@@ -60,7 +56,7 @@ class _WorkoutsHomeState extends State<WorkoutsHome> {
               workout.title = DateFormat('MM-dd-yy h:mm:ssa').format(
                 DateTime.now(),
               );
-              var db = await getDB();
+              var db = await DatabaseProvider().database;
               await db.insert("workout", workout.toMap());
               await launchWorkout(context, dmodel, workout, isEmpty: true);
             },

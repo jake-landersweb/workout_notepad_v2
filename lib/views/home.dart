@@ -3,17 +3,18 @@ import 'package:line_icons/line_icons.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/alert.dart';
-import 'package:workout_notepad_v2/components/blurred_container.dart';
-import 'package:workout_notepad_v2/components/clickable.dart';
+import 'package:workout_notepad_v2/components/root.dart';
+import 'package:workout_notepad_v2/main.dart';
 
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:workout_notepad_v2/views/collection/collection_home.dart';
 import 'package:workout_notepad_v2/views/logs/root.dart';
 import 'package:workout_notepad_v2/views/overview/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/profile/profile.dart';
-import 'package:workout_notepad_v2/views/workouts/launch/root.dart';
+import 'package:workout_notepad_v2/views/welcome.dart';
+import 'package:workout_notepad_v2/views/workouts/launch/launch_workout.dart';
+import 'package:workout_notepad_v2/views/workouts/launch/lw_time.dart';
 
 enum HomeScreen { logs, collections, overview, exercises, profile }
 
@@ -25,9 +26,37 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  bool _modelShown = false;
+
+  Future<void> _showWelcome(BuildContext context) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      cupertinoSheet(
+        context: context,
+        builder: (context) => const WelcomeScreen(),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
+
+    if (dmodel.paymentLoadStatus == PaymentLoadStatus.complete) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => const MyApp()),
+          (Route<dynamic> route) => false,
+        );
+      });
+    }
+
+    if (dmodel.hasNoData && !_modelShown) {
+      _modelShown = true;
+      _showWelcome(context);
+    }
+
     return Stack(
       alignment: Alignment.bottomCenter,
       children: [
@@ -43,7 +72,7 @@ class _HomeState extends State<Home> {
     }
     switch (dmodel.currentTabScreen) {
       case HomeScreen.collections:
-        return const CollectionHome();
+        return const Placeholder();
       case HomeScreen.overview:
         return const OverviewHome();
       // return const WorkoutsHome();

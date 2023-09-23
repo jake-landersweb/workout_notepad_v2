@@ -1,10 +1,14 @@
+// ignore_for_file: unused_field
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/logs/no_logs.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'dart:math' as math;
 
@@ -51,97 +55,108 @@ class _LogsCategoryIndividualState extends State<LogsCategoryIndividual> {
         isLarge: true,
         leading: const [BackButton2()],
         children: [
-          Section(
-            "Maxes",
-            child: ContainedList<Tuple3<String, DateTime, String>>(
-              childPadding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
-              leadingPadding: 0,
-              trailingPadding: 0,
+          if (_isLoading)
+            const Center(
+              child: LoadingIndicator(),
+            )
+          else if (_recentlyLogged.isEmpty)
+            const NoLogs()
+          else
+            Column(
               children: [
-                if (_maxWeight != null) _maxWeight!,
-                if (_maxTime != null) _maxTime!,
-                if (_maxReps != null) _maxReps!,
-                if (_maxSets != null) _maxSets!,
-              ],
-              childBuilder: (context, item, index) {
-                return Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            formatDateTime(item.v2),
-                            style: ttcaption(context),
-                          ),
-                          Text(item.v1),
-                        ],
-                      ),
-                    ),
-                    Text(
-                      item.v3,
-                      style: ttBody(
-                        context,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-          // exercise frequency distribution
-          if (_exerciseDist.isNotEmpty)
-            _distGraph(context, "Execise Distribution", _exerciseDist),
-
-          // tag distribution for category
-          if (_tagDist.isNotEmpty)
-            _distGraph(context, "Tag Distribution", _tagDist),
-
-          // recently logged for category
-          if (_recentlyLogged.isNotEmpty)
-            Section(
-              "Recently Logged",
-              child: ContainedList<Tuple3<String, String, DateTime>>(
-                children: _recentlyLogged,
-                childPadding: const EdgeInsets.fromLTRB(16, 6, 8, 6),
-                leadingPadding: 0,
-                trailingPadding: 0,
-                onChildTap: (context, item, index) {
-                  cupertinoSheet(
-                    context: context,
-                    builder: (context) => ExerciseLogs(
-                      exerciseId: item.v1,
-                      isInteractive: false,
-                    ),
-                  );
-                },
-                childBuilder: (context, item, index) {
-                  return Row(
+                Section(
+                  "Maxes",
+                  child: ContainedList<Tuple3<String, DateTime, String>>(
+                    childPadding: const EdgeInsets.fromLTRB(16, 4, 16, 4),
+                    leadingPadding: 0,
+                    trailingPadding: 0,
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              formatDateTime(item.v3),
-                              style: ttcaption(context),
-                            ),
-                            Text(item.v2),
-                          ],
-                        ),
-                      ),
-                      Transform.rotate(
-                        angle: math.pi / -2,
-                        child: Icon(
-                          Icons.chevron_right_rounded,
-                          color: AppColors.subtext(context),
-                        ),
-                      ),
+                      if (_maxWeight != null) _maxWeight!,
+                      if (_maxTime != null) _maxTime!,
+                      if (_maxReps != null) _maxReps!,
+                      if (_maxSets != null) _maxSets!,
                     ],
-                  );
-                },
-              ),
+                    childBuilder: (context, item, index) {
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  formatDateTime(item.v2),
+                                  style: ttcaption(context),
+                                ),
+                                Text(item.v1),
+                              ],
+                            ),
+                          ),
+                          Text(
+                            item.v3,
+                            style: ttBody(
+                              context,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                // exercise frequency distribution
+                if (_exerciseDist.isNotEmpty)
+                  _distGraph(context, "Execise Distribution", _exerciseDist),
+
+                // tag distribution for category
+                if (_tagDist.isNotEmpty)
+                  _distGraph(context, "Tag Distribution", _tagDist),
+
+                // recently logged for category
+                if (_recentlyLogged.isNotEmpty)
+                  Section(
+                    "Recently Logged",
+                    child: ContainedList<Tuple3<String, String, DateTime>>(
+                      children: _recentlyLogged,
+                      childPadding: const EdgeInsets.fromLTRB(16, 6, 8, 6),
+                      leadingPadding: 0,
+                      trailingPadding: 0,
+                      onChildTap: (context, item, index) {
+                        cupertinoSheet(
+                          context: context,
+                          builder: (context) => ExerciseLogs(
+                            exerciseId: item.v1,
+                            isInteractive: false,
+                          ),
+                        );
+                      },
+                      childBuilder: (context, item, index) {
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    formatDateTime(item.v3),
+                                    style: ttcaption(context),
+                                  ),
+                                  Text(item.v2),
+                                ],
+                              ),
+                            ),
+                            Transform.rotate(
+                              angle: math.pi / -2,
+                              child: Icon(
+                                Icons.chevron_right_rounded,
+                                color: AppColors.subtext(context),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+              ],
             ),
         ],
       ),
@@ -221,7 +236,35 @@ class _LogsCategoryIndividualState extends State<LogsCategoryIndividual> {
       _isLoading = true;
     });
     try {
-      var db = await getDB();
+      var db = await DatabaseProvider().database;
+      var recentResponse = await db.rawQuery("""
+        SELECT 
+          el.title,
+          el.exerciseId,
+          el.created AS date
+        FROM exercise_log el
+        JOIN exercise e ON el.exerciseId = e.exerciseId
+        WHERE e.category = '${widget.category.categoryId}'
+        ORDER BY el.created DESC
+        LIMIT 10;
+      """);
+      for (var i in recentResponse) {
+        _recentlyLogged.add(
+          Tuple3(
+            i['exerciseId'] as String,
+            i['title'] as String,
+            DateTime.parse(i['date'] as String),
+          ),
+        );
+      }
+      // if no logs found, that means there is no data
+      if (_recentlyLogged.isEmpty) {
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
       var weightResponse = await db.rawQuery("""
         SELECT
           el.title AS title,
@@ -261,6 +304,7 @@ class _LogsCategoryIndividualState extends State<LogsCategoryIndividual> {
       """);
       if (timeResponse.isNotEmpty) {
         var val = timeResponse[0]['max_val'] as num;
+
         if (val > 0) {
           _maxTime = Tuple3(
             timeResponse[0]['title'] as String,
@@ -284,6 +328,7 @@ class _LogsCategoryIndividualState extends State<LogsCategoryIndividual> {
       """);
       if (repsResponse.isNotEmpty) {
         var val = repsResponse[0]['max_val'] as num;
+
         if (val > 0) {
           _maxReps = Tuple3(
             repsResponse[0]['title'] as String,
@@ -312,6 +357,7 @@ class _LogsCategoryIndividualState extends State<LogsCategoryIndividual> {
       """);
       if (setsResponse.isNotEmpty) {
         var val = setsResponse[0]['max_val'] as num;
+
         if (val > 0) {
           _maxSets = Tuple3(
             setsResponse[0]['title'] as String,
@@ -358,29 +404,13 @@ class _LogsCategoryIndividualState extends State<LogsCategoryIndividual> {
           Tuple2(i['title'] as String, i['number_of_tags'] as int),
         );
       }
-
-      var recentResponse = await db.rawQuery("""
-        SELECT 
-          el.title,
-          el.exerciseId,
-          el.created AS date
-        FROM exercise_log el
-        JOIN exercise e ON el.exerciseId = e.exerciseId
-        WHERE e.category = '${widget.category.categoryId}'
-        ORDER BY el.created DESC
-        LIMIT 10;
-      """);
-      for (var i in recentResponse) {
-        _recentlyLogged.add(
-          Tuple3(
-            i['exerciseId'] as String,
-            i['title'] as String,
-            DateTime.parse(i['date'] as String),
-          ),
-        );
-      }
     } catch (e) {
-      print(e); // TODO
+      print(e);
+      NewrelicMobile.instance.recordError(
+        e,
+        StackTrace.current,
+        attributes: {"err_code": "log_cat_indv"},
+      );
       _hasError = true;
     }
     setState(() {

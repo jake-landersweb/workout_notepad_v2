@@ -3,25 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:workout_notepad_v2/components/alert.dart';
-import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
-import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/components/root.dart';
-import 'package:workout_notepad_v2/components/wrapped_button.dart';
 import 'package:workout_notepad_v2/data/root.dart';
-import 'package:workout_notepad_v2/data/snapshot.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:workout_notepad_v2/utils/tuple.dart';
 import 'package:workout_notepad_v2/views/account/root.dart';
 import 'package:workout_notepad_v2/views/profile/config_categories.dart';
 import 'package:workout_notepad_v2/views/profile/configure_tags.dart';
-import 'package:intl/intl.dart';
 import 'dart:math' as math;
 
 import 'package:workout_notepad_v2/views/profile/manage_data.dart';
 import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
-import 'package:workout_notepad_v2/views/profile/support.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -136,17 +129,17 @@ class _ProfileState extends State<Profile> {
                 );
               },
             ),
-          )
-        else if (dmodel.user!.isPremiumUser())
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16.0),
-            child: WrappedButton(
-              title: "Manage Purchases",
-              icon: Icons.credit_card_rounded,
-              iconBg: Colors.teal[400],
-              onTap: () {},
-            ),
           ),
+        // else if (dmodel.user!.isPremiumUser())
+        //   Padding(
+        //     padding: const EdgeInsets.only(bottom: 16.0),
+        //     child: WrappedButton(
+        //       title: "Manage Purchases",
+        //       icon: Icons.credit_card_rounded,
+        //       iconBg: Colors.teal[400],
+        //       onTap: () {},
+        //     ),
+        //   ),
         ContainedList<ProfileItem>(
           leadingPadding: 0,
           trailingPadding: 0,
@@ -217,13 +210,10 @@ class _ProfileState extends State<Profile> {
               title: "Export Data",
               icon: Icons.download_rounded,
               color: Colors.purple[300]!,
-              postType: 1,
+              postType: 0,
               onTap: () async {
                 if (dmodel.user!.isPremiumUser()) {
-                  cupertinoSheet(
-                    context: context,
-                    builder: (context) => const Support(),
-                  );
+                  await launchSupportPage(context, dmodel.user!, "Data Export");
                 } else {
                   cupertinoSheet(
                     context: context,
@@ -283,24 +273,18 @@ class _ProfileState extends State<Profile> {
               title: "Contact Support",
               icon: Icons.call_rounded,
               color: Colors.grey[500]!,
-              postType: 1,
+              postType: 0,
               onTap: () async {
-                cupertinoSheet(
-                  context: context,
-                  builder: (context) => const Support(),
-                );
+                await launchSupportPage(context, dmodel.user!, "App Issue");
               },
             ),
             ProfileItem(
               title: "Leave Feedback",
               icon: Icons.chat_rounded,
               color: Colors.amber[700]!,
-              postType: 1,
+              postType: 0,
               onTap: () async {
-                cupertinoSheet(
-                  context: context,
-                  builder: (context) => const Support(),
-                );
+                await launchSupportPage(context, dmodel.user!, "Feedback");
               },
             ),
           ],
@@ -408,7 +392,7 @@ class _ProfileState extends State<Profile> {
                   submitText: "Delete",
                   submitColor: Colors.red,
                   onSubmit: () async {
-                    await dmodel.delete(context);
+                    await dmodel.delete();
                   },
                 );
               },
@@ -431,7 +415,7 @@ class _ProfileState extends State<Profile> {
                     title: item.title,
                     icon: item.icon,
                     iconBg: item.color,
-                    isLoading: _loadingIndex == index,
+                    isLoading: _loadingIndex == index + 100,
                   ),
                 ),
                 if (item.postType > 0)

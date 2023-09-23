@@ -101,4 +101,8 @@ extension AppColors on Color {
   static Color divider(BuildContext context) {
     return text(context).withOpacity(0.065);
   }
+
+  static Color error() {
+    return ColorUtil.hexToColor("#CE4760");
+  }
 }

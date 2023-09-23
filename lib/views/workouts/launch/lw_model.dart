@@ -1,29 +1,21 @@
-import 'dart:async';
+import 'dart:convert';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
-import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/data/collection.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
-import 'package:workout_notepad_v2/data/exercise_set.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
-import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:workout_notepad_v2/utils/tuple.dart';
 
 class TimerInstance {
-  late int index;
-  int? childIndex;
+  late String workoutExerciseId;
   late DateTime startTime;
 
   TimerInstance({
-    required this.index,
-    this.childIndex,
+    required this.workoutExerciseId,
     required this.startTime,
   });
 }
@@ -31,13 +23,12 @@ class TimerInstance {
 class LaunchWorkoutModelState {
   late int workoutIndex;
   late Workout workout;
-  late List<WorkoutExercise> exercises;
+  late List<List<WorkoutExercise>> exercises;
   late PageController pageController;
   late WorkoutLog wl;
   late DateTime startTime;
-  List<List<ExerciseSet>> exerciseChildren = [];
-  List<ExerciseLog> exerciseLogs = [];
-  List<List<ExerciseLog>> exerciseChildLogs = [];
+  late String userId;
+  List<List<ExerciseLog>> exerciseLogs = [];
   late double offsetY;
   List<TimerInstance> timerInstances = [];
   CollectionItem? collectionItem;
@@ -50,6 +41,7 @@ class LaunchWorkoutModelState {
     required this.pageController,
     required this.wl,
     required this.startTime,
+    required this.userId,
     this.offsetY = -5,
     this.collectionItem,
     this.isEmpty = false,
@@ -63,13 +55,11 @@ class LaunchWorkoutModelState {
   Map<String, dynamic> toMap() => {
         "workoutIndex": workoutIndex,
         "workout": workout.toMap(),
-        "exercises": [for (var i in exercises) i.toMap()],
-        "exerciseChildren": [
-          for (var i in exerciseChildren) [for (var j in i) j.toMap()]
+        "exercises": [
+          for (var i in exercises) [for (var j in i) j.toMap()]
         ],
-        "exerciseLogs": [for (var i in exerciseLogs) i.toMap()],
-        "exerciseChildLogs": [
-          for (var i in exerciseChildLogs) [for (var j in i) j.toMap()]
+        "exerciseLogs": [
+          for (var i in exerciseLogs) [for (var j in i) j.toMap()]
         ],
         "wl": wl.toMap(),
         "startTime": startTime.millisecondsSinceEpoch,
@@ -81,8 +71,7 @@ class LaunchWorkoutModelState {
 class LaunchWorkoutModel extends ChangeNotifier {
   late LaunchWorkoutModelState state;
 
-  LaunchWorkoutModel(LaunchWorkoutModelState s) {
-    state = s;
+  LaunchWorkoutModel({required this.state}) {
     init();
   }
 
@@ -110,418 +99,304 @@ class LaunchWorkoutModel extends ChangeNotifier {
     );
   }
 
-  void setLogReps(int index, int row, int val) {
-    state.exerciseLogs[index].metadata[row].reps = val;
-
-    // set all unsaved next to this val
-    for (int i = row + 1; i < state.exerciseLogs[index].metadata.length; i++) {
-      if (!state.exerciseLogs[index].metadata[i].saved) {
-        state.exerciseLogs[index].metadata[i].reps = val;
-      }
+  void setReps(int i, int j, int m, int reps) {
+    // set this and future metadata
+    for (int idx = m; idx < state.exerciseLogs[i][j].metadata.length; idx++) {
+      if (state.exerciseLogs[i][j].metadata[idx].saved) continue;
+      state.exerciseLogs[i][j].metadata[idx].reps = reps;
     }
     notifyListeners();
   }
 
-  void setLogWeight(int index, int row, int val) {
-    state.exerciseLogs[index].metadata[row].weight = val;
-    // save all next unsaved
-    for (int i = row + 1; i < state.exerciseLogs[index].metadata.length; i++) {
-      if (!state.exerciseLogs[index].metadata[i].saved) {
-        state.exerciseLogs[index].metadata[i].weight = val;
-      }
+  void setWeight(int i, int j, int m, int weight) {
+    // set this and future metadata
+    for (int idx = m; idx < state.exerciseLogs[i][j].metadata.length; idx++) {
+      if (state.exerciseLogs[i][j].metadata[idx].saved) continue;
+      state.exerciseLogs[i][j].metadata[idx].weight = weight;
     }
     notifyListeners();
   }
 
-  void setLogWeightPost(int index, int j, String val) {
-    state.exerciseLogs[index].metadata[j].weightPost = val;
-    notifyListeners();
-  }
-
-  void setLogTime(int index, int row, int val) {
-    state.exerciseLogs[index].metadata[row].time = val;
-    // set all unsaved next
-    for (int i = row + 1; i < state.exerciseLogs[index].metadata.length; i++) {
-      if (!state.exerciseLogs[index].metadata[i].saved) {
-        state.exerciseLogs[index].metadata[i].time = val;
-      }
+  void setWeightPost(int i, int j, String post) {
+    // set this and future metadata
+    for (int idx = 0; idx < state.exerciseLogs[i][j].metadata.length; idx++) {
+      state.exerciseLogs[i][j].metadata[idx].weightPost = post;
     }
     notifyListeners();
   }
 
-  void setLogSaved(int index, int row, bool val) {
-    state.exerciseLogs[index].metadata[row].saved = val;
+  void setTime(int i, int j, int m, int time) {
+    // set this and future metadata
+    for (int idx = m; idx < state.exerciseLogs[i][j].metadata.length; idx++) {
+      if (state.exerciseLogs[i][j].metadata[idx].saved) continue;
+      state.exerciseLogs[i][j].metadata[idx].time = time;
+    }
     notifyListeners();
   }
 
-  void removeLogSet(int index, int row) {
-    state.exerciseLogs[index].removeSet(row);
+  void setSaved(int i, int j, int m, bool saved) {
+    state.exerciseLogs[i][j].metadata[m].saved = saved;
     notifyListeners();
   }
 
-  void addLogSet(int index) {
-    state.exerciseLogs[index].addSet();
+  void addSet(int i, int j, Tag? defaultTag) {
+    state.exerciseLogs[i][j].addSet(defaultTag: defaultTag);
     notifyListeners();
   }
 
-  void onTagClick(int index, int setIndex, Tag tag) {
-    if (state.exerciseLogs[index].metadata[setIndex].tags
+  void removeSet(int i, int j, int m) {
+    state.exerciseLogs[i][j].removeSet(m);
+    notifyListeners();
+  }
+
+  void onTagClick(int i, int j, int m, Tag tag) {
+    if (state.exerciseLogs[i][j].metadata[m].tags
         .any((element) => element.tagId == tag.tagId)) {
-      state.exerciseLogs[index].metadata[setIndex].tags.removeWhere(
+      state.exerciseLogs[i][j].metadata[m].tags.removeWhere(
         (element) => element.tagId == tag.tagId,
       );
       return;
     }
-    // remove all tags for now to support only single tags on sets
-    // TODO -- implement multiple tags
-    state.exerciseLogs[index].metadata[setIndex].tags
-        .removeWhere((element) => true);
-    state.exerciseLogs[index].metadata[setIndex].addTag(tag);
+    state.exerciseLogs[i][j].metadata[m].addTag(tag);
     notifyListeners();
   }
 
-  void setLogChildReps(int i, int j, int row, int val) {
-    state.exerciseChildLogs[i][j].metadata[row].reps = val;
-    // set all next not saved
-    for (int g = row + 1;
-        g < state.exerciseChildLogs[i][j].metadata.length;
-        g++) {
-      if (!state.exerciseChildLogs[i][j].metadata[g].saved) {
-        state.exerciseChildLogs[i][j].metadata[g].reps = val;
-      }
-    }
-    notifyListeners();
-  }
-
-  void setLogChildWeight(int i, int j, int row, int val) {
-    state.exerciseChildLogs[i][j].metadata[row].weight = val;
-    // set all next not saved
-    for (int g = row + 1;
-        g < state.exerciseChildLogs[i][j].metadata.length;
-        g++) {
-      if (!state.exerciseChildLogs[i][j].metadata[g].saved) {
-        state.exerciseChildLogs[i][j].metadata[g].weight = val;
-      }
-    }
-    notifyListeners();
-  }
-
-  void setLogChildWeightPost(int i, int j, int setIndex, String val) {
-    state.exerciseChildLogs[i][j].metadata[setIndex].weightPost = val;
-    notifyListeners();
-  }
-
-  void setLogChildTime(int i, int j, int row, int val) {
-    state.exerciseChildLogs[i][j].metadata[row].time = val;
-    // set all next not saved
-    for (int g = row + 1;
-        g < state.exerciseChildLogs[i][j].metadata.length;
-        g++) {
-      if (!state.exerciseChildLogs[i][j].metadata[g].saved) {
-        state.exerciseChildLogs[i][j].metadata[g].time = val;
-      }
-    }
-    notifyListeners();
-  }
-
-  void setLogChildSaved(int i, int j, int row, bool val) {
-    state.exerciseChildLogs[i][j].metadata[row].saved = val;
-    notifyListeners();
-  }
-
-  void removeLogChildSet(int i, int j, int row) {
-    state.exerciseChildLogs[i][j].removeSet(row);
-    notifyListeners();
-  }
-
-  void addLogChildSet(int i, int j) {
-    state.exerciseChildLogs[i][j].addSet();
-    notifyListeners();
-  }
-
-  void onTagClickChild(int index, int childIndex, int setIndex, Tag tag) {
-    if (state.exerciseChildLogs[index][childIndex].metadata[setIndex].tags
-        .any((element) => element.tagId == tag.tagId)) {
-      state.exerciseChildLogs[index][childIndex].metadata[setIndex].tags
-          .removeWhere(
-        (element) => element.tagId == tag.tagId,
-      );
-      return;
-    }
-    // remove all tags for now to support only single tags on sets
-    // TODO -- implement multiple tags
-    state.exerciseChildLogs[index][childIndex].metadata[setIndex].tags
-        .removeWhere((element) => true);
-    state.exerciseChildLogs[index][childIndex].metadata[setIndex].addTag(tag);
-    notifyListeners();
-  }
-
-  Future<Tuple2<bool, String>> finishWorkout(DataModel dmodel) async {
-    // remove all metadata entries that are not saved
-    for (var i in state.exerciseLogs) {
-      i.metadata.removeWhere((element) => !element.saved);
-    }
-    for (var i in state.exerciseChildLogs) {
-      for (var j in i) {
-        j.metadata.removeWhere((element) => !element.saved);
-      }
-    }
-
-    // get duration of workout
-    state.wl.duration = state.getCurrentSeconds();
-
+  Future<bool> addExercise(int i, int j, Exercise exercise) async {
     try {
-      // insert all under transaction
-      var db = await getDB();
-      await db.transaction((txn) async {
-        // insert exercises and exercise sets after each other
-        for (int i = 0; i < state.exerciseLogs.length; i++) {
-          // insert workout exercise
-          state.exerciseLogs[i].isSuperSet = false;
-          if (state.exerciseLogs[i].metadata.isNotEmpty) {
-            await txn.insert(
-              "exercise_log",
-              state.exerciseLogs[i].toMap(),
-              conflictAlgorithm: ConflictAlgorithm.replace,
-            );
+      // create a workout exercise and log
+      var we = WorkoutExercise.fromExercise(state.workout, exercise);
+      var el = ExerciseLog.workoutInit(
+        workoutLog: state.wl,
+        exercise: we,
+      );
+      we.supersetOrder = j;
+      el.supersetOrder = j;
 
-            // insert metadata
-            for (int m = 0; m < state.exerciseLogs[i].metadata.length; m++) {
-              await txn.insert(
-                "exercise_log_meta",
-                state.exerciseLogs[i].metadata[m].toMap(),
-                conflictAlgorithm: ConflictAlgorithm.replace,
-              );
-              // insert tags
-              for (int c = 0;
-                  c < state.exerciseLogs[i].metadata[m].tags.length;
-                  c++) {
-                await txn.insert(
-                  "exercise_log_meta_tag",
-                  state.exerciseLogs[i].metadata[m].tags[c].toMap(),
-                  conflictAlgorithm: ConflictAlgorithm.replace,
-                );
-              }
-            }
+      // do operations inside of transaction
+      var db = await DatabaseProvider().database;
+      await db.transaction((txn) async {
+        if (i >= state.exercises.length) {
+          // add to new list
+          state.exercises.add([we]);
+          state.exerciseLogs.add([el]);
+          int r = await txn.insert("workout_exercise", we.toMap());
+          if (r == 0) {
+            throw "There was an issue adding this exericse";
+          }
+        } else if (j == state.exercises[i].length) {
+          // adding to existing list
+
+          if (j > 0) {
+            we.supersetId = state.exercises[i][0].supersetId;
+            el.supersetId = state.exerciseLogs[i][0].supersetId;
+          }
+          state.exercises[i].add(we);
+          state.exerciseLogs[i].add(el);
+          // add this exercise to the workout
+          int r = await txn.insert("workout_exercise", we.toMap());
+          if (r == 0) {
+            throw "There was an issue adding the exericse";
+          }
+        } else {
+          // replace an existing exercise
+          we.supersetId = state.exercises[i][0].supersetId;
+          el.supersetId = state.exercises[i][0].supersetId;
+
+          // delete the old exercise
+          int r = await txn.rawDelete(
+            "DELETE FROM workout_exercise WHERE workoutExerciseId = ?",
+            [state.exercises[i][j].workoutExerciseId],
+          );
+          if (r == 0) {
+            throw "There was an issue deleting the old exercise";
           }
 
-          // insert super sets
-          for (int j = 0; j < state.exerciseChildLogs[i].length; j++) {
-            state.exerciseChildLogs[i][j].isSuperSet = true;
-            if (state.exerciseChildLogs[i][j].metadata.isNotEmpty) {
-              await txn.insert(
-                "exercise_log",
-                state.exerciseChildLogs[i][j].toMap(),
-                conflictAlgorithm: ConflictAlgorithm.replace,
-              );
+          // replace the existing exercise
+          state.exercises[i][j] = we;
+          state.exerciseLogs[i][j] = el;
 
-              // insert metadata
-              for (int m = 0;
-                  m < state.exerciseChildLogs[i][j].metadata.length;
-                  m++) {
-                await txn.insert(
-                  "exercise_log_meta",
-                  state.exerciseChildLogs[i][j].metadata[m].toMap(),
-                  conflictAlgorithm: ConflictAlgorithm.replace,
+          // insert into database
+          r = await txn.insert("workout_exercise", we.toMap());
+          if (r == 0) {
+            throw "There was an issue adding the exercise into the workout";
+          }
+        }
+      });
+      // if here, then it worked
+      notifyListeners();
+      return true;
+    } catch (e) {
+      print(e);
+      NewrelicMobile.instance.recordError(
+        e,
+        StackTrace.current,
+        attributes: {
+          "userId": state.userId,
+          "i": i,
+          "j": j,
+          "state": jsonEncode(state.toMap()),
+        },
+      );
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> removeExercise(int i, int j) async {
+    try {
+      var db = await DatabaseProvider().database;
+      await db.transaction((txn) async {
+        int r = await txn.rawDelete(
+          "DELETE FROM workout_exercise WHERE workoutExerciseId = ?",
+          [state.exercises[i][j].workoutExerciseId],
+        );
+        if (r == 0) {
+          throw "There was no workout exercise deleted";
+        }
+
+        // configure state
+        state.exercises[i].removeAt(j);
+        state.exerciseLogs[i].removeAt(j);
+        if (state.exercises[i].isEmpty) {
+          state.pageController.animateToPage(
+            state.workoutIndex - 1,
+            duration: const Duration(milliseconds: 700),
+            curve: Sprung.overDamped,
+          );
+          state.exercises.removeAt(i);
+          state.exerciseLogs.removeAt(i);
+        }
+      });
+      notifyListeners();
+      return true;
+    } catch (e) {
+      print(e);
+      NewrelicMobile.instance.recordError(
+        e,
+        StackTrace.current,
+        attributes: {
+          "userId": state.userId,
+          "i": i,
+          "j": j,
+          "state": jsonEncode(state.toMap()),
+        },
+      );
+      notifyListeners();
+      return false;
+    }
+  }
+
+  void refresh() {
+    notifyListeners();
+  }
+
+  Future<String> finishWorkout(DataModel dmodel) async {
+    try {
+      var db = await DatabaseProvider().database;
+      // remove all metadata that is not valid
+      for (var i in state.exerciseLogs) {
+        for (var j in i) {
+          j.metadata.removeWhere((element) => !element.saved);
+        }
+      }
+
+      // capture the duration of the workout
+      state.wl.duration = state.getCurrentSeconds();
+
+      // perform the update on the database
+      try {
+        await db.transaction((txn) async {
+          // insert exercise logs
+          for (int i = 0; i < state.exerciseLogs.length; i++) {
+            for (int j = 0; j < state.exerciseLogs[i].length; j++) {
+              // check for valid metadata
+              if (state.exerciseLogs[i][j].metadata.isNotEmpty) {
+                // insert exercise
+                int r = await txn.insert(
+                  "exercise_log",
+                  state.exerciseLogs[i][j].toMap(),
                 );
-                // insert tags
-                for (int c = 0;
-                    c < state.exerciseChildLogs[i][j].metadata[m].tags.length;
-                    c++) {
+                if (r == 0) {
+                  throw "There was an issue inserting the exercise log";
+                }
+
+                // insert the metadata
+                for (int m = 0;
+                    m < state.exerciseLogs[i][j].metadata.length;
+                    m++) {
                   await txn.insert(
-                    "exercise_log_meta_tag",
-                    state.exerciseChildLogs[i][j].metadata[m].tags[c].toMap(),
+                    "exercise_log_meta",
+                    state.exerciseLogs[i][j].metadata[m].toMap(),
                     conflictAlgorithm: ConflictAlgorithm.replace,
                   );
+                  // insert tags
+                  for (int c = 0;
+                      c < state.exerciseLogs[i][j].metadata[m].tags.length;
+                      c++) {
+                    await txn.insert(
+                      "exercise_log_meta_tag",
+                      state.exerciseLogs[i][j].metadata[m].tags[c].toMap(),
+                      conflictAlgorithm: ConflictAlgorithm.replace,
+                    );
+                  }
                 }
               }
             }
           }
-        }
 
-        // insert the workout
-        await txn.insert(
-          "workout_log",
-          state.wl.toMap(),
-          conflictAlgorithm: ConflictAlgorithm.replace,
+          // insert the workout
+          await txn.insert(
+            "workout_log",
+            state.wl.toMap(),
+            conflictAlgorithm: ConflictAlgorithm.replace,
+          );
+        });
+      } catch (e) {
+        print(e);
+        NewrelicMobile.instance.recordError(
+          e,
+          StackTrace.current,
+          attributes: {
+            "err_code": "workout_save",
+            "state": jsonEncode(state.toMap()),
+          },
+          isFatal: true,
         );
-      });
-    } catch (error) {
+        return "There was an issue saving your workout to the database. Support has been notified.";
+      }
+
+      // create a snapshot of the workout
+      if (dmodel.user!.subscriptionType != SubscriptionType.none) {
+        try {
+          var snp = await state.workout.toSnapshot(db);
+          await db.insert("workout_snapshot", snp.toMap());
+        } catch (error) {
+          print(error);
+          NewrelicMobile.instance.recordError(
+            error,
+            StackTrace.current,
+            attributes: {
+              "err_code": "workout_snapshot",
+              "state": jsonEncode(state.toMap()),
+            },
+          );
+          return "Your workout was successfully saved, but there was an issue creating a snapshot of the workout. You can safely cancel this workout and not lose progress.";
+        }
+      }
+
+      await dmodel.stopWorkout();
+      return "";
+    } catch (oops) {
+      print(oops);
       NewrelicMobile.instance.recordError(
-        error,
+        oops,
         StackTrace.current,
-        attributes: {"err_code": "workout_save"},
-        isFatal: true,
+        attributes: {
+          "err_code": "workout_unknown",
+          "state": jsonEncode(state.toMap()),
+        },
       );
-      print(error);
-      return Tuple2(
-        false,
-        "We are so sorry, but there was an unknown issue saving this workout. Support has been notified and will be reaching out to you on steps to preserve this workout data.",
-      );
+      return "There was an unknown issue when saving the workout. Support has been notified";
     }
-
-    if (dmodel.workoutState!.collectionItem != null) {
-      try {
-        // if there is a collection item, attach this log id to it
-        // TODO -- find out why state.wl.collectionItem is NULL
-        print("adding workoutlogid to collectionItem");
-        dmodel.workoutState!.collectionItem!.workoutLogId =
-            state.wl.workoutLogId;
-        await dmodel.workoutState!.collectionItem!.insert(
-          conflictAlgorithm: ConflictAlgorithm.replace,
-        );
-      } catch (error) {
-        NewrelicMobile.instance.recordError(
-          error,
-          StackTrace.current,
-          attributes: {
-            "err_code": "attaching_collection",
-          },
-        );
-        print(error);
-        return Tuple2(false,
-            "Your workout was successfully saved, but there was an issue attaching this workout to the apporpriate collection. You can safely cancel this workout and not lose progress.");
-      }
-    }
-
-    // create a snapshot of the workout
-    if (dmodel.user!.subscriptionType != SubscriptionType.none) {
-      try {
-        var db = await getDB();
-        var snp = await state.workout.toSnapshot();
-        await db.insert("workout_snapshot", snp.toMap());
-      } catch (error) {
-        NewrelicMobile.instance.recordError(
-          error,
-          StackTrace.current,
-          attributes: {
-            "err_code": "workout_snapshot",
-          },
-        );
-        print(error);
-        return Tuple2(false,
-            "Your workout was successfully saved, but there was an issue creating a snapshot of the workout. You can safely cancel this workout and not lose progress.");
-      }
-    }
-
-    await dmodel.stopWorkout();
-    return Tuple2(true, "Successfully saved workout");
-  }
-
-  Future<void> handleWorkoutFinish(
-    BuildContext context,
-    DataModel dmodel,
-  ) async {
-    var response = await finishWorkout(dmodel);
-    if (response.v1) {
-      Navigator.of(context, rootNavigator: true).pop();
-    } else {
-      snackbarErr(context, response.v2);
-    }
-  }
-
-  Future<void> removeExercise(BuildContext context, int index) async {
-    var resp = await state.exercises[index].delete(state.workout.workoutId);
-    if (!resp) {
-      print("There was an error deleting the exercise");
-      notifyListeners();
-      return;
-    }
-    state.exercises.removeAt(index);
-    state.exerciseChildren.removeAt(index);
-    state.exerciseLogs.removeAt(index);
-    state.exerciseChildLogs.removeAt(index);
-    notifyListeners();
-  }
-
-  Future<void> addExercise(
-    BuildContext context,
-    Exercise exercise,
-    int index, {
-    bool push = false,
-  }) async {
-    // exercise is not part of workout, need to add it.
-    WorkoutExercise we = WorkoutExercise.fromExercise(state.workout, exercise);
-    we.exerciseOrder =
-        index - 1; // TODO -- may need to remap all exercise index orders
-    await we.insert();
-
-    var log = ExerciseLog.workoutInit(
-      eid: we.exerciseId,
-      wlid: state.wl.workoutLogId,
-      exercise: we,
-      defaultTag: context
-          .read<DataModel>()
-          .tags
-          .firstWhereOrNull((element) => element.isDefault),
-    );
-
-    if (index >= state.exercises.length) {
-      // add onto end
-      state.exercises.add(we);
-      state.exerciseChildren.add([]);
-      state.exerciseLogs.add(log);
-      state.exerciseChildLogs.add([]);
-    } else {
-      if (push) {
-        // insert at index
-        state.exercises.insert(index, we);
-        state.exerciseChildren.insert(index, []);
-        state.exerciseLogs.insert(index, log);
-        state.exerciseChildLogs.insert(index, []);
-      } else {
-        // remove old
-        var resp = await state.exercises[index].delete(state.workout.workoutId);
-        if (!resp) {
-          print("There was an error deleting the exercise");
-          notifyListeners();
-          return;
-        }
-
-        // replace existing
-        state.exercises[index] = we;
-        state.exerciseChildren[index] = [];
-        state.exerciseLogs[index] = log;
-        state.exerciseChildLogs[index] = [];
-      }
-    }
-    notifyListeners();
-  }
-
-  Future<void> handleSuperSets(
-    BuildContext context,
-    int index,
-    List<ExerciseSet> sets,
-  ) async {
-    // delete all old exercise sets
-    for (var i in state.exerciseChildren[index]) {
-      await i.delete(state.workout.workoutId);
-    }
-
-    // new log list
-    List<ExerciseLog> logs = [];
-
-    // add to exercises
-    for (int i = 0; i < sets.length; i++) {
-      sets[i].exerciseOrder = i + 1;
-      await sets[i].insert(
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
-      var log = ExerciseLog.exerciseSetInit(
-        eid: sets[i].childId,
-        parentEid: sets[i].parentId,
-        wlid: state.wl.workoutLogId,
-        exercise: sets[i],
-        defaultTag: context
-            .read<DataModel>()
-            .tags
-            .firstWhereOrNull((element) => element.isDefault),
-      );
-      logs.add(log);
-    }
-    // add to current workout session state
-    state.exerciseChildren[index] = sets;
-    state.exerciseChildLogs[index] = logs;
-    notifyListeners();
   }
 }

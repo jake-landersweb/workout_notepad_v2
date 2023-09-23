@@ -1,15 +1,11 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:sprung/sprung.dart';
-import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/components/root.dart';
-import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/logs/no_logs.dart';
-import 'dart:math' as math;
 
 class LogsWorkoutsBreakdown extends StatefulWidget {
   const LogsWorkoutsBreakdown({super.key});
@@ -36,24 +32,26 @@ class _LogsWorkoutsBreakdownState extends State<LogsWorkoutsBreakdown> {
         title: "W. Breakdown",
         isLarge: true,
         leading: const [BackButton2()],
-        children: [
-          // const SizedBox(height: 8),
-          Section(
-            "Workout Duration By Day",
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: _workoutDurations(context),
-            ),
-          ),
-          Section(
-            "Exercise and Set Count",
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: _workoutStats(context),
-            ),
-          ),
-          const SizedBox(height: 8),
-        ],
+        children: !_isLoading && _workoutDurationData.length < 3
+            ? const [NoLogs()]
+            : [
+                // const SizedBox(height: 8),
+                Section(
+                  "Workout Duration By Day",
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: _workoutDurations(context),
+                  ),
+                ),
+                Section(
+                  "Exercise and Set Count",
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: _workoutStats(context),
+                  ),
+                ),
+                const SizedBox(height: 8),
+              ],
       ),
     );
   }
@@ -292,7 +290,7 @@ class _LogsWorkoutsBreakdownState extends State<LogsWorkoutsBreakdown> {
     setState(() {
       _isLoading = true;
     });
-    var db = await getDB();
+    var db = await DatabaseProvider().database;
     var response = await db.rawQuery("""
       WITH dates AS (
         SELECT DISTINCT DATE(wl.created) as log_date

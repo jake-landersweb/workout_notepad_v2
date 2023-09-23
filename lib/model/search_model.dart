@@ -17,7 +17,7 @@ class SearchModel extends ChangeNotifier {
     _controller = TextEditingController();
   }
 
-  List<String> _categories = [];
+  final List<String> _categories = [];
   ExerciseType? _type;
 
   List<Exercise> search(List<Exercise> input) {
@@ -27,9 +27,10 @@ class SearchModel extends ChangeNotifier {
     }
 
     // multiple levels of filtering
-    Iterable<Exercise> items = [];
+    Iterable<Exercise> items = input;
+
     if (_categories.isNotEmpty) {
-      items = input.where((element) => _categories.contains(element.category));
+      items = items.where((element) => _categories.contains(element.category));
     }
     if (_type != null) {
       items = items.where((element) => element.type == _type);
@@ -94,49 +95,55 @@ class SearchModel extends ChangeNotifier {
                     _categoryCell(context, dmodel.categories[i]),
                 ],
               ),
-              // const SizedBox(height: 8),
-              // DynamicGridView(
-              //   crossAxisCount: 2,
-              //   shrinkWrap: true,
-              //   itemCount: ExerciseType.values.length,
-              //   builder: (context, i) {
-              //     var t = ExerciseType.values[i];
-              //     return Clickable(
-              //       onTap: () {
-              //         if (_type == t) {
-              //           _type = null;
-              //         } else {
-              //           _type = t;
-              //         }
-              //         notifyListeners();
-              //       },
-              //       child: Container(
-              //         decoration: BoxDecoration(
-              //           color:
-              //               _type == t ? dmodel.color : AppColors.cell(context),
-              //           borderRadius: BorderRadius.circular(10),
-              //         ),
-              //         child: Padding(
-              //           padding: const EdgeInsets.symmetric(vertical: 4.0),
-              //           child: Center(
-              //             child: Row(
-              //               mainAxisSize: MainAxisSize.min,
-              //               children: [
-              //                 Image.asset(
-              //                   exerciseTypeIcon(t),
-              //                   height: 30,
-              //                   width: 30,
-              //                 ),
-              //                 const SizedBox(width: 8),
-              //                 Text(exerciseTypeTitle(t)),
-              //               ],
-              //             ),
-              //           ),
-              //         ),
-              //       ),
-              //     );
-              //   },
-              // ),
+              const SizedBox(height: 8),
+              DynamicGridView(
+                crossAxisCount: 2,
+                shrinkWrap: true,
+                itemCount: ExerciseType.values.length,
+                builder: (context, i) {
+                  var t = ExerciseType.values[i];
+                  return Clickable(
+                    onTap: () {
+                      if (_type == t) {
+                        _type = null;
+                      } else {
+                        _type = t;
+                      }
+                      notifyListeners();
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color:
+                            _type == t ? dmodel.color : AppColors.cell(context),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4.0),
+                        child: Center(
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Image.asset(
+                                exerciseTypeIcon(t),
+                                height: 30,
+                                width: 30,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                exerciseTypeTitle(t),
+                                style: TextStyle(
+                                    color: _type == t
+                                        ? Colors.white
+                                        : Colors.black),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         ),

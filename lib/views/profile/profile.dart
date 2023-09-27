@@ -15,6 +15,7 @@ import 'dart:math' as math;
 
 import 'package:workout_notepad_v2/views/profile/manage_data.dart';
 import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
+import 'package:workout_notepad_v2/views/welcome.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -148,7 +149,7 @@ class _ProfileState extends State<Profile> {
             ProfileItem(
               title: "Configure Categories",
               icon: Icons.category_rounded,
-              color: Colors.blue[300]!,
+              color: Colors.green[500]!,
               postType: 1,
               onTap: () async {
                 if (dmodel.user!.isPremiumUser()) {
@@ -169,7 +170,7 @@ class _ProfileState extends State<Profile> {
             ProfileItem(
               title: "Configure tags",
               icon: Icons.tag_rounded,
-              color: Colors.deepOrange[300]!,
+              color: Colors.green[500]!,
               postType: 1,
               onTap: () async {
                 if (dmodel.user!.isPremiumUser()) {
@@ -190,7 +191,7 @@ class _ProfileState extends State<Profile> {
             ProfileItem(
               title: "Manage Syncs",
               icon: Icons.sync_rounded,
-              color: Colors.green[300]!,
+              color: Colors.purple[500]!,
               postType: 2,
               onTap: () async {
                 if (dmodel.user!.isPremiumUser()) {
@@ -209,7 +210,7 @@ class _ProfileState extends State<Profile> {
             ProfileItem(
               title: "Export Data",
               icon: Icons.download_rounded,
-              color: Colors.purple[300]!,
+              color: Colors.blue[700]!,
               postType: 0,
               onTap: () async {
                 if (dmodel.user!.isPremiumUser()) {
@@ -272,7 +273,7 @@ class _ProfileState extends State<Profile> {
             ProfileItem(
               title: "Contact Support",
               icon: Icons.call_rounded,
-              color: Colors.grey[500]!,
+              color: Colors.blue[700]!,
               postType: 0,
               onTap: () async {
                 await launchSupportPage(context, dmodel.user!, "App Issue");
@@ -281,10 +282,22 @@ class _ProfileState extends State<Profile> {
             ProfileItem(
               title: "Leave Feedback",
               icon: Icons.chat_rounded,
-              color: Colors.amber[700]!,
+              color: Colors.blue[700]!,
               postType: 0,
               onTap: () async {
                 await launchSupportPage(context, dmodel.user!, "Feedback");
+              },
+            ),
+            ProfileItem(
+              title: "View Help Screen",
+              icon: Icons.info_outline_rounded,
+              color: Colors.red[500]!,
+              postType: 0,
+              onTap: () async {
+                cupertinoSheet(
+                  context: context,
+                  builder: (context) => const WelcomeScreen(),
+                );
               },
             ),
           ],
@@ -359,7 +372,7 @@ class _ProfileState extends State<Profile> {
                     onCancel: () {},
                     cancelBolded: true,
                     submitText: "Logout",
-                    submitColor: Colors.red,
+                    submitColor: Colors.red[500],
                     onSubmit: () async {
                       await dmodel.logout(context);
                       setState(() {});

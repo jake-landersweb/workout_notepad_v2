@@ -22,6 +22,7 @@ class _SigninAppleState extends State<SigninApple> {
   Widget build(BuildContext context) {
     return Clickable(
       onTap: () async {
+        WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
         if (_isLoading) {
           return;
         }

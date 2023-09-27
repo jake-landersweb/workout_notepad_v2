@@ -47,7 +47,7 @@ Future<void> launchWorkout(
         body: const Text(
           "You currently have a workout in progress, do you want to cancel that workout and start this one?",
         ),
-        cancelText: "Cancel",
+        cancelText: "No, close",
         cancelBolded: true,
         onCancel: () {
           return;

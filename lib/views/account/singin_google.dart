@@ -36,6 +36,7 @@ class _SigninGoogleState extends State<SigninGoogle> {
   Widget build(BuildContext context) {
     return Clickable(
       onTap: () async {
+        WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
         if (_isLoading) {
           return;
         }

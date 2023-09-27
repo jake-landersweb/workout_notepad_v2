@@ -91,6 +91,7 @@ class _LoginState extends State<Login> {
               fg: AppColors.cell(context),
               isLoading: _isLoading,
               onTap: () async {
+                WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
                 if (_isLoading) {
                   return;
                 }

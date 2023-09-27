@@ -19,8 +19,6 @@ class Subscriptions extends StatefulWidget {
 
 class _SubscriptionsState extends State<Subscriptions> {
   ProductDetails? _premiumDetails;
-  final PageController _pageController = PageController();
-  int _pageIndex = 0;
   bool _isloading = false;
 
   final List<String> _images = [
@@ -145,55 +143,7 @@ class _SubscriptionsState extends State<Subscriptions> {
         ),
         const SizedBox(height: 8),
         // show sliding screenshots of premium features
-        ConstrainedBox(
-          constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.5),
-          child: PageView(
-            controller: _pageController,
-            onPageChanged: (value) {
-              setState(() {
-                _pageIndex = value;
-              });
-            },
-            children: [
-              for (int i = 0; i < 3; i++)
-                SizedBox(
-                  width: double.infinity,
-                  child: Center(
-                    child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(26),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: Image.asset(_images[i]),
-                        )),
-                  ),
-                ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 4),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            for (int i = 0; i < 3; i++)
-              Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: i == _pageIndex
-                        ? AppColors.subtext(context)
-                        : AppColors.light(context),
-                    shape: BoxShape.circle,
-                  ),
-                  height: 7,
-                  width: 7,
-                ),
-              ),
-          ],
-        ),
+        PhoneAssetCarrossel(assets: _images),
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(

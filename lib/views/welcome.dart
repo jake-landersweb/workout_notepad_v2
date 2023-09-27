@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 
-import 'package:workout_notepad_v2/text_themes.dart';
-
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
 
@@ -15,37 +13,35 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   Widget build(BuildContext context) {
     return HeaderBar.sheet(
       title: "Welcome!",
-      trailing: const [CancelButton(title: "Done")],
+      trailing: const [CancelButton(title: "Close")],
+      horizontalSpacing: 0,
       children: [
         const SizedBox(height: 16),
-        Text(
-          "Welcome to Workout Notepad! This is a passion project of mine, I hope you enjoy it as much as I do.",
-          style: ttLabel(context),
+        const PhoneAssetCarrossel(
+          heightFactor: 0.7,
+          assets: [
+            "assets/images/RAW-dashboard.png",
+            "assets/images/RAW-wedit.png",
+            "assets/images/RAW-wlaunch.png",
+            "assets/images/RAW-reps-graph.png",
+          ],
+          titles: [
+            "Welcome to Workout Notepad! This is a passion project of mine, I hope you enjoy it as much as I do.",
+            "Workouts are playlists! The exercises are songs. Compose them dynamically to fit your needs.",
+            "Seamless but customizable input and tagging lets you track workouts the way you want to.",
+            "Lastly, view advanced statistics on your logged exercises to tailor your future workouts better!",
+          ],
         ),
-        const SizedBox(height: 4),
-        Text("  - The Developer (Jake)", style: ttcaption(context)),
-        const SizedBox(height: 16),
-        Text(
-          "The main philosophy behind this app is to give experienced users a seamless transition from pen and paper to an app.",
-          style: ttLabel(context),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          "The focus is to provide a great interface for inputting your exercise set data, then showing you that information in extremely cool ways.",
-          style: ttLabel(context),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          "You can think of workouts as playlists, and your exercises as songs. Compose your workout playlists dynamically as you workout, with default and custom exericses!",
-          style: ttLabel(context),
-        ),
-        const SizedBox(height: 16),
-        WrappedButton(
-          title: "Begin!",
-          type: WrappedButtonType.main,
-          onTap: () {
-            Navigator.of(context).pop();
-          },
+        Padding(
+          padding: const EdgeInsets.all(16),
+          child: WrappedButton(
+            title: "Begin!",
+            center: true,
+            type: WrappedButtonType.main,
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+          ),
         ),
       ],
     );

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 
 /// for conventinely showing an alert that is styled for the current platform.
 Future<void> showAlert({
@@ -67,8 +68,14 @@ Future<void> showAlert({
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text(title,
-                style: const TextStyle(fontWeight: FontWeight.w600)),
+            contentPadding: const EdgeInsets.all(10),
+            actionsPadding: const EdgeInsets.all(10),
+            title: Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+            backgroundColor: AppColors.cell(context),
+            surfaceTintColor: AppColors.cell(context),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [body],
@@ -144,7 +151,7 @@ List<Widget> _materialActions({
       },
       child: Text(cancelText,
           style: TextStyle(
-              color: cancelColor ?? Colors.blue[800],
+              color: cancelColor ?? Theme.of(context).colorScheme.primary,
               fontWeight: cancelBolded ? FontWeight.w600 : null)),
     ),
     // submit button
@@ -156,7 +163,7 @@ List<Widget> _materialActions({
       child: Text(submitText,
           style: TextStyle(
               fontWeight: submitBolded ? FontWeight.w600 : null,
-              color: submitColor ?? Colors.blue[800])),
+              color: submitColor ?? Theme.of(context).colorScheme.primary)),
     ),
   ];
 }

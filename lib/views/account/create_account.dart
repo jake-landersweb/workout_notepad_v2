@@ -82,6 +82,7 @@ class _CreateAccountState extends State<CreateAccount> {
           fg: AppColors.cell(context),
           isLoading: _isLoading,
           onTap: () async {
+            WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
             if (!_isLoading) {
               setState(() {
                 _isLoading = true;

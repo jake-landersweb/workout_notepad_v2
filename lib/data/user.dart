@@ -137,6 +137,7 @@ class User {
           "phone": credential.user!.phoneNumber,
           "imgUrl": credential.user!.photoURL,
           "convertFromAnon": convertFromAnon,
+          "signInMethod": credential.credential?.signInMethod ?? "unknown",
         }),
       );
       if (response.statusCode != 200) {

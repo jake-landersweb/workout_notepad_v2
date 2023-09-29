@@ -246,16 +246,7 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
                       submitBolded: true,
                       submitText: "Finish",
                       onSubmit: () async {
-                        var response = await lmodel.finishWorkout(dmodel);
-                        if (response.isEmpty) {
-                          Navigator.of(context, rootNavigator: true).pop();
-                        } else {
-                          snackbarErr(
-                            context,
-                            response,
-                            duration: const Duration(seconds: 6),
-                          );
-                        }
+                        lmodel.handleFinish(context, dmodel);
                       },
                     );
                     break;

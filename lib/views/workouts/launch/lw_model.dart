@@ -1,14 +1,18 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:sprung/sprung.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/data/collection.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 
 class TimerInstance {
   late String workoutExerciseId;
@@ -102,7 +106,7 @@ class LaunchWorkoutModel extends ChangeNotifier {
   void setReps(int i, int j, int m, int reps) {
     // set this and future metadata
     for (int idx = m; idx < state.exerciseLogs[i][j].metadata.length; idx++) {
-      if (state.exerciseLogs[i][j].metadata[idx].saved) continue;
+      if (state.exerciseLogs[i][j].metadata[idx].saved && idx != m) continue;
       state.exerciseLogs[i][j].metadata[idx].reps = reps;
     }
     notifyListeners();
@@ -111,7 +115,7 @@ class LaunchWorkoutModel extends ChangeNotifier {
   void setWeight(int i, int j, int m, int weight) {
     // set this and future metadata
     for (int idx = m; idx < state.exerciseLogs[i][j].metadata.length; idx++) {
-      if (state.exerciseLogs[i][j].metadata[idx].saved) continue;
+      if (state.exerciseLogs[i][j].metadata[idx].saved && idx != m) continue;
       state.exerciseLogs[i][j].metadata[idx].weight = weight;
     }
     notifyListeners();
@@ -128,7 +132,7 @@ class LaunchWorkoutModel extends ChangeNotifier {
   void setTime(int i, int j, int m, int time) {
     // set this and future metadata
     for (int idx = m; idx < state.exerciseLogs[i][j].metadata.length; idx++) {
-      if (state.exerciseLogs[i][j].metadata[idx].saved) continue;
+      if (state.exerciseLogs[i][j].metadata[idx].saved && idx != m) continue;
       state.exerciseLogs[i][j].metadata[idx].time = time;
     }
     notifyListeners();
@@ -290,8 +294,13 @@ class LaunchWorkoutModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<String> finishWorkout(DataModel dmodel) async {
+  Future<Tuple2<bool, String>> finishWorkout(DataModel dmodel) async {
     try {
+      if (state.exercises.isEmpty) {
+        await dmodel.stopWorkout(isCancel: true);
+        return Tuple2(
+            true, "The exercise was empty, so this workout was not saved.");
+      }
       var db = await DatabaseProvider().database;
       // remove all metadata that is not valid
       for (var i in state.exerciseLogs) {
@@ -362,7 +371,8 @@ class LaunchWorkoutModel extends ChangeNotifier {
           },
           isFatal: true,
         );
-        return "There was an issue saving your workout to the database. Support has been notified.";
+        return Tuple2(false,
+            "There was an issue saving your workout to the database. Support has been notified.");
       }
 
       // create a snapshot of the workout
@@ -380,12 +390,13 @@ class LaunchWorkoutModel extends ChangeNotifier {
               "state": jsonEncode(state.toMap()),
             },
           );
-          return "Your workout was successfully saved, but there was an issue creating a snapshot of the workout. You can safely cancel this workout and not lose progress.";
+          return Tuple2(false,
+              "Your workout was successfully saved, but there was an issue creating a snapshot of the workout. You can safely cancel this workout and not lose progress.");
         }
       }
 
       await dmodel.stopWorkout();
-      return "";
+      return Tuple2(true, "");
     } catch (oops) {
       print(oops);
       NewrelicMobile.instance.recordError(
@@ -396,7 +407,29 @@ class LaunchWorkoutModel extends ChangeNotifier {
           "state": jsonEncode(state.toMap()),
         },
       );
-      return "There was an unknown issue when saving the workout. Support has been notified";
+      return Tuple2(false,
+          "There was an unknown issue when saving the workout. Support has been notified");
+    }
+  }
+
+  Future<void> handleFinish(BuildContext context, DataModel dmodel) async {
+    // send the request
+    var response = await finishWorkout(dmodel);
+    if (response.v1) {
+      if (response.v2.isNotEmpty) {
+        snackbarStatus(
+          context,
+          response.v2,
+          duration: const Duration(seconds: 6),
+        );
+      }
+      Navigator.of(context, rootNavigator: true).pop();
+    } else {
+      snackbarErr(
+        context,
+        response.v2,
+        duration: const Duration(seconds: 6),
+      );
     }
   }
 }

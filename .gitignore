@@ -52,3 +52,5 @@ build.sh
 .vscode
 
 GoogleService-Info.plist
+
+.env

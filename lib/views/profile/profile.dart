@@ -1,6 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:in_app_review/in_app_review.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/root.dart';
@@ -42,6 +45,22 @@ class ProfileItem {
 
 class _ProfileState extends State<Profile> {
   int _loadingIndex = -1;
+  String buildInfo = "";
+
+  @override
+  void initState() {
+    init();
+    super.initState();
+  }
+
+  Future<void> init() async {
+    print("INIT");
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      buildInfo =
+          "Version ${packageInfo.version} Build ${packageInfo.buildNumber}";
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +98,7 @@ class _ProfileState extends State<Profile> {
                   padding: const EdgeInsets.only(left: 8.0),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.amber[700],
+                      color: Colors.amber[500],
                       shape: BoxShape.circle,
                     ),
                     child: Padding(
@@ -122,7 +141,7 @@ class _ProfileState extends State<Profile> {
             child: WrappedButton(
               title: "Workout Notepad Unlocked",
               icon: Icons.star,
-              iconBg: Colors.amber[700],
+              iconBg: Colors.amber[500],
               onTap: () {
                 cupertinoSheet(
                   context: context,
@@ -210,7 +229,7 @@ class _ProfileState extends State<Profile> {
             ProfileItem(
               title: "Export Data",
               icon: Icons.download_rounded,
-              color: Colors.blue[700]!,
+              color: Colors.blue[500]!,
               postType: 0,
               onTap: () async {
                 if (dmodel.user!.isPremiumUser()) {
@@ -273,7 +292,7 @@ class _ProfileState extends State<Profile> {
             ProfileItem(
               title: "Contact Support",
               icon: Icons.call_rounded,
-              color: Colors.blue[700]!,
+              color: Colors.blue[500]!,
               postType: 0,
               onTap: () async {
                 await launchSupportPage(context, dmodel.user!, "App Issue");
@@ -282,10 +301,20 @@ class _ProfileState extends State<Profile> {
             ProfileItem(
               title: "Leave Feedback",
               icon: Icons.chat_rounded,
-              color: Colors.blue[700]!,
+              color: Colors.blue[500]!,
               postType: 0,
               onTap: () async {
                 await launchSupportPage(context, dmodel.user!, "Feedback");
+              },
+            ),
+            ProfileItem(
+              title: "Rate The App!",
+              icon: Icons.star_rounded,
+              color: Colors.amber[500]!,
+              postType: 0,
+              onTap: () async {
+                final InAppReview inAppReview = InAppReview.instance;
+                await inAppReview.openStoreListing(appStoreId: '6453561144');
               },
             ),
             ProfileItem(
@@ -444,6 +473,52 @@ class _ProfileState extends State<Profile> {
               ],
             );
           },
+        ),
+        const SizedBox(height: 32),
+        Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Made with",
+                style: ttcaption(context, fontWeight: FontWeight.w400),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2.0),
+                child: Icon(
+                  Icons.favorite_rounded,
+                  size: 16,
+                  color: Colors.red[400],
+                ),
+              ),
+              Text(
+                "in Portland, OR",
+                style: ttcaption(context, fontWeight: FontWeight.w400),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        Clickable(
+          onTap: () async {
+            if (!await launchUrl(Uri.parse("https://sapphirenw.com"))) {
+              snackbarErr(
+                  context, "There was an issue opening the support page.");
+            }
+          },
+          child: Center(
+            child: Image.asset(
+              "assets/images/sapphire_text_blue_small.png",
+              height: 20,
+            ),
+          ),
+        ),
+        const SizedBox(height: 32),
+        Center(
+          child: Text(
+            buildInfo,
+            style: ttcaption(context, fontWeight: FontWeight.w400),
+          ),
         ),
         const SizedBox(height: 100),
       ],

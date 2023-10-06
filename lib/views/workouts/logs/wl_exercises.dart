@@ -94,7 +94,7 @@ class _WLExercisesState extends State<WLExercises> {
                               ELCell(
                                 log: j,
                                 showDate: false,
-                                backgroundColor: AppColors.cell(context)[50],
+                                // backgroundColor: AppColors.cell(context)[50],
                               ),
                             ],
                           ),

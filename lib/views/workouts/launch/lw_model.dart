@@ -165,16 +165,27 @@ class LaunchWorkoutModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> addExercise(int i, int j, Exercise exercise) async {
+  Future<bool> addExercise(
+      int i, int j, Exercise exercise, Tag? defaultTag) async {
     try {
       // create a workout exercise and log
       var we = WorkoutExercise.fromExercise(state.workout, exercise);
       var el = ExerciseLog.workoutInit(
         workoutLog: state.wl,
         exercise: we,
+        defaultTag: defaultTag,
       );
       we.supersetOrder = j;
       el.supersetOrder = j;
+
+      // remove if a timer exists for this item
+      if (i < state.timerInstances.length) {
+        state.timerInstances.removeWhere(
+          (element) =>
+              element.workoutExerciseId ==
+              state.exercises[i][j].workoutExerciseId,
+        );
+      }
 
       // do operations inside of transaction
       var db = await DatabaseProvider().database;
@@ -329,6 +340,8 @@ class LaunchWorkoutModel extends ChangeNotifier {
                   throw "There was an issue inserting the exercise log";
                 }
 
+                // remove possible metadata objects
+
                 // insert the metadata
                 for (int m = 0;
                     m < state.exerciseLogs[i][j].metadata.length;
@@ -338,13 +351,21 @@ class LaunchWorkoutModel extends ChangeNotifier {
                     state.exerciseLogs[i][j].metadata[m].toMap(),
                     conflictAlgorithm: ConflictAlgorithm.replace,
                   );
+
+                  // remove duplicate tags based on tag id
+                  final seenTags = <String>{};
+                  List<ExerciseLogMetaTag> pruned = [];
+
+                  for (var item in state.exerciseLogs[i][j].metadata[m].tags) {
+                    if (seenTags.add(item.tagId)) {
+                      pruned.add(item);
+                    }
+                  }
                   // insert tags
-                  for (int c = 0;
-                      c < state.exerciseLogs[i][j].metadata[m].tags.length;
-                      c++) {
+                  for (var elmt in pruned) {
                     await txn.insert(
                       "exercise_log_meta_tag",
-                      state.exerciseLogs[i][j].metadata[m].tags[c].toMap(),
+                      elmt.toMap(),
                       conflictAlgorithm: ConflictAlgorithm.replace,
                     );
                   }

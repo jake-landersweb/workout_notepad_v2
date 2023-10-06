@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -40,7 +41,13 @@ class _LWEndState extends State<LWEnd> {
                     context: context,
                     builder: (context) => SelectExercise(
                       onSelect: (e) {
-                        lmodel.addExercise(lmodel.state.exercises.length, 0, e);
+                        lmodel.addExercise(
+                          lmodel.state.exercises.length,
+                          0,
+                          e,
+                          dmodel.tags
+                              .firstWhereOrNull((element) => element.isDefault),
+                        );
                       },
                     ),
                   );

@@ -48,7 +48,6 @@ app.*.map.json
 
 ideas.md
 *.jks
-build.sh
 .vscode
 
 GoogleService-Info.plist

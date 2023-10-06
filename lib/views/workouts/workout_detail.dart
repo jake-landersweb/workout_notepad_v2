@@ -2,8 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
+import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/components/close_button.dart';
 import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
@@ -243,6 +245,54 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
                 cupertinoSheet(
                   context: context,
                   builder: (context) => CloneWorkout(workout: _workout),
+                );
+              },
+              index: 4,
+            ),
+            const SizedBox(width: 16),
+            _actionCell(
+              context: context,
+              icon: Icons.delete_rounded,
+              title: "Delete",
+              description: "Delete this workout",
+              onTap: () {
+                showAlert(
+                  context: context,
+                  title: "Are You Sure?",
+                  body: const Text("This action cannot be reversed."),
+                  cancelText: "Cancel",
+                  cancelBolded: true,
+                  onCancel: () {},
+                  submitText: "Delete",
+                  submitColor: Colors.red,
+                  onSubmit: () async {
+                    try {
+                      var db = await DatabaseProvider().database;
+                      await db.transaction((txn) async {
+                        await txn.rawDelete(
+                          "DELETE FROM workout_exercise WHERE workoutId = ?",
+                          [_workout.workoutId],
+                        );
+                        await txn.rawDelete(
+                          "DELETE FROM workout WHERE workoutId = ?",
+                          [_workout.workoutId],
+                        );
+                      });
+                      await dmodel.fetchData();
+                      Navigator.of(context).pop();
+                      snackbarStatus(
+                        context,
+                        "Successfully deleted the workout",
+                      );
+                    } catch (e) {
+                      print(e);
+                      NewrelicMobile.instance.recordError(
+                        e,
+                        StackTrace.current,
+                        attributes: {"err_code": "workout_delete"},
+                      );
+                    }
+                  },
                 );
               },
               index: 4,

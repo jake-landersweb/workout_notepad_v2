@@ -32,6 +32,10 @@ class _WLEditState extends State<WLEdit> {
   void initState() {
     super.initState();
     _wl = widget.wl.copy();
+    parseTime();
+  }
+
+  void parseTime() {
     var items = formatHHMMSS(_wl.duration, truncate: false).split(":");
     _hours = int.tryParse(items[0]) ?? 0;
     _minutes = int.tryParse(items[1]) ?? 0;
@@ -72,6 +76,7 @@ class _WLEditState extends State<WLEdit> {
             hours: _hours,
             minutes: _minutes,
             seconds: _seconds,
+            showButtons: true,
             onChanged: (val) {
               setState(() {
                 _wl.duration = val;

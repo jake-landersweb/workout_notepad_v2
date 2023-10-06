@@ -61,6 +61,8 @@ class _LWCellState extends State<LWCell> {
                       widget.i,
                       lmodel.state.exercises[widget.i].length,
                       e,
+                      dmodel.tags
+                          .firstWhereOrNull((element) => element.isDefault),
                     );
                   },
                 ),
@@ -88,6 +90,7 @@ class _LWCellState extends State<LWCell> {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxHeight: 300),
               child: comp.CountdownTimer(
+                key: ValueKey(e.workoutExerciseId),
                 duration: e.getDuration(),
                 beginTime: _getTimerInstance(lmodel, j)?.startTime,
                 onStart: () {
@@ -114,6 +117,7 @@ class _LWCellState extends State<LWCell> {
           Padding(
             padding: const EdgeInsets.only(bottom: 16.0),
             child: comp.CountupTimer(
+              key: ValueKey(e.workoutExerciseId),
               goalDuration: e.getDuration(),
               startTime: _getTimerInstance(lmodel, j)?.startTime,
               startOnInit: _getTimerInstance(lmodel, j) != null,
@@ -212,7 +216,13 @@ class _LWCellState extends State<LWCell> {
                           builder: (context) => SelectExercise(
                             title: "Swap Exercise",
                             onSelect: (e) {
-                              lmodel.addExercise(widget.i, j, e);
+                              lmodel.addExercise(
+                                widget.i,
+                                j,
+                                e,
+                                dmodel.tags.firstWhereOrNull(
+                                    (element) => element.isDefault),
+                              );
                             },
                           ),
                         );

@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
@@ -441,6 +442,8 @@ class DataModel extends ChangeNotifier {
 
     // check if there is a need for a snapshot
     var currSnap = await Snapshot.databaseSignature(user!.userId);
+    // ask for review in the background
+    checkForReview(currSnap);
     if (!currSnap.compareMetadata(serverSnapshots.first)) {
       print("snapshot signatures do not match, snapshotting data");
 
@@ -755,6 +758,40 @@ class DataModel extends ChangeNotifier {
     } catch (e) {
       print(e);
       return false;
+    }
+  }
+
+  Future<void> checkForReview(Snapshot databaseSig) async {
+    if (user == null) {
+      return;
+    }
+    if (user!.created == null) {
+      return;
+    }
+    var numWorkouts = databaseSig.metadata
+        .firstWhereOrNull((element) => element.table == "workout");
+    if (numWorkouts == null) {
+      return;
+    }
+    if (numWorkouts.length == 0) {
+      return;
+    }
+
+    var prefs = await SharedPreferences.getInstance();
+
+    if (prefs.containsKey("asked_review")) {
+      return;
+    }
+
+    // check for specific requirements
+    if (user!.created! >
+        DateTime.now().add(Duration(days: 3)).millisecondsSinceEpoch) {
+      // ask for review
+      final InAppReview inAppReview = InAppReview.instance;
+      if (await inAppReview.isAvailable()) {
+        await inAppReview.requestReview();
+        await prefs.setBool("asked_review", true);
+      }
     }
   }
 

@@ -304,7 +304,6 @@ class ExerciseLogMeta {
     exerciseLogMetaId = const Uuid().v4();
     exerciseLogId = m.exerciseLogId;
     exerciseId = m.exerciseId;
-    exerciseLogMetaId = m.exerciseLogMetaId;
     reps = m.reps;
     time = m.time;
     weight = m.weight;

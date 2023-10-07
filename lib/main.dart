@@ -11,6 +11,7 @@ import 'package:workout_notepad_v2/color_schemes.dart';
 import 'package:workout_notepad_v2/env.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/model/search_model.dart';
+import 'package:workout_notepad_v2/views/account/anon_create.dart';
 import 'package:workout_notepad_v2/views/account/root.dart';
 import 'package:workout_notepad_v2/views/home.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -223,7 +224,7 @@ class _IndexState extends State<Index> with WidgetsBindingObserver {
       case LoadStatus.done:
         return const Home();
       case LoadStatus.expired:
-        return const Placeholder();
+        return const AnonCreateAccount();
     }
   }
 }

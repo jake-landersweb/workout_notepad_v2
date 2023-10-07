@@ -45,6 +45,7 @@ class User {
   late SubscriptionType subscriptionType = SubscriptionType.none;
   int? subscriptionEstimatedExpireEpoch;
   int? subscriptionTransactionEpoch;
+  String? anonUserId;
 
   User({
     required this.userId,
@@ -57,6 +58,7 @@ class User {
     required this.expireEpoch,
     required this.created,
     required this.updated,
+    this.anonUserId,
   });
 
   User copy() => User(
@@ -70,6 +72,7 @@ class User {
         expireEpoch: expireEpoch,
         created: created,
         updated: updated,
+        anonUserId: anonUserId,
       );
 
   User.initTest() {
@@ -99,6 +102,7 @@ class User {
         json['subscriptionEstimatedExpireEpoch']?.round();
     subscriptionTransactionEpoch =
         json['subscriptionTransactionEpoch']?.round();
+    anonUserId = json['anonUserId'];
   }
 
   Map<String, dynamic> toMap() {
@@ -114,12 +118,14 @@ class User {
       "subscriptionType": subStatusToJson(subscriptionType),
       "subscriptionEstimatedExpireEpoch": subscriptionEstimatedExpireEpoch,
       "subscriptionTransactionEpoch": subscriptionTransactionEpoch,
+      "anonUserId": anonUserId,
     };
   }
 
   static Future<User?> loginAuth(
     auth.UserCredential credential, {
     bool convertFromAnon = false,
+    String? anonUserId,
   }) async {
     try {
       if (credential.user == null) {
@@ -138,6 +144,7 @@ class User {
           "imgUrl": credential.user!.photoURL,
           "convertFromAnon": convertFromAnon,
           "signInMethod": credential.credential?.signInMethod ?? "unknown",
+          "anonUserId": anonUserId,
         }),
       );
       if (response.statusCode != 200) {

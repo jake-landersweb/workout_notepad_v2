@@ -16,7 +16,7 @@ import 'package:workout_notepad_v2/views/welcome.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/launch_workout.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/lw_time.dart';
 
-enum HomeScreen { logs, collections, overview, exercises, profile }
+enum HomeScreen { logs, overview, exercises, profile }
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -71,8 +71,6 @@ class _HomeState extends State<Home> {
       return Container();
     }
     switch (dmodel.currentTabScreen) {
-      case HomeScreen.collections:
-        return const Placeholder();
       case HomeScreen.overview:
         return const OverviewHome();
       // return const WorkoutsHome();

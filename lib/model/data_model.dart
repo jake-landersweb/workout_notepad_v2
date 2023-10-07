@@ -270,34 +270,45 @@ class DataModel extends ChangeNotifier {
     BuildContext context,
     auth.UserCredential credential,
   ) async {
+    print("LOGIN");
     loadStatus = LoadStatus.init;
     notifyListeners();
     var prefs = await SharedPreferences.getInstance();
-    var u = await User.loginAuth(credential, convertFromAnon: user != null);
+    var u = await User.loginAuth(
+      credential,
+      convertFromAnon: user != null,
+      anonUserId: user?.anonUserId,
+    );
     if (u == null) {
       snackbarErr(context, "There was an issue getting your account.");
+      loadStatus = LoadStatus.noUser;
+      notifyListeners();
       return;
     }
-    if (user != null) {
+    prefs.setString("user", jsonEncode(u.toMap()));
+    if (user == null) {
+      // check if there are snapshots for this user
+      var serverSnapshots = await Snapshot.getList(u.userId);
+      // import the first snapshot as the user's data
+      if (serverSnapshots != null && serverSnapshots.isNotEmpty) {
+        // sorted by first = latest on server
+        await importSnapshot(serverSnapshots.first);
+      }
+    } else {
       await NewrelicMobile.instance.recordCustomEvent(
         "WN_Metric",
         eventName: "anon_convert",
         eventAttributes: {"new_user_id": u.userId, "old_user_id": user!.userId},
       );
-    }
-    prefs.setString("user", jsonEncode(u.toMap()));
-    // check if there are snapshots for this user
-    var serverSnapshots = await Snapshot.getList(u.userId);
-    // import the first snapshot as the user's data
-    if (serverSnapshots != null && serverSnapshots.isNotEmpty) {
-      // sorted by first = latest on server
-      await importSnapshot(serverSnapshots.first);
+      // save on the user
+      u.anonUserId = user!.userId;
+      prefs.setString("user", jsonEncode(u.toMap()));
     }
     await init(u: u);
   }
 
   Future<void> init({User? u}) async {
-    // await importOldData();
+    print("INIT");
     loadStatus = LoadStatus.done;
     notifyListeners();
 
@@ -317,28 +328,20 @@ class DataModel extends ChangeNotifier {
     // get the saved user
     user = User.fromJson(jsonDecode(prefs.getString("user")!));
 
+    print("userId = ${user!.userId}");
+
     // check to make sure the expire epoch is valid
     if (user!.expireEpoch != -1 &&
         user!.expireEpoch < DateTime.now().millisecondsSinceEpoch) {
       // user is not longer valid
       print("[INIT] The anon user has expired");
-      await clearData(ls: LoadStatus.expired);
+      print(user!.expireEpoch);
+      print(DateTime.fromMillisecondsSinceEpoch(user!.expireEpoch));
+      print(DateTime.now());
+      loadStatus = LoadStatus.expired;
+      notifyListeners();
       return;
     }
-
-    // // check if the premium estimated expire epoch is overdue
-    // if (user!.subscriptionEstimatedExpireEpoch != null) {
-    //   print("Checking to make sure user still has a valid subscription ...");
-    //   print("User epoch:   ${user!.subscriptionEstimatedExpireEpoch!}");
-    //   print("Client epoch: ${DateTime.now().millisecondsSinceEpoch}");
-    //   if (user!.subscriptionEstimatedExpireEpoch! <
-    //       DateTime.now().millisecondsSinceEpoch) {
-    //     print("The user's subscription has expired");
-    //     user!.subscriptionType = SubscriptionType.none;
-    //   } else {
-    //     print("User has a valid subscription");
-    //   }
-    // }
 
     print("[INIT] app state is valid. Fetching user in background to ensure");
     await fetchData();
@@ -379,7 +382,8 @@ class DataModel extends ChangeNotifier {
         // check if expired
         if (tmp.expireEpoch < DateTime.now().millisecondsSinceEpoch) {
           print("[GET_USER] This anon user is expired");
-          await clearData(ls: LoadStatus.expired);
+          loadStatus = LoadStatus.expired;
+          notifyListeners();
           return;
         } else {
           print("[GET_USER] Anon user is valid");

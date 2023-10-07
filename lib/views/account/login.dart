@@ -203,6 +203,11 @@ class _LoginState extends State<Login> {
       Navigator.of(context).pop();
       print("logged in");
     } on FirebaseAuthException catch (e) {
+      NewrelicMobile.instance.recordError(
+        e,
+        StackTrace.current,
+        attributes: {"err_code": "email_login"},
+      );
       if (e.code == 'user-not-found' || e.code == 'wrong-password') {
         print('Your username or password was incorrect.');
         snackbarErr(context, "Your username or password was incorrect.");
@@ -211,7 +216,7 @@ class _LoginState extends State<Login> {
         snackbarErr(context, "There was an unknown error: ${e.code}");
       }
     } catch (e) {
-      print(e);
+      print("ERROR UNKNOWN. CODE: $e");
       snackbarErr(context, "There was an unknown error.");
     }
   }

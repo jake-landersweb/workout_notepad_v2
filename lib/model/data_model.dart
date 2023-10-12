@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:workout_notepad_v2/components/alert.dart';
@@ -42,12 +43,19 @@ class DataModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  // global client to use
+  final client = Client(client: http.Client());
+
   User? user;
   User? expiredAnonUser;
   LoadStatus loadStatus = LoadStatus.init;
   Color color = const Color(0xFF418a2f);
   PaymentLoadStatus paymentLoadStatus = PaymentLoadStatus.none;
   bool hasNoData = false;
+  bool showRecommendedUpdate = false;
+  bool hasRecommendedUpdate = false;
+  bool showForcedUpdate = false;
+  String? currentPromoCode;
 
   DataModel() {
     // create the subscription
@@ -76,17 +84,19 @@ class DataModel extends ChangeNotifier {
     List<PurchaseDetails> purchaseDetailsList,
   ) async {
     for (var purchaseDetails in purchaseDetailsList) {
+      print("[IAP] - ${purchaseDetails.productID}");
       await _handlePurchaseRecord(purchaseDetails);
     }
   }
 
   Future<void> _handlePurchaseRecord(PurchaseDetails details) async {
-    if ((details.purchaseID?.isEmpty ?? true) || details.productID.isEmpty) {
-      return;
-    }
     print("[PURCHASE] Handling Purchase with productID: ${details.productID}");
     try {
-      if (details.status == PurchaseStatus.pending) {
+      if ((details.purchaseID?.isEmpty ?? true) || details.productID.isEmpty) {
+        print("There was missing metadata in the purchase request");
+        paymentLoadStatus = PaymentLoadStatus.none;
+        notifyListeners();
+      } else if (details.status == PurchaseStatus.pending) {
         print("[PURCHASE] purchase pending");
         paymentLoadStatus = PaymentLoadStatus.loading;
         notifyListeners();
@@ -101,12 +111,16 @@ class DataModel extends ChangeNotifier {
           notifyListeners();
         } else if (details.status == PurchaseStatus.purchased ||
             details.status == PurchaseStatus.restored) {
+          paymentLoadStatus = PaymentLoadStatus.loading;
+          notifyListeners();
           if (user!.isPremiumUser()) {
             print(
               "[PURCHASE] duplicate event found, completing and ignoring. This event will be handled by the server",
             );
             await InAppPurchase.instance.completePurchase(details);
             print("[PURCHASE] duplicate purchaseId = ${details.purchaseID}");
+            paymentLoadStatus = PaymentLoadStatus.none;
+            notifyListeners();
             // TODO - add this to the user_purchaseId table
             return;
           } else {
@@ -204,8 +218,6 @@ class DataModel extends ChangeNotifier {
   }
 
   Future<bool> _verifyPurchase(PurchaseDetails details) async {
-    var client = Client(client: http.Client());
-
     var response = await client.put(
       "/users/${user!.userId}/verifyPurchase",
       {},
@@ -227,8 +239,6 @@ class DataModel extends ChangeNotifier {
   }
 
   Future<bool> _assignPurchase(PurchaseDetails details) async {
-    var client = Client(client: http.Client());
-
     var response = await client.put(
       "/users/${user!.userId}/assignPurchase",
       {},
@@ -236,6 +246,8 @@ class DataModel extends ChangeNotifier {
         "productId": details.productID,
         "transactionDate": int.parse(details.transactionDate!),
         "purchaseId": details.purchaseID,
+        "promoCode":
+            currentPromoCode, // if set, then record to see what promo codes are used
       }),
     );
     if (response.statusCode == 200) {
@@ -346,6 +358,7 @@ class DataModel extends ChangeNotifier {
     print("[INIT] app state is valid. Fetching user in background to ensure");
     await fetchData();
     getUser(); // run non-asynchonously to allow for no internet
+    checkUpdate(); // get app version asynchronously as well
     loadStatus = LoadStatus.done;
     notifyListeners();
   }
@@ -797,6 +810,59 @@ class DataModel extends ChangeNotifier {
         await prefs.setBool("asked_review", true);
       }
     }
+  }
+
+  Future<void> checkUpdate() async {
+    print("[UPDATE] checking for required update asynchronously ...");
+    var prefs = await SharedPreferences.getInstance();
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String currentVersion = packageInfo.version;
+
+    // send the request
+    var response = await client.fetch("/mobile-metadata/$currentVersion");
+
+    // check for errors
+    if (response.statusCode != 200) {
+      print("[UPDATE] there was an issue checking for the mobile metadata");
+      // ignore for now, but log to NEW RELIC
+      // TODO
+      NewrelicMobile.instance.recordError(
+        "Failed to fetch the mobile metadata",
+        null,
+        attributes: {"err_code": "mobile_metadata"},
+      );
+      return;
+    }
+
+    // parse the body
+    Map<String, dynamic> body = jsonDecode(response.body);
+
+    if (body['status'] != 200) {
+      print("[UPDATE] there was an issue with the request: $body");
+      return;
+    }
+
+    // check rules for showing an update screen
+    if (body['body']['force_update']) {
+      print("[UPDATE] a forced update has been detected");
+      // show non-dismissable model
+      showForcedUpdate = true;
+    } else if (body['body']['recommend_update']) {
+      hasRecommendedUpdate = true;
+      print("[UPDATE] a recommended update has been detected");
+      // check if this version has already been recommended
+      var rec = prefs.get("recommend_version");
+      if ((rec ?? currentVersion) != body['body']['current_version']) {
+        print("[UPDATE] showing the recommended update screen");
+        // show recommend alert
+        showRecommendedUpdate = true;
+
+        // update the stored value so the alert does not fire again
+        prefs.setString("recommend_version", body['body']['current_version']);
+      }
+    }
+    print("[UPDATE] successfully checked");
+    notifyListeners();
   }
 
   Future<bool> importTests() async {

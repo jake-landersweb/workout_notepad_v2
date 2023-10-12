@@ -9,6 +9,7 @@ import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/profile/promo_code.dart';
 
 class Subscriptions extends StatefulWidget {
   const Subscriptions({super.key});
@@ -20,6 +21,8 @@ class Subscriptions extends StatefulWidget {
 class _SubscriptionsState extends State<Subscriptions> {
   ProductDetails? _premiumDetails;
   bool _isloading = false;
+  String _promoCode = "";
+  bool _isLoadingPromoCode = false;
 
   final List<String> _images = [
     "assets/images/RAW-categories.png",
@@ -35,6 +38,8 @@ class _SubscriptionsState extends State<Subscriptions> {
 
   @override
   Widget build(BuildContext context) {
+    var dmodel = Provider.of<DataModel>(context);
+
     return Stack(
       alignment: Alignment.bottomCenter,
       children: [
@@ -42,19 +47,73 @@ class _SubscriptionsState extends State<Subscriptions> {
           title: "",
           horizontalSpacing: 0,
           trailing: const [CloseButton2()],
+          leading: [
+            Clickable(
+              onTap: () {
+                cupertinoSheet(
+                  context: context,
+                  builder: (context) => PromoCodeSearch(
+                    onFound: (details) {
+                      snackbarStatus(
+                        context,
+                        "Success! Reduced price from ${_premiumDetails!.price} to ${details.price}",
+                        bg: Colors.green[300],
+                      );
+                      setState(() {
+                        _premiumDetails = details;
+                      });
+                    },
+                  ),
+                );
+              },
+              child: Text(
+                "Promo Code?",
+                style: ttBody(
+                  context,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+              ),
+            ),
+          ],
           children: [
             _content(context),
             const SizedBox(height: 100),
           ],
         ),
-        _overlay(context),
+        _overlay(context, dmodel),
+        if (_isloading || dmodel.paymentLoadStatus == PaymentLoadStatus.loading)
+          GestureDetector(
+            child: Container(
+              color: Colors.black.withOpacity(0.1),
+              child: Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: LoadingIndicator(),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }
 
-  Widget _overlay(BuildContext context) {
-    var dmodel = Provider.of<DataModel>(context);
-
+  Widget _overlay(BuildContext context, DataModel dmodel) {
     return Material(
       color: AppColors.cell(context)[100],
       borderRadius: const BorderRadius.only(
@@ -85,7 +144,7 @@ class _SubscriptionsState extends State<Subscriptions> {
                 ),
               const SizedBox(height: 16),
               WrappedButton(
-                title: "Purchase",
+                title: "One Time Purchase",
                 bg: Colors.amber[600],
                 center: true,
                 rowAxisSize: MainAxisSize.max,

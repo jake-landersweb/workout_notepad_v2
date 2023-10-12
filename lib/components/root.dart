@@ -37,3 +37,4 @@ export 'wrapped_button.dart';
 export 'loading_wrapper.dart';
 export 'video_player.dart';
 export 'asset_carrossel.dart';
+export 'section_content.dart';

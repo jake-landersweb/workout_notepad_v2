@@ -15,18 +15,10 @@ enum SubscriptionType { none, wn_unlocked }
 SubscriptionType subStatusFromJson(String? status) {
   switch (status) {
     case "wn_unlocked":
+    case "wn_unlocked_promo":
       return SubscriptionType.wn_unlocked;
     default:
       return SubscriptionType.none;
-  }
-}
-
-String subStatusToJson(SubscriptionType status) {
-  switch (status) {
-    case SubscriptionType.wn_unlocked:
-      return "wn_unlocked";
-    default:
-      return "none";
   }
 }
 
@@ -115,7 +107,6 @@ class User {
       "sync": sync,
       "isAnon": isAnon,
       "expireEpoch": expireEpoch,
-      "subscriptionType": subStatusToJson(subscriptionType),
       "subscriptionEstimatedExpireEpoch": subscriptionEstimatedExpireEpoch,
       "subscriptionTransactionEpoch": subscriptionTransactionEpoch,
       "anonUserId": anonUserId,

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:workout_notepad_v2/data/root.dart';
@@ -46,4 +48,18 @@ Future<void> launchSupportPage(
       "https://workoutnotepad.co/support?email=${user.email}&userId=${user.userId}&type=$type"))) {
     snackbarErr(context, "There was an issue opening the support page.");
   }
+}
+
+Future<void> launchAppStore() async {
+  // launch app store
+  late Uri uri;
+  if (Platform.isIOS) {
+    uri = Uri.parse("https://apps.apple.com/app/workout-notepad/id6453561144");
+  } else if (Platform.isAndroid) {
+    uri = Uri.parse(
+        "https://play.google.com/store/apps/details?id=com.landersweb.workout_notepad_v2");
+  } else {
+    uri = Uri.parse("https://workoutnotepad.co");
+  }
+  launchUrl(uri, mode: LaunchMode.externalApplication);
 }

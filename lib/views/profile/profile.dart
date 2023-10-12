@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +20,7 @@ import 'package:workout_notepad_v2/views/profile/configure_tags.dart';
 import 'dart:math' as math;
 
 import 'package:workout_notepad_v2/views/profile/manage_data.dart';
+import 'package:workout_notepad_v2/views/profile/manage_purchases.dart';
 import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
 import 'package:workout_notepad_v2/views/welcome.dart';
 
@@ -78,39 +82,67 @@ class _ProfileState extends State<Profile> {
           padding: const EdgeInsets.only(bottom: 16.0),
           child: dmodel.user!.avatar(context, size: 125),
         ),
-        Center(
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                dmodel.user!.getName(),
-                style: ttSubTitle(context),
-                textAlign: TextAlign.center,
+        Clickable(
+          onTap: () {
+            showFloatingSheet(
+              context: context,
+              builder: (context) => FloatingSheet(
+                title: "",
+                child: Column(
+                  children: [
+                    Section(
+                      "Name",
+                      headerPadding: const EdgeInsets.fromLTRB(0, 8, 0, 4),
+                      child: Text(
+                        dmodel.user!.getName(),
+                      ),
+                    ),
+                    Section(
+                      "userId",
+                      headerPadding: const EdgeInsets.fromLTRB(0, 8, 0, 4),
+                      child: SelectableText(
+                        dmodel.user!.userId,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              if (dmodel.user!.isAnon)
+            );
+          },
+          child: Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
                 Text(
-                  "Anonymous User",
+                  dmodel.user!.getName(),
                   style: ttSubTitle(context),
                   textAlign: TextAlign.center,
                 ),
-              if (dmodel.user!.subscriptionType != SubscriptionType.none)
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.amber[500],
-                      shape: BoxShape.circle,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: Icon(
-                        Icons.star_rounded,
-                        color: AppColors.cell(context),
+                if (dmodel.user!.isAnon)
+                  Text(
+                    "Anonymous User",
+                    style: ttSubTitle(context),
+                    textAlign: TextAlign.center,
+                  ),
+                if (dmodel.user!.subscriptionType != SubscriptionType.none)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.amber[500],
+                        shape: BoxShape.circle,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(2.0),
+                        child: Icon(
+                          Icons.star_rounded,
+                          color: AppColors.cell(context),
+                        ),
                       ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
         if (dmodel.user!.isPremiumUser() && dmodel.snapshots.isNotEmpty)
@@ -120,10 +152,10 @@ class _ProfileState extends State<Profile> {
               style: ttcaption(context),
             ),
           ),
-        const SizedBox(height: 32),
+        const SizedBox(height: 16),
         if (dmodel.user!.isAnon)
           Padding(
-            padding: const EdgeInsets.only(bottom: 16.0),
+            padding: const EdgeInsets.only(top: 16.0),
             child: WrappedButton(
               title: "Create Account",
               icon: Icons.person_outline_outlined,
@@ -137,7 +169,7 @@ class _ProfileState extends State<Profile> {
           )
         else if (dmodel.user!.subscriptionType == SubscriptionType.none)
           Padding(
-            padding: const EdgeInsets.only(bottom: 16.0),
+            padding: const EdgeInsets.only(top: 16.0),
             child: WrappedButton(
               title: "Workout Notepad Unlocked",
               icon: Icons.star,
@@ -147,6 +179,18 @@ class _ProfileState extends State<Profile> {
                   context: context,
                   builder: (context) => const Subscriptions(),
                 );
+              },
+            ),
+          ),
+        if (dmodel.hasRecommendedUpdate)
+          Padding(
+            padding: const EdgeInsets.only(top: 16.0),
+            child: WrappedButton(
+              title: "Update Available",
+              icon: Icons.update_rounded,
+              iconBg: Colors.teal[300],
+              onTap: () async {
+                await launchAppStore();
               },
             ),
           ),
@@ -160,16 +204,15 @@ class _ProfileState extends State<Profile> {
         //       onTap: () {},
         //     ),
         //   ),
-        ContainedList<ProfileItem>(
-          leadingPadding: 0,
-          trailingPadding: 0,
-          childPadding: EdgeInsets.zero,
-          children: [
-            ProfileItem(
+        StyledSection(
+          title: "",
+          items: [
+            StyledSectionItem(
               title: "Configure Categories",
               icon: Icons.category_rounded,
               color: Colors.green[500]!,
-              postType: 1,
+              post: StyledSectionItemPost.model,
+              isLocked: dmodel.user!.subscriptionType == SubscriptionType.none,
               onTap: () async {
                 if (dmodel.user!.isPremiumUser()) {
                   cupertinoSheet(
@@ -186,11 +229,12 @@ class _ProfileState extends State<Profile> {
                 }
               },
             ),
-            ProfileItem(
+            StyledSectionItem(
               title: "Configure tags",
               icon: Icons.tag_rounded,
               color: Colors.green[500]!,
-              postType: 1,
+              post: StyledSectionItemPost.model,
+              isLocked: dmodel.user!.subscriptionType == SubscriptionType.none,
               onTap: () async {
                 if (dmodel.user!.isPremiumUser()) {
                   cupertinoSheet(
@@ -207,11 +251,12 @@ class _ProfileState extends State<Profile> {
                 }
               },
             ),
-            ProfileItem(
+            StyledSectionItem(
               title: "Manage Syncs",
               icon: Icons.sync_rounded,
               color: Colors.purple[500]!,
-              postType: 2,
+              post: StyledSectionItemPost.view,
+              isLocked: dmodel.user!.subscriptionType == SubscriptionType.none,
               onTap: () async {
                 if (dmodel.user!.isPremiumUser()) {
                   navigate(
@@ -226,102 +271,73 @@ class _ProfileState extends State<Profile> {
                 }
               },
             ),
-            ProfileItem(
+          ],
+        ),
+        StyledSection(
+          title: "",
+          items: [
+            StyledSectionItem(
+              title: "Manage Purchases",
+              icon: Icons.local_mall_rounded,
+              color: Colors.black,
+              post: StyledSectionItemPost.view,
+              isLocked: false,
+              onTap: () async {
+                // var iap = InAppPurchase.instance;
+                // await iap.restorePurchases();
+                navigate(
+                  context: context,
+                  builder: (context) => ManagePurchases(user: dmodel.user!),
+                );
+              },
+            ),
+            StyledSectionItem(
               title: "Export Data",
               icon: Icons.download_rounded,
               color: Colors.blue[500]!,
-              postType: 0,
+              post: StyledSectionItemPost.view,
+              isLocked: false,
               onTap: () async {
-                if (dmodel.user!.isPremiumUser()) {
-                  await launchSupportPage(context, dmodel.user!, "Data Export");
-                } else {
-                  cupertinoSheet(
-                    context: context,
-                    builder: (context) => const Subscriptions(),
-                  );
-                }
+                await launchSupportPage(context, dmodel.user!, "Data Export");
               },
             ),
-          ],
-          onChildTap: (context, item, index) async {
-            setState(() {
-              _loadingIndex = index;
-            });
-            await item.onTap();
-            setState(() {
-              _loadingIndex = -1;
-            });
-          },
-          childBuilder: (context, item, index) {
-            return Row(
-              children: [
-                Expanded(
-                  child: WrappedButton(
-                    title: item.title,
-                    icon: item.icon,
-                    iconBg: item.color,
-                    isLoading: _loadingIndex == index,
-                  ),
-                ),
-                if (item.postType > 0)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: dmodel.user!.isPremiumUser()
-                        ? Transform.rotate(
-                            angle: item.postType == 1 ? math.pi / -2 : 0,
-                            child: Icon(
-                              Icons.chevron_right_rounded,
-                              color: AppColors.subtext(context),
-                            ),
-                          )
-                        : Icon(
-                            Icons.lock_rounded,
-                            color: AppColors.subtext(context),
-                          ),
-                  ),
-              ],
-            );
-          },
-        ),
-        const SizedBox(height: 16),
-        ContainedList<ProfileItem>(
-          leadingPadding: 0,
-          trailingPadding: 0,
-          childPadding: EdgeInsets.zero,
-          children: [
-            ProfileItem(
+            StyledSectionItem(
               title: "Contact Support",
               icon: Icons.call_rounded,
               color: Colors.blue[500]!,
-              postType: 0,
+              post: StyledSectionItemPost.view,
+              isLocked: false,
               onTap: () async {
                 await launchSupportPage(context, dmodel.user!, "App Issue");
               },
             ),
-            ProfileItem(
+            StyledSectionItem(
               title: "Leave Feedback",
               icon: Icons.chat_rounded,
               color: Colors.blue[500]!,
-              postType: 0,
+              post: StyledSectionItemPost.view,
+              isLocked: false,
               onTap: () async {
                 await launchSupportPage(context, dmodel.user!, "Feedback");
               },
             ),
-            ProfileItem(
+            StyledSectionItem(
               title: "Rate The App!",
               icon: Icons.star_rounded,
               color: Colors.amber[500]!,
-              postType: 0,
+              post: StyledSectionItemPost.none,
+              isLocked: false,
               onTap: () async {
                 final InAppReview inAppReview = InAppReview.instance;
-                await inAppReview.openStoreListing(appStoreId: '6453561144');
+                inAppReview.openStoreListing(appStoreId: '6453561144');
               },
             ),
-            ProfileItem(
+            StyledSectionItem(
               title: "View Help Screen",
               icon: Icons.info_outline_rounded,
               color: Colors.red[500]!,
-              postType: 0,
+              post: StyledSectionItemPost.model,
+              isLocked: false,
               onTap: () async {
                 cupertinoSheet(
                   context: context,
@@ -330,51 +346,16 @@ class _ProfileState extends State<Profile> {
               },
             ),
           ],
-          onChildTap: (context, item, index) async {
-            setState(() {
-              _loadingIndex = index + 100;
-            });
-            await item.onTap();
-            setState(() {
-              _loadingIndex = -1;
-            });
-          },
-          childBuilder: (context, item, index) {
-            return Row(
-              children: [
-                Expanded(
-                  child: WrappedButton(
-                    title: item.title,
-                    icon: item.icon,
-                    iconBg: item.color,
-                    isLoading: _loadingIndex == index,
-                  ),
-                ),
-                if (item.postType > 0)
-                  Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: Transform.rotate(
-                        angle: item.postType == 1 ? math.pi / -2 : 0,
-                        child: Icon(
-                          Icons.chevron_right_rounded,
-                          color: AppColors.subtext(context),
-                        ),
-                      )),
-              ],
-            );
-          },
         ),
-        const SizedBox(height: 32),
-        ContainedList<ProfileItem>(
-          leadingPadding: 0,
-          trailingPadding: 0,
-          childPadding: EdgeInsets.zero,
-          children: [
-            ProfileItem(
+        StyledSection(
+          title: "",
+          items: [
+            StyledSectionItem(
               title: "Logout",
               icon: Icons.logout_rounded,
               color: Colors.grey[500]!,
-              postType: 0,
+              post: StyledSectionItemPost.none,
+              isLocked: false,
               onTap: () async {
                 if (dmodel.user!.isAnon) {
                   await showAlert(
@@ -410,11 +391,12 @@ class _ProfileState extends State<Profile> {
                 }
               },
             ),
-            ProfileItem(
+            StyledSectionItem(
               title: "Delete Account",
               icon: Icons.delete_forever_rounded,
               color: Colors.red[400]!,
-              postType: 0,
+              post: StyledSectionItemPost.none,
+              isLocked: false,
               onTap: () async {
                 await showAlert(
                   context: context,
@@ -440,39 +422,6 @@ class _ProfileState extends State<Profile> {
               },
             ),
           ],
-          onChildTap: (context, item, index) async {
-            setState(() {
-              _loadingIndex = index + 100;
-            });
-            await item.onTap();
-            setState(() {
-              _loadingIndex = -1;
-            });
-          },
-          childBuilder: (context, item, index) {
-            return Row(
-              children: [
-                Expanded(
-                  child: WrappedButton(
-                    title: item.title,
-                    icon: item.icon,
-                    iconBg: item.color,
-                    isLoading: _loadingIndex == index + 100,
-                  ),
-                ),
-                if (item.postType > 0)
-                  Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: Transform.rotate(
-                        angle: item.postType == 1 ? math.pi / -2 : 0,
-                        child: Icon(
-                          Icons.chevron_right_rounded,
-                          color: AppColors.subtext(context),
-                        ),
-                      )),
-              ],
-            );
-          },
         ),
         const SizedBox(height: 32),
         Center(

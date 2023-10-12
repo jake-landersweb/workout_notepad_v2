@@ -1,16 +1,23 @@
+// ignore_for_file: avoid_print, library_private_types_in_public_api
+
 import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:newrelic_mobile/config.dart';
 import 'package:newrelic_mobile/newrelic_navigation_observer.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/color_schemes.dart';
+import 'package:workout_notepad_v2/components/alert.dart';
+import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/env.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/model/search_model.dart';
+import 'package:workout_notepad_v2/text_themes.dart';
+import 'package:workout_notepad_v2/utils/functions.dart';
 import 'package:workout_notepad_v2/views/account/anon_create.dart';
 import 'package:workout_notepad_v2/views/account/root.dart';
 import 'package:workout_notepad_v2/views/home.dart';
@@ -170,6 +177,19 @@ class Index extends StatefulWidget {
 
 class _IndexState extends State<Index> with WidgetsBindingObserver {
   DateTime? _closedTime;
+  bool showedUpdate = false;
+
+  @override
+  initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -180,11 +200,14 @@ class _IndexState extends State<Index> with WidgetsBindingObserver {
         DataModel dmodel = Provider.of<DataModel>(context, listen: false);
 
         // check if enough time has passed
-        if (_closedTime
-                ?.isBefore(DateTime.now().subtract(const Duration(hours: 1))) ??
+        if ((_closedTime?.isBefore(
+                DateTime.now().subtract(const Duration(minutes: 30)))) ??
             false) {
-          // fetch the user information
-          dmodel.init();
+          // do not fuck with workout states
+          if (dmodel.workoutState == null) {
+            // fetch the user information
+            dmodel.getUser();
+          }
         }
 
         break;
@@ -206,16 +229,74 @@ class _IndexState extends State<Index> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    var dmodel = Provider.of<DataModel>(context);
+
+    if (!showedUpdate) {
+      if (dmodel.showForcedUpdate) {
+        return Scaffold(
+          body: HeaderBar(
+            title: "Required Update",
+            isLarge: true,
+            children: [
+              const SizedBox(height: 16),
+              Text(
+                "There is a required update for Workout Notepad.",
+                style: ttLabel(context),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                "We appologize for any inconveniences this may cause.",
+                style: ttcaption(context),
+              ),
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height / 2,
+                ),
+                child: SvgPicture.asset(
+                  "assets/svg/workout.svg",
+                  semanticsLabel: 'Workout Logo',
+                ),
+              ),
+              WrappedButton(
+                title: "Update now",
+                type: WrappedButtonType.main,
+                center: true,
+                onTap: () {
+                  launchAppStore();
+                },
+              ),
+            ],
+          ),
+        );
+      } else if (dmodel.showRecommendedUpdate) {
+        showedUpdate = true;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          showAlert(
+            context: context,
+            title: "Update Available",
+            body: const Text(
+                "There is a recommended update available for Workout Notepad. Would you like to update?"),
+            cancelText: "Not Now",
+            onCancel: () {},
+            submitBolded: true,
+            submitText: "Update",
+            onSubmit: () async {
+              launchAppStore();
+            },
+          );
+        });
+      }
+    }
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Center(
-        child: _body(context),
+        child: _body(context, dmodel),
       ),
     );
   }
 
-  Widget _body(BuildContext context) {
-    var dmodel = Provider.of<DataModel>(context);
+  Widget _body(BuildContext context, DataModel dmodel) {
     switch (dmodel.loadStatus) {
       case LoadStatus.init:
         return const CircularProgressIndicator();

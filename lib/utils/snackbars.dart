@@ -19,6 +19,7 @@ void snackbarStatus(
   BuildContext context,
   String message, {
   Duration? duration,
+  Color? bg,
 }) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
@@ -29,7 +30,7 @@ void snackbarStatus(
           color: AppColors.text(context),
         ),
       ),
-      backgroundColor: AppColors.cell(context)[100],
+      backgroundColor: bg ?? AppColors.cell(context)[100],
     ),
   );
 }

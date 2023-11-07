@@ -102,7 +102,7 @@ class _LogsHomeState extends State<LogsHome> {
               ),
             ],
             onChildTap: (context, item, index) {
-              if (dmodel.user!.isPremiumUser()) {
+              if (dmodel.hasValidSubscription()) {
                 navigate(context: context, builder: (context) => item.v4);
               } else {
                 cupertinoSheet(
@@ -122,7 +122,7 @@ class _LogsHomeState extends State<LogsHome> {
                     ),
                   ),
                   Icon(
-                    dmodel.user!.isPremiumUser()
+                    dmodel.hasValidSubscription()
                         ? Icons.chevron_right_rounded
                         : Icons.lock_rounded,
                     color: AppColors.subtext(context),
@@ -140,7 +140,7 @@ class _LogsHomeState extends State<LogsHome> {
             childPadding: const EdgeInsets.only(left: 16),
             children: dmodel.categories,
             onChildTap: (context, item, index) {
-              if (dmodel.user!.isPremiumUser()) {
+              if (dmodel.hasValidSubscription()) {
                 navigate(
                   context: context,
                   builder: (context) => LogsCategoryIndividual(category: item),
@@ -177,7 +177,7 @@ class _LogsHomeState extends State<LogsHome> {
                       ),
                     ),
                     Icon(
-                      dmodel.user!.isPremiumUser()
+                      dmodel.hasValidSubscription()
                           ? Icons.chevron_right_rounded
                           : Icons.lock_rounded,
                       color: AppColors.subtext(context),

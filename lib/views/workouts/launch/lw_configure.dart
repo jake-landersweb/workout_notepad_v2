@@ -200,7 +200,9 @@ class _LWConfigureState extends State<LWConfigure> {
           for (int j = 0; j < _items[i].v2.length; j++) {
             // modify the items
             _items[i].v2[j].exerciseOrder = i;
+            _items[i].v2[j].supersetOrder = j;
             _items[i].v3[j].exerciseOrder = i;
+            _items[i].v3[j].supersetOrder = j;
             r = await txn.insert("workout_exercise", _items[i].v2[j].toMap());
             if (r == 0) {
               throw "There was an issue re-adding the exercises when re-ordering";

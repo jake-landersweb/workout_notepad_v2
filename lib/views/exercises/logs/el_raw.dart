@@ -29,7 +29,7 @@ class ELRaw extends StatelessWidget {
             );
           },
         ),
-        if (dmodel.user!.subscriptionType == SubscriptionType.none)
+        if (!dmodel.hasValidSubscription())
           Column(
             children: [
               Text(

@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:sprung/sprung.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/data/collection.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/root.dart';
@@ -331,6 +330,10 @@ class LaunchWorkoutModel extends ChangeNotifier {
             for (int j = 0; j < state.exerciseLogs[i].length; j++) {
               // check for valid metadata
               if (state.exerciseLogs[i][j].metadata.isNotEmpty) {
+                // ensure order integrity
+                state.exerciseLogs[i][j].exerciseOrder = i;
+                state.exerciseLogs[i][j].supersetOrder = j;
+
                 // insert exercise
                 int r = await txn.insert(
                   "exercise_log",
@@ -397,7 +400,7 @@ class LaunchWorkoutModel extends ChangeNotifier {
       }
 
       // create a snapshot of the workout
-      if (dmodel.user!.subscriptionType != SubscriptionType.none) {
+      if (dmodel.hasValidSubscription()) {
         try {
           var snp = await state.workout.toSnapshot(db);
           await db.insert("workout_snapshot", snp.toMap());

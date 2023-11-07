@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:workout_notepad_v2/model/client.dart';
 import 'package:http/http.dart' as http;
 import 'package:workout_notepad_v2/model/root.dart';
@@ -135,7 +136,11 @@ class Snapshot {
       }
       return snps;
     } catch (e) {
-      print(e);
+      NewrelicMobile.instance.recordError(
+        e,
+        StackTrace.current,
+        attributes: {"err_code": "snapshot_create"},
+      );
       return null;
     }
   }

@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
@@ -10,6 +8,7 @@ import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/profile/promo_code.dart';
+import 'package:workout_notepad_v2/views/profile/subscriptions2.dart';
 
 class Subscriptions extends StatefulWidget {
   const Subscriptions({super.key});
@@ -19,10 +18,7 @@ class Subscriptions extends StatefulWidget {
 }
 
 class _SubscriptionsState extends State<Subscriptions> {
-  ProductDetails? _premiumDetails;
-  bool _isloading = false;
-  String _promoCode = "";
-  bool _isLoadingPromoCode = false;
+  ProductDetails? _details;
 
   final List<String> _images = [
     "assets/images/RAW-categories.png",
@@ -47,68 +43,12 @@ class _SubscriptionsState extends State<Subscriptions> {
           title: "",
           horizontalSpacing: 0,
           trailing: const [CloseButton2()],
-          leading: [
-            Clickable(
-              onTap: () {
-                cupertinoSheet(
-                  context: context,
-                  builder: (context) => PromoCodeSearch(
-                    onFound: (details) {
-                      snackbarStatus(
-                        context,
-                        "Success! Reduced price from ${_premiumDetails!.price} to ${details.price}",
-                        bg: Colors.green[300],
-                      );
-                      setState(() {
-                        _premiumDetails = details;
-                      });
-                    },
-                  ),
-                );
-              },
-              child: Text(
-                "Promo Code?",
-                style: ttBody(
-                  context,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
-            ),
-          ],
           children: [
             _content(context),
             const SizedBox(height: 100),
           ],
         ),
         _overlay(context, dmodel),
-        if (_isloading || dmodel.paymentLoadStatus == PaymentLoadStatus.loading)
-          GestureDetector(
-            child: Container(
-              color: Colors.black.withOpacity(0.1),
-              child: Center(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: LoadingIndicator(),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
       ],
     );
   }
@@ -132,11 +72,11 @@ class _SubscriptionsState extends State<Subscriptions> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (_premiumDetails == null)
+              if (_details == null)
                 LoadingIndicator(color: dmodel.color)
               else
                 Text(
-                  _premiumDetails!.price,
+                  "${_details!.price}/month",
                   style: ttBody(
                     context,
                     fontWeight: FontWeight.bold,
@@ -144,27 +84,13 @@ class _SubscriptionsState extends State<Subscriptions> {
                 ),
               const SizedBox(height: 16),
               WrappedButton(
-                title: "One Time Purchase",
+                title: "Subscribe",
                 bg: Colors.amber[600],
                 center: true,
                 rowAxisSize: MainAxisSize.max,
-                isLoading: _isloading ||
+                isLoading:
                     dmodel.paymentLoadStatus == PaymentLoadStatus.loading,
-                onTap: () async {
-                  print("Attemting to purchase premium");
-                  setState(() {
-                    _isloading = true;
-                  });
-                  var response = await _purchase(context);
-                  if (!response) {
-                    print("There was an error making the purchase");
-                    snackbarErr(
-                        context, "There was an error making the purchase");
-                  }
-                  setState(() {
-                    _isloading = true;
-                  });
-                },
+                onTap: () async {},
               ),
             ],
           ),
@@ -190,7 +116,7 @@ class _SubscriptionsState extends State<Subscriptions> {
                 ),
               ),
               Text(
-                "Workout Notepad Unlocked",
+                "Workout Notepad Premium",
                 style: ttLabel(
                   context,
                   fontWeight: FontWeight.w800,
@@ -310,41 +236,25 @@ class _SubscriptionsState extends State<Subscriptions> {
   }
 
   Future<void> _fetchSubscriptions() async {
-    const Set<String> kIds = <String>{'wn_unlocked'};
+    const Set<String> kIds = <String>{'wn_premium'};
     final ProductDetailsResponse response =
         await InAppPurchase.instance.queryProductDetails(kIds);
+
     if (response.error != null) {
-      NewrelicMobile.instance.recordError(
-        "the query to google/apple failed when querying purchases",
-        null,
-        attributes: {"err_code": "purchase_query_fail"},
-      );
-      snackbarErr(context, "There was an unknown error");
-      Navigator.of(context).pop();
+      print(response.error);
       return;
     }
+
     if (response.productDetails.isEmpty) {
-      NewrelicMobile.instance.recordError(
-        "the product does not exist",
-        null,
-        attributes: {"err_code": "purchase_null"},
-      );
-      snackbarErr(context, "This product does not exist");
-      Navigator.of(context).pop();
+      print("No products found");
       return;
     }
+
+    print("found product");
+
     setState(() {
-      _premiumDetails = response.productDetails[0];
+      _details = response.productDetails[0];
     });
-  }
-
-  Future<bool> _purchase(BuildContext context) async {
-    final PurchaseParam purchaseParam = PurchaseParam(
-      productDetails: _premiumDetails!,
-    );
-
-    return await InAppPurchase.instance
-        .buyNonConsumable(purchaseParam: purchaseParam);
   }
 }
 

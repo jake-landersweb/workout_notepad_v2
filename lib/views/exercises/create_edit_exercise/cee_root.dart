@@ -230,7 +230,7 @@ class _CEERootState extends State<CEERoot> {
         spacing: 8,
         runSpacing: 8,
         children: [
-          if (dmodel.user!.subscriptionType != SubscriptionType.none)
+          if (dmodel.hasValidSubscription())
             Clickable(
               onTap: () {
                 comp.cupertinoSheet(

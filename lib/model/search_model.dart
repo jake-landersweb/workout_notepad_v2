@@ -99,6 +99,7 @@ class SearchModel extends ChangeNotifier {
               DynamicGridView(
                 crossAxisCount: 2,
                 shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: ExerciseType.values.length,
                 builder: (context, i) {
                   var t = ExerciseType.values[i];

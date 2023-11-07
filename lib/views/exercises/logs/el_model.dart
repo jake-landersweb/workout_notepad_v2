@@ -25,16 +25,16 @@ class ELModel extends ChangeNotifier {
   final List<num> _allReps = [];
   double minReps = double.infinity;
 
-  ELModel({required this.exercise, required User user}) {
+  ELModel({required this.exercise, required bool premiumUser}) {
     pageController = PageController();
-    init(user: user);
+    init(premiumUser: premiumUser);
   }
 
-  Future<void> init({required User user}) async {
+  Future<void> init({required bool premiumUser}) async {
     isLoading = true;
     notifyListeners();
     // get logs
-    logs = await exercise.getLogs(exercise.exerciseId, user);
+    logs = await exercise.getLogs(exercise.exerciseId, premiumUser);
     // create dashboard data from these logs
     await compose();
     isLoading = false;

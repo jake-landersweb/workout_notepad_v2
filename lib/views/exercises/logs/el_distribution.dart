@@ -173,8 +173,7 @@ class _ELDistributionState extends State<ELDistribution> {
               ),
             ),
           ),
-          if (dmodel.user!.subscriptionType == SubscriptionType.none)
-            const ELPremiumOverlay(),
+          if (!dmodel.hasValidSubscription()) const ELPremiumOverlay(),
         ],
       );
     }

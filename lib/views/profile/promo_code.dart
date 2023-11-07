@@ -8,11 +8,8 @@ import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 
 import 'package:workout_notepad_v2/components/root.dart';
-import 'package:workout_notepad_v2/model/client.dart';
 import 'package:workout_notepad_v2/model/data_model.dart';
-import 'package:workout_notepad_v2/utils/color.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import "package:http/http.dart" as http;
 
 class PromoCodeSearch extends StatefulWidget {
   const PromoCodeSearch({

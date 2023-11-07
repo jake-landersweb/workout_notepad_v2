@@ -1,8 +1,7 @@
-import 'dart:io';
+// ignore_for_file: unused_field
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
@@ -17,11 +16,11 @@ import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/account/root.dart';
 import 'package:workout_notepad_v2/views/profile/config_categories.dart';
 import 'package:workout_notepad_v2/views/profile/configure_tags.dart';
-import 'dart:math' as math;
 
 import 'package:workout_notepad_v2/views/profile/manage_data.dart';
 import 'package:workout_notepad_v2/views/profile/manage_purchases.dart';
 import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
+import 'package:workout_notepad_v2/views/profile/subscriptions2.dart';
 import 'package:workout_notepad_v2/views/welcome.dart';
 
 class Profile extends StatefulWidget {
@@ -124,7 +123,7 @@ class _ProfileState extends State<Profile> {
                     style: ttSubTitle(context),
                     textAlign: TextAlign.center,
                   ),
-                if (dmodel.user!.subscriptionType != SubscriptionType.none)
+                if (dmodel.hasValidSubscription())
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0),
                     child: Container(
@@ -145,7 +144,7 @@ class _ProfileState extends State<Profile> {
             ),
           ),
         ),
-        if (dmodel.user!.isPremiumUser() && dmodel.snapshots.isNotEmpty)
+        if (dmodel.hasValidSubscription() && dmodel.snapshots.isNotEmpty)
           Center(
             child: Text(
               "Last sync: ${formatDateTime(DateTime.fromMillisecondsSinceEpoch(dmodel.snapshots.first.created.round()))}",
@@ -167,17 +166,17 @@ class _ProfileState extends State<Profile> {
               },
             ),
           )
-        else if (dmodel.user!.subscriptionType == SubscriptionType.none)
+        else if (!dmodel.hasValidSubscription())
           Padding(
             padding: const EdgeInsets.only(top: 16.0),
             child: WrappedButton(
-              title: "Workout Notepad Unlocked",
+              title: "Workout Notepad Premium",
               icon: Icons.star,
               iconBg: Colors.amber[500],
               onTap: () {
                 cupertinoSheet(
                   context: context,
-                  builder: (context) => const Subscriptions(),
+                  builder: (context) => const Subscriptions2(),
                 );
               },
             ),
@@ -212,9 +211,9 @@ class _ProfileState extends State<Profile> {
               icon: Icons.category_rounded,
               color: Colors.green[500]!,
               post: StyledSectionItemPost.model,
-              isLocked: dmodel.user!.subscriptionType == SubscriptionType.none,
+              isLocked: !dmodel.hasValidSubscription(),
               onTap: () async {
-                if (dmodel.user!.isPremiumUser()) {
+                if (dmodel.hasValidSubscription()) {
                   cupertinoSheet(
                     context: context,
                     builder: (context) => ConfigureCategories(
@@ -234,9 +233,9 @@ class _ProfileState extends State<Profile> {
               icon: Icons.tag_rounded,
               color: Colors.green[500]!,
               post: StyledSectionItemPost.model,
-              isLocked: dmodel.user!.subscriptionType == SubscriptionType.none,
+              isLocked: !dmodel.hasValidSubscription(),
               onTap: () async {
-                if (dmodel.user!.isPremiumUser()) {
+                if (dmodel.hasValidSubscription()) {
                   cupertinoSheet(
                     context: context,
                     builder: (context) => ConfigureTags(
@@ -256,9 +255,9 @@ class _ProfileState extends State<Profile> {
               icon: Icons.sync_rounded,
               color: Colors.purple[500]!,
               post: StyledSectionItemPost.view,
-              isLocked: dmodel.user!.subscriptionType == SubscriptionType.none,
+              isLocked: !dmodel.hasValidSubscription(),
               onTap: () async {
-                if (dmodel.user!.isPremiumUser()) {
+                if (dmodel.hasValidSubscription()) {
                   navigate(
                     context: context,
                     builder: (context) => const ManageData(),
@@ -277,7 +276,7 @@ class _ProfileState extends State<Profile> {
           title: "",
           items: [
             StyledSectionItem(
-              title: "Manage Purchases",
+              title: "Manage Subscriptions",
               icon: Icons.local_mall_rounded,
               color: Colors.black,
               post: StyledSectionItemPost.view,

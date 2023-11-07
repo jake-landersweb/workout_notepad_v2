@@ -311,12 +311,12 @@ class Exercise {
     time = duration.inSeconds;
   }
 
-  Future<List<ExerciseLog>> getLogs(String exerciseId, User user) async {
+  Future<List<ExerciseLog>> getLogs(String exerciseId, bool premiumUser) async {
     var db = await DatabaseProvider().database;
     String sql = """
       SELECT * FROM exercise_log WHERE exerciseId = '$exerciseId'
       ORDER BY created DESC
-      ${user.isPremiumUser() ? '' : 'LIMIT 7'}
+      ${premiumUser ? '' : 'LIMIT 7'}
     """;
     var response = await db.rawQuery(sql);
     List<ExerciseLog> items = [];

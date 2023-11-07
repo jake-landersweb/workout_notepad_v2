@@ -77,7 +77,7 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
       return ChangeNotifierProvider(
         create: ((context) => ELModel(
               exercise: _exercise!,
-              user: dmodel.user!,
+              premiumUser: dmodel.hasValidSubscription(),
             )),
         builder: ((context, child) {
           return Navigator(
@@ -94,7 +94,7 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
       return ChangeNotifierProvider(
         create: ((context) => ELModel(
               exercise: _exercise!,
-              user: dmodel.user!,
+              premiumUser: dmodel.hasValidSubscription(),
             )),
         builder: ((context, child) {
           return _body(context);

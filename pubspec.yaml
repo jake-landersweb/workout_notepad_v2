@@ -173,6 +173,7 @@ flutter:
     - assets/images/RAW-wedit.png
     - assets/images/RAW-wlaunch.png
     - assets/images/sapphire_text_blue_small.png
+    - assets/images/app-icon.png
 
   # fonts:
   #   - family: Schyler

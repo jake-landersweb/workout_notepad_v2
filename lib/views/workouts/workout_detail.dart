@@ -221,7 +221,7 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
               title: "Snapshots",
               description: "View previous versions",
               onTap: () {
-                if (dmodel.user!.subscriptionType == SubscriptionType.none) {
+                if (!dmodel.hasValidSubscription()) {
                   cupertinoSheet(
                     context: context,
                     builder: (context) => const Subscriptions(),

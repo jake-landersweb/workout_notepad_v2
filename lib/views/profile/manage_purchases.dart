@@ -33,7 +33,6 @@ class ManagePurchases extends StatefulWidget {
 class _ManagePurchasesState extends State<ManagePurchases> {
   bool _isLoading = true;
   bool _loadingRestore = false;
-  List<PurchaseTransaction> _transactions = [];
 
   @override
   void initState() {
@@ -51,7 +50,7 @@ class _ManagePurchasesState extends State<ManagePurchases> {
           IgnorePointer(
             ignoring: _isLoadingHandler(dmodel),
             child: HeaderBar(
-              title: "Manage Purchases",
+              title: "Manage Subscriptions",
               leading: const [BackButton2()],
               children: [
                 Column(
@@ -59,35 +58,35 @@ class _ManagePurchasesState extends State<ManagePurchases> {
                     StyledSection(
                       title: "",
                       items: [
-                        StyledSectionItem(
-                          title: "Missing A Purchase",
-                          icon: Icons.search_rounded,
-                          color: Colors.blueGrey[300]!,
-                          onTap: () async {
-                            await showAlert(
-                              context: context,
-                              title: "Are You Sure?",
-                              body: const Column(
-                                children: [
-                                  Text(
-                                      "The recommended way to restore purchases is through support or in your transaction history."),
-                                  Text(
-                                      "If you click yes, your purchases will be queried from the store, and your app will reload if a purchase is found.")
-                                ],
-                              ),
-                              cancelText: "Cancel",
-                              onCancel: () {},
-                              cancelBolded: true,
-                              submitText: "Yes",
-                              onSubmit: () async {
-                                var iap = InAppPurchase.instance;
-                                await iap.restorePurchases();
-                              },
-                            );
-                          },
-                          post: StyledSectionItemPost.view,
-                          isLocked: false,
-                        ),
+                        // StyledSectionItem(
+                        //   title: "Missing A Purchase",
+                        //   icon: Icons.search_rounded,
+                        //   color: Colors.blueGrey[300]!,
+                        //   onTap: () async {
+                        //     await showAlert(
+                        //       context: context,
+                        //       title: "Are You Sure?",
+                        //       body: const Column(
+                        //         children: [
+                        //           Text(
+                        //               "The recommended way to restore purchases is through support or in your transaction history."),
+                        //           Text(
+                        //               "If you click yes, your purchases will be queried from the store, and your app will reload if a purchase is found.")
+                        //         ],
+                        //       ),
+                        //       cancelText: "Cancel",
+                        //       onCancel: () {},
+                        //       cancelBolded: true,
+                        //       submitText: "Yes",
+                        //       onSubmit: () async {
+                        //         var iap = InAppPurchase.instance;
+                        //         await iap.restorePurchases();
+                        //       },
+                        //     );
+                        //   },
+                        //   post: StyledSectionItemPost.view,
+                        //   isLocked: false,
+                        // ),
                         StyledSectionItem(
                           title: "Request a Refund",
                           icon: Icons.currency_exchange_rounded,
@@ -145,112 +144,19 @@ class _ManagePurchasesState extends State<ManagePurchases> {
                                 ),
                               ),
                             )
-                          else if (_transactions.isNotEmpty)
-                            Column(
-                              children: [
-                                for (int i = 0; i < _transactions.length; i++)
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 8.0),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: AppColors.cell(context),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            16, 8, 16, 8),
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                              ),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(6.0),
-                                                child: Icon(
-                                                  _transactions[i].getIcon(),
-                                                  color: Colors.white,
-                                                  size: 32,
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 16),
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    _transactions[i].productId,
-                                                    style: ttcaption(context),
-                                                  ),
-                                                  Row(
-                                                    children: [
-                                                      Expanded(
-                                                        child: Text(
-                                                          _transactions[i]
-                                                              .getTitle(),
-                                                          style:
-                                                              ttLabel(context),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Text(
-                                                    formatDateTime(
-                                                        _transactions[i]
-                                                            .created),
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: AppColors.subtext(
-                                                          context),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            if (i == 0 &&
-                                                _transactions[i]
-                                                        .transactionType ==
-                                                    PurchaseTransactionType
-                                                        .assign &&
-                                                dmodel.user!.subscriptionType ==
-                                                    SubscriptionType.none)
-                                              Clickable(
-                                                onTap: () {
-                                                  _restorePurchase(context);
-                                                },
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.amber[500],
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            5),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .fromLTRB(8, 2, 8, 2),
-                                                    child: Text(
-                                                      "Restore Purchase",
-                                                      style: ttcaption(
-                                                        context,
-                                                        color: Colors.white,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                              ],
+                          else if (dmodel.user!.subscriptionType ==
+                              SubscriptionType.wn_unlocked)
+                            Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.cell(context),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              width: double.infinity,
+                              height: 40,
+                              child: Center(
+                                child:
+                                    Text("Subscriptions do not apply to you!"),
+                              ),
                             )
                           else
                             Container(
@@ -303,24 +209,30 @@ class _ManagePurchasesState extends State<ManagePurchases> {
       _isLoading = true;
     });
     try {
-      var client = Client(client: http.Client());
+      var client = PurchaseClient(client: http.Client());
       var response =
-          await client.fetch("/users/${widget.user.userId}/transactions");
-      if (response.statusCode == 200) {
-        var body = jsonDecode(response.body);
-        for (var i in body['body']) {
-          _transactions.add(PurchaseTransaction.fromJson(i));
-        }
-        _transactions.sortBy((element) => element.created);
-        _transactions = _transactions.reversed.toList();
-      } else {
+          await client.fetch("/users/${widget.user.userId}/transactionHistory");
+      client.client.close();
+
+      if (response.statusCode == 404) {
+        print("No transactions found");
+      } else if (response.statusCode != 200) {
         print(response.body);
-        snackbarErr(context, "There was an issue fetching your purchases");
-        NewrelicMobile.instance.recordError(
-          "There was an issue fetching the users transactions",
-          null,
-          attributes: {"err_code": "user_transactions"},
+        snackbarErr(
+          context,
+          "There was an issue getting your transaction history",
         );
+      } else {
+        // decode
+        var body = jsonDecode(response.body);
+
+        // parse apple transactions
+        for (var i in body['app_store']) {
+          var decoded = ApplePurchaseRecord.fromJson(i);
+          if (decoded.records.isNotEmpty) {
+            print(decoded.records[0]);
+          }
+        }
       }
     } catch (e) {
       print(e);
@@ -357,7 +269,6 @@ class _ManagePurchasesState extends State<ManagePurchases> {
           );
         }
       } else {
-        print(response.body);
         NewrelicMobile.instance.recordError(
           response.body,
           StackTrace.current,

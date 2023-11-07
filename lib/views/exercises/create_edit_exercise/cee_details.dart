@@ -136,7 +136,7 @@ class _CEEDetailsState extends State<CEEDetails> {
     if (widget.cemodel.file.file == null) {
       return Clickable(
         onTap: () async {
-          if (dmodel.user!.subscriptionType == SubscriptionType.none) {
+          if (!dmodel.hasValidSubscription()) {
             cupertinoSheet(
               context: context,
               builder: (context) => const Subscriptions(),

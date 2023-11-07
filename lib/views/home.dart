@@ -4,7 +4,6 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/root.dart';
-import 'package:workout_notepad_v2/main.dart';
 
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -41,16 +40,6 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
-
-    if (dmodel.paymentLoadStatus == PaymentLoadStatus.complete) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const MyApp()),
-          (Route<dynamic> route) => false,
-        );
-      });
-    }
 
     if (dmodel.hasNoData && !_modelShown) {
       _modelShown = true;

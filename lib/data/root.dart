@@ -6,3 +6,4 @@ export 'workout_exercise.dart';
 export 'workout.dart';
 export 'tag.dart';
 export 'purchase_transaction.dart';
+export 'subscription_record.dart';

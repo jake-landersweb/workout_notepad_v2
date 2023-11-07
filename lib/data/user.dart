@@ -321,14 +321,14 @@ class User {
     }
   }
 
-  bool isPremiumUser() {
-    switch (subscriptionType) {
-      case SubscriptionType.none:
-        return false;
-      case SubscriptionType.wn_unlocked:
-        return true;
-    }
-  }
+  // bool isPremiumUser() {
+  //   switch (subscriptionType) {
+  //     case SubscriptionType.none:
+  //       return false;
+  //     case SubscriptionType.wn_unlocked:
+  //       return true;
+  //   }
+  // }
 
   String getName() {
     if (displayName == null || displayName == "") {

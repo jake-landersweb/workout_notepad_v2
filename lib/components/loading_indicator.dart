@@ -10,10 +10,12 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 /// can be modifided with the [color] field.
 class LoadingIndicator extends StatelessWidget {
   final Color? color;
+  final double scaleFactor;
 
   const LoadingIndicator({
     super.key,
     this.color,
+    this.scaleFactor = 1,
   });
 
   @override
@@ -27,7 +29,9 @@ class LoadingIndicator extends StatelessWidget {
       if (Platform.isIOS) {
         return Center(
             child: CupertinoActivityIndicator(
-                color: color == Colors.white ? Colors.white : null));
+          color: color == Colors.white ? Colors.white : null,
+          radius: 10 * scaleFactor,
+        ));
       } else {
         return Center(
           child: CircularProgressIndicator(

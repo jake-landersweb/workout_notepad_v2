@@ -12,7 +12,6 @@ import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/data/collection.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/root.dart';
@@ -317,6 +316,8 @@ class DataModel extends ChangeNotifier {
     // get the saved user
     user = User.fromJson(jsonDecode(prefs.getString("user")!));
 
+    print(user?.subscriptionType);
+
     print("userId = ${user!.userId}");
 
     // check to make sure the expire epoch is valid
@@ -337,6 +338,7 @@ class DataModel extends ChangeNotifier {
     getUser(); // run non-asynchonously to allow for no internet
     getSubscription(user!.userId); // get subscription status async as well
     checkUpdate(); // get app version asynchronously as well
+    checkWorkoutState(); // see if there is a workout launch state to load
     loadStatus = LoadStatus.done;
     notifyListeners();
   }
@@ -422,12 +424,20 @@ class DataModel extends ChangeNotifier {
 
   Future<void> getSubscription(String userId) async {
     try {
+      // check for offline record for the user
+      var prefs = await SharedPreferences.getInstance();
+      if (prefs.containsKey("subscription")) {
+        subscription = SubscriptionRecord.fromJson(
+            jsonDecode(prefs.get("subscription") as String));
+        print("Found saved record: active=${subscription!.active}");
+        notifyListeners();
+      }
+
       print("Checking for a subscription record ...");
       var s = await SubscriptionRecord.fromUserId(userId);
       subscription = s;
       if (subscription != null) {
         print("Record found. active=${subscription!.active}");
-        var prefs = await SharedPreferences.getInstance();
         prefs.setString("subscription", jsonEncode(subscription!.toJson()));
       }
       notifyListeners();
@@ -452,11 +462,29 @@ class DataModel extends ChangeNotifier {
       return;
     }
 
-    // check if there is a need for a snapshot
+    var shouldSnapshot = false;
+
     var currSnap = await Snapshot.databaseSignature(user!.userId);
-    // ask for review in the background
     checkForReview(currSnap);
-    if (!currSnap.compareMetadata(serverSnapshots.first)) {
+
+    // check for new way
+    if (serverSnapshots.first.lastModified != null) {
+      // check if should be snapshotted
+      var lm = await DatabaseProvider().getLastModifiedTime();
+      if (serverSnapshots.first.lastModified! > lm.millisecondsSinceEpoch) {
+        print("should snapshot based on new method");
+        shouldSnapshot = true;
+      } else {
+        print("file last modified times match");
+      }
+    } else {
+      // use old method
+      shouldSnapshot = !currSnap.compareMetadata(serverSnapshots.first);
+    }
+
+    // check if there is a need for a snapshot
+    // ask for review in the background
+    if (shouldSnapshot) {
       print("snapshot signatures do not match, snapshotting data");
 
       var response = await snapshotData();
@@ -484,6 +512,7 @@ class DataModel extends ChangeNotifier {
     if (foundation.kDebugMode) {
       return true;
     }
+
     // do not snapshot anon data
     if (user!.isAnon) {
       return true;
@@ -599,31 +628,30 @@ class DataModel extends ChangeNotifier {
 
   Future<void> logout(BuildContext context) async {
     // create a snapshot of their data
-    var response = await snapshotData();
+    // var response = await snapshotData();
     var cont = true;
-    if (!response) {
-      await showAlert(
-        context: context,
-        title: "An Error Occured",
-        body: Text(
-            "There was an issue creating a snapshot of your exercise data, if you logout now, you may lose some data."),
-        cancelText: "Cancel",
-        cancelBolded: true,
-        onCancel: () {
-          cont = false;
-        },
-        submitColor: Colors.red,
-        submitText: "I'm Sure",
-        onSubmit: () {
-          cont = true;
-        },
-      );
-    }
+    // if (!response) {
+    //   await showAlert(
+    //     context: context,
+    //     title: "An Error Occured",
+    //     body: Text(
+    //         "There was an issue creating a snapshot of your exercise data, if you logout now, you may lose some data."),
+    //     cancelText: "Cancel",
+    //     cancelBolded: true,
+    //     onCancel: () {
+    //       cont = false;
+    //     },
+    //     submitColor: Colors.red,
+    //     submitText: "I'm Sure",
+    //     onSubmit: () {
+    //       cont = true;
+    //     },
+    //   );
+    // }
     if (cont) {
       await deleteDB();
       await clearData();
       auth.FirebaseAuth.instance.signOut();
-      notifyListeners();
     }
     notifyListeners();
   }
@@ -858,6 +886,19 @@ class DataModel extends ChangeNotifier {
     }
     print("[UPDATE] successfully checked");
     notifyListeners();
+  }
+
+  // see if there is a valid workout state that was dumped on program exit
+  Future<void> checkWorkoutState() async {
+    print("checking for a saved workout state ...");
+    var s = await LaunchWorkoutModelState.loadFromFile();
+    if (s != null) {
+      print("saved workout state found, relaunching workout");
+      workoutState = s;
+      notifyListeners();
+    } else {
+      print("no saved state found");
+    }
   }
 
   Future<bool> importTests() async {

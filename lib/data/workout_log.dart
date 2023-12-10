@@ -85,6 +85,19 @@ class WorkoutLog {
     };
   }
 
+  Map<String, dynamic> toDump() {
+    return {
+      "workoutLogId": workoutLogId,
+      "workoutId": workoutId,
+      "title": title,
+      "description": description,
+      "duration": duration,
+      "note": note,
+      "created": created,
+      "updated": updated,
+    };
+  }
+
   Future<int> insert({ConflictAlgorithm? conflictAlgorithm}) async {
     final db = await DatabaseProvider().database;
     var response = await db.insert(

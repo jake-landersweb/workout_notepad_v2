@@ -39,6 +39,9 @@ class User {
   int? subscriptionTransactionEpoch;
   String? anonUserId;
 
+  // not in database
+  String? _rawSubType;
+
   User({
     required this.userId,
     this.email,
@@ -90,6 +93,7 @@ class User {
       updated = json['updated'].round();
     }
     subscriptionType = subStatusFromJson(json['subscriptionType']);
+    _rawSubType = json['subscriptionType'];
     subscriptionEstimatedExpireEpoch =
         json['subscriptionEstimatedExpireEpoch']?.round();
     subscriptionTransactionEpoch =
@@ -107,6 +111,7 @@ class User {
       "sync": sync,
       "isAnon": isAnon,
       "expireEpoch": expireEpoch,
+      "subscriptionType": _rawSubType ?? "none",
       "subscriptionEstimatedExpireEpoch": subscriptionEstimatedExpireEpoch,
       "subscriptionTransactionEpoch": subscriptionTransactionEpoch,
       "anonUserId": anonUserId,

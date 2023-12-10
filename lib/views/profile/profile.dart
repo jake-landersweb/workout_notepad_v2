@@ -9,7 +9,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/root.dart';
-import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -20,7 +19,6 @@ import 'package:workout_notepad_v2/views/profile/configure_tags.dart';
 import 'package:workout_notepad_v2/views/profile/manage_data.dart';
 import 'package:workout_notepad_v2/views/profile/manage_purchases.dart';
 import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
-import 'package:workout_notepad_v2/views/profile/subscriptions2.dart';
 import 'package:workout_notepad_v2/views/welcome.dart';
 
 class Profile extends StatefulWidget {
@@ -176,7 +174,7 @@ class _ProfileState extends State<Profile> {
               onTap: () {
                 cupertinoSheet(
                   context: context,
-                  builder: (context) => const Subscriptions2(),
+                  builder: (context) => const Subscriptions(),
                 );
               },
             ),
@@ -376,7 +374,7 @@ class _ProfileState extends State<Profile> {
                     context: context,
                     title: "Are You Sure?",
                     body: const Text(
-                        "Your exercise data will be removed from your phone on logout. If you are online, a snapshot will be automatically created for you."),
+                        "Your exercise data will be removed from your phone on logout. Ensure your data is properly synced."),
                     cancelText: "Cancel",
                     onCancel: () {},
                     cancelBolded: true,
@@ -384,6 +382,7 @@ class _ProfileState extends State<Profile> {
                     submitColor: Colors.red[500],
                     onSubmit: () async {
                       await dmodel.logout(context);
+                      await Future.delayed(const Duration(milliseconds: 1000));
                       setState(() {});
                     },
                   );

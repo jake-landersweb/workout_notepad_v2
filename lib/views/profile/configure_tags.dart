@@ -179,9 +179,10 @@ class _ConfigureTagsState extends State<ConfigureTags> {
             },
             child: Icon(
               tag.isDefault ? Icons.check_box : Icons.check_box_outline_blank,
-              color: tag.isDefault
-                  ? Theme.of(context).colorScheme.primary
-                  : AppColors.cell(context)[600],
+              // color: tag.isDefault
+              //     ? Theme.of(context).colorScheme.primary
+              //     : AppColors.cell(context)[600],
+              color: ColorUtil.random(tag.title),
               size: 30,
             ),
           ),

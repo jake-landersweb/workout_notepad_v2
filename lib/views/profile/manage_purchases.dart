@@ -3,13 +3,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/main.dart';
@@ -37,7 +34,7 @@ class _ManagePurchasesState extends State<ManagePurchases> {
   @override
   void initState() {
     super.initState();
-    _getPurchases();
+    // _getPurchases();
   }
 
   @override
@@ -55,6 +52,7 @@ class _ManagePurchasesState extends State<ManagePurchases> {
               children: [
                 Column(
                   children: [
+                    _currentSubscription(context, dmodel),
                     StyledSection(
                       title: "",
                       items: [
@@ -125,54 +123,6 @@ class _ManagePurchasesState extends State<ManagePurchases> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 8),
-                    Section(
-                      "Transaction History",
-                      child: Column(
-                        children: [
-                          if (_isLoading)
-                            Container(
-                              decoration: BoxDecoration(
-                                color: AppColors.cell(context),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              width: double.infinity,
-                              height: 40,
-                              child: Center(
-                                child: LoadingIndicator(
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                              ),
-                            )
-                          else if (dmodel.user!.subscriptionType ==
-                              SubscriptionType.wn_unlocked)
-                            Container(
-                              decoration: BoxDecoration(
-                                color: AppColors.cell(context),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              width: double.infinity,
-                              height: 40,
-                              child: Center(
-                                child:
-                                    Text("Subscriptions do not apply to you!"),
-                              ),
-                            )
-                          else
-                            Container(
-                              decoration: BoxDecoration(
-                                color: AppColors.cell(context),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              width: double.infinity,
-                              height: 40,
-                              child: Center(
-                                child: Text("No Transactions Found"),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ],
@@ -193,6 +143,54 @@ class _ManagePurchasesState extends State<ManagePurchases> {
                 ),
               ),
             )
+        ],
+      ),
+    );
+  }
+
+  Widget _currentSubscription(BuildContext context, DataModel dmodel) {
+    late String title;
+    late String dates;
+    if (dmodel.user!.subscriptionType == SubscriptionType.wn_unlocked) {
+      title = "Permanently Unlocked";
+      dates = "";
+    } else if (dmodel.subscription != null) {
+      title = dmodel.subscription!.title;
+      dates = "${formatDateTime(
+        DateTime.parse(dmodel.subscription!.created),
+      )} - ${dmodel.subscription!.active == 1 ? "Current" : ("${formatDateTime(
+          DateTime.parse(dmodel.subscription!.updated),
+        )} (expired)")}";
+    } else {
+      return Container();
+    }
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.amber, width: 2),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            height: 75,
+            width: 75,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Image.asset("assets/images/app-icon.png"),
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            title,
+            style: ttLabel(context),
+          ),
+          if (dates.isNotEmpty)
+            Text(
+              dates,
+              style: ttcaption(context),
+            ),
         ],
       ),
     );

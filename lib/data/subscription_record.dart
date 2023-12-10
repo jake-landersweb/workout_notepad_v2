@@ -85,6 +85,17 @@ class SubscriptionRecord {
     return SubscriptionRecord.fromJson(body);
   }
 
+  String get title {
+    switch (productId) {
+      case "wn_premium":
+        return "Premium (Monthly)";
+      case "wn_premium_year":
+        return "Premium (Yearly)";
+      default:
+        return "Unknown";
+    }
+  }
+
   @override
   String toString() {
     return toJson().toString();

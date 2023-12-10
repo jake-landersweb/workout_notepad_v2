@@ -114,6 +114,32 @@ class ExerciseLog {
     return el;
   }
 
+  static Future<ExerciseLog> fromDump(
+    Map<String, dynamic> json, {
+    Database? db,
+  }) async {
+    var el = ExerciseLog(
+      exerciseLogId: json['exerciseLogId'],
+      exerciseId: json['exerciseId'],
+      exerciseOrder: json['exerciseOrder'],
+      workoutExerciseId: json['workoutExerciseId'],
+      supersetId: json['supersetId'],
+      supersetOrder: json['supersetOrder'] ?? 0,
+      workoutLogId: json['workoutLogId'],
+      title: json['title'],
+      category: json['category'] ?? "",
+      type: exerciseTypeFromJson(json['type']),
+      sets: json['sets'],
+      note: json['note'],
+      created: json['created'],
+      updated: json['updated'],
+    );
+    el.metadata = [
+      for (var i in json['metadata']) await ExerciseLogMeta.fromDump(i)
+    ];
+    return el;
+  }
+
   bool removeSet(int index) {
     if (sets < 2) {
       return false;
@@ -157,6 +183,24 @@ class ExerciseLog {
         "type": exerciseTypeToJson(type),
         "sets": sets,
         "note": note,
+      };
+
+  Map<String, dynamic> toDump() => {
+        "exerciseLogId": exerciseLogId,
+        "exerciseId": exerciseId,
+        "supersetId": supersetId,
+        "workoutExerciseId": workoutExerciseId,
+        "exerciseOrder": exerciseOrder,
+        "supersetOrder": supersetOrder,
+        "workoutLogId": workoutLogId,
+        "title": title,
+        "category": category,
+        "type": exerciseTypeToJson(type),
+        "sets": sets,
+        "note": note,
+        "created": created,
+        "updated": updated,
+        "metadata": [for (var i in metadata) i.toDump()],
       };
 
   Future<bool> insert({ConflictAlgorithm? conflictAlgorithm}) async {
@@ -326,6 +370,21 @@ class ExerciseLogMeta {
     return elm;
   }
 
+  static Future<ExerciseLogMeta> fromDump(dynamic json, {Database? db}) async {
+    var elm = ExerciseLogMeta(
+      exerciseLogMetaId: json['exerciseLogMetaId'],
+      exerciseLogId: json['exerciseLogId'],
+      exerciseId: json['exerciseId'],
+      reps: json['reps'],
+      time: json['time'],
+      weight: json['weight'],
+      weightPost: json['weightPost'] ?? "lbs",
+    );
+    elm.tags = [for (var i in json['tags']) ExerciseLogMetaTag.fromJson(i)];
+    elm.saved = json['saved'];
+    return elm;
+  }
+
   void setDuration(Duration duration) {
     time = duration.inSeconds;
   }
@@ -372,6 +431,18 @@ class ExerciseLogMeta {
         "time": time,
         "weight": weight,
         "weightPost": weightPost,
+      };
+
+  Map<String, dynamic> toDump() => {
+        "exerciseLogMetaId": exerciseLogMetaId,
+        "exerciseLogId": exerciseLogId,
+        "exerciseId": "",
+        "reps": reps,
+        "time": time,
+        "weight": weight,
+        "weightPost": weightPost,
+        "tags": [for (var i in tags) i.toDump()],
+        "saved": saved,
       };
 }
 
@@ -430,6 +501,17 @@ class ExerciseLogMetaTag {
       "exerciseLogId": exerciseLogId,
       "tagId": tagId,
       "sortPos": sortPos,
+    };
+  }
+
+  Map<String, dynamic> toDump() {
+    return {
+      "exerciseLogMetaTagId": exerciseLogMetaTagId,
+      "exerciseLogMetaId": exerciseLogMetaId,
+      "exerciseLogId": exerciseLogId,
+      "tagId": tagId,
+      "sortPos": sortPos,
+      "title": title,
     };
   }
 }

@@ -42,6 +42,7 @@ class Snapshot {
   late String createdStr;
   late String s3FileName;
   late List<SnapshotMetadataItem> metadata;
+  int? lastModified;
   Map<String, dynamic>? fileData;
 
   Snapshot({
@@ -49,6 +50,7 @@ class Snapshot {
     required this.created,
     required this.createdStr,
     required this.s3FileName,
+    this.lastModified,
   });
 
   Snapshot.fromJson(dynamic json) {
@@ -60,6 +62,7 @@ class Snapshot {
     for (var i in json['metadata']) {
       metadata.add(SnapshotMetadataItem.fromJson(i));
     }
+    lastModified = json['lastModified']?.round();
   }
 
   /// Get the json blob of the snapshot
@@ -102,7 +105,8 @@ class Snapshot {
   static Future<List<Snapshot>?> snapshotDatabase(String userId) async {
     try {
       // get the database
-      var db = await DatabaseProvider().database;
+      var dbProvider = DatabaseProvider();
+      var db = await dbProvider.database;
       // get all table names
       var response = await db.rawQuery(
         "SELECT name FROM sqlite_master WHERE type='table'",
@@ -115,6 +119,10 @@ class Snapshot {
         var r = await db.query(i['name'] as String);
         data[i['name'] as String] = r;
       }
+
+      // add a last modified field
+      var lastModified = await dbProvider.getLastModifiedTime();
+      data['lastModified'] = lastModified.millisecondsSinceEpoch;
 
       // encode to json
       String encoded = jsonEncode(data);

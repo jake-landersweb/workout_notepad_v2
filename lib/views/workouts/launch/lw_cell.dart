@@ -880,11 +880,13 @@ class _CellLogState extends State<_CellLog> {
       child: Container(
         decoration: BoxDecoration(
           color: widget.tags.any((element) => element.tagId == tag.tagId)
-              ? Theme.of(context).colorScheme.primary.withOpacity(0.15)
+              // ? Theme.of(context).colorScheme.primary.withOpacity(0.15)
+              ? ColorUtil.random(tag.title).withOpacity(0.15)
               : AppColors.cell(context),
           border: Border.all(
             color: widget.tags.any((element) => element.tagId == tag.tagId)
-                ? Theme.of(context).colorScheme.primary
+                // ? Theme.of(context).colorScheme.primary
+                ? ColorUtil.random(tag.title)
                 : AppColors.cell(context),
           ),
           borderRadius: BorderRadius.circular(10),
@@ -896,7 +898,7 @@ class _CellLogState extends State<_CellLog> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                tag.title,
+                "#${tag.title}",
                 style: const TextStyle(
                   fontSize: 16,
                 ),

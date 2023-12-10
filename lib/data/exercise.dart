@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
@@ -178,12 +179,11 @@ class Exercise {
   }
 
   Widget getIcon(List<Category> categories, {double? size}) {
-    Category match = categories.firstWhere(
-      (element) => element.title.toLowerCase() == category.toLowerCase(),
-      orElse: () => Category(categoryId: "", title: "", icon: ""),
+    Category? match = categories.firstWhereOrNull(
+      (element) => element.categoryId.toLowerCase() == category.toLowerCase(),
     );
-    if (match.icon.isEmpty) {
-      return const SizedBox(height: 50, width: 50);
+    if (match == null) {
+      return SizedBox(height: size, width: size);
     }
     return getImageIcon(match.icon, size: size);
   }

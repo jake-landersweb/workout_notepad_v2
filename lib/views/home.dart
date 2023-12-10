@@ -151,7 +151,8 @@ class _HomeState extends State<Home> {
                                   submitColor: Colors.red,
                                   submitText: "Yes",
                                   onSubmit: () {
-                                    dmodel.stopWorkout(isCancel: true);
+                                    // dmodel.stopWorkout(isCancel: true);
+                                    dmodel.workoutState!.dumpToFile();
                                   },
                                 );
                               },

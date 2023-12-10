@@ -79,6 +79,7 @@ class _LoginState extends State<Login> {
                   hintText: "******",
                   obscureText: true,
                   keyboardType: TextInputType.visiblePassword,
+                  textCapitalization: TextCapitalization.none,
                   labelText: "Password",
                   onChanged: (_) {},
                 ),

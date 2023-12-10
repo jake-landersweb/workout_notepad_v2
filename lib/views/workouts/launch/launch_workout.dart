@@ -279,6 +279,7 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
                           lmodel.state.exercises = exercises;
                           lmodel.state.exerciseLogs = logs;
                           lmodel.refresh();
+                          await dmodel.refreshWorkouts();
                           return true;
                         },
                       ),

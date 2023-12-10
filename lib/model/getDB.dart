@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:sqflite/sqflite.dart';
@@ -9,6 +11,10 @@ class DatabaseProvider {
   DatabaseProvider._internal();
   static Database? _database;
 
+  Future<String> _getPath() async {
+    return join(await getDatabasesPath(), 'workout_notepad.db');
+  }
+
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDatabase();
@@ -17,7 +23,7 @@ class DatabaseProvider {
 
   Future<Database> _initDatabase() async {
     // get db path
-    String path = join(await getDatabasesPath(), 'workout_notepad.db');
+    String path = await _getPath();
     // create db
     Database db = await openDatabase(
       path,
@@ -63,5 +69,11 @@ class DatabaseProvider {
       );
       return false;
     }
+  }
+
+  Future<DateTime> getLastModifiedTime() async {
+    var path = await _getPath();
+    File file = File(path);
+    return await file.lastModified();
   }
 }

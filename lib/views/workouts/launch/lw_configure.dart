@@ -1,7 +1,9 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/components/cancel_button.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
@@ -55,8 +57,9 @@ class _LWConfigureState extends State<LWConfigure> {
 
   @override
   Widget build(BuildContext context) {
+    DataModel dmodel = Provider.of(context);
     return HeaderBar.sheet(
-      title: "Re-Order",
+      title: "Configure",
       canScroll: true,
       trailing: [
         Clickable(
@@ -136,10 +139,45 @@ class _LWConfigureState extends State<LWConfigure> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               for (var i in item.v2)
-                                Row(
-                                  children: [
-                                    Expanded(child: Text("- ${i.title}")),
-                                  ],
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 4.0),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          color: AppColors.text(context)
+                                              .withOpacity(0.4),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        height: 6,
+                                        width: 6,
+                                      ),
+                                      i.getIcon(dmodel.categories, size: 40),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                          child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text("${i.title}"),
+                                              ),
+                                            ],
+                                          ),
+                                          i.info(
+                                            context,
+                                            style: ttBody(
+                                              context,
+                                              color: AppColors.subtext(context),
+                                            ),
+                                          )
+                                        ],
+                                      )),
+                                    ],
+                                  ),
                                 ),
                             ],
                           ),
@@ -168,6 +206,9 @@ class _LWConfigureState extends State<LWConfigure> {
                     var wl = ExerciseLog.workoutInit(
                       workoutLog: widget.workoutLog,
                       exercise: we,
+                      defaultTag: dmodel.tags.firstWhereOrNull(
+                        (element) => element.isDefault,
+                      ),
                     );
                     setState(() {
                       _items.add(Tuple3(const Uuid().v4(), [we], [wl]));

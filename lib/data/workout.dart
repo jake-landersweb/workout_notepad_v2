@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
@@ -96,6 +97,18 @@ class Workout {
     };
   }
 
+  Map<String, dynamic> toDump() {
+    return {
+      "workoutId": workoutId,
+      "title": title,
+      "description": description,
+      "template": template ? 1 : 0,
+      "icon": icon,
+      "created": created,
+      "updated": updated,
+    };
+  }
+
   Image getIcon({double? size}) {
     return getImageIcon(icon, size: size);
   }
@@ -119,12 +132,15 @@ class Workout {
           groupedData.putIfAbsent(exercise.supersetId, () => [])..add(exercise);
     }
 
-    // Sort each group by supersetOrder
-    for (final List<WorkoutExercise> exercises in groupedData.values) {
-      exercises.sort((a, b) => a.supersetOrder.compareTo(b.supersetOrder));
+    // sort exercises
+    var exercises = groupedData.values
+        .sorted((a, b) => a[0].exerciseOrder.compareTo(b[0].exerciseOrder));
+    // sort supersets
+    for (final List<WorkoutExercise> ss in exercises) {
+      ss.sort((a, b) => a.supersetOrder.compareTo(b.supersetOrder));
     }
 
-    return groupedData.values.toList();
+    return exercises;
   }
 
   Future<List<String>> getCategories() async {

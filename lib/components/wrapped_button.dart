@@ -22,6 +22,7 @@ class WrappedButton extends StatelessWidget {
     this.type = WrappedButtonType.standard,
     this.rowAxisSize = MainAxisSize.min,
     this.iconSpacing = 12,
+    this.trailing,
   });
 
   final String title;
@@ -38,6 +39,7 @@ class WrappedButton extends StatelessWidget {
   final WrappedButtonType type;
   final MainAxisSize rowAxisSize;
   final double iconSpacing;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -95,6 +97,7 @@ class WrappedButton extends StatelessWidget {
                   style: ttLabel(context, color: getFg(context)),
                 ),
               ),
+        if (trailing != null) trailing!,
       ],
     );
   }

@@ -1,9 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sprung/sprung.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:workout_notepad_v2/data/collection.dart';
@@ -21,6 +23,16 @@ class TimerInstance {
     required this.workoutExerciseId,
     required this.startTime,
   });
+
+  TimerInstance.fromJson(Map<String, dynamic> data) {
+    workoutExerciseId = data['workoutExerciseId'];
+    startTime = DateTime.fromMillisecondsSinceEpoch(data['startTime']);
+  }
+
+  Map<String, dynamic> toMap() => {
+        "workoutExerciseId": workoutExerciseId,
+        "startTime": startTime.millisecondsSinceEpoch,
+      };
 }
 
 class LaunchWorkoutModelState {
@@ -69,6 +81,97 @@ class LaunchWorkoutModelState {
         "collectionItem": collectionItem?.toMap(),
         "isEmpty": isEmpty,
       };
+
+  Future<bool> dumpToFile() async {
+    print("writing workout state to file ...");
+    // create the object
+    var obj = {
+      "workoutIndex": workoutIndex,
+      "workout": workout.toDump(),
+      "exercises": [
+        for (var i in exercises) [for (var j in i) j.toMapRAW()]
+      ],
+      "wl": wl.toDump(),
+      "startTime": startTime.millisecondsSinceEpoch,
+      "userId": userId,
+      "exerciseLogs": [
+        for (var i in exerciseLogs) [for (var j in i) j.toDump()]
+      ],
+      "offsetY": offsetY,
+      "timerInstances": [for (var i in timerInstances) i.toMap()],
+      "isEmpty": isEmpty,
+    };
+
+    // write to file
+    try {
+      final directory = await getTemporaryDirectory();
+      final file = File('${directory.path}/workout_state.tmp');
+      await file.writeAsString(jsonEncode(obj));
+      print("success.");
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  static Future<LaunchWorkoutModelState?> loadFromFile() async {
+    try {
+      // check if file exists
+      final directory = await getTemporaryDirectory();
+      final file = File('${directory.path}/workout_state.tmp');
+
+      if (!file.existsSync()) {
+        return null;
+      }
+
+      // read the data
+      String raw = await file.readAsString();
+      Map<String, dynamic> data = jsonDecode(raw);
+
+      var workoutIndex = data['workoutIndex'];
+      var workout = await Workout.fromJson(data['workout']);
+      var exercises = [
+        for (var i in data['exercises'])
+          [for (var j in i) WorkoutExercise.fromJson(j)]
+      ];
+      var pageController = PageController(initialPage: 0);
+      var wl = await WorkoutLog.fromJson(data['wl']);
+      var startTime = DateTime.fromMillisecondsSinceEpoch(data['startTime']);
+      var userId = data['userId'];
+      var exerciseLogs = [
+        for (var i in data['exerciseLogs'])
+          [for (var j in i) await ExerciseLog.fromDump(j)]
+      ];
+      var offsetY = data['offsetY'];
+      var timerInstances = [
+        for (var i in data['timerInstances']) TimerInstance.fromJson(i)
+      ];
+      var isEmpty = data['isEmpty'];
+
+      var state = LaunchWorkoutModelState(
+        workoutIndex: workoutIndex,
+        workout: workout,
+        exercises: exercises,
+        pageController: pageController,
+        wl: wl,
+        startTime: startTime,
+        userId: userId,
+        offsetY: offsetY,
+        isEmpty: isEmpty,
+      );
+      state.exerciseLogs = exerciseLogs;
+      state.timerInstances = timerInstances;
+
+      // delete the file
+      await file.delete();
+      return state;
+    } catch (e, stack) {
+      print(e);
+      print(stack);
+      return null;
+    }
+  }
 }
 
 class LaunchWorkoutModel extends ChangeNotifier {
@@ -158,6 +261,7 @@ class LaunchWorkoutModel extends ChangeNotifier {
       state.exerciseLogs[i][j].metadata[m].tags.removeWhere(
         (element) => element.tagId == tag.tagId,
       );
+      notifyListeners();
       return;
     }
     state.exerciseLogs[i][j].metadata[m].addTag(tag);

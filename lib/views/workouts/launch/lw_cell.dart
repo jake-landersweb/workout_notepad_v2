@@ -463,7 +463,7 @@ class _Cell extends StatelessWidget {
           onTap: () {
             showFloatingSheet(
               context: context,
-              builder: (context) => _CellLog(
+              builder: (context) => LaunchCellLog(
                 index: index,
                 reps: reps,
                 weight: weight,
@@ -565,8 +565,9 @@ class _Cell extends StatelessWidget {
   }
 }
 
-class _CellLog extends StatefulWidget {
-  const _CellLog({
+class LaunchCellLog extends StatefulWidget {
+  const LaunchCellLog({
+    super.key,
     required this.index,
     required this.reps,
     required this.weight,
@@ -581,6 +582,7 @@ class _CellLog extends StatefulWidget {
     required this.onSaved,
     required this.onDelete,
     required this.onTagClick,
+    this.interactive = true,
   });
   final int index;
   final int reps;
@@ -596,12 +598,13 @@ class _CellLog extends StatefulWidget {
   final Function(bool val) onSaved;
   final VoidCallback onDelete;
   final Function(Tag tag) onTagClick;
+  final bool interactive;
 
   @override
-  State<_CellLog> createState() => _CellLogState();
+  State<LaunchCellLog> createState() => _LaunchCellLogState();
 }
 
-class _CellLogState extends State<_CellLog> {
+class _LaunchCellLogState extends State<LaunchCellLog> {
   late int _reps;
   late int _weight;
   late String _weightPost;
@@ -629,18 +632,19 @@ class _CellLogState extends State<_CellLog> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Row(
-            children: [
-              Spacer(),
-              comp.CloseButton2(),
-            ],
-          ),
+          if (widget.interactive)
+            const Row(
+              children: [
+                Spacer(),
+                comp.CloseButton2(),
+              ],
+            ),
           const SizedBox(height: 16),
           _getContent(context),
           const SizedBox(height: 16),
           Section(
             "Tags",
-            allowsCollapse: true,
+            allowsCollapse: widget.interactive,
             initOpen: true,
             child: Wrap(
               spacing: 8,
@@ -671,48 +675,53 @@ class _CellLogState extends State<_CellLog> {
               ],
             ),
           ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(flex: 1, child: Container()),
-              Expanded(
-                flex: 2,
-                child: Row(
+          if (widget.interactive)
+            Column(
+              children: [
+                const SizedBox(height: 16),
+                Row(
                   children: [
+                    Expanded(flex: 1, child: Container()),
                     Expanded(
-                      child: TextButton(
-                        onPressed: () {
-                          widget.onDelete();
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(
-                          "Delete",
-                          style: ttBody(
-                            context,
-                            color: AppColors.subtext(context),
+                      flex: 2,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: TextButton(
+                              onPressed: () {
+                                widget.onDelete();
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(
+                                "Delete",
+                                style: ttBody(
+                                  context,
+                                  color: AppColors.subtext(context),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: FilledButton(
-                        onPressed: () {
-                          widget.onRepsChange(_reps);
-                          widget.onWeightChange(_weight);
-                          widget.onWeightPostChange(_weightPost);
-                          widget.onTimeChange(_time);
-                          widget.onSaved(true);
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text("Save"),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: FilledButton(
+                              onPressed: () {
+                                widget.onRepsChange(_reps);
+                                widget.onWeightChange(_weight);
+                                widget.onWeightPostChange(_weightPost);
+                                widget.onTimeChange(_time);
+                                widget.onSaved(true);
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text("Save"),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
         ],
       ),
     );

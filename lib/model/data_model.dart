@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/foundation.dart' as foundation;
@@ -24,10 +25,13 @@ import 'package:workout_notepad_v2/views/home.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:http/http.dart' as http;
 import 'package:workout_notepad_v2/views/workouts/launch/lw_model.dart';
+import 'package:crypto/crypto.dart';
 
 enum LoadStatus { init, noUser, done, expired }
 
 enum LoadingStatus { loading, error, done }
+
+enum SyncStatus { loading, inSync, outOfSync, error }
 
 enum PaymentLoadStatus {
   none,
@@ -63,6 +67,8 @@ class DataModel extends ChangeNotifier {
   bool hasRecommendedUpdate = false;
   bool showForcedUpdate = false;
   String? currentPromoCode;
+  SyncStatus dataSyncStatus = SyncStatus.loading;
+  bool showPostWorkoutScreen = false;
 
   DataModel() {
     // create the subscription
@@ -467,19 +473,18 @@ class DataModel extends ChangeNotifier {
     var currSnap = await Snapshot.databaseSignature(user!.userId);
     checkForReview(currSnap);
 
-    // check for new way
-    if (serverSnapshots.first.lastModified != null) {
-      // check if should be snapshotted
-      var lm = await DatabaseProvider().getLastModifiedTime();
-      if (serverSnapshots.first.lastModified! > lm.millisecondsSinceEpoch) {
-        print("should snapshot based on new method");
-        shouldSnapshot = true;
-      } else {
-        print("file last modified times match");
-      }
-    } else {
-      // use old method
+    if (serverSnapshots.first.sha256Hash == null) {
+      print(
+          "The snapshot does not contain a hash, using old method to compare database");
       shouldSnapshot = !currSnap.compareMetadata(serverSnapshots.first);
+    } else {
+      print("comparing sha256");
+      var localContent = await Snapshot.getLocalData();
+      var tmp = utf8.encode(jsonEncode(localContent));
+      var hash = sha256.convert(tmp).toString();
+      print(hash);
+      print(serverSnapshots.first.sha256Hash);
+      shouldSnapshot = hash != serverSnapshots.first.sha256Hash!;
     }
 
     // check if there is a need for a snapshot
@@ -503,40 +508,54 @@ class DataModel extends ChangeNotifier {
       print("The current snapshot signature matches the current data");
       // snapshots are up to date
       _snapshots = serverSnapshots;
+      dataSyncStatus = SyncStatus.inSync;
       notifyListeners();
     }
   }
 
   Future<bool> snapshotData() async {
-    // do not snapshot in debug mode
-    if (foundation.kDebugMode) {
-      return true;
-    }
+    try {
+      dataSyncStatus = SyncStatus.loading;
+      notifyListeners();
+      // do not snapshot in debug mode
+      if (foundation.kDebugMode) {
+        dataSyncStatus = SyncStatus.inSync;
+        notifyListeners();
+        return true;
+      }
 
-    // do not snapshot anon data
-    if (user!.isAnon) {
-      return true;
-    }
+      // do not snapshot anon data
+      if (user!.isAnon) {
+        dataSyncStatus = SyncStatus.inSync;
+        notifyListeners();
+        return true;
+      }
 
-    // snapshot the data
-    var snps = await Snapshot.snapshotDatabase(user!.userId);
-    if (snps == null) {
+      // snapshot the data
+      var snps = await Snapshot.snapshotDatabase(user!.userId);
+      if (snps == null) {
+        throw "There was an issue creating the snapshot";
+      }
+      await NewrelicMobile.instance.recordCustomEvent(
+        "WN_Metric",
+        eventName: "snapshot_create",
+      );
+      _snapshots = snps;
+      dataSyncStatus = SyncStatus.inSync;
+      notifyListeners();
+      return true;
+    } catch (e, s) {
+      print(e);
+      print(s);
       NewrelicMobile.instance.recordError(
-        "There was an issue snapshotting the database",
-        StackTrace.current,
+        e,
+        s,
         attributes: {"err_code": "snapshot_create"},
       );
-      // TODO -- handle errors
-      print("There was an issue creating the snapshot");
+      dataSyncStatus = SyncStatus.error;
+      notifyListeners();
       return false;
     }
-    await NewrelicMobile.instance.recordCustomEvent(
-      "WN_Metric",
-      eventName: "snapshot_create",
-    );
-    _snapshots = snps;
-    notifyListeners();
-    return true;
   }
 
   Future<void> fetchData({bool checkData = true}) async {
@@ -745,6 +764,8 @@ class DataModel extends ChangeNotifier {
         eventName: "workout_cancel",
       );
     }
+    // delete the temp file if created
+    await workoutState!.deleteFile();
     workoutState = null;
     await fetchData();
     notifyListeners();
@@ -771,7 +792,7 @@ class DataModel extends ChangeNotifier {
       var invalidTables = ["android_metadata"];
 
       // get the snapshot file data
-      var data = await snapshot.getFileData();
+      var data = await snapshot.getRemoteFileData();
       if (data == null) {
         print("There was an issue importing the data");
         return false;
@@ -899,6 +920,12 @@ class DataModel extends ChangeNotifier {
     } else {
       print("no saved state found");
     }
+  }
+
+  Future<void> toggleShowPostWorkoutScreen() async {
+    await Future.delayed(const Duration(milliseconds: 1000));
+    showPostWorkoutScreen = true;
+    notifyListeners();
   }
 
   Future<bool> importTests() async {

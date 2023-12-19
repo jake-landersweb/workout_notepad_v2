@@ -40,7 +40,7 @@ class _OverviewHomeState extends State<OverviewHome> {
       children: [
         const SizedBox(height: 16),
         WrappedButton(
-          title: "Start An Empty Workout",
+          title: "Start A New Workout",
           rowAxisSize: MainAxisSize.max,
           type: WrappedButtonType.main,
           center: true,

@@ -9,6 +9,7 @@ import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/model/client.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:http/http.dart' as http;
+import 'package:workout_notepad_v2/utils/image.dart';
 
 enum SubscriptionType { none, wn_unlocked }
 
@@ -298,7 +299,7 @@ class User {
           ),
         ),
       );
-    } else {
+    } else if (imgUrl!.contains("http")) {
       return Container(
         width: size,
         height: size,
@@ -323,6 +324,12 @@ class User {
           ),
         ),
       );
+    } else {
+      return _AwsAvatar(
+        imgUrl: imgUrl!,
+        size: size,
+        defaultAvatar: defaultAvatar,
+      );
     }
   }
 
@@ -346,5 +353,105 @@ class User {
   @override
   String toString() {
     return toMap().toString();
+  }
+}
+
+class _AwsAvatar extends StatefulWidget {
+  const _AwsAvatar({
+    super.key,
+    required this.imgUrl,
+    required this.size,
+    required this.defaultAvatar,
+  });
+  final String imgUrl;
+  final double size;
+  final Widget defaultAvatar;
+
+  @override
+  State<_AwsAvatar> createState() => __AwsAvatarState();
+}
+
+class __AwsAvatarState extends State<_AwsAvatar> {
+  AppFile? _file;
+  bool _isLoading = true;
+  bool _error = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _init();
+  }
+
+  Future<void> _init() async {
+    _file = await AppFile.fromFilename(filename: widget.imgUrl);
+
+    if (_file!.file == null) {
+      print("There was an error");
+      _error = true;
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: widget.size,
+      height: widget.size,
+      decoration: const BoxDecoration(shape: BoxShape.circle),
+      child: Align(child: _child(context)),
+    );
+  }
+
+  Widget _child(BuildContext context) {
+    if (_isLoading) {
+      return Container(
+        width: widget.size,
+        height: widget.size,
+        decoration: const BoxDecoration(shape: BoxShape.circle),
+        child: Align(
+          child: ClipOval(
+            child:
+                LoadingIndicator(color: Theme.of(context).colorScheme.primary),
+          ),
+        ),
+      );
+    }
+
+    if (_error) {
+      return Container(
+        width: widget.size,
+        height: widget.size,
+        decoration: const BoxDecoration(shape: BoxShape.circle),
+        child: Align(
+          child: ClipOval(
+            child: widget.defaultAvatar,
+          ),
+        ),
+      );
+    }
+
+    return ClipOval(
+      child: Image(
+        key: UniqueKey(),
+        image: FileImage(_file!.file!),
+        height: widget.size,
+        width: widget.size,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          print(error);
+          print(stackTrace);
+          return widget.defaultAvatar;
+        },
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) {
+            return child;
+          }
+          return LoadingIndicator(color: Theme.of(context).colorScheme.primary);
+        },
+      ),
+    );
   }
 }

@@ -1,11 +1,14 @@
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sql.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/data/collection.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 
 class WorkoutLog {
   late String workoutLogId;
@@ -157,7 +160,9 @@ class WorkoutLog {
     return logs;
   }
 
-  DateTime getCreated() => DateTime.parse(created);
+  // trick to parse db date as utc time
+  DateTime getCreated() => DateTime.parse("${created}Z").toLocal();
+
   String getCreatedFormatted() {
     var d = getCreated();
     var f = DateFormat("MMM d, y");
@@ -201,4 +206,35 @@ String _formatHHMMSS(int seconds) {
   }
 
   return out;
+}
+
+class WorkoutLogCalendarDataSource extends CalendarDataSource {
+  WorkoutLogCalendarDataSource(List<WorkoutLog> source) {
+    appointments = source;
+  }
+
+  @override
+  DateTime getStartTime(int index) {
+    return appointments![index].getCreated();
+  }
+
+  @override
+  DateTime getEndTime(int index) {
+    return appointments![index].getCreated();
+  }
+
+  @override
+  String getSubject(int index) {
+    return appointments![index].title;
+  }
+
+  @override
+  Color getColor(int index) {
+    return ColorUtil.random(appointments![index].workoutId);
+  }
+
+  @override
+  bool isAllDay(int index) {
+    return true;
+  }
 }

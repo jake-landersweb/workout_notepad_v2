@@ -3,6 +3,7 @@ import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:workout_notepad_v2/model/client.dart';
 import 'package:http/http.dart' as http;
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:crypto/crypto.dart';
 
 class SnapshotMetadataItem {
   late String table;
@@ -43,6 +44,7 @@ class Snapshot {
   late String s3FileName;
   late List<SnapshotMetadataItem> metadata;
   int? lastModified;
+  String? sha256Hash;
   Map<String, dynamic>? fileData;
 
   Snapshot({
@@ -63,10 +65,11 @@ class Snapshot {
       metadata.add(SnapshotMetadataItem.fromJson(i));
     }
     lastModified = json['lastModified']?.round();
+    sha256Hash = json['sha256Hash'];
   }
 
   /// Get the json blob of the snapshot
-  Future<Map<String, dynamic>?> getFileData() async {
+  Future<Map<String, dynamic>?> getRemoteFileData() async {
     try {
       var client = Client(client: http.Client());
       var response = await client.fetch("/users/$userId/snapshots/$created");
@@ -104,26 +107,7 @@ class Snapshot {
 
   static Future<List<Snapshot>?> snapshotDatabase(String userId) async {
     try {
-      // get the database
-      var dbProvider = DatabaseProvider();
-      var db = await dbProvider.database;
-      // get all table names
-      var response = await db.rawQuery(
-        "SELECT name FROM sqlite_master WHERE type='table'",
-      );
-
-      Map<String, dynamic> data = {};
-
-      // compose the data for dynamodb
-      for (var i in response) {
-        var r = await db.query(i['name'] as String);
-        data[i['name'] as String] = r;
-      }
-
-      // add a last modified field
-      var lastModified = await dbProvider.getLastModifiedTime();
-      data['lastModified'] = lastModified.millisecondsSinceEpoch;
-
+      var data = await Snapshot.getLocalData();
       // encode to json
       String encoded = jsonEncode(data);
 
@@ -134,7 +118,7 @@ class Snapshot {
         encoded,
       );
       if (httpResponse.statusCode != 200) {
-        print("ERROR - There was an error with the request $response");
+        print("ERROR - There was an error with the request $httpResponse");
         return null;
       }
       Map<String, dynamic> body = jsonDecode(httpResponse.body);
@@ -176,6 +160,31 @@ class Snapshot {
         Snapshot(userId: userId, created: 0, createdStr: "", s3FileName: "");
     s.metadata = items;
     return s;
+  }
+
+  static Future<Map<String, dynamic>> getLocalData() async {
+    // get the database
+    var dbProvider = DatabaseProvider();
+    var db = await dbProvider.database;
+    // get all table names
+    var response = await db.rawQuery(
+      "SELECT name FROM sqlite_master WHERE type='table'",
+    );
+
+    Map<String, dynamic> data = {};
+
+    // compose the data for dynamodb
+    for (var i in response) {
+      var r = await db.query(i['name'] as String);
+      data[i['name'] as String] = r;
+    }
+
+    // create sha256 to compare content
+    var tmp1 = utf8.encode(jsonEncode(data));
+    var sha1 = sha256.convert(tmp1).toString();
+    data['sha256Hash'] = sha1;
+
+    return data;
   }
 
   int get workoutLength {

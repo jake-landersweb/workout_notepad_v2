@@ -6,6 +6,7 @@ import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/logs/no_logs.dart';
+import 'package:workout_notepad_v2/views/logs/post_workout.dart';
 import 'dart:math' as math;
 
 import 'package:workout_notepad_v2/views/workouts/logs/root.dart';
@@ -111,8 +112,8 @@ class _LogsPreviousWorkoutsState extends State<LogsPreviousWorkouts> {
           print(item.workoutLogId);
           cupertinoSheet(
             context: context,
-            builder: (context) => WLExercises(
-              workoutLog: item,
+            builder: (context) => PostWorkoutSummary(
+              workoutLogId: item.workoutLogId,
               onSave: (wl) => setState(() {
                 _workoutLogs[index] = wl;
               }),

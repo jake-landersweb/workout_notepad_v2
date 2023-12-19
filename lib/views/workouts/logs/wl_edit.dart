@@ -5,6 +5,7 @@ import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
 class WLEdit extends StatefulWidget {
@@ -47,6 +48,18 @@ class _WLEditState extends State<WLEdit> {
     return HeaderBar.sheet(
       title: "",
       leading: const [CancelButton()],
+      trailing: [
+        Clickable(
+          onTap: () => _onSave(),
+          child: Text(
+            "Save",
+            style: ttLabel(
+              context,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        ),
+      ],
       children: [
         const SizedBox(height: 16),
         Container(
@@ -84,47 +97,42 @@ class _WLEditState extends State<WLEdit> {
             },
           ),
         ),
-        const SizedBox(height: 16),
-        WrappedButton(
-          title: "Save Workout Log",
-          type: WrappedButtonType.main,
-          isLoading: _loading,
-          onTap: () async {
-            if (_wl.title.isEmpty) {
-              snackbarErr(context, "Title cannot be empty");
-              return;
-            }
-            setState(() {
-              _loading = true;
-            });
-            try {
-              var db = await DatabaseProvider().database;
-              var r = await db.update(
-                "workout_log",
-                _wl.toMap(),
-                where: "workoutLogId = ?",
-                whereArgs: [_wl.workoutLogId],
-              );
-              if (r == 0) {
-                throw "No items were changed in database";
-              }
-              widget.onSave(_wl);
-              Navigator.of(context).pop();
-            } catch (e) {
-              print(e);
-              NewrelicMobile.instance.recordError(
-                e,
-                StackTrace.current,
-                attributes: {"err_code": "wl_save"},
-              );
-              snackbarErr(context, "There was an unknown error");
-            }
-            setState(() {
-              _loading = true;
-            });
-          },
-        )
       ],
     );
+  }
+
+  Future<void> _onSave() async {
+    if (_wl.title.isEmpty) {
+      snackbarErr(context, "Title cannot be empty");
+      return;
+    }
+    setState(() {
+      _loading = true;
+    });
+    try {
+      var db = await DatabaseProvider().database;
+      var r = await db.update(
+        "workout_log",
+        _wl.toMap(),
+        where: "workoutLogId = ?",
+        whereArgs: [_wl.workoutLogId],
+      );
+      if (r == 0) {
+        throw "No items were changed in database";
+      }
+      widget.onSave(_wl);
+      Navigator.of(context).pop();
+    } catch (e) {
+      print(e);
+      NewrelicMobile.instance.recordError(
+        e,
+        StackTrace.current,
+        attributes: {"err_code": "wl_save"},
+      );
+      snackbarErr(context, "There was an unknown error");
+    }
+    setState(() {
+      _loading = true;
+    });
   }
 }

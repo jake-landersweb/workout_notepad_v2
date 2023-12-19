@@ -9,12 +9,14 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/root.dart';
+import 'package:workout_notepad_v2/main.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/account/root.dart';
 import 'package:workout_notepad_v2/views/profile/config_categories.dart';
 import 'package:workout_notepad_v2/views/profile/configure_tags.dart';
+import 'package:workout_notepad_v2/views/profile/edit_profile.dart';
 
 import 'package:workout_notepad_v2/views/profile/manage_data.dart';
 import 'package:workout_notepad_v2/views/profile/manage_purchases.dart';
@@ -45,11 +47,13 @@ class ProfileItem {
 }
 
 class _ProfileState extends State<Profile> {
+  late Key _avatarKey;
   int _loadingIndex = -1;
   String buildInfo = "";
 
   @override
   void initState() {
+    _avatarKey = UniqueKey();
     init();
     super.initState();
   }
@@ -73,9 +77,30 @@ class _ProfileState extends State<Profile> {
     }
     return HeaderBar(
       title: "",
+      trailing: [
+        if (dmodel.user != null)
+          EditButton(onTap: () {
+            if (dmodel.user!.offline) {
+              snackbarErr(context, "You are offline.");
+            } else {
+              cupertinoSheet(
+                context: context,
+                builder: (context) => EditProfile(
+                  user: dmodel.user!,
+                  onSave: () {
+                    setState(() {
+                      _avatarKey = UniqueKey();
+                    });
+                  },
+                ),
+              );
+            }
+          }),
+      ],
       children: [
         const SizedBox(height: 16),
         Padding(
+          key: _avatarKey,
           padding: const EdgeInsets.only(bottom: 16.0),
           child: dmodel.user!.avatar(context, size: 125),
         ),

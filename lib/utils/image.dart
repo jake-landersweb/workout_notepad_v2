@@ -52,6 +52,51 @@ class AppFile {
     return af;
   }
 
+  // source from an image downloaded on the internet
+  static Future<AppFile?> fromUrl({
+    required String objectId,
+    required String url,
+  }) async {
+    try {
+      print("fetching image with url: $url");
+
+      // fetch the file from the url
+      var response = await http.get(Uri.parse(url));
+      if (response.statusCode != 200) {
+        print("the response code was not 200");
+        return null;
+      }
+
+      // source the extension
+      String extension = path.extension(Uri.parse(url).pathSegments.last);
+      if (!imageExtensions.contains(extension)) {
+        if (response.headers.containsKey("content-type")) {
+          // use the request headers
+          var contentType = response.headers['content-type']!.split("/").last;
+          extension = ".$contentType";
+          print("contentType: $contentType");
+        } else {
+          extension = ".jpg";
+        }
+      }
+      print("url extension: $extension");
+
+      final directory = await getTemporaryDirectory();
+      var tmpFile = File('${directory.path}/$objectId$extension');
+      await tmpFile.writeAsBytes(response.bodyBytes);
+
+      var appFile = AppFile.init(objectId: objectId);
+      appFile._extension = extension;
+      appFile._file = tmpFile;
+
+      return appFile;
+    } catch (e, stack) {
+      print(e);
+      print(stack);
+      return null;
+    }
+  }
+
   /// ONLY USE METHOD IF SURE FILE EXISTS
   File? get file {
     return _file;
@@ -66,7 +111,7 @@ class AppFile {
     _extension = path.extension(_file!.path);
 
     // delete from cache
-    await _deleteCached(filename);
+    await deleteCachedImage(filename);
   }
 
   Future<File?> getCached() async {
@@ -78,6 +123,10 @@ class AppFile {
     }
 
     return _file;
+  }
+
+  Future<void> ejectFromCache() async {
+    await deleteCachedImage(filename);
   }
 
   Future<void> deleteFile() async {
@@ -93,7 +142,7 @@ class AppFile {
     // clear from memory
     _file = null;
     _cached = false;
-    await _deleteCached(filename);
+    await deleteCachedImage(filename);
   }
 
   AppFileType get type {
@@ -235,6 +284,7 @@ Future<File?> pickMedia(
 Future<void> promptMedia({
   required BuildContext context,
   required Function(File?) onSelected,
+  bool allowsVideo = true,
 }) async {
   await showFloatingSheet(
     context: context,
@@ -289,51 +339,52 @@ Future<void> promptMedia({
                 },
               ),
             ),
-            Section(
-              "Videos",
-              child:
-                  ContainedList<Tuple4<String, IconData, Color, AsyncCallback>>(
-                leadingPadding: 0,
-                trailingPadding: 0,
-                childPadding: EdgeInsets.zero,
-                children: [
-                  Tuple4(
-                    "Capture with camera",
-                    Icons.camera_alt_rounded,
-                    Colors.red[300]!,
-                    () async {
-                      Navigator.of(context).pop();
-                      var file = await pickMedia(
-                        ImageSource.camera,
-                        type: AppFileType.video,
-                      );
-                      onSelected(file);
-                    },
-                  ),
-                  Tuple4(
-                    "Pick from gallery",
-                    Icons.image_rounded,
-                    Colors.purple[300]!,
-                    () async {
-                      Navigator.of(context).pop();
-                      var file = await pickMedia(
-                        ImageSource.gallery,
-                        type: AppFileType.video,
-                      );
-                      onSelected(file);
-                    },
-                  ),
-                ],
-                onChildTap: (context, item, index) async => await item.v4(),
-                childBuilder: (context, item, index) {
-                  return WrappedButton(
-                    title: item.v1,
-                    icon: item.v2,
-                    iconBg: item.v3,
-                  );
-                },
+            if (allowsVideo)
+              Section(
+                "Videos",
+                child: ContainedList<
+                    Tuple4<String, IconData, Color, AsyncCallback>>(
+                  leadingPadding: 0,
+                  trailingPadding: 0,
+                  childPadding: EdgeInsets.zero,
+                  children: [
+                    Tuple4(
+                      "Capture with camera",
+                      Icons.camera_alt_rounded,
+                      Colors.red[300]!,
+                      () async {
+                        Navigator.of(context).pop();
+                        var file = await pickMedia(
+                          ImageSource.camera,
+                          type: AppFileType.video,
+                        );
+                        onSelected(file);
+                      },
+                    ),
+                    Tuple4(
+                      "Pick from gallery",
+                      Icons.image_rounded,
+                      Colors.purple[300]!,
+                      () async {
+                        Navigator.of(context).pop();
+                        var file = await pickMedia(
+                          ImageSource.gallery,
+                          type: AppFileType.video,
+                        );
+                        onSelected(file);
+                      },
+                    ),
+                  ],
+                  onChildTap: (context, item, index) async => await item.v4(),
+                  childBuilder: (context, item, index) {
+                    return WrappedButton(
+                      title: item.v1,
+                      icon: item.v2,
+                      iconBg: item.v3,
+                    );
+                  },
+                ),
               ),
-            ),
           ],
         ),
       );
@@ -411,7 +462,7 @@ Future<File?> _getCachedFile(String objectKey) async {
   }
 }
 
-Future<void> _deleteCached(String objectId) async {
+Future<void> deleteCachedImage(String objectId) async {
   // if file with object exists in cache, delete it
   Directory tempDir = await getTemporaryDirectory();
   String tempPath = tempDir.path;

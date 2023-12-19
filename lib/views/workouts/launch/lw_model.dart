@@ -8,12 +8,14 @@ import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sprung/sprung.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/collection.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/logs/post_workout.dart';
 
 class TimerInstance {
   late String workoutExerciseId;
@@ -170,6 +172,16 @@ class LaunchWorkoutModelState {
       print(e);
       print(stack);
       return null;
+    }
+  }
+
+  Future<void> deleteFile() async {
+    // check if file exists
+    final directory = await getTemporaryDirectory();
+    final file = File('${directory.path}/workout_state.tmp');
+
+    if (file.existsSync()) {
+      await file.delete();
     }
   }
 }
@@ -551,6 +563,7 @@ class LaunchWorkoutModel extends ChangeNotifier {
           duration: const Duration(seconds: 6),
         );
       }
+      dmodel.toggleShowPostWorkoutScreen();
       Navigator.of(context, rootNavigator: true).pop();
     } else {
       snackbarErr(

@@ -7,6 +7,7 @@ import 'package:workout_notepad_v2/components/root.dart';
 
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/logs/post_workout.dart';
 import 'package:workout_notepad_v2/views/logs/root.dart';
 import 'package:workout_notepad_v2/views/overview/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
@@ -37,6 +38,24 @@ class _HomeState extends State<Home> {
     });
   }
 
+  Future<void> _showPostWorkout(BuildContext context) async {
+    var db = await DatabaseProvider().database;
+    var wlid = await db.rawQuery(
+        "SELECT workoutLogId FROM workout_log ORDER BY created DESC LIMIT 1");
+    if (wlid.isNotEmpty) {
+      print(wlid);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        cupertinoSheet(
+          context: context,
+          builder: (context) => PostWorkoutSummary(
+            workoutLogId: wlid[0]['workoutLogId'] as String,
+            onSave: (v) {},
+          ),
+        );
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
@@ -44,6 +63,11 @@ class _HomeState extends State<Home> {
     if (dmodel.hasNoData && !_modelShown) {
       _modelShown = true;
       _showWelcome(context);
+    }
+
+    if (dmodel.showPostWorkoutScreen) {
+      dmodel.showPostWorkoutScreen = false;
+      _showPostWorkout(context);
     }
 
     return Stack(
@@ -151,8 +175,8 @@ class _HomeState extends State<Home> {
                                   submitColor: Colors.red,
                                   submitText: "Yes",
                                   onSubmit: () {
-                                    // dmodel.stopWorkout(isCancel: true);
-                                    dmodel.workoutState!.dumpToFile();
+                                    dmodel.stopWorkout(isCancel: true);
+                                    // dmodel.workoutState!.dumpToFile();
                                   },
                                 );
                               },

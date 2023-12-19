@@ -28,7 +28,25 @@ class _ManageDataState extends State<ManageData> {
         leading: const [BackButton2()],
         children: [
           const Text(
-            "Note: Snapshots will be created for you automatically every 8 hours on app launch.",
+            "Your data is automatically synched when discrepencies are found.",
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Icon(
+                _getIcon(dmodel),
+                size: 24,
+                color: _getIconColor(context, dmodel),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                _syncText(dmodel),
+                style: ttLabel(
+                  context,
+                  color: AppColors.subtext(context),
+                ),
+              ),
+            ],
           ),
           Section(
             "Data Snapshots",
@@ -137,5 +155,43 @@ class _ManageDataState extends State<ManageData> {
         ],
       ),
     );
+  }
+
+  IconData _getIcon(DataModel dmodel) {
+    switch (dmodel.dataSyncStatus) {
+      case SyncStatus.loading:
+        return Icons.sync_rounded;
+      case SyncStatus.inSync:
+        return Icons.check_rounded;
+      case SyncStatus.outOfSync:
+        return Icons.sync_disabled_rounded;
+      case SyncStatus.error:
+        return Icons.error_outline_rounded;
+    }
+  }
+
+  Color _getIconColor(BuildContext context, DataModel dmodel) {
+    switch (dmodel.dataSyncStatus) {
+      case SyncStatus.loading:
+        return AppColors.cell(context)[500]!;
+      case SyncStatus.inSync:
+        return Theme.of(context).colorScheme.primary;
+      case SyncStatus.outOfSync:
+      case SyncStatus.error:
+        return Colors.red[300]!;
+    }
+  }
+
+  String _syncText(DataModel dmodel) {
+    switch (dmodel.dataSyncStatus) {
+      case SyncStatus.loading:
+        return "Loading ...";
+      case SyncStatus.inSync:
+        return "In Sync";
+      case SyncStatus.outOfSync:
+        return "Out of Sync";
+      case SyncStatus.error:
+        return "Error";
+    }
   }
 }

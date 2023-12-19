@@ -213,20 +213,26 @@ class _IndexState extends State<Index> with WidgetsBindingObserver {
         break;
       case AppLifecycleState.inactive:
         print("[STATE] inactive");
-        break;
-      case AppLifecycleState.paused:
-        print("[STATE] paused");
-        _closedTime = DateTime.now();
-        break;
-      case AppLifecycleState.detached:
-        print("[STATE] detached");
-        // check if a workout is currently running
+
+        // dump current workout state to a tmp file if the user ends up closing the app
         DataModel dmodel = Provider.of<DataModel>(context, listen: false);
         if (dmodel.workoutState != null) {
           // create a snapshot of this workout state
           print("DUMPING WORKOUT STATE TO FILE");
           dmodel.workoutState!.dumpToFile();
         }
+
+        break;
+      case AppLifecycleState.paused:
+        print("[STATE] paused");
+
+        // keep track of time when to re-load the app
+        _closedTime = DateTime.now();
+
+        break;
+      case AppLifecycleState.detached:
+        print("[STATE] detached");
+
         break;
       case AppLifecycleState.hidden:
         print("[STATE] hidden");

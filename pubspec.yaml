@@ -70,6 +70,7 @@ dependencies:
   url_launcher: ^6.1.14
   in_app_review: ^2.0.6
   package_info_plus: ^4.1.0
+  share_plus: ^7.2.1
 
 dev_dependencies:
   flutter_test:

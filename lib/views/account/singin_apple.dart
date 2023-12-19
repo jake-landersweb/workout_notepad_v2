@@ -67,6 +67,7 @@ class _SigninAppleState extends State<SigninApple> {
   Future<void> _signIn() async {
     try {
       final appleProvider = AppleAuthProvider();
+      appleProvider.addScope("email");
       var credential =
           await FirebaseAuth.instance.signInWithProvider(appleProvider);
       if (credential.user == null) {

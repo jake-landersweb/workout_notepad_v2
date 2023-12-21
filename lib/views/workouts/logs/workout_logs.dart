@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_notepad_v2/components/close_button.dart';
+import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/components/loading_indicator.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 
@@ -33,78 +35,40 @@ class _WorkoutLogsState extends State<WorkoutLogs> {
     var dmodel = Provider.of<DataModel>(context);
     return ChangeNotifierProvider(
       create: (context) => WorkoutLogModel(workout: widget.workout),
-      builder: (context, child) {
-        return Navigator(
-          onGenerateRoute: (settings) {
-            return MaterialWithModalsPageRoute(
-              settings: settings,
-              builder: (context) => _body(context, dmodel),
-            );
-          },
-        );
-      },
+      builder: (context, child) => _body(context, dmodel),
     );
   }
 
   Widget _body(BuildContext context, DataModel dmodel) {
     var lmodel = Provider.of<WorkoutLogModel>(context);
-    return comp.InteractiveSheet(
-      header: (context) {
-        return SizedBox(
-          width: double.infinity,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const comp.CloseButton2(useRoot: true),
-              Text(
-                widget.workout.title,
-                style: ttTitle(
-                  context,
-                ),
+    return HeaderBar.sheet(
+      title: "Workout Logs",
+      leading: const [CloseButton2()],
+      children: [
+        const SizedBox(height: 8),
+        Text(widget.workout.title, style: ttTitle(context, size: 24)),
+        const SizedBox(height: 8),
+        if (!lmodel.loaded)
+          const Center(child: LoadingIndicator())
+        else if (lmodel.logs.isEmpty)
+          const NoLogs()
+        else
+          for (var i in lmodel.logs)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: WorkoutLogCell(
+                workoutLog: i,
+                onSelect: widget.onSelect == null
+                    ? null
+                    : () {
+                        widget.onSelect!(i);
+                        if (widget.closeOnSelect) {
+                          Navigator.of(context, rootNavigator: true).pop();
+                        }
+                      },
               ),
-              if (widget.workout.description?.isNotEmpty ?? false)
-                Text(
-                  widget.workout.description!,
-                  style: ttLabel(
-                    context,
-                  ),
-                ),
-            ],
-          ),
-        );
-      },
-      builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              const SizedBox(height: 16),
-              if (!lmodel.loaded)
-                const Center(child: LoadingIndicator())
-              else if (lmodel.logs.isEmpty)
-                const NoLogs()
-              else
-                for (var i in lmodel.logs)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: WorkoutLogCell(
-                      workoutLog: i,
-                      onSelect: widget.onSelect == null
-                          ? null
-                          : () {
-                              widget.onSelect!(i);
-                              if (widget.closeOnSelect) {
-                                Navigator.of(context, rootNavigator: true)
-                                    .pop();
-                              }
-                            },
-                    ),
-                  ),
-            ],
-          ),
-        );
-      },
+            ),
+      ],
     );
   }
 }

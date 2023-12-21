@@ -50,6 +50,7 @@ class _CreateAccountState extends State<CreateAccount> {
               controller: _email,
               hintText: "user@workoutnotepad.app",
               keyboardType: TextInputType.emailAddress,
+              textCapitalization: TextCapitalization.none,
               labelText: "Email",
               onChanged: (v) {
                 setState(() {});
@@ -70,6 +71,7 @@ class _CreateAccountState extends State<CreateAccount> {
               hintText: "******",
               obscureText: true,
               keyboardType: TextInputType.visiblePassword,
+              textCapitalization: TextCapitalization.none,
               labelText: "Password",
               onChanged: (_) {},
             ),

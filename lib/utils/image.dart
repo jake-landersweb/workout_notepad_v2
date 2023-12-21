@@ -286,62 +286,21 @@ Future<void> promptMedia({
   required Function(File?) onSelected,
   bool allowsVideo = true,
 }) async {
-  await showFloatingSheet(
+  await showModalBottomSheet(
     context: context,
     builder: (builder) {
       return FloatingSheet(
         title: "Select Asset",
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Section(
-              "Images",
-              child:
-                  ContainedList<Tuple4<String, IconData, Color, AsyncCallback>>(
-                leadingPadding: 0,
-                trailingPadding: 0,
-                childPadding: EdgeInsets.zero,
-                children: [
-                  Tuple4(
-                    "Capture with camera",
-                    Icons.camera_alt_rounded,
-                    Colors.green[300]!,
-                    () async {
-                      Navigator.of(context).pop();
-                      var file = await pickMedia(
-                        ImageSource.camera,
-                        type: AppFileType.image,
-                      );
-                      onSelected(file);
-                    },
-                  ),
-                  Tuple4(
-                    "Pick from gallery",
-                    Icons.image_rounded,
-                    Colors.blue[300]!,
-                    () async {
-                      Navigator.of(context).pop();
-                      var file = await pickMedia(
-                        ImageSource.gallery,
-                        type: AppFileType.image,
-                      );
-                      onSelected(file);
-                    },
-                  ),
-                ],
-                onChildTap: (context, item, index) async => await item.v4(),
-                childBuilder: (context, item, index) {
-                  return WrappedButton(
-                    title: item.v1,
-                    icon: item.v2,
-                    iconBg: item.v3,
-                  );
-                },
-              ),
-            ),
-            if (allowsVideo)
+        child: SafeArea(
+          top: false,
+          left: false,
+          right: false,
+          bottom: true,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
               Section(
-                "Videos",
+                "Images",
                 child: ContainedList<
                     Tuple4<String, IconData, Color, AsyncCallback>>(
                   leadingPadding: 0,
@@ -351,12 +310,12 @@ Future<void> promptMedia({
                     Tuple4(
                       "Capture with camera",
                       Icons.camera_alt_rounded,
-                      Colors.red[300]!,
+                      Colors.green[300]!,
                       () async {
                         Navigator.of(context).pop();
                         var file = await pickMedia(
                           ImageSource.camera,
-                          type: AppFileType.video,
+                          type: AppFileType.image,
                         );
                         onSelected(file);
                       },
@@ -364,12 +323,12 @@ Future<void> promptMedia({
                     Tuple4(
                       "Pick from gallery",
                       Icons.image_rounded,
-                      Colors.purple[300]!,
+                      Colors.blue[300]!,
                       () async {
                         Navigator.of(context).pop();
                         var file = await pickMedia(
                           ImageSource.gallery,
-                          type: AppFileType.video,
+                          type: AppFileType.image,
                         );
                         onSelected(file);
                       },
@@ -385,7 +344,54 @@ Future<void> promptMedia({
                   },
                 ),
               ),
-          ],
+              if (allowsVideo)
+                Section(
+                  "Videos",
+                  child: ContainedList<
+                      Tuple4<String, IconData, Color, AsyncCallback>>(
+                    leadingPadding: 0,
+                    trailingPadding: 0,
+                    childPadding: EdgeInsets.zero,
+                    children: [
+                      Tuple4(
+                        "Capture with camera",
+                        Icons.camera_alt_rounded,
+                        Colors.red[300]!,
+                        () async {
+                          Navigator.of(context).pop();
+                          var file = await pickMedia(
+                            ImageSource.camera,
+                            type: AppFileType.video,
+                          );
+                          onSelected(file);
+                        },
+                      ),
+                      Tuple4(
+                        "Pick from gallery",
+                        Icons.image_rounded,
+                        Colors.purple[300]!,
+                        () async {
+                          Navigator.of(context).pop();
+                          var file = await pickMedia(
+                            ImageSource.gallery,
+                            type: AppFileType.video,
+                          );
+                          onSelected(file);
+                        },
+                      ),
+                    ],
+                    onChildTap: (context, item, index) async => await item.v4(),
+                    childBuilder: (context, item, index) {
+                      return WrappedButton(
+                        title: item.v1,
+                        icon: item.v2,
+                        iconBg: item.v3,
+                      );
+                    },
+                  ),
+                ),
+            ],
+          ),
         ),
       );
     },

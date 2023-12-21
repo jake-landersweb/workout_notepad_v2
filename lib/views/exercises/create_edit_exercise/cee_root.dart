@@ -9,14 +9,19 @@ import 'package:workout_notepad_v2/components/field.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
 
 import 'package:workout_notepad_v2/components/root.dart' as comp;
+import 'package:workout_notepad_v2/components/section.dart';
+import 'package:workout_notepad_v2/components/segmented_picker.dart';
 import 'package:workout_notepad_v2/components/time_picker.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/text_themes.dart';
+import 'package:workout_notepad_v2/utils/image.dart';
 import 'package:workout_notepad_v2/views/exercises/create_edit_exercise/cee_details.dart';
 import 'package:workout_notepad_v2/views/exercises/create_edit_exercise/cee_type.dart';
 import 'package:workout_notepad_v2/views/exercises/create_edit_exercise/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/icon_picker.dart';
+import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
 
 class CEERoot extends StatefulWidget {
   const CEERoot({
@@ -58,8 +63,6 @@ class _CEERootState extends State<CEERoot> {
     var cemodel = Provider.of<CreateExerciseModel>(context);
     return HeaderBar.sheet(
       title: widget.isCreate ? "Create Exercise" : "Update Exercise",
-      isFluid: true,
-      itemSpacing: 16,
       crossAxisAlignment: CrossAxisAlignment.center,
       leading: const [comp.CancelButton()],
       trailing: [
@@ -98,53 +101,126 @@ class _CEERootState extends State<CEERoot> {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: _title(context, cemodel),
-        ),
-        if (widget.isCreate)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Clickable(
-              onTap: () {
-                comp.cupertinoSheet(
-                  context: context,
-                  builder: (cntext) => CEEType(
-                    type: cemodel.exercise.type,
-                    onSelect: (type) {
-                      setState(() {
-                        cemodel.exercise.type = type;
-                      });
-                    },
+          child: Section(
+            "Asset",
+            initOpen: false,
+            allowsCollapse: true,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Stack(
+                alignment: Alignment.topLeft,
+                children: [
+                  Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 300),
+                      child: _getAssetWidget(context, cemodel),
+                    ),
                   ),
-                );
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.cell(context),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                height: 50,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Row(
-                    children: [
-                      Image.asset(exerciseTypeIcon(cemodel.exercise.type),
-                          height: 40, width: 40),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: comp.LabeledCell(
-                          label: "Type",
-                          child: Text(
-                            exerciseTypeTitle(cemodel.exercise.type),
-                            style: const TextStyle(fontSize: 16),
+                  if (cemodel.file.file != null)
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Clickable(
+                        onTap: () {
+                          setState(() {
+                            cemodel.file.deleteFile();
+                          });
+                          cemodel.deleteFile = true;
+                          cemodel.fileChanged = true;
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.cell(context),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Icon(
+                              Icons.close_rounded,
+                              color: AppColors.subtext(context),
+                            ),
                           ),
                         ),
                       ),
-                    ],
-                  ),
+                    )
+                ],
+              ),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: _title(context, cemodel),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Section(
+            "Difficulty",
+            child: SegmentedPicker(
+              style: SegmentedPickerStyle(
+                height: 50,
+                backgroundColor: AppColors.cell(context),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                pickerColor: _pickerColor(context, cemodel).withOpacity(0.3),
+                selectedTextColor: _pickerColor(context, cemodel),
+              ),
+              titles: const ["Beginner", "Intermediate", "Advanced"],
+              selection: cemodel.exercise.difficulty,
+              onSelection: (v) {
+                setState(() {
+                  cemodel.exercise.difficulty = v;
+                });
+              },
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Clickable(
+            onTap: () {
+              comp.cupertinoSheet(
+                context: context,
+                builder: (cntext) => CEEType(
+                  type: cemodel.exercise.type,
+                  isCreate: widget.isCreate,
+                  onSelect: (type) {
+                    setState(() {
+                      cemodel.exercise.type = type;
+                    });
+                  },
+                ),
+              );
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: AppColors.cell(context),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              height: 50,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  children: [
+                    Image.asset(exerciseTypeIcon(cemodel.exercise.type),
+                        height: 40, width: 40),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: comp.LabeledCell(
+                        label: "Type",
+                        child: Text(
+                          exerciseTypeTitle(cemodel.exercise.type),
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
+        ),
         comp.Section(
           "Category",
           initOpen: true,
@@ -152,7 +228,11 @@ class _CEERootState extends State<CEERoot> {
           headerPadding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
           child: _category(context, cemodel, dmodel),
         ),
-        for (var i in _setBody(context, cemodel)) i
+        for (var i in _setBody(context, cemodel))
+          Padding(
+            padding: EdgeInsets.only(top: 16),
+            child: i,
+          ),
       ],
     );
   }
@@ -206,15 +286,32 @@ class _CEERootState extends State<CEERoot> {
             },
           ),
         ),
-        comp.WrappedButton(
-          title: "Exercise Details",
-          icon: Icons.info_outline_rounded,
-          rowAxisSize: MainAxisSize.max,
-          onTap: () => cupertinoSheet(
-            context: context,
-            builder: (context) => CEEDetails(cemodel: cemodel),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Field(
+            value: cemodel.exercise.description,
+            hintText:
+                "Description (Break down the exercise into steps to make it easier to follow.)",
+            labelText: "Description",
+            onChanged: (v) {
+              setState(() {
+                cemodel.exercise.description = v;
+              });
+            },
+            isLabeled: false,
+            maxLines: 5,
+            minLines: 5,
           ),
         ),
+        // comp.WrappedButton(
+        //   title: "Exercise Details",
+        //   icon: Icons.info_outline_rounded,
+        //   rowAxisSize: MainAxisSize.max,
+        //   onTap: () => cupertinoSheet(
+        //     context: context,
+        //     builder: (context) => CEEDetails(cemodel: cemodel),
+        //   ),
+        // ),
       ],
     );
   }
@@ -493,5 +590,71 @@ class _CEERootState extends State<CEERoot> {
         ],
       ),
     );
+  }
+
+  Widget _getAssetWidget(BuildContext context, CreateExerciseModel cemodel) {
+    var dmodel = Provider.of<DataModel>(context);
+    if (cemodel.file.file == null) {
+      return Clickable(
+        onTap: () async {
+          if (!dmodel.hasValidSubscription()) {
+            cupertinoSheet(
+              context: context,
+              builder: (context) => const Subscriptions(),
+            );
+          } else {
+            await promptMedia(
+              context: context,
+              onSelected: (file) {
+                if (file == null) {
+                  print("There was an issue picking the file");
+                }
+                setState(() {
+                  cemodel.file.setFile(file: file!);
+                });
+              },
+            );
+          }
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.cell(context),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.camera_alt_rounded,
+                  size: 30,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "Choose an Asset",
+                  style: ttLabel(context),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: cemodel.file.getRenderer(),
+    );
+  }
+
+  Color _pickerColor(BuildContext context, CreateExerciseModel cemodel) {
+    switch (cemodel.exercise.difficulty) {
+      case "Intermediate":
+        return Colors.amber[600]!;
+      case "Advanced":
+        return Colors.red[300]!;
+      default:
+        return Theme.of(context).colorScheme.primary;
+    }
   }
 }

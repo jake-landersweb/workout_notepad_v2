@@ -104,67 +104,39 @@ class _ProfileState extends State<Profile> {
           padding: const EdgeInsets.only(bottom: 16.0),
           child: dmodel.user!.avatar(context, size: 125),
         ),
-        Clickable(
-          onTap: () {
-            showFloatingSheet(
-              context: context,
-              builder: (context) => FloatingSheet(
-                title: "",
-                child: Column(
-                  children: [
-                    Section(
-                      "Name",
-                      headerPadding: const EdgeInsets.fromLTRB(0, 8, 0, 4),
-                      child: Text(
-                        dmodel.user!.getName(),
-                      ),
-                    ),
-                    Section(
-                      "userId",
-                      headerPadding: const EdgeInsets.fromLTRB(0, 8, 0, 4),
-                      child: SelectableText(
-                        dmodel.user!.userId,
-                      ),
-                    ),
-                  ],
-                ),
+        Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                dmodel.user!.getName(),
+                style: ttSubTitle(context),
+                textAlign: TextAlign.center,
               ),
-            );
-          },
-          child: Center(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
+              if (dmodel.user!.isAnon)
                 Text(
-                  dmodel.user!.getName(),
+                  "Anonymous User",
                   style: ttSubTitle(context),
                   textAlign: TextAlign.center,
                 ),
-                if (dmodel.user!.isAnon)
-                  Text(
-                    "Anonymous User",
-                    style: ttSubTitle(context),
-                    textAlign: TextAlign.center,
-                  ),
-                if (dmodel.hasValidSubscription())
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.amber[500],
-                        shape: BoxShape.circle,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(2.0),
-                        child: Icon(
-                          Icons.star_rounded,
-                          color: AppColors.cell(context),
-                        ),
+              if (dmodel.hasValidSubscription())
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.amber[500],
+                      shape: BoxShape.circle,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: Icon(
+                        Icons.star_rounded,
+                        color: AppColors.cell(context),
                       ),
                     ),
                   ),
-              ],
-            ),
+                ),
+            ],
           ),
         ),
         if (dmodel.hasValidSubscription() && dmodel.snapshots.isNotEmpty)

@@ -145,6 +145,16 @@ class _EditProfileState extends State<EditProfile> {
             ),
           ),
         ),
+        const SizedBox(height: 32),
+        Center(
+          child: SelectableText(
+            "userId: ${widget.user.userId}",
+            style: ttcaption(
+              context,
+              fontWeight: FontWeight.w300,
+            ),
+          ),
+        ),
       ],
     );
   }

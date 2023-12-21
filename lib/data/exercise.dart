@@ -170,7 +170,7 @@ class Exercise {
     title = "";
     category = "";
     description = "";
-    difficulty = "";
+    difficulty = "Intermediate";
     icon = "";
     type = ExerciseType.weight;
     sets = 1;

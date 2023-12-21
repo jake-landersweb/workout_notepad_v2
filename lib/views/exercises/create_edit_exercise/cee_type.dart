@@ -10,9 +10,11 @@ class CEEType extends StatefulWidget {
     super.key,
     required this.type,
     required this.onSelect,
+    required this.isCreate,
   });
   final ExerciseType type;
   final Function(ExerciseType type) onSelect;
+  final bool isCreate;
 
   @override
   State<CEEType> createState() => _CEETypeState();
@@ -27,6 +29,22 @@ class _CEETypeState extends State<CEEType> {
     super.initState();
   }
 
+  List<ExerciseType> _getValues() {
+    var values = ExerciseType.values;
+    if (widget.isCreate) {
+      return values;
+    } else {
+      switch (_type) {
+        case ExerciseType.bw:
+        case ExerciseType.weight:
+          return [ExerciseType.weight, ExerciseType.bw];
+        case ExerciseType.timed:
+        case ExerciseType.duration:
+          return [ExerciseType.duration, ExerciseType.timed];
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return HeaderBar.sheet(
@@ -34,7 +52,7 @@ class _CEETypeState extends State<CEEType> {
       trailing: const [CancelButton(title: "Done")],
       children: [
         const SizedBox(height: 16),
-        for (var i in ExerciseType.values)
+        for (var i in _getValues())
           Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
             child: _typeCell(context, i),

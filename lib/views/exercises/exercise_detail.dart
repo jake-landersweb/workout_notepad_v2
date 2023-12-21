@@ -89,7 +89,8 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
     var dmodel = Provider.of<DataModel>(context);
 
     return HeaderBar.sheet(
-      title: _exercise?.title ?? "Loading",
+      // title: _exercise?.title ?? "Loading",
+      title: "",
       crossAxisAlignment: CrossAxisAlignment.center,
       isFluid: false,
       itemSpacing: 16,
@@ -147,7 +148,19 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(_exercise?.title ?? "",
+                    style: ttTitle(context, size: 24)),
+              )
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
         if (e.difficulty.isNotEmpty)
           Align(
             alignment: Alignment.centerLeft,

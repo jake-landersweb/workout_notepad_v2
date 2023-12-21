@@ -207,34 +207,34 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
               title: "Logs",
               description: "View workout logs",
               onTap: () {
-                showMaterialModalBottomSheet(
+                cupertinoSheet(
                   context: context,
                   builder: (context) => WorkoutLogs(workout: _workout),
                 );
               },
               index: 2,
             ),
-            const SizedBox(width: 16),
-            _actionCell(
-              context: context,
-              icon: Icons.camera_rounded,
-              title: "Snapshots",
-              description: "View previous versions",
-              onTap: () {
-                if (!dmodel.hasValidSubscription()) {
-                  cupertinoSheet(
-                    context: context,
-                    builder: (context) => const Subscriptions(),
-                  );
-                } else {
-                  cupertinoSheet(
-                    context: context,
-                    builder: (context) => WorkoutSnapshots(workout: _workout),
-                  );
-                }
-              },
-              index: 3,
-            ),
+            // const SizedBox(width: 16),
+            // _actionCell(
+            //   context: context,
+            //   icon: Icons.camera_rounded,
+            //   title: "Snapshots",
+            //   description: "View previous versions",
+            //   onTap: () {
+            //     if (!dmodel.hasValidSubscription()) {
+            //       cupertinoSheet(
+            //         context: context,
+            //         builder: (context) => const Subscriptions(),
+            //       );
+            //     } else {
+            //       cupertinoSheet(
+            //         context: context,
+            //         builder: (context) => WorkoutSnapshots(workout: _workout),
+            //       );
+            //     }
+            //   },
+            //   index: 3,
+            // ),
             const SizedBox(width: 16),
             _actionCell(
               context: context,

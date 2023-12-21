@@ -480,11 +480,10 @@ class DataModel extends ChangeNotifier {
     } else {
       print("comparing sha256");
       var localContent = await Snapshot.getLocalData();
-      var tmp = utf8.encode(jsonEncode(localContent));
-      var hash = sha256.convert(tmp).toString();
-      print(hash);
+      print(localContent['sha256Hash']);
       print(serverSnapshots.first.sha256Hash);
-      shouldSnapshot = hash != serverSnapshots.first.sha256Hash!;
+      shouldSnapshot =
+          localContent['sha256Hash'] != serverSnapshots.first.sha256Hash!;
     }
 
     // check if there is a need for a snapshot

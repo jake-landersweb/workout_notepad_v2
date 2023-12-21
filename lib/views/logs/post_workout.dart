@@ -103,6 +103,8 @@ class WorkoutSummaryModel extends ChangeNotifier {
 
 enum _LoadingType { none, standard, square, full }
 
+enum _ViewType { full, square }
+
 class PostWorkoutSummary extends StatefulWidget {
   const PostWorkoutSummary({
     super.key,
@@ -119,7 +121,8 @@ class PostWorkoutSummary extends StatefulWidget {
 class _PostWorkoutSummaryState extends State<PostWorkoutSummary> {
   WorkoutLog? _workoutLog;
   final GlobalKey _reportKey = GlobalKey();
-  _LoadingType _loadingType = _LoadingType.none;
+  bool _isLoading = false;
+  _ViewType _viewType = _ViewType.full;
   bool _refresh = false;
 
   @override
@@ -130,83 +133,119 @@ class _PostWorkoutSummaryState extends State<PostWorkoutSummary> {
 
   @override
   Widget build(BuildContext context) {
-    return HeaderBar.sheet(
-      title: "Summary",
-      leading: const [CloseButton2()],
-      trailing: [
-        Clickable(
-          onTap: () async {
-            showModalBottomSheet(
-              context: context,
-              builder: (context) => Container(
-                color: AppColors.background(context),
-                width: double.infinity,
-                child: SafeArea(
-                  top: false,
-                  bottom: true,
-                  child: SizedBox(
-                    height: 100,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: Row(
-                        children: [
-                          _exportCell(
-                            context,
-                            Icons.crop_square_rounded,
-                            "Square",
-                            _LoadingType.square,
-                          ),
-                          _exportCell(
-                            context,
-                            Icons.crop_portrait,
-                            "Rect",
-                            _LoadingType.standard,
-                          ),
-                          // _exportCell(
-                          //   context,
-                          //   Icons.crop_16_9_rounded,
-                          //   "Full",
-                          //   _LoadingType.full,
-                          //   angle: math.pi / 2,
-                          // ),
-                        ],
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        HeaderBar.sheet(
+          title: "Summary",
+          leading: const [CloseButton2()],
+          trailing: [
+            if (widget.onSave != null)
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: EditButton(onTap: () {
+                  cupertinoSheet(
+                    context: context,
+                    builder: (context) => WLEdit(
+                        wl: _workoutLog!,
+                        onSave: (v) async {
+                          widget.onSave!(v);
+                          await _init();
+                          await Future.delayed(
+                              const Duration(milliseconds: 50));
+                          setState(() {
+                            _refresh = true;
+                          });
+                        }),
+                  );
+                }),
+              )
+          ],
+          horizontalSpacing: 0,
+          children: [
+            if (_workoutLog != null) _body(context, _workoutLog!),
+          ],
+        ),
+        // action buttons
+        Padding(
+          padding: EdgeInsets.fromLTRB(
+              8, 0, 8, MediaQuery.of(context).padding.bottom + 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Clickable(
+                onTap: () {
+                  if (_viewType == _ViewType.full) {
+                    setState(() {
+                      _viewType = _ViewType.square;
+                    });
+                  } else {
+                    setState(() {
+                      _viewType = _ViewType.full;
+                    });
+                  }
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.cell(context)[100],
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        spreadRadius: 5,
+                        blurRadius: 7,
                       ),
-                    ),
+                    ],
+                  ),
+                  height: MediaQuery.of(context).size.width * 0.15,
+                  width: MediaQuery.of(context).size.width * 0.15,
+                  child: Center(
+                    child: Icon(_viewType == _ViewType.square
+                        ? Icons.crop_square_rounded
+                        : Icons.crop_portrait),
                   ),
                 ),
               ),
-            );
-          },
-          child: _loadingType != _LoadingType.none
-              ? LoadingIndicator(color: Theme.of(context).colorScheme.primary)
-              : Icon(
-                  Icons.ios_share_rounded,
-                  color: Theme.of(context).colorScheme.primary,
+              Clickable(
+                onTap: () async {
+                  setState(() {
+                    _isLoading = true;
+                  });
+                  await _share(context);
+                  setState(() {
+                    _isLoading = false;
+                  });
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                      ),
+                    ],
+                  ),
+                  height: MediaQuery.of(context).size.width * 0.15,
+                  width: MediaQuery.of(context).size.width * 0.15,
+                  child: Center(
+                    child: _isLoading
+                        ? LoadingIndicator(color: Colors.white)
+                        : Padding(
+                            padding: EdgeInsets.only(bottom: 3.0),
+                            child: Icon(
+                              Icons.ios_share_rounded,
+                              color: Colors.white,
+                            ),
+                          ),
+                  ),
                 ),
+              ),
+            ],
+          ),
         ),
-        if (widget.onSave != null)
-          Padding(
-            padding: const EdgeInsets.only(left: 10.0),
-            child: EditButton(onTap: () {
-              cupertinoSheet(
-                context: context,
-                builder: (context) => WLEdit(
-                    wl: _workoutLog!,
-                    onSave: (v) async {
-                      widget.onSave!(v);
-                      await _init();
-                      await Future.delayed(const Duration(milliseconds: 50));
-                      setState(() {
-                        _refresh = true;
-                      });
-                    }),
-              );
-            }),
-          )
-      ],
-      horizontalSpacing: 0,
-      children: [
-        if (_workoutLog != null) _body(context, _workoutLog!),
       ],
     );
   }
@@ -227,188 +266,193 @@ class _PostWorkoutSummaryState extends State<PostWorkoutSummary> {
     }
     return RepaintBoundary(
       key: _reportKey,
-      child: _loadingType == _LoadingType.square
-          ? _squareContent(context, model)
-          : Container(
-              color: AppColors.background(context),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      child: _view(context, model),
+    );
+  }
+
+  Widget _view(BuildContext context, WorkoutSummaryModel model) {
+    switch (_viewType) {
+      case _ViewType.full:
+        return Container(
+          color: AppColors.background(context),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 8),
+                Text(model.wl.title, style: ttTitle(context, size: 32)),
+                const SizedBox(height: 8),
+                Column(
                   children: [
-                    const SizedBox(height: 8),
-                    Text(model.wl.title, style: ttTitle(context, size: 32)),
-                    const SizedBox(height: 8),
-                    Column(
+                    _cell(
+                      context,
+                      _attributeCell(
+                        context,
+                        "Total Time",
+                        model.duration,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
                       children: [
-                        _cell(
-                          context,
-                          _attributeCell(
-                            context,
-                            "Total Time",
-                            model.duration,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _cell(
-                                context,
-                                _attributeCell(
-                                  context,
-                                  "Exercises",
-                                  model.totalExercises.toString(),
-                                  vertical: true,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: _cell(
-                                context,
-                                _attributeCell(
-                                  context,
-                                  "Sets",
-                                  model.totalSets.toString(),
-                                  vertical: true,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            Expanded(
-                              child: _cell(
-                                context,
-                                _attributeCell(
-                                  context,
-                                  "Reps",
-                                  model.totalReps.toString(),
-                                  vertical: true,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        if (model.totalWeight > 0)
-                          _cell(
+                        Expanded(
+                          child: _cell(
                             context,
                             _attributeCell(
                               context,
-                              "Total lbs",
-                              model.totalWeight.toString(),
+                              "Exercises",
+                              model.totalExercises.toString(),
+                              vertical: true,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: _cell(
+                            context,
+                            _attributeCell(
+                              context,
+                              "Sets",
+                              model.totalSets.toString(),
+                              vertical: true,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: _cell(
+                            context,
+                            _attributeCell(
+                              context,
+                              "Reps",
+                              model.totalReps.toString(),
+                              vertical: true,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    if (model.totalWeight > 0)
+                      _cell(
+                        context,
+                        _attributeCell(
+                          context,
+                          "Total lbs",
+                          model.totalWeight.toString(),
+                        ),
+                      ),
+                  ],
+                ),
+                // categories
+                if (model.categories.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.cell(context),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      width: double.infinity,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child:
+                                Text("Categories", style: ttcaption(context)),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: [
+                                for (int i = 0;
+                                    i < model.categories.length;
+                                    i++)
+                                  CategoryCell(categoryId: model.categories[i])
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                if (model.tags.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: _pieChart(context, "Tag Dist.", model.tags),
+                  ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: _weightBySet(context, model),
+                ),
+                if (model.exerciseTypes.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: _pieChart(
+                        context, "Exercise Type Dist.", model.exerciseTypes),
+                  ),
+                if (!_isLoading)
+                  Section(
+                    "Raw Logs",
+                    child: Column(
+                      children: [
+                        for (var i in model.wl.exerciseLogs)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.cell(context),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Column(
+                                children: [
+                                  for (var j in i)
+                                    Padding(
+                                      padding:
+                                          const EdgeInsets.fromLTRB(8, 0, 8, 8),
+                                      child: Section(
+                                        j.title,
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: AppColors.cell(context),
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              ELCell(
+                                                log: j,
+                                                showDate: false,
+                                                // backgroundColor: AppColors.cell(context)[50],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
                             ),
                           ),
                       ],
                     ),
-                    // categories
-                    if (model.categories.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: AppColors.cell(context),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          width: double.infinity,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("Categories",
-                                    style: ttcaption(context)),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Wrap(
-                                  spacing: 8,
-                                  runSpacing: 8,
-                                  children: [
-                                    for (int i = 0;
-                                        i < model.categories.length;
-                                        i++)
-                                      CategoryCell(
-                                          categoryId: model.categories[i])
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    if (model.tags.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: _pieChart(context, "Tag Dist.", model.tags),
-                      ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: _weightBySet(context, model),
-                    ),
-                    if (model.exerciseTypes.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 8.0),
-                        child: _pieChart(context, "Exercise Type Dist.",
-                            model.exerciseTypes),
-                      ),
-                    if (_loadingType == _LoadingType.full ||
-                        _loadingType == _LoadingType.none)
-                      Section(
-                        "Raw Logs",
-                        child: Column(
-                          children: [
-                            for (var i in model.wl.exerciseLogs)
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 16.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: AppColors.cell(context),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      for (var j in i)
-                                        Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              8, 0, 8, 8),
-                                          child: Section(
-                                            j.title,
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: AppColors.cell(context),
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  ELCell(
-                                                    log: j,
-                                                    showDate: false,
-                                                    // backgroundColor: AppColors.cell(context)[50],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                      )
-                    else
-                      const SizedBox(height: 16),
-                  ],
-                ),
-              ),
+                  )
+                else
+                  const SizedBox(height: 16),
+              ],
             ),
-    );
+          ),
+        );
+      case _ViewType.square:
+        return _squareContent(context, model);
+    }
   }
 
   Widget _squareContent(BuildContext context, WorkoutSummaryModel model) {
@@ -761,49 +805,6 @@ class _PostWorkoutSummaryState extends State<PostWorkoutSummary> {
     );
   }
 
-  Widget _exportCell(
-      BuildContext context, IconData icon, String title, _LoadingType lt,
-      {double angle = 0}) {
-    return Expanded(
-      child: Clickable(
-        onTap: () async {
-          setState(() {
-            _loadingType = lt;
-          });
-          await _share(context);
-          setState(() {
-            _loadingType = _LoadingType.none;
-          });
-          Navigator.of(context).pop();
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: AppColors.cell(context),
-          ),
-          height: double.infinity,
-          width: double.infinity,
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Transform.rotate(
-                  angle: angle,
-                  child: Icon(
-                    icon,
-                    size: 32,
-                    color: AppColors.subtext(context),
-                  ),
-                ),
-                Text(title, style: ttcaption(context)),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
   Future<void> _share(BuildContext context) async {
     File? file;
     try {
@@ -830,8 +831,10 @@ class _PostWorkoutSummaryState extends State<PostWorkoutSummary> {
       await file.writeAsBytes(pngBytes);
 
       // share the file
-      final result =
-          await Share.shareXFiles([XFile(path)], text: 'Look at my workout!');
+      final result = await Share.shareXFiles(
+        [XFile(path)],
+        text: 'My post workout summary from: https://workoutnotepad.co',
+      );
       switch (result.status) {
         case ShareResultStatus.success:
           snackbarStatus(context, "Successfully shared your workout.");

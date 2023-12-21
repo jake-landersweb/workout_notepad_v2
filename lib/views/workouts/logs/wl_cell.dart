@@ -6,6 +6,7 @@ import 'package:workout_notepad_v2/components/wrapped_button.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/logs/post_workout.dart';
 import 'package:workout_notepad_v2/views/workouts/logs/root.dart';
 
 class WorkoutLogCell extends StatefulWidget {
@@ -61,15 +62,15 @@ class _WorkoutLogCellState extends State<WorkoutLogCell> {
               children: [
                 Expanded(
                   child: WrappedButton(
-                    title: "View Exercises",
+                    title: "View Summary",
                     type: WrappedButtonType.main,
                     rowAxisSize: MainAxisSize.max,
                     center: true,
                     onTap: () {
                       comp.cupertinoSheet(
                         context: context,
-                        builder: (context) => WLExercises(
-                          workoutLog: _wl,
+                        builder: (context) => PostWorkoutSummary(
+                          workoutLogId: widget.workoutLog.workoutLogId,
                           onSave: (wl) async {
                             _wl = wl;
                             _wl.exerciseLogs = await _wl.getExercises() ?? [];

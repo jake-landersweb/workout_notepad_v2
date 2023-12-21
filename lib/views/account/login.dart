@@ -59,6 +59,7 @@ class _LoginState extends State<Login> {
                   controller: _email,
                   hintText: "user@workoutnotepad.app",
                   keyboardType: TextInputType.emailAddress,
+                  textCapitalization: TextCapitalization.none,
                   labelText: "Email",
                   onChanged: (v) {
                     setState(() {});
@@ -127,7 +128,8 @@ class _LoginState extends State<Login> {
                         try {
                           print("Sending reset email");
                           await FirebaseAuth.instance.sendPasswordResetEmail(
-                              email: _email.text.toLowerCase());
+                            email: _email.text.toLowerCase(),
+                          );
                           snackbarStatus(context,
                               "Success. Check your inbox for instructions on how to reset your password.");
                         } on FirebaseAuthException catch (e) {

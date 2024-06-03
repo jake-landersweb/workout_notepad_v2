@@ -2,10 +2,11 @@
 
 Source code for the Workout Notepad mobile application. You can download this app for [iOS](https://apps.apple.com/pk/app/workout-notepad/id6453561144) and [Android](https://play.google.com/store/apps/details?id=com.landersweb.workout_notepad_v2) at the links provided. You can also visit the [website](https://workoutnotepad.co).
 
-|:-------------------------:|:-------------------------:|
-|<img height="400" alt="screenshot-1" src="https://workoutnotepad.co/public/images/app-store/screenshot-1.png"> | <img height="400" alt="screenshot-2" src="https://workoutnotepad.co/public/images/app-store/screenshot-2.png">|
-|<img height="400" alt="screenshot-3" src="https://workoutnotepad.co/public/images/app-store/screenshot-3.png"> | <img height="400" alt="screenshot-4" src="https://workoutnotepad.co/public/images/app-store/screenshot-4.png">|
-|<img height="400" alt="screenshot-5" src="https://workoutnotepad.co/public/images/app-store/screenshot-5.png"> | <img height="400" alt="screenshot-6" src="https://workoutnotepad.co/public/images/app-store/screenshot-6.png">|
+|                                                                                                                |                                                                                                                |
+| :------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------: |
+| <img height="400" alt="screenshot-1" src="https://workoutnotepad.co/public/images/app-store/screenshot-1.png"> | <img height="400" alt="screenshot-2" src="https://workoutnotepad.co/public/images/app-store/screenshot-2.png"> |
+| <img height="400" alt="screenshot-3" src="https://workoutnotepad.co/public/images/app-store/screenshot-3.png"> | <img height="400" alt="screenshot-4" src="https://workoutnotepad.co/public/images/app-store/screenshot-4.png"> |
+| <img height="400" alt="screenshot-5" src="https://workoutnotepad.co/public/images/app-store/screenshot-5.png"> | <img height="400" alt="screenshot-6" src="https://workoutnotepad.co/public/images/app-store/screenshot-6.png"> |
 
 ## About
 

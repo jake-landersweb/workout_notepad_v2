@@ -226,7 +226,7 @@ class _ProfileState extends State<Profile> {
             StyledSectionItem(
               title: "Configure tags",
               icon: Icons.tag_rounded,
-              color: Colors.green[500]!,
+              color: Colors.blueGrey.shade300,
               post: StyledSectionItemPost.model,
               isLocked: !dmodel.hasValidSubscription(),
               onTap: () async {
@@ -248,7 +248,7 @@ class _ProfileState extends State<Profile> {
             StyledSectionItem(
               title: "Manage Syncs",
               icon: Icons.sync_rounded,
-              color: Colors.purple[500]!,
+              color: Colors.red.shade300,
               post: StyledSectionItemPost.view,
               isLocked: !dmodel.hasValidSubscription(),
               onTap: () async {
@@ -298,7 +298,7 @@ class _ProfileState extends State<Profile> {
             StyledSectionItem(
               title: "Contact Support",
               icon: Icons.call_rounded,
-              color: Colors.blue[500]!,
+              color: Colors.orangeAccent.shade200,
               post: StyledSectionItemPost.view,
               isLocked: false,
               onTap: () async {
@@ -308,7 +308,7 @@ class _ProfileState extends State<Profile> {
             StyledSectionItem(
               title: "Leave Feedback",
               icon: Icons.chat_rounded,
-              color: Colors.blue[500]!,
+              color: Colors.purple.shade300,
               post: StyledSectionItemPost.view,
               isLocked: false,
               onTap: () async {
@@ -329,7 +329,7 @@ class _ProfileState extends State<Profile> {
             StyledSectionItem(
               title: "View Help Screen",
               icon: Icons.info_outline_rounded,
-              color: Colors.red[500]!,
+              color: Colors.red.shade300,
               post: StyledSectionItemPost.model,
               isLocked: false,
               onTap: () async {
@@ -341,9 +341,37 @@ class _ProfileState extends State<Profile> {
             ),
           ],
         ),
+
         StyledSection(
           title: "",
           items: [
+            StyledSectionItem(
+              title: "Privacy Policy",
+              icon: Icons.lock,
+              color: Colors.green.shade400,
+              post: StyledSectionItemPost.view,
+              isLocked: false,
+              onTap: () async {
+                if (!await launchUrl(
+                    Uri.parse("https://workoutnotepad.co/privacy-policy"))) {
+                  snackbarErr(context,
+                      "There was an issue opening the privacy policy.");
+                }
+              },
+            ),
+            StyledSectionItem(
+              title: "EULA",
+              icon: Icons.check,
+              color: Colors.blue.shade400,
+              post: StyledSectionItemPost.view,
+              isLocked: false,
+              onTap: () async {
+                if (!await launchUrl(
+                    Uri.parse("https://workoutnotepad.co/eula"))) {
+                  snackbarErr(context, "There was an issue opening the EULA.");
+                }
+              },
+            ),
             StyledSectionItem(
               title: "Logout",
               icon: Icons.logout_rounded,

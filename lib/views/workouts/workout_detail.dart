@@ -16,14 +16,12 @@ import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/workouts/clone_workout.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:workout_notepad_v2/views/workouts/create_edit/root.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/launch_workout.dart';
 import 'package:workout_notepad_v2/views/workouts/logs/root.dart';
-import 'package:workout_notepad_v2/views/workouts/snapshots/workout_snapshots.dart';
 
 class WorkoutDetail extends StatefulWidget {
   WorkoutDetail({

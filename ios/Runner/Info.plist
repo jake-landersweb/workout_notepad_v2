@@ -65,5 +65,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>CSResourcesFileMapped</key>
+	<false/>
 </dict>
 </plist>

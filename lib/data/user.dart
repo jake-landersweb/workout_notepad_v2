@@ -232,8 +232,9 @@ class User {
         StackTrace.current,
         attributes: {"err_code": "login_fromid"},
       );
-      print("UNKNOWN ERROR - $error");
-      return null;
+      print("UNKNOWN ERROR (passing to handling function) - $error");
+      // throw so the encapsulating function is aware
+      rethrow;
     }
   }
 

@@ -97,6 +97,7 @@ flutter:
   assets:
     - sql/init.sql
     - sql/pre-init.json
+    - sql/migration_2.sql
     
     - assets/icons/unavailable-96.png
     - assets/icons/bench-press-96.png

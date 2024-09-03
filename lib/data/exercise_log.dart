@@ -280,6 +280,7 @@ class ExerciseLogMeta {
   late int time;
   late int weight;
   late String weightPost;
+  DateTime? savedDate;
 
   // not in database
   late bool saved;
@@ -293,6 +294,7 @@ class ExerciseLogMeta {
     required this.time,
     required this.weight,
     required this.weightPost,
+    this.savedDate,
   });
 
   ExerciseLogMeta.init({
@@ -354,6 +356,7 @@ class ExerciseLogMeta {
     saved = false;
     tags = [for (var i in m.tags) i.clone()];
     weightPost = m.weightPost;
+    // savedDate = m.savedDate;
   }
 
   static Future<ExerciseLogMeta> fromJson(dynamic json, {Database? db}) async {
@@ -365,6 +368,7 @@ class ExerciseLogMeta {
       time: json['time'],
       weight: json['weight'],
       weightPost: json['weightPost'] ?? "lbs",
+      savedDate: DateTime.tryParse(json['savedDate'] ?? ""),
     );
     elm.tags = await elm.getTags(db: db) ?? [];
     return elm;
@@ -379,6 +383,7 @@ class ExerciseLogMeta {
       time: json['time'],
       weight: json['weight'],
       weightPost: json['weightPost'] ?? "lbs",
+      savedDate: DateTime.tryParse(json['savedDate'] ?? ""),
     );
     elm.tags = [for (var i in json['tags']) ExerciseLogMetaTag.fromJson(i)];
     elm.saved = json['saved'];
@@ -402,6 +407,19 @@ class ExerciseLogMeta {
       ),
     );
     return true;
+  }
+
+  String savedDifference(DateTime? other, {String format = "mm:ss"}) {
+    if (savedDate == null) {
+      return "";
+    }
+    if (other == null) {
+      return "";
+    }
+    Duration difference = savedDate!.difference(other);
+    String formattedDifference = DateFormat(format)
+        .format(DateTime.fromMillisecondsSinceEpoch(difference.inMilliseconds));
+    return formattedDifference;
   }
 
   Future<List<ExerciseLogMetaTag>?> getTags({Database? db}) async {
@@ -431,6 +449,7 @@ class ExerciseLogMeta {
         "time": time,
         "weight": weight,
         "weightPost": weightPost,
+        "savedDate": savedDate?.toString(),
       };
 
   Map<String, dynamic> toDump() => {
@@ -443,6 +462,7 @@ class ExerciseLogMeta {
         "weightPost": weightPost,
         "tags": [for (var i in tags) i.toDump()],
         "saved": saved,
+        "savedDate": savedDate?.toString(),
       };
 }
 

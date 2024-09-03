@@ -252,8 +252,13 @@ class LaunchWorkoutModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setSaved(int i, int j, int m, bool saved) {
+  void setSaved(int i, int j, int m, bool saved, {DateTime? savedDate}) {
     state.exerciseLogs[i][j].metadata[m].saved = saved;
+    // only set once
+    if (state.exerciseLogs[i][j].metadata[m].savedDate == null) {
+      state.exerciseLogs[i][j].metadata[m].savedDate =
+          savedDate ?? DateTime.now();
+    }
     notifyListeners();
   }
 

@@ -2,6 +2,7 @@ import 'package:animated_list_plus/animated_list_plus.dart';
 import 'package:animated_list_plus/transitions.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/alert.dart';
 
@@ -348,28 +349,38 @@ class _LWCellState extends State<LWCell> {
               sizeFraction: 0.7,
               curve: Curves.fastOutSlowIn,
               animation: animation,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: _Cell(
-                  index: i,
-                  title: "SET ${i + 1}",
-                  reps: item.reps,
-                  weight: item.weight,
-                  weightPost: item.weightPost,
-                  time: item.time,
-                  type: lmodel.state.exercises[widget.i][j].type,
-                  saved: item.saved,
-                  tags: item.tags,
-                  onRepsChange: (val) => lmodel.setReps(widget.i, j, i, val),
-                  onWeightChange: (val) =>
-                      lmodel.setWeight(widget.i, j, i, val),
-                  onWeightPostChange: (val) =>
-                      lmodel.setWeightPost(widget.i, j, val),
-                  onTimeChange: (val) => lmodel.setTime(widget.i, j, i, val),
-                  onSaved: (val) => lmodel.setSaved(widget.i, j, i, val),
-                  onDelete: () => lmodel.removeSet(widget.i, j, i),
-                  onTagClick: (tag) => lmodel.onTagClick(widget.i, j, i, tag),
-                ),
+              child: Column(
+                children: [
+                  _Cell(
+                    index: i,
+                    title: "SET ${i + 1}",
+                    reps: item.reps,
+                    weight: item.weight,
+                    weightPost: item.weightPost,
+                    time: item.time,
+                    type: lmodel.state.exercises[widget.i][j].type,
+                    saved: item.saved,
+                    tags: item.tags,
+                    onRepsChange: (val) => lmodel.setReps(widget.i, j, i, val),
+                    onWeightChange: (val) =>
+                        lmodel.setWeight(widget.i, j, i, val),
+                    onWeightPostChange: (val) =>
+                        lmodel.setWeightPost(widget.i, j, val),
+                    onTimeChange: (val) => lmodel.setTime(widget.i, j, i, val),
+                    onSaved: (val) => lmodel.setSaved(widget.i, j, i, val),
+                    onDelete: () => lmodel.removeSet(widget.i, j, i),
+                    onTagClick: (tag) => lmodel.onTagClick(widget.i, j, i, tag),
+                  ),
+                  SizedBox(
+                    height: 24,
+                    child: Center(
+                      child: Text(
+                        getTimeBetweenText(lmodel, j, i),
+                        style: ttcaption(context),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             );
           }),
@@ -378,6 +389,25 @@ class _LWCellState extends State<LWCell> {
         ),
       ],
     );
+  }
+
+  String getTimeBetweenText(LaunchWorkoutModel lmodel, int j, int i) {
+    try {
+      if (i == lmodel.state.exerciseLogs[widget.i][j].metadata.length - 1) {
+        return "";
+      }
+
+      if (lmodel.state.exerciseLogs[widget.i][j].metadata[i].saved &&
+          lmodel.state.exerciseLogs[widget.i][j].metadata[i + 1].saved) {
+        return lmodel.state.exerciseLogs[widget.i][j].metadata[i + 1]
+            .savedDifference(
+                lmodel.state.exerciseLogs[widget.i][j].metadata[i].savedDate);
+      }
+      return "";
+    } catch (e) {
+      // to allow for out-of-bounds index checks when animating
+      return "";
+    }
   }
 
   TimerInstance? _getTimerInstance(LaunchWorkoutModel lmodel, int j) {

@@ -1,0 +1,1 @@
+ALTER TABLE exercise_log_meta ADD COLUMN savedDate DATETIME DEFAULT NULL;

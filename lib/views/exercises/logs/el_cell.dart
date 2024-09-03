@@ -80,9 +80,19 @@ class ELCell extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 for (int i = 0; i < log.metadata.length; i++)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: _cell(context, i, log.metadata[i]),
+                  Column(
+                    children: [
+                      _cell(context, i, log.metadata[i]),
+                      SizedBox(
+                        height: 24,
+                        child: Center(
+                          child: Text(
+                            getRestText(i),
+                            style: ttcaption(context),
+                          ),
+                        ),
+                      )
+                    ],
                   ),
               ],
             ),
@@ -191,5 +201,16 @@ class ELCell extends StatelessWidget {
           ),
       ],
     );
+  }
+
+  String getRestText(int i) {
+    if (i == log.metadata.length - 1) {
+      return "";
+    }
+    if (log.metadata[i].savedDate != null &&
+        log.metadata[i + 1].savedDate != null) {
+      return log.metadata[i + 1].savedDifference(log.metadata[i].savedDate);
+    }
+    return "";
   }
 }

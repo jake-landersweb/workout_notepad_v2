@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/field.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/components/wrapped_button.dart';
-import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/model/data_model.dart';
 import 'package:workout_notepad_v2/utils/color.dart';
 import 'package:workout_notepad_v2/utils/root.dart';

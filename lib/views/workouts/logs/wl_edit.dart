@@ -27,8 +27,6 @@ class _WLEditState extends State<WLEdit> {
   late int _minutes;
   late int _seconds;
 
-  var _loading = false;
-
   @override
   void initState() {
     super.initState();
@@ -106,9 +104,6 @@ class _WLEditState extends State<WLEdit> {
       snackbarErr(context, "Title cannot be empty");
       return;
     }
-    setState(() {
-      _loading = true;
-    });
     try {
       var db = await DatabaseProvider().database;
       var r = await db.update(
@@ -131,8 +126,5 @@ class _WLEditState extends State<WLEdit> {
       );
       snackbarErr(context, "There was an unknown error");
     }
-    setState(() {
-      _loading = true;
-    });
   }
 }

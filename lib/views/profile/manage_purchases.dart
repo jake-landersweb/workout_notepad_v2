@@ -1,20 +1,15 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/root.dart';
-import 'package:workout_notepad_v2/main.dart';
-import 'package:workout_notepad_v2/model/client.dart';
 import 'package:workout_notepad_v2/model/data_model.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:http/http.dart' as http;
 
 class ManagePurchases extends StatefulWidget {
   const ManagePurchases({
@@ -28,8 +23,8 @@ class ManagePurchases extends StatefulWidget {
 }
 
 class _ManagePurchasesState extends State<ManagePurchases> {
-  bool _isLoading = true;
-  bool _loadingRestore = false;
+  // bool _isLoading = true;
+  final bool _loadingRestore = false;
 
   @override
   void initState() {
@@ -202,92 +197,92 @@ class _ManagePurchasesState extends State<ManagePurchases> {
     return false;
   }
 
-  Future<void> _getPurchases() async {
-    setState(() {
-      _isLoading = true;
-    });
-    try {
-      var client = PurchaseClient(client: http.Client());
-      var response =
-          await client.fetch("/users/${widget.user.userId}/transactionHistory");
-      client.client.close();
+  // Future<void> _getPurchases() async {
+  //   setState(() {
+  //     _isLoading = true;
+  //   });
+  //   try {
+  //     var client = PurchaseClient(client: http.Client());
+  //     var response =
+  //         await client.fetch("/users/${widget.user.userId}/transactionHistory");
+  //     client.client.close();
 
-      if (response.statusCode == 404) {
-        print("No transactions found");
-      } else if (response.statusCode != 200) {
-        print(response.body);
-        snackbarErr(
-          context,
-          "There was an issue getting your transaction history",
-        );
-      } else {
-        // decode
-        var body = jsonDecode(response.body);
+  //     if (response.statusCode == 404) {
+  //       print("No transactions found");
+  //     } else if (response.statusCode != 200) {
+  //       print(response.body);
+  //       snackbarErr(
+  //         context,
+  //         "There was an issue getting your transaction history",
+  //       );
+  //     } else {
+  //       // decode
+  //       var body = jsonDecode(response.body);
 
-        // parse apple transactions
-        for (var i in body['app_store']) {
-          var decoded = ApplePurchaseRecord.fromJson(i);
-          if (decoded.records.isNotEmpty) {
-            print(decoded.records[0]);
-          }
-        }
-      }
-    } catch (e) {
-      print(e);
-      NewrelicMobile.instance.recordError(
-        e,
-        StackTrace.current,
-        attributes: {"err_code": "user_transactions"},
-      );
-    }
-    setState(() {
-      _isLoading = false;
-    });
-  }
+  //       // parse apple transactions
+  //       for (var i in body['app_store']) {
+  //         var decoded = ApplePurchaseRecord.fromJson(i);
+  //         if (decoded.records.isNotEmpty) {
+  //           print(decoded.records[0]);
+  //         }
+  //       }
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //     NewrelicMobile.instance.recordError(
+  //       e,
+  //       StackTrace.current,
+  //       attributes: {"err_code": "user_transactions"},
+  //     );
+  //   }
+  //   setState(() {
+  //     _isLoading = false;
+  //   });
+  // }
 
-  Future<void> _restorePurchase(BuildContext context) async {
-    setState(() {
-      _loadingRestore = true;
-    });
-    try {
-      var client = Client(client: http.Client());
-      var response = await client.put(
-        "/users/${widget.user.userId}/restorePurchase",
-        {},
-        null,
-      );
-      if (response.statusCode == 200) {
-        var body = jsonDecode(response.body);
-        if (body['body']) {
-          RestartWidget.restartApp(context);
-        } else {
-          snackbarErr(
-            context,
-            "There was an issue restoring the purchase. If you think this is a mistake, please contact support",
-          );
-        }
-      } else {
-        NewrelicMobile.instance.recordError(
-          response.body,
-          StackTrace.current,
-          attributes: {"err_code": "restore_purchase"},
-        );
-        snackbarErr(
-          context,
-          "There was an issue restoring the purchase. If you think this is a mistake, please contact support",
-        );
-      }
-    } catch (e) {
-      print(e);
-      NewrelicMobile.instance.recordError(
-        e,
-        StackTrace.current,
-        attributes: {"err_code": "restore_purchase"},
-      );
-      snackbarErr(context, "There was an unknown error restoring the purchase");
-    }
-    setState(() {
-      _loadingRestore = false;
-    });
-  }
+  // Future<void> _restorePurchase(BuildContext context) async {
+  //   setState(() {
+  //     _loadingRestore = true;
+  //   });
+  //   try {
+  //     var client = Client(client: http.Client());
+  //     var response = await client.put(
+  //       "/users/${widget.user.userId}/restorePurchase",
+  //       {},
+  //       null,
+  //     );
+  //     if (response.statusCode == 200) {
+  //       var body = jsonDecode(response.body);
+  //       if (body['body']) {
+  //         RestartWidget.restartApp(context);
+  //       } else {
+  //         snackbarErr(
+  //           context,
+  //           "There was an issue restoring the purchase. If you think this is a mistake, please contact support",
+  //         );
+  //       }
+  //     } else {
+  //       NewrelicMobile.instance.recordError(
+  //         response.body,
+  //         StackTrace.current,
+  //         attributes: {"err_code": "restore_purchase"},
+  //       );
+  //       snackbarErr(
+  //         context,
+  //         "There was an issue restoring the purchase. If you think this is a mistake, please contact support",
+  //       );
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //     NewrelicMobile.instance.recordError(
+  //       e,
+  //       StackTrace.current,
+  //       attributes: {"err_code": "restore_purchase"},
+  //     );
+  //     snackbarErr(context, "There was an unknown error restoring the purchase");
+  //   }
+  //   setState(() {
+  //     _loadingRestore = false;
+  //   });
+  // }
 }

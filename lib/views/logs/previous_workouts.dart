@@ -9,8 +9,6 @@ import 'package:workout_notepad_v2/views/logs/no_logs.dart';
 import 'package:workout_notepad_v2/views/logs/post_workout.dart';
 import 'dart:math' as math;
 
-import 'package:workout_notepad_v2/views/workouts/logs/root.dart';
-
 class LogsPreviousWorkouts extends StatefulWidget {
   const LogsPreviousWorkouts({super.key});
 

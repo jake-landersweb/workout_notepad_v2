@@ -7,7 +7,6 @@ import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/logs/post_workout.dart';
-import 'package:workout_notepad_v2/views/workouts/logs/root.dart';
 
 class WorkoutLogCell extends StatefulWidget {
   const WorkoutLogCell({

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:workout_notepad_v2/components/root.dart';
-import 'package:workout_notepad_v2/utils/image.dart';
 
 class ImgagePicker extends StatefulWidget {
   const ImgagePicker({
@@ -14,8 +13,6 @@ class ImgagePicker extends StatefulWidget {
 }
 
 class _ImgagePickerState extends State<ImgagePicker> {
-  AppFile? _file;
-
   @override
   Widget build(BuildContext context) {
     return Clickable(

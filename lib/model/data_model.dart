@@ -2,7 +2,6 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/foundation.dart' as foundation;
@@ -25,7 +24,6 @@ import 'package:workout_notepad_v2/views/home.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:http/http.dart' as http;
 import 'package:workout_notepad_v2/views/workouts/launch/lw_model.dart';
-import 'package:crypto/crypto.dart';
 
 enum LoadStatus { init, noUser, done, expired }
 

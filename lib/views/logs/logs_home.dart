@@ -15,8 +15,6 @@ import 'package:workout_notepad_v2/views/logs/root.dart';
 import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
 import 'dart:math' as math;
 
-import 'package:workout_notepad_v2/views/workouts/logs/wl_exercises.dart';
-
 class LogsHome extends StatefulWidget {
   const LogsHome({super.key});
 
@@ -25,7 +23,7 @@ class LogsHome extends StatefulWidget {
 }
 
 class _LogsHomeState extends State<LogsHome> {
-  List<WorkoutLog> _workoutLogs = [];
+  final List<WorkoutLog> _workoutLogs = [];
   List<WorkoutLog> _currentWorkoutLogs = [];
 
   @override

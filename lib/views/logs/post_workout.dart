@@ -6,15 +6,12 @@ import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:line_icons/line_icon.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
-import 'package:workout_notepad_v2/model/data_model.dart';
 import 'package:workout_notepad_v2/model/getDB.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -22,7 +19,6 @@ import 'package:workout_notepad_v2/views/exercises/category_cell.dart';
 import 'package:workout_notepad_v2/views/exercises/logs/el_cell.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:workout_notepad_v2/views/workouts/logs/wl_edit.dart';
-import 'dart:math' as math;
 
 class WorkoutSummaryModel extends ChangeNotifier {
   late WorkoutLog wl;
@@ -100,8 +96,6 @@ class WorkoutSummaryModel extends ChangeNotifier {
     categories = categories.toSet().toList();
   }
 }
-
-enum _LoadingType { none, standard, square, full }
 
 enum _ViewType { full, square }
 

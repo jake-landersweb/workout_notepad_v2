@@ -49,15 +49,15 @@ class _OverviewHomeState extends State<OverviewHome> {
             workout.title = DateFormat('MM-dd-yy h:mm:ssa').format(
               DateTime.now(),
             );
-            var db = await DatabaseProvider().database;
-            await db.insert("workout", workout.toMap());
+            // var db = await DatabaseProvider().database;
+            // await db.insert("workout", workout.toMap());
             await launchWorkout(context, dmodel, workout, isEmpty: true);
           },
         ),
         const SizedBox(height: 16),
         // recently completed workouts
         Section(
-          "All Workouts",
+          "My Templates",
           child: Column(
             children: [
               for (var i in dmodel.workouts)
@@ -68,20 +68,21 @@ class _OverviewHomeState extends State<OverviewHome> {
             ],
           ),
         ),
-        Section(
-          "Workout Templates",
-          initOpen: dmodel.workouts.isEmpty,
-          allowsCollapse: true,
-          child: Column(
-            children: [
-              for (var i in dmodel.workoutTemplates)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
-                  child: WorkoutCell(workout: i),
-                ),
-            ],
+        if (dmodel.workoutTemplates.isNotEmpty)
+          Section(
+            "Default Templates",
+            initOpen: dmodel.workouts.isEmpty,
+            allowsCollapse: true,
+            child: Column(
+              children: [
+                for (var i in dmodel.workoutTemplates)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8.0),
+                    child: WorkoutCell(workout: i),
+                  ),
+              ],
+            ),
           ),
-        ),
         SizedBox(
             height: (dmodel.workoutState == null ? 100 : 130) +
                 (dmodel.user!.offline ? 30 : 0)),

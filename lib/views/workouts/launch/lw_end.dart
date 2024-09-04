@@ -10,6 +10,7 @@ import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/exercises/select_exercise.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/lw_model.dart';
+import 'package:workout_notepad_v2/views/workouts/launch/lw_save_template.dart';
 
 class LWEnd extends StatefulWidget {
   const LWEnd({super.key});
@@ -54,6 +55,19 @@ class _LWEndState extends State<LWEnd> {
                 },
               ),
               Tuple4(
+                Icons.splitscreen,
+                "Save As Template",
+                Colors.blue[300]!,
+                () async {
+                  await showFloatingSheet(
+                    context: context,
+                    builder: (context) => LWSaveAsTemplate(
+                      initTitle: lmodel.state.workout.title,
+                    ),
+                  );
+                },
+              ),
+              Tuple4(
                 Icons.close_rounded,
                 "Cancel Workout",
                 Colors.red[300]!,
@@ -90,7 +104,8 @@ class _LWEndState extends State<LWEnd> {
                     submitBolded: true,
                     submitText: "Finish",
                     onSubmit: () async {
-                      lmodel.handleFinish(context, dmodel);
+                      await lmodel.handleFinish(context, dmodel);
+                      Navigator.of(context, rootNavigator: true).pop();
                     },
                   );
                 },

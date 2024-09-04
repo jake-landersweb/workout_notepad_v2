@@ -52,6 +52,7 @@ class _LogsHomeState extends State<LogsHome> {
               child: SfCalendar(
                 dataSource: WorkoutLogCalendarDataSource(_workoutLogs),
                 cellBorderColor: Colors.transparent,
+                initialSelectedDate: DateTime.now(),
                 showNavigationArrow: true,
                 onTap: (d) {
                   _currentWorkoutLogs = [];
@@ -332,7 +333,13 @@ class _LogsHomeState extends State<LogsHome> {
       ORDER BY created DESC
     """);
     for (var i in logsResponse) {
-      _workoutLogs.add(await WorkoutLog.fromJson(i));
+      var log = await WorkoutLog.fromJson(i);
+      _workoutLogs.add(log);
+      if (log.getCreated().day == DateTime.now().day &&
+          log.getCreated().month == DateTime.now().month &&
+          log.getCreated().year == DateTime.now().year) {
+        _currentWorkoutLogs.add(log);
+      }
     }
     setState(() {});
   }

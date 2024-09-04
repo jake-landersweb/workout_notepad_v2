@@ -246,7 +246,8 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
                       submitBolded: true,
                       submitText: "Finish",
                       onSubmit: () async {
-                        lmodel.handleFinish(context, dmodel);
+                        Navigator.of(context, rootNavigator: true).pop();
+                        await lmodel.handleFinish(context, dmodel);
                       },
                     );
                     break;

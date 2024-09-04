@@ -8,14 +8,13 @@ import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sprung/sprung.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:workout_notepad_v2/components/root.dart';
+import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/data/collection.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:workout_notepad_v2/views/logs/post_workout.dart';
 
 class TimerInstance {
   late String workoutExerciseId;
@@ -308,55 +307,79 @@ class LaunchWorkoutModel extends ChangeNotifier {
       }
 
       // do operations inside of transaction
-      var db = await DatabaseProvider().database;
-      await db.transaction((txn) async {
-        if (i >= state.exercises.length) {
-          // add to new list
-          state.exercises.add([we]);
-          state.exerciseLogs.add([el]);
-          int r = await txn.insert("workout_exercise", we.toMap());
-          if (r == 0) {
-            throw "There was an issue adding this exericse";
-          }
-        } else if (j == state.exercises[i].length) {
-          // adding to existing list
+      if (i >= state.exercises.length) {
+        // add to new list
+        state.exercises.add([we]);
+        state.exerciseLogs.add([el]);
+      } else if (j == state.exercises[i].length) {
+        // adding to existing list
 
-          if (j > 0) {
-            we.supersetId = state.exercises[i][0].supersetId;
-            el.supersetId = state.exerciseLogs[i][0].supersetId;
-          }
-          state.exercises[i].add(we);
-          state.exerciseLogs[i].add(el);
-          // add this exercise to the workout
-          int r = await txn.insert("workout_exercise", we.toMap());
-          if (r == 0) {
-            throw "There was an issue adding the exericse";
-          }
-        } else {
-          // replace an existing exercise
+        if (j > 0) {
           we.supersetId = state.exercises[i][0].supersetId;
-          el.supersetId = state.exercises[i][0].supersetId;
-
-          // delete the old exercise
-          int r = await txn.rawDelete(
-            "DELETE FROM workout_exercise WHERE workoutExerciseId = ?",
-            [state.exercises[i][j].workoutExerciseId],
-          );
-          if (r == 0) {
-            throw "There was an issue deleting the old exercise";
-          }
-
-          // replace the existing exercise
-          state.exercises[i][j] = we;
-          state.exerciseLogs[i][j] = el;
-
-          // insert into database
-          r = await txn.insert("workout_exercise", we.toMap());
-          if (r == 0) {
-            throw "There was an issue adding the exercise into the workout";
-          }
+          el.supersetId = state.exerciseLogs[i][0].supersetId;
         }
-      });
+        state.exercises[i].add(we);
+        state.exerciseLogs[i].add(el);
+      } else {
+        // replace an existing exercise
+        we.supersetId = state.exercises[i][0].supersetId;
+        el.supersetId = state.exercises[i][0].supersetId;
+
+        // replace the existing exercise
+        state.exercises[i][j] = we;
+        state.exerciseLogs[i][j] = el;
+      }
+
+      // -- OLD CODE FOR EDITING THE BASE WORKOUT DIRECTLY
+      // var db = await DatabaseProvider().database;
+      // await db.transaction((txn) async {
+      //   if (i >= state.exercises.length) {
+      //     // add to new list
+      //     state.exercises.add([we]);
+      //     state.exerciseLogs.add([el]);
+      //     int r = await txn.insert("workout_exercise", we.toMap());
+      //     if (r == 0) {
+      //       throw "There was an issue adding this exericse";
+      //     }
+      //   } else if (j == state.exercises[i].length) {
+      //     // adding to existing list
+
+      //     if (j > 0) {
+      //       we.supersetId = state.exercises[i][0].supersetId;
+      //       el.supersetId = state.exerciseLogs[i][0].supersetId;
+      //     }
+      //     state.exercises[i].add(we);
+      //     state.exerciseLogs[i].add(el);
+      //     // add this exercise to the workout
+      //     int r = await txn.insert("workout_exercise", we.toMap());
+      //     if (r == 0) {
+      //       throw "There was an issue adding the exericse";
+      //     }
+      //   } else {
+      //     // replace an existing exercise
+      //     we.supersetId = state.exercises[i][0].supersetId;
+      //     el.supersetId = state.exercises[i][0].supersetId;
+
+      //     // delete the old exercise
+      //     int r = await txn.rawDelete(
+      //       "DELETE FROM workout_exercise WHERE workoutExerciseId = ?",
+      //       [state.exercises[i][j].workoutExerciseId],
+      //     );
+      //     if (r == 0) {
+      //       throw "There was an issue deleting the old exercise";
+      //     }
+
+      //     // replace the existing exercise
+      //     state.exercises[i][j] = we;
+      //     state.exerciseLogs[i][j] = el;
+
+      //     // insert into database
+      //     r = await txn.insert("workout_exercise", we.toMap());
+      //     if (r == 0) {
+      //       throw "There was an issue adding the exercise into the workout";
+      //     }
+      //   }
+      // });
       // if here, then it worked
       notifyListeners();
       return true;
@@ -379,29 +402,42 @@ class LaunchWorkoutModel extends ChangeNotifier {
 
   Future<bool> removeExercise(int i, int j) async {
     try {
-      var db = await DatabaseProvider().database;
-      await db.transaction((txn) async {
-        int r = await txn.rawDelete(
-          "DELETE FROM workout_exercise WHERE workoutExerciseId = ?",
-          [state.exercises[i][j].workoutExerciseId],
+      // configure state
+      state.exercises[i].removeAt(j);
+      state.exerciseLogs[i].removeAt(j);
+      if (state.exercises[i].isEmpty) {
+        state.pageController.animateToPage(
+          state.workoutIndex - 1,
+          duration: const Duration(milliseconds: 700),
+          curve: Sprung.overDamped,
         );
-        if (r == 0) {
-          throw "There was no workout exercise deleted";
-        }
+        state.exercises.removeAt(i);
+        state.exerciseLogs.removeAt(i);
+      }
+      // -- OLD CODE FOR EDITING THE BASE WORKOUT
+      // var db = await DatabaseProvider().database;
+      // await db.transaction((txn) async {
+      //   int r = await txn.rawDelete(
+      //     "DELETE FROM workout_exercise WHERE workoutExerciseId = ?",
+      //     [state.exercises[i][j].workoutExerciseId],
+      //   );
+      //   if (r == 0) {
+      //     throw "There was no workout exercise deleted";
+      //   }
 
-        // configure state
-        state.exercises[i].removeAt(j);
-        state.exerciseLogs[i].removeAt(j);
-        if (state.exercises[i].isEmpty) {
-          state.pageController.animateToPage(
-            state.workoutIndex - 1,
-            duration: const Duration(milliseconds: 700),
-            curve: Sprung.overDamped,
-          );
-          state.exercises.removeAt(i);
-          state.exerciseLogs.removeAt(i);
-        }
-      });
+      //   // configure state
+      //   state.exercises[i].removeAt(j);
+      //   state.exerciseLogs[i].removeAt(j);
+      //   if (state.exercises[i].isEmpty) {
+      //     state.pageController.animateToPage(
+      //       state.workoutIndex - 1,
+      //       duration: const Duration(milliseconds: 700),
+      //       curve: Sprung.overDamped,
+      //     );
+      //     state.exercises.removeAt(i);
+      //     state.exerciseLogs.removeAt(i);
+      //   }
+      // });
       notifyListeners();
       return true;
     } catch (e) {
@@ -557,6 +593,62 @@ class LaunchWorkoutModel extends ChangeNotifier {
     }
   }
 
+  Future<bool> saveWorkoutAsTemplate(String title) async {
+    try {
+      var db = await DatabaseProvider().database;
+      await db.transaction((txn) async {
+        // create a new workout
+        var tmpWorkout = Workout.init();
+        tmpWorkout.title = title;
+
+        // loop through all exercises and group and add as supersets
+        var uuid = const Uuid();
+        for (int i = 0; i < state.exercises.length; i++) {
+          var supersetId = uuid.v4();
+          for (int j = 0; j < state.exercises[i].length; j++) {
+            // create a clone
+            var tmpExercise = state.exercises[i][j].clone(tmpWorkout);
+            // configure the exercise fields
+            tmpExercise.exerciseOrder = i;
+            tmpExercise.supersetId = supersetId;
+            tmpExercise.supersetOrder = j;
+            var r = await txn.insert("workout_exercise", tmpExercise.toMap());
+            if (r == 0) {
+              throw 'failed to insert the workout exericse';
+            }
+          }
+        }
+
+        // add or update the workout
+        var r = await txn.insert(
+          "workout",
+          tmpWorkout.toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+        if (r == 0) {
+          throw 'failed to insert the workout';
+        }
+      });
+      // set the title of the current workout (just for looks)
+      state.workout.title = title;
+      notifyListeners();
+      return true;
+    } catch (e, stack) {
+      print(e);
+      print(stack);
+      print(StackTrace.current);
+      NewrelicMobile.instance.recordError(
+        e,
+        stack,
+        attributes: {
+          "err_code": "save_workout_as_template",
+          "state": jsonEncode(state.toMap()),
+        },
+      );
+      return false;
+    }
+  }
+
   Future<void> handleFinish(BuildContext context, DataModel dmodel) async {
     // send the request
     var response = await finishWorkout(dmodel);
@@ -569,7 +661,6 @@ class LaunchWorkoutModel extends ChangeNotifier {
         );
       }
       dmodel.toggleShowPostWorkoutScreen();
-      Navigator.of(context, rootNavigator: true).pop();
     } else {
       snackbarErr(
         context,

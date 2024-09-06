@@ -39,6 +39,7 @@ class User {
   int? subscriptionEstimatedExpireEpoch;
   int? subscriptionTransactionEpoch;
   String? anonUserId;
+  String? newUserId;
 
   // not in database
   String? _rawSubType;
@@ -55,6 +56,7 @@ class User {
     required this.created,
     required this.updated,
     this.anonUserId,
+    this.newUserId,
   });
 
   User copy() => User(
@@ -69,6 +71,7 @@ class User {
         created: created,
         updated: updated,
         anonUserId: anonUserId,
+        newUserId: newUserId,
       );
 
   User.initTest() {
@@ -100,6 +103,7 @@ class User {
     subscriptionTransactionEpoch =
         json['subscriptionTransactionEpoch']?.round();
     anonUserId = json['anonUserId'];
+    newUserId = json['newUserId'];
   }
 
   Map<String, dynamic> toMap() {
@@ -116,6 +120,7 @@ class User {
       "subscriptionEstimatedExpireEpoch": subscriptionEstimatedExpireEpoch,
       "subscriptionTransactionEpoch": subscriptionTransactionEpoch,
       "anonUserId": anonUserId,
+      "newUserId": newUserId,
     };
   }
 
@@ -141,6 +146,56 @@ class User {
           "imgUrl": credential.user!.photoURL,
           "convertFromAnon": convertFromAnon,
           "signInMethod": credential.credential?.signInMethod ?? "unknown",
+          "anonUserId": anonUserId,
+        }),
+      );
+      if (response.statusCode != 200) {
+        print("ERROR - There was an error with the request ${response.body}");
+        return null;
+      }
+      Map<String, dynamic> body = jsonDecode(response.body);
+      if (!body.containsKey("status") || body['status'] != 200) {
+        print(body);
+        return null;
+      }
+      var user = User.fromJson(body['body']);
+      // save userid
+      var prefs = await SharedPreferences.getInstance();
+      prefs.setString("userId", user.userId);
+      return user;
+    } catch (error) {
+      NewrelicMobile.instance.recordError(
+        error,
+        StackTrace.current,
+        attributes: {"err_code": "login_auth"},
+      );
+      print("UNKNOWN ERROR - $error");
+      return null;
+    }
+  }
+
+  static Future<User?> loginPocketbase({
+    required String userId,
+    required String email,
+    required String provider,
+    String displayName = "",
+    String avatar = "",
+    bool convertFromAnon = false,
+    String? anonUserId,
+  }) async {
+    try {
+      var client = Client(client: http.Client());
+      var response = await client.post(
+        "/login",
+        {},
+        jsonEncode({
+          "userId": userId,
+          "email": email,
+          "displayName": displayName,
+          "phone": "",
+          "imgUrl": avatar,
+          "convertFromAnon": convertFromAnon,
+          "signInMethod": provider,
           "anonUserId": anonUserId,
         }),
       );
@@ -279,8 +334,16 @@ class User {
         ),
       );
     }
-    var defaultAvatar = SvgPicture.network(
-      "https://source.boringavatars.com/beam/120/$userId?colors=418A2F,DD7373,4B3F72,283044",
+    // var defaultAvatar = SvgPicture.network(
+    //   "https://source.boringavatars.com/beam/120/$userId?colors=418A2F,DD7373,4B3F72,283044",
+    //   height: size,
+    //   fit: BoxFit.fitHeight,
+    //   placeholderBuilder: (context) {
+    //     return LoadingIndicator(color: Theme.of(context).colorScheme.primary);
+    //   },
+    // );
+    var defaultAvatar = SvgPicture.asset(
+      "assets/svg/default_profile.svg",
       height: size,
       fit: BoxFit.fitHeight,
       placeholderBuilder: (context) {
@@ -349,6 +412,10 @@ class User {
     } else {
       return displayName!;
     }
+  }
+
+  bool requiresReAuth() {
+    return userId.length > 15 && newUserId == null;
   }
 
   @override

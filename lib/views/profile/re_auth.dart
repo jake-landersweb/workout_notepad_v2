@@ -1,29 +1,30 @@
-// ignore_for_file: use_build_context_synchronously
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/model/data_model.dart';
 import 'package:workout_notepad_v2/views/account/template.dart';
 
-class CreateAccount extends StatefulWidget {
-  const CreateAccount({super.key});
+class ReAuth extends StatefulWidget {
+  const ReAuth({super.key});
 
   @override
-  State<CreateAccount> createState() => _CreateAccountState();
+  State<ReAuth> createState() => _ReAuthState();
 }
 
-class _CreateAccountState extends State<CreateAccount> {
+class _ReAuthState extends State<ReAuth> {
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
     return AccountTemplate(
-      title: "One Step Away From Fitness Planning.",
-      description: "Complete the sign-up process below to get started.",
-      emailPassButtonTitle: "Create Account",
+      title: "Sorry for the Inconvenience",
+      description:
+          "We are performing updates, so we ask you re-athenticate your account.",
+      emailPassButtonTitle: "Submit",
       onEmailCallback: (email, pass) async {
-        print("create email callback with new");
+        print("email callback with new");
         try {
           if (dmodel.pb == null) {
             throw "Initialization failure";
@@ -47,13 +48,7 @@ class _CreateAccountState extends State<CreateAccount> {
             throw "The returned record was null";
           }
 
-          await dmodel.loginUserPocketbase(
-            context,
-            userId: record.record!.id,
-            email: email,
-            provider: "email/pass",
-          );
-
+          await _updateRemote(dmodel, record.record!.id, email);
           return "";
         } on ClientException catch (e) {
           print(e);
@@ -119,20 +114,28 @@ class _CreateAccountState extends State<CreateAccount> {
         return "Error creating the user record";
       }
 
-      await dmodel.loginUserPocketbase(
-        context,
-        userId: data.record!.id,
-        email: data.meta['email'],
-        avatar: data.meta['avatarUrl'],
-        displayName: data.meta['username'],
-        provider: provider,
-      );
-
+      await _updateRemote(dmodel, data.record!.id, data.meta['email']);
       return "";
     } catch (e, stack) {
       print(e);
       print(stack);
       return "There was an unknown error";
     }
+  }
+
+  Future<bool> _updateRemote(DataModel dmodel, String id, String email) async {
+    var response = await dmodel.purchaseClient.put(
+      "/users/${dmodel.user!.userId}",
+      {},
+      jsonEncode({"newUserId": id, "email": email}),
+    );
+    if (response.statusCode != 200) {
+      print(response.body);
+      return false;
+    }
+    setState(() {
+      dmodel.user!.newUserId = id;
+    });
+    return true;
   }
 }

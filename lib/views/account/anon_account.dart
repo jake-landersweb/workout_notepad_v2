@@ -86,12 +86,12 @@ class _AnonAccountState extends State<AnonAccount> {
           },
           isLoading: _isLoading,
         ),
-        AccountAuthButtons(
-          onSignIn: (credential) async {
-            await dmodel.loginUser(context, credential);
-            Navigator.of(context).pop();
-          },
-        ),
+        // AccountAuthButtons(
+        //   onSignIn: (credential) async {
+        //     await dmodel.loginUser(context, credential);
+        //     Navigator.of(context).pop();
+        //   },
+        // ),
       ],
     );
   }

@@ -1,52 +1,29 @@
-import 'dart:developer';
-
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:workout_notepad_v2/components/root.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
 class SigninGoogle extends StatefulWidget {
   const SigninGoogle({
     super.key,
     required this.onSignIn,
+    required this.isLoading,
   });
-  final Function(UserCredential credential) onSignIn;
+  // final Function(UserCredential credential) onSignIn;
+  final VoidCallback onSignIn;
+  final bool isLoading;
 
   @override
   State<SigninGoogle> createState() => _SigninGoogleState();
 }
 
 class _SigninGoogleState extends State<SigninGoogle> {
-  bool _isLoading = false;
-
-  final _googleSignIn = GoogleSignIn(
-    scopes: ['email'],
-    // The OAuth client id of your app. This is required.
-    clientId:
-        "993769836789-o52cpd11lc4kkccfhqtgftmut6s7ph34.apps.googleusercontent.com",
-    // "993769836789-e614gf7untnrc9dljh3vo1djamch2m0c.apps.googleusercontent.com",
-    // If you need to authenticate to a backend server, specify its OAuth client. This is optional.
-    serverClientId:
-        "993769836789-e614gf7untnrc9dljh3vo1djamch2m0c.apps.googleusercontent.com",
-  );
-
   @override
   Widget build(BuildContext context) {
     return Clickable(
       onTap: () async {
         WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
-        if (_isLoading) {
-          return;
-        }
-        setState(() {
-          _isLoading = true;
-        });
-        await _signIn();
-        setState(() {
-          _isLoading = false;
-        });
+        if (widget.isLoading) return;
+        widget.onSignIn();
       },
       child: Container(
         decoration: BoxDecoration(
@@ -63,7 +40,7 @@ class _SigninGoogleState extends State<SigninGoogle> {
               child: Image.asset("assets/images/google.png"),
             ),
             Center(
-              child: _isLoading
+              child: widget.isLoading
                   ? LoadingIndicator(color: AppColors.subtext(context))
                   : Text(
                       "Sign in with Google",
@@ -76,75 +53,5 @@ class _SigninGoogleState extends State<SigninGoogle> {
         ),
       ),
     );
-  }
-
-  Future<void> _signIn() async {
-    try {
-      var googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) {
-        print("Unable to sign in");
-        return;
-      }
-
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-      final oauthCredential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-      var credential =
-          await FirebaseAuth.instance.signInWithCredential(oauthCredential);
-      await NewrelicMobile.instance.recordCustomEvent(
-        "WN_Metric",
-        eventName: "login_google",
-        eventAttributes: {"userId": credential.user?.uid},
-      );
-      widget.onSignIn(credential);
-      // if (Platform.isAndroid) {
-      //   final googleProvider = GoogleAuthProvider();
-      //   googleProvider.addScope('https://www.googleapis.com/auth/email');
-      //   var credential =
-      //       await FirebaseAuth.instance.signInWithProvider(googleProvider);
-      //   if (credential.user == null) {
-      //     print("There was an error signing in with google");
-      //     return;
-      //   }
-      //   await NewrelicMobile.instance.recordCustomEvent(
-      //     "WN_Metric",
-      //     eventName: "login_google",
-      //     eventAttributes: {"userId": credential.user?.uid},
-      //   );
-      //   widget.onSignIn(credential);
-      // } else {
-      //   var googleUser = await _googleSignIn.signIn();
-      //   if (googleUser == null) {
-      //     print("Unable to sign in");
-      //     return;
-      //   }
-
-      //   final GoogleSignInAuthentication googleAuth =
-      //       await googleUser.authentication;
-      //   final oauthCredential = GoogleAuthProvider.credential(
-      //     accessToken: googleAuth.accessToken,
-      //     idToken: googleAuth.idToken,
-      //   );
-      //   var credential =
-      //       await FirebaseAuth.instance.signInWithCredential(oauthCredential);
-      //   await NewrelicMobile.instance.recordCustomEvent(
-      //     "WN_Metric",
-      //     eventName: "login_google",
-      //     eventAttributes: {"userId": credential.user?.uid},
-      //   );
-      //   widget.onSignIn(credential);
-      // }
-    } catch (error) {
-      NewrelicMobile.instance.recordError(
-        error,
-        StackTrace.current,
-        attributes: {"err_code": "login_google"},
-      );
-      log(error.toString());
-      snackbarErr(context, "There was an unknown error.");
-    }
   }
 }

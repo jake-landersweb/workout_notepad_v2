@@ -1,10 +1,12 @@
 // ignore_for_file: avoid_print
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:workout_notepad_v2/views/account/anon_account.dart';
+import 'package:workout_notepad_v2/views/account/login_new.dart';
 import 'package:workout_notepad_v2/views/account/root.dart';
 
 class AccountInit extends StatefulWidget {
@@ -15,6 +17,8 @@ class AccountInit extends StatefulWidget {
 }
 
 class _AccountInitState extends State<AccountInit> {
+  Timer? _timer;
+
   @override
   Widget build(BuildContext context) {
     return comp.HeaderBar(
@@ -27,13 +31,26 @@ class _AccountInitState extends State<AccountInit> {
             color: AppColors.subtext(context),
           ),
         ),
-        ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height / 2,
-          ),
-          child: SvgPicture.asset(
-            "assets/svg/workout.svg",
-            semanticsLabel: 'Workout Logo',
+        GestureDetector(
+          onLongPressStart: (details) {
+            _timer = Timer(const Duration(seconds: 3), () {
+              comp.cupertinoSheet(
+                context: context,
+                builder: (context) => const LoginOld(),
+              );
+            });
+          },
+          onLongPressEnd: (details) {
+            _timer?.cancel();
+          },
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height / 2,
+            ),
+            child: SvgPicture.asset(
+              "assets/svg/workout.svg",
+              semanticsLabel: 'Workout Logo',
+            ),
           ),
         ),
         AccountButton(
@@ -47,24 +64,24 @@ class _AccountInitState extends State<AccountInit> {
             );
           },
         ),
-        const SizedBox(height: 8),
-        AccountButton(
-          title: "Try Anonymously",
-          bg: AppColors.cell(context),
-          fg: AppColors.subtext(context),
-          onTap: () {
-            comp.cupertinoSheet(
-              context: context,
-              builder: (context) => const AnonAccount(),
-            );
-          },
-        ),
+        // const SizedBox(height: 8),
+        // AccountButton(
+        //   title: "Try Anonymously",
+        //   bg: AppColors.cell(context),
+        //   fg: AppColors.subtext(context),
+        //   onTap: () {
+        //     comp.cupertinoSheet(
+        //       context: context,
+        //       builder: (context) => const AnonAccount(),
+        //     );
+        //   },
+        // ),
         const SizedBox(height: 16),
         comp.Clickable(
           onTap: () {
             comp.cupertinoSheet(
               context: context,
-              builder: (context) => const Login(),
+              builder: (context) => const LoginNew(),
             );
           },
           child: Text(

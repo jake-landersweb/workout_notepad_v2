@@ -1,5 +1,6 @@
 // ignore_for_file: unused_field
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_review/in_app_review.dart';
@@ -19,6 +20,7 @@ import 'package:workout_notepad_v2/views/profile/edit_profile.dart';
 
 import 'package:workout_notepad_v2/views/profile/manage_data.dart';
 import 'package:workout_notepad_v2/views/profile/manage_purchases.dart';
+import 'package:workout_notepad_v2/views/profile/re_auth.dart';
 import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
 import 'package:workout_notepad_v2/views/welcome.dart';
 
@@ -146,6 +148,21 @@ class _ProfileState extends State<Profile> {
             ),
           ),
         const SizedBox(height: 16),
+        if (dmodel.user!.requiresReAuth())
+          Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: WrappedButton(
+              title: "Re-Auth Required",
+              icon: Icons.warning,
+              iconBg: Colors.red.shade400,
+              bg: Colors.red.shade400,
+              fg: Colors.white,
+              onTap: () => cupertinoSheet(
+                context: context,
+                builder: (context) => const ReAuth(),
+              ),
+            ),
+          ),
         if (dmodel.user!.isAnon)
           Padding(
             padding: const EdgeInsets.only(top: 16.0),

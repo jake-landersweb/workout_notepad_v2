@@ -71,6 +71,7 @@ dependencies:
   in_app_review: ^2.0.6
   package_info_plus: ^4.1.0
   share_plus: ^7.2.1
+  pocketbase: ^0.18.1
 
 dev_dependencies:
   flutter_test:
@@ -97,6 +98,7 @@ flutter:
   assets:
     - sql/init.sql
     - sql/pre-init.json
+    - sql/migration_1.sql
     - sql/migration_2.sql
     
     - assets/icons/unavailable-96.png

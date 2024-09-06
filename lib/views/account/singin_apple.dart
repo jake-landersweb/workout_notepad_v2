@@ -1,6 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
@@ -8,31 +6,23 @@ class SigninApple extends StatefulWidget {
   const SigninApple({
     super.key,
     required this.onSignIn,
+    required this.isLoading,
   });
-  final Function(UserCredential credential) onSignIn;
+  final VoidCallback onSignIn;
+  final bool isLoading;
 
   @override
   State<SigninApple> createState() => _SigninAppleState();
 }
 
 class _SigninAppleState extends State<SigninApple> {
-  bool _isLoading = false;
-
   @override
   Widget build(BuildContext context) {
     return Clickable(
       onTap: () async {
+        if (widget.isLoading) return;
         WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
-        if (_isLoading) {
-          return;
-        }
-        setState(() {
-          _isLoading = true;
-        });
-        await _signIn();
-        setState(() {
-          _isLoading = false;
-        });
+        widget.onSignIn();
       },
       child: Container(
         decoration: BoxDecoration(
@@ -49,7 +39,7 @@ class _SigninAppleState extends State<SigninApple> {
                 padding: const EdgeInsets.all(8.0),
                 child: Image.asset("assets/images/apple.png"),
               ),
-              _isLoading
+              widget.isLoading
                   ? LoadingIndicator(color: AppColors.subtext(context))
                   : const Text(
                       "Sign in with Apple",
@@ -64,29 +54,5 @@ class _SigninAppleState extends State<SigninApple> {
     );
   }
 
-  Future<void> _signIn() async {
-    try {
-      final appleProvider = AppleAuthProvider();
-      appleProvider.addScope("email");
-      var credential =
-          await FirebaseAuth.instance.signInWithProvider(appleProvider);
-      if (credential.user == null) {
-        print("There was an error signing in with apple");
-        return;
-      }
-      await NewrelicMobile.instance.recordCustomEvent(
-        "WN_Metric",
-        eventName: "login_apple",
-        eventAttributes: {"userId": credential.user?.uid},
-      );
-      widget.onSignIn(credential);
-    } catch (error) {
-      NewrelicMobile.instance.recordError(
-        error,
-        StackTrace.current,
-        attributes: {"err_code": "login_apple"},
-      );
-      print(error);
-    }
-  }
+  Future<void> _signIn() async {}
 }

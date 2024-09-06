@@ -4,26 +4,26 @@ import 'package:flutter/material.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/model/data_model.dart';
 import 'package:workout_notepad_v2/views/account/template.dart';
 
-class CreateAccount extends StatefulWidget {
-  const CreateAccount({super.key});
+class LoginNew extends StatefulWidget {
+  const LoginNew({super.key});
 
   @override
-  State<CreateAccount> createState() => _CreateAccountState();
+  State<LoginNew> createState() => _LoginNewState();
 }
 
-class _CreateAccountState extends State<CreateAccount> {
+class _LoginNewState extends State<LoginNew> {
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
     return AccountTemplate(
-      title: "One Step Away From Fitness Planning.",
-      description: "Complete the sign-up process below to get started.",
-      emailPassButtonTitle: "Create Account",
+      title: "Welcome Back!",
+      description: "Login to resume where you left off last time.",
+      emailPassButtonTitle: "Login",
       onEmailCallback: (email, pass) async {
-        print("create email callback with new");
+        print("login email callback with new");
         try {
           if (dmodel.pb == null) {
             throw "Initialization failure";

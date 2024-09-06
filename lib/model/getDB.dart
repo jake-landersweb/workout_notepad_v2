@@ -29,7 +29,7 @@ class DatabaseProvider {
     // create db
     Database db = await openDatabase(
       path,
-      version: CURRENT_DATABASE_VERSION,
+      version: 1,
       onDowngrade: (db, oldVersion, newVersion) {
         print("IGNORING DOWNGRADE");
       },
@@ -69,6 +69,22 @@ class DatabaseProvider {
         }
       },
     );
+
+    // check for migrations
+    print("Running initial migration ...");
+    try {
+      String contents = await rootBundle.loadString("sql/migration_1.sql");
+      await db.execute(contents.trim());
+    } catch (e, stack) {
+      print("failed to run the initial migration");
+      print(e);
+      print(stack);
+      rethrow;
+    }
+
+    print("Running all migrations");
+    await runMigrations(db);
+
     return db;
   }
 
@@ -96,5 +112,44 @@ class DatabaseProvider {
     var path = await _getPath();
     File file = File(path);
     return await file.lastModified();
+  }
+
+  Future<void> runMigrations(Database db) async {
+    try {
+      const migrations = [2];
+
+      for (var i in migrations) {
+        print("----");
+        print("Checking migration: $i");
+
+        var response =
+            await db.rawQuery("SELECT * FROM migrations WHERE id = ?", [i]);
+        if (response.isEmpty) {
+          print("Migration $i not present");
+          print("Running migration: $i");
+          await db.transaction((txn) async {
+            String contents =
+                await rootBundle.loadString("sql/migration_$i.sql");
+            List<String> functions = contents.split("--");
+            for (var i in functions) {
+              if (i.isNotEmpty) {
+                print("EXECUTING: $i");
+                await txn.execute(i.trim());
+              }
+            }
+
+            // insert the new migration record
+            await txn.insert("migrations", {"id": i});
+          });
+          print("Migration $i run successfully");
+        } else {
+          print("Migration $i present");
+        }
+      }
+    } catch (e, stack) {
+      print(e);
+      print(stack);
+      rethrow;
+    }
   }
 }

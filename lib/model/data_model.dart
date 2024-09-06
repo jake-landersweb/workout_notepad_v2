@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:pocketbase/pocketbase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:workout_notepad_v2/data/collection.dart';
@@ -18,6 +19,7 @@ import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/snapshot.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/client.dart';
+import 'package:workout_notepad_v2/model/pocketbaseAuth.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/home.dart';
@@ -42,6 +44,7 @@ enum PaymentLoadStatus {
 
 class DataModel extends ChangeNotifier {
   late StreamSubscription<List<PurchaseDetails>> _subscription;
+  // late StreamSubscription<AuthStoreEvent> _pocketbaseAuth;
 
   HomeScreen _currentTabScreen = HomeScreen.overview;
   HomeScreen get currentTabScreen => _currentTabScreen;
@@ -53,6 +56,8 @@ class DataModel extends ChangeNotifier {
   // global client to use
   final client = Client(client: http.Client());
   final purchaseClient = PurchaseClient(client: http.Client());
+
+  PocketBase? pb;
 
   User? user;
   User? expiredAnonUser;
@@ -69,7 +74,7 @@ class DataModel extends ChangeNotifier {
   bool showPostWorkoutScreen = false;
 
   DataModel() {
-    // create the subscription
+    // create the subscription notifier
     _subscription =
         InAppPurchase.instance.purchaseStream.listen((purchaseDetailsList) {
       _listenToPurchaseUpdated(purchaseDetailsList);
@@ -82,6 +87,7 @@ class DataModel extends ChangeNotifier {
         attributes: {"err_code": "payment_exception"},
       );
     });
+
     init();
   }
 
@@ -299,12 +305,67 @@ class DataModel extends ChangeNotifier {
     await init(u: u);
   }
 
+  Future<void> loginUserPocketbase(
+    BuildContext context, {
+    required String userId,
+    required String email,
+    required String provider,
+    String displayName = "",
+    String avatar = "",
+  }) async {
+    print("LOGIN");
+    loadStatus = LoadStatus.init;
+    notifyListeners();
+    var prefs = await SharedPreferences.getInstance();
+    var u = await User.loginPocketbase(
+      userId: userId,
+      email: email,
+      provider: provider,
+      displayName: displayName,
+      avatar: avatar,
+      convertFromAnon: user != null,
+      anonUserId: user?.anonUserId,
+    );
+    if (u == null) {
+      snackbarErr(context, "There was an issue getting your account.");
+      loadStatus = LoadStatus.noUser;
+      notifyListeners();
+      return;
+    }
+    prefs.setString("user", jsonEncode(u.toMap()));
+    if (user == null) {
+      // check if there are snapshots for this user
+      var serverSnapshots = await Snapshot.getList(u.userId);
+      // import the first snapshot as the user's data
+      if (serverSnapshots != null && serverSnapshots.isNotEmpty) {
+        // sorted by first = latest on server
+        await importSnapshot(serverSnapshots.first);
+      }
+    } else {
+      await NewrelicMobile.instance.recordCustomEvent(
+        "WN_Metric",
+        eventName: "anon_convert",
+        eventAttributes: {"new_user_id": u.userId, "old_user_id": user!.userId},
+      );
+      // save on the user
+      u.anonUserId = user!.userId;
+      prefs.setString("user", jsonEncode(u.toMap()));
+    }
+    await init(u: u);
+  }
+
   Future<void> init({User? u}) async {
     print("INIT");
     loadStatus = LoadStatus.done;
     notifyListeners();
 
     var prefs = await SharedPreferences.getInstance();
+
+    // create the pb client
+    pb = PocketBase(
+      'https://pocketbase.sapphirenw.com',
+      authStore: SharedPreferencesAuthStore(prefs),
+    );
 
     // set to index page
     _currentTabScreen = HomeScreen.overview;
@@ -391,8 +452,11 @@ class DataModel extends ChangeNotifier {
         auth.User? firebaseUser = auth.FirebaseAuth.instance.currentUser;
         if (firebaseUser == null) {
           print("[GET_USER] No user loaded in firebase");
-          await clearData();
-          return;
+          user = tmp;
+
+          // ignore this
+          // await clearData();
+          // return;
         } else {
           print("[GET_USER] valid firebase user");
           print(firebaseUser);
@@ -687,6 +751,9 @@ class DataModel extends ChangeNotifier {
     prefs.remove("user");
     user = null;
     loadStatus = ls;
+    if (pb != null) {
+      pb!.authStore.clear();
+    }
     notifyListeners();
   }
 

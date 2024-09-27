@@ -14,15 +14,19 @@ class TagCell extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         // color: AppColors.cell(context)[600],
-        color: ColorUtil.random(title),
+        color: ColorUtil.random(title).withOpacity(0.2),
         borderRadius: BorderRadius.circular(5),
+        border: Border.all(color: ColorUtil.random(title)),
       ),
       child: Padding(
         padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
         child: Text(
           "#$title",
           textAlign: TextAlign.center,
-          style: ttcaption(context),
+          style: ttcaption(
+            context,
+            color: getSwatch(ColorUtil.random(title))[600]!.withOpacity(0.7),
+          ),
         ),
       ),
     );

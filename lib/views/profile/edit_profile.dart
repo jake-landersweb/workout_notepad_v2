@@ -58,7 +58,11 @@ class _EditProfileState extends State<EditProfile> {
     var dmodel = Provider.of<DataModel>(context);
     return HeaderBar.sheet(
       title: "Edit Profile",
-      leading: const [CancelButton()],
+      leading: const [
+        CancelButton(
+          useRoot: true,
+        )
+      ],
       trailing: [
         Clickable(
           onTap: () async {

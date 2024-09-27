@@ -168,7 +168,7 @@ class _ELSetsState extends State<ELSets> {
               ),
             ),
           ),
-          if (!dmodel.hasValidSubscription()) const ELPremiumOverlay(),
+          // if (!dmodel.hasValidSubscription()) const ELPremiumOverlay(),
         ],
       );
     }

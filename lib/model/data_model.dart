@@ -1080,6 +1080,7 @@ class DataModel extends ChangeNotifier {
   }
 
   bool hasValidSubscription() {
+    // return false;
     // legacy users
     if ((user?.subscriptionType ?? "") == SubscriptionType.wn_unlocked) {
       return true;

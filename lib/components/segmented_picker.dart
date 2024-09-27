@@ -80,14 +80,18 @@ class _SegmentedPickerState extends State<SegmentedPicker> {
                     Expanded(
                       child: Clickable(
                         onTap: () => _handleTap(i),
-                        child: Align(
-                          alignment: AlignmentDirectional.center,
-                          child: Text(
-                            widget.titles[i],
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: _fontWeight(i, context),
-                              color: _titleColor(i, context),
+                        child: Container(
+                          width: double.infinity,
+                          color: Colors.white.withOpacity(0.0),
+                          child: Align(
+                            alignment: AlignmentDirectional.center,
+                            child: Text(
+                              widget.titles[i],
+                              style: TextStyle(
+                                fontSize: 17,
+                                fontWeight: _fontWeight(i, context),
+                                color: _titleColor(i, context),
+                              ),
                             ),
                           ),
                         ),

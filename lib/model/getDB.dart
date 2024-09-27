@@ -5,8 +5,6 @@ import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
-const CURRENT_DATABASE_VERSION = 2;
-
 class DatabaseProvider {
   static final DatabaseProvider _databaseService = DatabaseProvider._internal();
   factory DatabaseProvider() => _databaseService;
@@ -34,26 +32,7 @@ class DatabaseProvider {
         print("IGNORING DOWNGRADE");
       },
       onUpgrade: (db, oldVersion, newVersion) async {
-        try {
-          print("UPGRADING DATABASE $oldVersion -> $newVersion");
-          // run through all migrations
-          for (var i = oldVersion + 1; i <= newVersion; i++) {
-            print("Migrating version: $i");
-            String contents =
-                await rootBundle.loadString("sql/migration_$i.sql");
-            List<String> functions = contents.split("--");
-            for (var i in functions) {
-              if (i.isNotEmpty) {
-                print("EXECUTING: $i");
-                await db.execute(i.trim());
-              }
-            }
-          }
-        } catch (e) {
-          print("FATAL ERROR RUNNING MIGRATIONS");
-          print(e);
-          rethrow;
-        }
+        print("IGNORING UPGRADE");
       },
       onCreate: (db, version) async {
         print("CREATING DATABASE");
@@ -116,7 +95,7 @@ class DatabaseProvider {
 
   Future<void> runMigrations(Database db) async {
     try {
-      const migrations = [2];
+      const migrations = [2, 3];
 
       for (var i in migrations) {
         print("----");

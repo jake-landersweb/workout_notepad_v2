@@ -100,6 +100,7 @@ flutter:
     - sql/pre-init.json
     - sql/migration_1.sql
     - sql/migration_2.sql
+    - sql/migration_3.sql
     
     - assets/icons/unavailable-96.png
     - assets/icons/bench-press-96.png

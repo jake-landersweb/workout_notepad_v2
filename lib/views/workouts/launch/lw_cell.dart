@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/alert.dart';
 
 import 'package:workout_notepad_v2/components/clickable.dart';
+import 'package:workout_notepad_v2/components/colored_cell.dart';
 import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
 import 'package:workout_notepad_v2/components/floating_sheet.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
@@ -479,7 +480,11 @@ class _Cell extends StatelessWidget {
                         for (var i in tags)
                           Padding(
                             padding: const EdgeInsets.only(top: 2.0),
-                            child: TagCell(title: i.title),
+                            child: ColoredCell(
+                              isTag: true,
+                              size: ColoredCellSize.small,
+                              title: i.title,
+                            ),
                           ),
                       ],
                     ),

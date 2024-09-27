@@ -35,7 +35,7 @@ class WorkoutCellSmall extends StatelessWidget {
                 Expanded(
                   child: Text(
                     workout.title,
-                    style: ttTitle(context),
+                    style: ttLargeLabel(context),
                   ),
                 ),
               ],

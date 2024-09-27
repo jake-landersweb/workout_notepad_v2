@@ -31,6 +31,18 @@ class TimePicker extends StatefulWidget {
     seconds = exercise.getSeconds();
   }
 
+  TimePicker.fromSeconds({
+    super.key,
+    required int seconds,
+    required this.onChanged,
+    this.showButtons = false,
+    this.label,
+  }) {
+    this.hours = seconds ~/ 3600;
+    this.minutes = (seconds % 3600) ~/ 60;
+    this.seconds = seconds % 60;
+  }
+
   late int hours;
   late int minutes;
   late int seconds;

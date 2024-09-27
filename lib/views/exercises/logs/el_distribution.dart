@@ -173,7 +173,7 @@ class _ELDistributionState extends State<ELDistribution> {
               ),
             ),
           ),
-          if (!dmodel.hasValidSubscription()) const ELPremiumOverlay(),
+          // if (!dmodel.hasValidSubscription()) const ELPremiumOverlay(),
         ],
       );
     }

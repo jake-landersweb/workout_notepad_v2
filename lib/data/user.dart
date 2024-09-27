@@ -3,12 +3,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/model/client.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:http/http.dart' as http;
+import 'package:workout_notepad_v2/model/data_model.dart';
+import 'package:workout_notepad_v2/model/env.dart';
 import 'package:workout_notepad_v2/utils/image.dart';
 
 enum SubscriptionType { none, wn_unlocked }
@@ -314,6 +317,7 @@ class User {
   }
 
   Widget avatar(BuildContext context, {double size = 120}) {
+    var dmodel = context.read<DataModel>();
     if (offline) {
       return Container(
         width: size,
@@ -342,14 +346,6 @@ class User {
     //     return LoadingIndicator(color: Theme.of(context).colorScheme.primary);
     //   },
     // );
-    var defaultAvatar = SvgPicture.asset(
-      "assets/svg/default_profile.svg",
-      height: size,
-      fit: BoxFit.fitHeight,
-      placeholderBuilder: (context) {
-        return LoadingIndicator(color: Theme.of(context).colorScheme.primary);
-      },
-    );
     if (imgUrl == null ||
         imgUrl == "" ||
         (imgUrl?.contains("default") ?? false)) {
@@ -359,7 +355,7 @@ class User {
         decoration: const BoxDecoration(shape: BoxShape.circle),
         child: Align(
           child: ClipOval(
-            child: defaultAvatar,
+            child: defaultAvatar(context),
           ),
         ),
       );
@@ -375,7 +371,7 @@ class User {
               height: size,
               fit: BoxFit.fitHeight,
               errorBuilder: (context, error, stackTrace) {
-                return defaultAvatar;
+                return defaultAvatar(context);
               },
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) {
@@ -392,9 +388,29 @@ class User {
       return _AwsAvatar(
         imgUrl: imgUrl!,
         size: size,
-        defaultAvatar: defaultAvatar,
+        defaultAvatar: defaultAvatar(context),
       );
     }
+  }
+
+  Widget defaultAvatar(BuildContext context, {double size = 120}) {
+    return SvgPicture.network(
+      "$PURCHASE_HOST/users/$userId/avatar",
+      headers: const {"x-api-key": PURCHASE_API_KEY},
+      height: size,
+      fit: BoxFit.fitHeight,
+      placeholderBuilder: (context) {
+        return SvgPicture.asset(
+          "assets/svg/default_profile.svg",
+          height: size,
+          fit: BoxFit.fitHeight,
+          placeholderBuilder: (context) {
+            return LoadingIndicator(
+                color: Theme.of(context).colorScheme.primary);
+          },
+        );
+      },
+    );
   }
 
   // bool isPremiumUser() {

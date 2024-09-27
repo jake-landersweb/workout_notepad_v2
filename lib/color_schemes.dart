@@ -54,6 +54,34 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
           ),
         ),
       ),
+      switchTheme: SwitchThemeData(
+        thumbColor: MaterialStateProperty.resolveWith(
+          (states) => AppColors.cell(context),
+        ),
+        trackColor: MaterialStateProperty.resolveWith(
+          (states) {
+            if (states.contains(MaterialState.selected)) {
+              return primaryColor;
+            }
+            return Colors.transparent;
+          },
+        ),
+        trackOutlineColor: MaterialStateProperty.resolveWith(
+          (states) => AppColors.divider(context),
+        ),
+      ),
+      datePickerTheme: DatePickerThemeData(
+        backgroundColor: AppColors.background(context),
+        dividerColor: AppColors.divider(context),
+        surfaceTintColor: Colors.transparent,
+        headerForegroundColor: AppColors.text(context),
+        dayBackgroundColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return primaryColor;
+          }
+          return Colors.transparent;
+        }),
+      ),
       textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
           textStyle: MaterialStateProperty.resolveWith(

@@ -84,6 +84,7 @@ class SearchModel extends ChangeNotifier {
           "Filters",
           allowsCollapse: true,
           initOpen: _categories.isNotEmpty || _type != null,
+          headerPadding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

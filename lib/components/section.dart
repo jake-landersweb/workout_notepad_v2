@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
+import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
 class Section extends StatefulWidget {
@@ -10,10 +11,13 @@ class Section extends StatefulWidget {
     required this.child,
     this.allowsCollapse = false,
     this.initOpen = false,
-    this.headerPadding = const EdgeInsets.fromLTRB(16, 8, 0, 4),
+    // this.headerPadding = const EdgeInsets.fromLTRB(16, 8, 0, 4),
+    this.headerPadding = const EdgeInsets.fromLTRB(0, 32, 0, 16),
     this.color = Colors.blue,
     this.animateOpen = true,
-    this.textColor,
+    this.style,
+    this.trailingWidget,
+    this.uppercase = true,
   }) : super(key: key);
 
   final String title;
@@ -23,7 +27,9 @@ class Section extends StatefulWidget {
   final EdgeInsets headerPadding;
   final Color color;
   final bool animateOpen;
-  final Color? textColor;
+  final TextStyle? style;
+  final Widget? trailingWidget;
+  final bool uppercase;
 
   @override
   _SectionState createState() => _SectionState();
@@ -102,16 +108,21 @@ class _SectionState extends State<Section> with TickerProviderStateMixin {
           child: Row(
             children: [
               Expanded(child: _title(context)),
-              Row(
+              Stack(
                 children: [
-                  // so this and collapsable section are the same height above view
-                  Opacity(
-                    opacity: 0,
-                    child: Icon(
-                      Icons.chevron_left,
-                      color: AppColors.subtext(context),
-                    ),
-                  )
+                  Row(
+                    children: [
+                      // so this and collapsable section are the same height above view
+                      Opacity(
+                        opacity: 0,
+                        child: Icon(
+                          Icons.chevron_left,
+                          color: AppColors.subtext(context),
+                        ),
+                      )
+                    ],
+                  ),
+                  if (widget.trailingWidget != null) widget.trailingWidget!
                 ],
               ),
             ],
@@ -127,16 +138,18 @@ class _SectionState extends State<Section> with TickerProviderStateMixin {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
               padding: widget.headerPadding,
               child: _title(context),
             ),
             Expanded(
-              child: Divider(
-                height: 0.5,
-                color: AppColors.divider(context),
-              ),
+              child: Container(),
+              // child: Divider(
+              //   height: 0.5,
+              //   color: AppColors.divider(context),
+              // ),
             ),
             Padding(
               padding: widget.headerPadding,
@@ -178,16 +191,16 @@ class _SectionState extends State<Section> with TickerProviderStateMixin {
   }
 
   Widget _title(BuildContext context) {
-    return Opacity(
-      opacity: 0.5,
-      child: Text(
-        widget.title.toUpperCase(),
-        style: TextStyle(
-          fontWeight: FontWeight.w600,
-          color: widget.textColor,
-          fontSize: 13,
-        ),
-      ),
+    return Text(
+      // widget.uppercase ? widget.title.toUpperCase() : widget.title,
+      widget.title,
+      style: widget.style ?? ttLargeLabel(context),
+      // style: widget.style ??
+      //     TextStyle(
+      //       fontWeight: FontWeight.w600,
+      //       color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+      //       fontSize: 13,
+      //     ),
     );
   }
 }

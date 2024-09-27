@@ -23,6 +23,8 @@ class WrappedButton extends StatelessWidget {
     this.rowAxisSize = MainAxisSize.min,
     this.iconSpacing = 12,
     this.trailing,
+    this.borderColor,
+    this.backgroundColor,
   });
 
   final String title;
@@ -40,6 +42,8 @@ class WrappedButton extends StatelessWidget {
   final MainAxisSize rowAxisSize;
   final double iconSpacing;
   final Widget? trailing;
+  final Color? borderColor;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +58,9 @@ class WrappedButton extends StatelessWidget {
       decoration: BoxDecoration(
         color: getBg(context),
         borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+            color: borderColor ?? getBg(context) ?? Colors.transparent,
+            width: 1),
       ),
       child: ConstrainedBox(
         constraints: BoxConstraints(minHeight: height ?? 50),
@@ -103,6 +110,9 @@ class WrappedButton extends StatelessWidget {
   }
 
   Color? getBg(BuildContext context) {
+    if (backgroundColor != null) {
+      return backgroundColor;
+    }
     switch (type) {
       case WrappedButtonType.standard:
         return bg ?? AppColors.cell(context);

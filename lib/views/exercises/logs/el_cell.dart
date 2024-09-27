@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:workout_notepad_v2/components/colored_cell.dart';
 import 'package:workout_notepad_v2/components/timer.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
@@ -84,13 +85,20 @@ class ELCell extends StatelessWidget {
                     children: [
                       _cell(context, i, log.metadata[i]),
                       SizedBox(
-                        height: 24,
-                        child: Center(
-                          child: Text(
-                            getRestText(i),
-                            style: ttcaption(context),
-                          ),
-                        ),
+                        height: 32,
+                        child: getRestText(i).isEmpty
+                            ? Container()
+                            : Center(
+                                // child: Text(
+                                //   getRestText(i),
+                                //   style: ttcaption(context),
+                                // ),
+                                child: ColoredCell(
+                                  title: "Rest: ${getRestText(i)}",
+                                  color: Colors.grey.withOpacity(0.5),
+                                  size: ColoredCellSize.small,
+                                ),
+                              ),
                       )
                     ],
                   ),
@@ -118,11 +126,15 @@ class ELCell extends StatelessWidget {
                   ),
                 ),
               ),
-              // assume single tag for now
               for (var i in meta.tags)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 2.0),
-                  child: TagCell(title: i.title),
+                  // child: ColoredCell(
+                  //   isTag: true,
+                  //   size: ColoredCellSize.small,
+                  //   title: i.title,
+                  // ),
+                  child: TagCell(title: "${i.title}"),
                 ),
             ],
           ),

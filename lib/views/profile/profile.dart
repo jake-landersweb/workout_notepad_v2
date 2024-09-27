@@ -214,6 +214,7 @@ class _ProfileState extends State<Profile> {
         //       onTap: () {},
         //     ),
         //   ),
+        const SizedBox(height: 32),
         StyledSection(
           title: "",
           items: [
@@ -283,6 +284,7 @@ class _ProfileState extends State<Profile> {
             ),
           ],
         ),
+        const SizedBox(height: 32),
         StyledSection(
           title: "",
           items: [
@@ -357,7 +359,7 @@ class _ProfileState extends State<Profile> {
             ),
           ],
         ),
-
+        const SizedBox(height: 32),
         StyledSection(
           title: "",
           items: [

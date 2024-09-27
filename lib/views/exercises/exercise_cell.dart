@@ -16,6 +16,7 @@ class ExerciseCell extends StatelessWidget {
     this.onTap,
     this.showBackground = true,
     this.padding = const EdgeInsets.only(bottom: 8),
+    this.borderColor,
   });
   final Exercise exercise;
   final VoidCallback? onTap;
@@ -23,6 +24,7 @@ class ExerciseCell extends StatelessWidget {
   final Widget? trailingWidget;
   final bool showBackground;
   final EdgeInsets padding;
+  final Color? borderColor;
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +44,10 @@ class ExerciseCell extends StatelessWidget {
       child: showBackground
           ? Container(
               decoration: BoxDecoration(
-                color: AppColors.cell(context),
-                borderRadius: BorderRadius.circular(10),
-              ),
+                  color: AppColors.cell(context),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                      color: borderColor ?? AppColors.cell(context))),
               child: _content(context),
             )
           : _content(context),

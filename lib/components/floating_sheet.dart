@@ -100,7 +100,6 @@ class FloatingSheet extends StatefulWidget {
 class _FloatingSheetState extends State<FloatingSheet> {
   @override
   Widget build(BuildContext context) {
-    var dmodel = Provider.of<DataModel>(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -129,7 +128,7 @@ class _FloatingSheetState extends State<FloatingSheet> {
                               .pop(),
                       child: Icon(
                         widget.icon ?? Icons.close,
-                        color: dmodel.color,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                   ],

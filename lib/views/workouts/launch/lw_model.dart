@@ -183,6 +183,28 @@ class LaunchWorkoutModelState {
       await file.delete();
     }
   }
+
+  double getPercentageComplete() {
+    int total = 0;
+    int complete = 0;
+
+    for (var group in exerciseLogs) {
+      for (var log in group) {
+        for (var meta in log.metadata) {
+          total += 1;
+          if (meta.saved) {
+            complete += 1;
+          }
+        }
+      }
+    }
+
+    if (total == 0) {
+      return 0;
+    }
+
+    return complete / total;
+  }
 }
 
 class LaunchWorkoutModel extends ChangeNotifier {

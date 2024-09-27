@@ -72,7 +72,7 @@ class _ELTagsState extends State<ELTags> {
               ],
             ),
           ),
-          if (!dmodel.hasValidSubscription()) const ELPremiumOverlay(),
+          // if (!dmodel.hasValidSubscription()) const ELPremiumOverlay(),
         ],
       );
     }

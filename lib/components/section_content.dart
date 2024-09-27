@@ -70,41 +70,38 @@ class _StyledSectionState extends State<StyledSection> {
 
   @override
   Widget build(BuildContext context) {
-    return Section(
-      widget.title,
-      child: ContainedList<StyledSectionItem>(
-        leadingPadding: 0,
-        trailingPadding: 0,
-        childPadding: EdgeInsets.zero,
-        children: widget.items,
-        onChildTap: (context, item, index) async {
-          setState(() {
-            _loadingIndex = index;
-          });
-          await item.onTap();
-          setState(() {
-            _loadingIndex = -1;
-          });
-        },
-        childBuilder: (context, item, index) {
-          return Row(
-            children: [
-              Expanded(
-                child: WrappedButton(
-                  title: item.title,
-                  icon: item.icon,
-                  iconBg: item.color,
-                  isLoading: _loadingIndex == index,
-                ),
+    return ContainedList<StyledSectionItem>(
+      leadingPadding: 0,
+      trailingPadding: 0,
+      childPadding: EdgeInsets.zero,
+      children: widget.items,
+      onChildTap: (context, item, index) async {
+        setState(() {
+          _loadingIndex = index;
+        });
+        await item.onTap();
+        setState(() {
+          _loadingIndex = -1;
+        });
+      },
+      childBuilder: (context, item, index) {
+        return Row(
+          children: [
+            Expanded(
+              child: WrappedButton(
+                title: item.title,
+                icon: item.icon,
+                iconBg: item.color,
+                isLoading: _loadingIndex == index,
               ),
-              Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: item.getPostContent(context),
-              ),
-            ],
-          );
-        },
-      ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: item.getPostContent(context),
+            ),
+          ],
+        );
+      },
     );
   }
 }

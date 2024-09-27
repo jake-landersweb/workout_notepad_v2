@@ -25,9 +25,9 @@ class CategoryCell extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           border: Border.all(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+            color: AppColors.divider(context),
           ),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
@@ -36,8 +36,8 @@ class CategoryCell extends StatelessWidget {
             children: [
               getIcon(dmodel),
               Text(
-                getTitle(dmodel).capitalize(),
-                style: ttBody(context),
+                getTitle(dmodel).toUpperCase(),
+                style: ttcaption(context),
               ),
             ],
           ),

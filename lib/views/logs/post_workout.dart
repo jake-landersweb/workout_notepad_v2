@@ -410,6 +410,9 @@ class _PostWorkoutSummaryState extends State<PostWorkoutSummary> {
                                           const EdgeInsets.fromLTRB(8, 0, 8, 8),
                                       child: Section(
                                         j.title,
+                                        headerPadding:
+                                            const EdgeInsets.fromLTRB(
+                                                0, 8, 0, 8),
                                         child: Container(
                                           decoration: BoxDecoration(
                                             color: AppColors.cell(context),

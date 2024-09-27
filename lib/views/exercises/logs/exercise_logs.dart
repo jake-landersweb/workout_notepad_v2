@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_notepad_v2/components/blur_if_not_subscription.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
@@ -210,9 +211,10 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
             ]
           : [
               const ELOverview(),
-              ELDistribution(exercise: elmodel.exercise),
-              ELSets(exercise: elmodel.exercise),
-              ELTags(exercise: elmodel.exercise),
+              BlurIfNotSubscription(
+                  child: ELDistribution(exercise: elmodel.exercise)),
+              BlurIfNotSubscription(child: ELSets(exercise: elmodel.exercise)),
+              BlurIfNotSubscription(child: ELTags(exercise: elmodel.exercise)),
             ],
     );
   }

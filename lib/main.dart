@@ -318,6 +318,7 @@ class _IndexState extends State<Index> with WidgetsBindingObserver {
         return const AccountInit();
       case LoadStatus.done:
         return const Home();
+      // return LogsCatIndiv2(category: dmodel.categories[6]);
       case LoadStatus.expired:
         return const AnonCreateAccount();
     }

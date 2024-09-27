@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/components/wrapped_button.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
@@ -35,74 +36,69 @@ class _WorkoutCellState extends State<WorkoutCell> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  widget.workout.title,
-                                  style: ttTitle(context),
-                                ),
-                              ),
-                            ],
-                          ),
-                          if (widget.workout.description?.isNotEmpty ?? false)
+            Clickable(
+              onTap: () {
+                comp.navigate(
+                  context: context,
+                  builder: (context) => WorkoutDetail(workout: widget.workout),
+                );
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             Row(
                               children: [
                                 Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 4.0),
-                                    child: Text(
-                                      widget.workout.description!,
-                                      style: ttBody(
-                                        context,
-                                        color: AppColors.subtext(context),
-                                      ),
-                                    ),
+                                  child: Text(
+                                    widget.workout.title,
+                                    style: ttTitle(context),
                                   ),
                                 ),
                               ],
-                            )
-                        ],
+                            ),
+                            if (widget.workout.description?.isNotEmpty ?? false)
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 4.0),
+                                      child: Text(
+                                        widget.workout.description!,
+                                        style: ttBody(
+                                          context,
+                                          color: AppColors.subtext(context),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                if (widget.workout.categories.isNotEmpty)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8),
-                    child: _cat(context),
+                    ],
                   ),
-              ],
+                  if (widget.workout.categories.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: _cat(context),
+                    ),
+                ],
+              ),
             ),
             const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
-                    child: WrappedButton(
-                  title: "Details",
-                  bg: AppColors.cell(context)[600],
-                  center: true,
-                  onTap: () {
-                    comp.navigate(
-                      context: context,
-                      builder: (context) =>
-                          WorkoutDetail(workout: widget.workout),
-                    );
-                  },
-                )),
-                const SizedBox(width: 8),
-                Expanded(
                   child: WrappedButton(
+                    height: 35,
                     bg: dmodel.workoutState?.workout.workoutId ==
                             widget.workout.workoutId
                         ? AppColors.cell(context)[600]
@@ -111,11 +107,17 @@ class _WorkoutCellState extends State<WorkoutCell> {
                             widget.workout.workoutId
                         ? AppColors.text(context)
                         : Colors.white,
-                    center: true,
+                    iconBg: Colors.transparent,
+                    iconFg: dmodel.workoutState?.workout.workoutId ==
+                            widget.workout.workoutId
+                        ? AppColors.text(context)
+                        : Colors.white,
+                    center: false,
                     title: dmodel.workoutState?.workout.workoutId ==
                             widget.workout.workoutId
                         ? "Resume"
                         : "Start",
+                    icon: Icons.play_arrow,
                     onTap: () async => await launchWorkout(
                       context,
                       dmodel,

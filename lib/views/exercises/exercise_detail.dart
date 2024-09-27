@@ -48,6 +48,7 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
     }
     _init();
     super.initState();
+    print("exerciseId: ${widget.exercise?.exerciseId}");
   }
 
   Future<void> _init() async {

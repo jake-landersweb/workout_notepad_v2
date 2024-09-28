@@ -677,6 +677,7 @@ class _GraphBuilderState extends State<GraphBuilder> {
 
   Future<bool> _save(BuildContext context) async {
     try {
+      _lb.title = _textController.text;
       var m = _lb.toMap();
       var db = await DatabaseProvider().database;
 

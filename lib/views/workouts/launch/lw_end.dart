@@ -104,8 +104,8 @@ class _LWEndState extends State<LWEnd> {
                     submitBolded: true,
                     submitText: "Finish",
                     onSubmit: () async {
-                      await lmodel.handleFinish(context, dmodel);
                       Navigator.of(context, rootNavigator: true).pop();
+                      await lmodel.handleFinish(context, dmodel);
                     },
                   );
                 },

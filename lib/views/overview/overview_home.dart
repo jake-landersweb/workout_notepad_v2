@@ -208,6 +208,7 @@ class _OverviewHomeState extends State<OverviewHome> {
           const WorkoutProgress(),
         const PreviousWorkout(),
         _templates(context, dmodel),
+        _exercises(context, dmodel),
         const SizedBox(height: 100),
       ],
     );
@@ -248,6 +249,43 @@ class _OverviewHomeState extends State<OverviewHome> {
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: WorkoutCell(workout: i),
               ),
+        ],
+      ),
+    );
+  }
+
+  Widget _exercises(BuildContext context, DataModel dmodel) {
+    return Section(
+      "Exercises",
+      trailingWidget: Opacity(
+        opacity: 0.7,
+        child: Clickable(
+          onTap: () {
+            navigate(
+              context: context,
+              builder: (context) => const ExerciseHome(),
+            );
+          },
+          child: const Row(
+            children: [
+              Text("All"),
+              Icon(Icons.arrow_right_alt),
+            ],
+          ),
+        ),
+      ),
+      child: Column(
+        children: [
+          for (var i in dmodel.exercises.slice(0, 5))
+            ExerciseCell(
+              exercise: i,
+              onTap: () {
+                cupertinoSheet(
+                  context: context,
+                  builder: (context) => ExerciseDetail(exercise: i),
+                );
+              },
+            ),
         ],
       ),
     );

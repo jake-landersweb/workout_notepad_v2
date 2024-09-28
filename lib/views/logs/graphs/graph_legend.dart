@@ -48,7 +48,7 @@ class GraphLegend extends StatelessWidget {
                       const SizedBox(width: 2),
                       Text(
                         logBuilder.titleBuilder(dmodel, i, separator: " - "),
-                        style: ttcaption(context),
+                        style: ttcaption(context, color: logBuilder.color),
                       ),
                     ],
                   ),

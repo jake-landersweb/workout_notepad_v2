@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:newrelic_mobile/metricunit.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -11,6 +11,7 @@ import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/views/logs/graphs/graph_builder.dart';
 import 'package:workout_notepad_v2/views/logs/graphs/graph_range_picker.dart';
 import 'package:workout_notepad_v2/views/logs/graphs/graph_renderer.dart';
+import 'package:workout_notepad_v2/views/logs/graphs/graphs_edit.dart';
 
 class CustomGraphs extends StatefulWidget {
   const CustomGraphs({super.key});
@@ -44,7 +45,17 @@ class _CustomGraphsState extends State<CustomGraphs> {
           title: "",
           leading: const [BackButton2()],
           trailing: [
-            EditButton(onTap: () {}),
+            EditButton(onTap: () {
+              cupertinoSheet(
+                context: context,
+                builder: (context) => GraphsEdit(
+                  logBuilders: _logBuilders,
+                  onSave: ((logBuilders) {
+                    _fetch();
+                  }),
+                ),
+              );
+            }),
             const SizedBox(width: 16),
             AddButton(onTap: () {
               cupertinoSheet(
@@ -76,6 +87,15 @@ class _CustomGraphsState extends State<CustomGraphs> {
       return Center(
         child: Column(
           children: [
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height / 2,
+              ),
+              child: SvgPicture.asset(
+                "assets/svg/graph1.svg",
+                semanticsLabel: 'Graph1',
+              ),
+            ),
             Text(
               "You do not have any custom graphs created.",
               textAlign: TextAlign.center,
@@ -135,7 +155,6 @@ class _CustomGraphsState extends State<CustomGraphs> {
     });
     try {
       var db = await DatabaseProvider().database;
-
       var rows = await db
           .rawQuery("SELECT * FROM custom_log_builder ORDER BY sortIndex ASC");
 

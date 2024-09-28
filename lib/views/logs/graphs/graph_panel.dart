@@ -23,12 +23,16 @@ class GraphPanel extends StatelessWidget {
           Text(
               logBuilder.titleBuilder(context.read(), data.first,
                   includeValue: false),
-              style: ttcaption(context)),
+              style: ttcaption(
+                context,
+                color: logBuilder.color,
+              )),
           Text(
             logBuilder.formatValue(data.first.v2),
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 52,
+              color: logBuilder.color,
             ),
           ),
         ],

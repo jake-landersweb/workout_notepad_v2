@@ -118,6 +118,7 @@ class LogBuilder {
   late bool showLegend;
   late bool showTitle;
   late LogBuilderDate date;
+  late int sortIndex;
 
   // runtime fields
   int numberOfRecordsEvaluated = 0;
@@ -139,6 +140,7 @@ class LogBuilder {
     this.showYAxis = true,
     this.showLegend = true,
     this.showTitle = true,
+    this.sortIndex = 0,
   }) {
     id = const Uuid().v4();
     this.items = items ?? [];
@@ -154,9 +156,16 @@ class LogBuilder {
       condensing: condensing,
       weightNormalization: weightNormalization,
       graphType: graphType,
-      color: color,
       limit: limit,
       version: version,
+      color: color,
+      backgroundColor: backgroundColor,
+      date: date.copy(),
+      showXAxis: showXAxis,
+      showYAxis: showYAxis,
+      showLegend: showLegend,
+      showTitle: showTitle,
+      sortIndex: sortIndex,
     );
     b.id = id;
     b.numberOfRecordsEvaluated = numberOfRecordsEvaluated;
@@ -190,6 +199,7 @@ class LogBuilder {
         LBGraphType.values.first;
     limit = raw['limit'];
     if (raw['color'] != null && raw['color'] != "") {
+      print(raw['color']);
       color = ColorUtil.hexToColor(raw['color']);
     }
     if (raw['backgroundColor'] != null && raw['backgroundColor'] != "") {
@@ -201,6 +211,7 @@ class LogBuilder {
     showLegend = raw['showLegend'];
     showTitle = raw['showTitle'];
     date = LogBuilderDate.fromJson(raw['date']);
+    sortIndex = raw['sortIndex'] ?? 0;
   }
 
   num getColumnValue(LogRow row) {
@@ -565,6 +576,7 @@ class LogBuilder {
       "showLegend": showLegend,
       "showTitle": showTitle,
       "date": date.toMap(),
+      "sortIndex": sortIndex,
     };
   }
 
@@ -578,6 +590,7 @@ class LogBuilder {
       "condensing": condensing.name,
       "weightNormalization": weightNormalization.name,
       "graphType": graphType.name,
+      "sortIndex": sortIndex,
       "data": jsonEncode(toMap()),
     };
   }

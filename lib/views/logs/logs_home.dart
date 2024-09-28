@@ -62,8 +62,8 @@ class _LogsHomeState extends State<LogsHome> {
     );
 
     return HeaderBar(
-      title: "Logging",
-      isLarge: false,
+      title: "Log Dashboard",
+      isLarge: true,
       horizontalSpacing: 0,
       largeTitlePadding: const EdgeInsets.only(left: 16),
       trailing: [
@@ -80,7 +80,7 @@ class _LogsHomeState extends State<LogsHome> {
         Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
               child: GraphRangeView(
                 date: graphRange,
                 onSave: ((_, date) {
@@ -109,6 +109,8 @@ class _LogsHomeState extends State<LogsHome> {
                     showLegend: true,
                     showXAxis: false,
                     showYAxis: true,
+                    // backgroundColor: Colors.black,
+                    // color: Colors.white,
                   ),
                 ),
                 GraphRenderer(
@@ -332,8 +334,8 @@ class _LogsHomeState extends State<LogsHome> {
         childPadding: const EdgeInsets.only(left: 16),
         children: [
           Tuple3(LineIcons.barChart, "All", const CustomGraphs()),
-          Tuple3(LineIcons.pieChart, "By Graph Type", const CustomGraphs()),
-          Tuple3(LineIcons.lineChart, "By Grouping", const CustomGraphs()),
+          // Tuple3(LineIcons.pieChart, "By Graph Type", const CustomGraphs()),
+          // Tuple3(LineIcons.lineChart, "By Grouping", const CustomGraphs()),
         ],
         onChildTap: (context, item, index) {
           if (dmodel.hasValidSubscription()) {

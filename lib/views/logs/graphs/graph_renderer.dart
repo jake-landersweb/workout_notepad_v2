@@ -88,7 +88,8 @@ class GraphRenderer extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (_showTitle())
-                    Text(logBuilder.graphTitle, style: ttLabel(context)),
+                    Text(logBuilder.graphTitle,
+                        style: ttLabel(context, color: logBuilder.color)),
                   AspectRatio(
                     aspectRatio: aspectRatio,
                     child: _body(context),

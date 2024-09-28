@@ -108,6 +108,15 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
             endContent: Container(),
           ),
           const SizedBox(height: 8),
+          _cell(
+            context,
+            _attributeCell(
+              context,
+              "Duration",
+              formatHHMMSS(log.duration),
+            ),
+          ),
+          const SizedBox(height: 4),
           Row(
             children: [
               Expanded(

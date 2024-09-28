@@ -35,7 +35,7 @@ class GraphBar extends StatelessWidget {
                 touchTooltipData: BarTouchTooltipData(
                   fitInsideHorizontally: true,
                   fitInsideVertically: true,
-                  tooltipBgColor: AppColors.cell(context),
+                  getTooltipColor: (spot) => AppColors.cell(context),
                   tooltipBorder: BorderSide(color: AppColors.divider(context)),
                   getTooltipItem: (group, a, rod, b) {
                     return BarTooltipItem(

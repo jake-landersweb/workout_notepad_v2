@@ -1,12 +1,8 @@
 // ignore_for_file: prefer_final_fields
 
-import 'dart:convert';
-
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -15,7 +11,6 @@ import 'package:workout_notepad_v2/components/colored_cell.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder_item.dart';
-import 'package:workout_notepad_v2/model/data_model.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -678,11 +673,8 @@ class _GraphBuilderState extends State<GraphBuilder> {
   Future<bool> _save(BuildContext context) async {
     try {
       _lb.title = _textController.text;
-      var m = _lb.toMap();
       var db = await DatabaseProvider().database;
-
       await db.insert("custom_log_builder", _lb.toPayload());
-
       snackbarStatus(context, "Successfully saved graph");
       return true;
     } catch (error, stack) {

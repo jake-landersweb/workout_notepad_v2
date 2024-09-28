@@ -6,7 +6,7 @@ devices:
 
 clean:
 	sudo rm -rf ~/.gradle
-	rm -rf android/.gradle
+	sudo rm -rf android/.gradle
 	flutter clean && flutter pub get
 
 debug:

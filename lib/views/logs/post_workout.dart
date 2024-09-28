@@ -730,7 +730,9 @@ class _PostWorkoutSummaryState extends State<PostWorkoutSummary> {
             touchTooltipData: LineTouchTooltipData(
               fitInsideHorizontally: true,
               fitInsideVertically: true,
-              tooltipBgColor: AppColors.cell(context),
+              getTooltipColor: (spot) {
+                return AppColors.cell(context);
+              },
               getTooltipItems: (touchedSpots) {
                 List<LineTooltipItem> items = [];
                 items.add(

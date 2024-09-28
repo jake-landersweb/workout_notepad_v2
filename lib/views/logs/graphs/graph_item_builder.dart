@@ -6,12 +6,9 @@ import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/colored_cell.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder_item.dart';
-import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/data_model.dart';
 import 'package:workout_notepad_v2/model/search_model.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
-import 'package:workout_notepad_v2/utils/color.dart';
-import 'package:workout_notepad_v2/utils/icons.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 
@@ -343,6 +340,5 @@ class _GraphItemBuilderState extends State<GraphItemBuilder> {
           ],
         );
     }
-    return Container();
   }
 }

@@ -25,14 +25,14 @@ class CustomPageView extends StatefulWidget {
 class _CustomPageViewState extends State<CustomPageView>
     with TickerProviderStateMixin {
   late PageController _pageController;
-  late List<double> _heights;
+  // late List<double> _heights;
   int _currentPage = 0;
 
-  double get _currentHeight => _heights[_currentPage];
+  // double get _currentHeight => _heights[_currentPage];
 
   @override
   void initState() {
-    _heights = widget.children.map((e) => 0.0).toList();
+    // _heights = widget.children.map((e) => 0.0).toList();
     super.initState();
     _pageController = PageController()
       ..addListener(() {

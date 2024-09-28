@@ -54,5 +54,5 @@ class _SigninAppleState extends State<SigninApple> {
     );
   }
 
-  Future<void> _signIn() async {}
+  // Future<void> _signIn() async {}
 }

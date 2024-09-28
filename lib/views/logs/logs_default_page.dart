@@ -1,4 +1,3 @@
-import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -7,7 +6,6 @@ import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder_date.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder_item.dart';
-import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/logs/graphs/graph_range_picker.dart';
 import 'package:workout_notepad_v2/views/logs/graphs/graph_renderer.dart';

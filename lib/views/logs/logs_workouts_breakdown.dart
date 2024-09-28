@@ -1,6 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
@@ -85,10 +84,12 @@ class _LogsWorkoutsBreakdownState extends State<LogsWorkoutsBreakdown> {
                 touchTooltipData: BarTouchTooltipData(
                   fitInsideHorizontally: true,
                   fitInsideVertically: true,
-                  tooltipBgColor: Theme.of(context)
-                      .colorScheme
-                      .surfaceVariant
-                      .withOpacity(0.7),
+                  getTooltipColor: (spot) {
+                    return Theme.of(context)
+                        .colorScheme
+                        .surfaceVariant
+                        .withOpacity(0.7);
+                  },
                   getTooltipItem: (group, a, rod, b) {
                     return BarTooltipItem(
                       "${formatHHMMSS(rod.toY.toInt())}\n${formatDateTime(DateTime.fromMillisecondsSinceEpoch(group.x))}",
@@ -190,7 +191,7 @@ class _LogsWorkoutsBreakdownState extends State<LogsWorkoutsBreakdown> {
                 touchTooltipData: LineTouchTooltipData(
                   fitInsideHorizontally: true,
                   fitInsideVertically: true,
-                  tooltipBgColor: Theme.of(context)
+                  getTooltipColor: (spot) => Theme.of(context)
                       .colorScheme
                       .surfaceVariant
                       .withOpacity(0.7),
@@ -278,8 +279,8 @@ class _LogsWorkoutsBreakdownState extends State<LogsWorkoutsBreakdown> {
                 ),
               ],
             ),
-            swapAnimationCurve: Sprung(36),
-            swapAnimationDuration: const Duration(milliseconds: 700),
+            // swapAnimationCurve: Sprung(36),
+            // swapAnimationDuration: const Duration(milliseconds: 700),
           ),
         ),
       );

@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:workout_notepad_v2/components/contained_list.dart';
-import 'package:workout_notepad_v2/components/section.dart';
 import 'package:workout_notepad_v2/components/wrapped_button.dart';
 import 'package:workout_notepad_v2/utils/color.dart';
 import 'dart:math' as math;

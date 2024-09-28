@@ -1,12 +1,10 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:workout_notepad_v2/views/exercises/logs/el_premium.dart';
 
 enum ELDistributionType { weight, reps, time }
 
@@ -48,7 +46,6 @@ class _ELDistributionState extends State<ELDistribution> {
 
   @override
   Widget build(BuildContext context) {
-    var dmodel = Provider.of<DataModel>(context);
     if (_isLoading) {
       return LoadingIndicator(
         color: Theme.of(context).colorScheme.primary,
@@ -101,7 +98,7 @@ class _ELDistributionState extends State<ELDistribution> {
                           touchTooltipData: LineTouchTooltipData(
                             fitInsideHorizontally: true,
                             fitInsideVertically: true,
-                            tooltipBgColor: AppColors.cell(context),
+                            getTooltipColor: (spot) => AppColors.cell(context),
                             getTooltipItems: (touchedSpots) {
                               List<LineTooltipItem> items = [];
                               items.add(
@@ -164,8 +161,8 @@ class _ELDistributionState extends State<ELDistribution> {
                           _getLineData(Colors.blue[300]!, _minData),
                         ],
                       ),
-                      swapAnimationCurve: Curves.easeInOutSine,
-                      swapAnimationDuration: const Duration(milliseconds: 500),
+                      // swapAnimationCurve: Curves.easeInOutSine,
+                      // swapAnimationDuration: const Duration(milliseconds: 500),
                     ),
                   ),
                   const SizedBox(height: 16),

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:workout_notepad_v2/color_schemes.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder_item.dart';
 import 'package:workout_notepad_v2/model/getDB.dart';
-import 'package:workout_notepad_v2/utils/color.dart';
 import 'package:workout_notepad_v2/views/logs/graphs/graph_builder.dart';
 
 class TestWidget extends StatefulWidget {
@@ -18,7 +16,7 @@ class _TestWidgetState extends State<TestWidget> {
   @override
   void initState() {
     super.initState();
-    // _test();
+    _test();
   }
 
   @override

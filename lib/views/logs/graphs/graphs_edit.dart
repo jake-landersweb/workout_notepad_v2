@@ -4,14 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
-import 'package:provider/provider.dart';
-import 'package:workout_notepad_v2/components/raw_reorderable_list.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder.dart';
-import 'package:workout_notepad_v2/data/workout_exercise.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
-import 'package:workout_notepad_v2/utils/color.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
 class GraphsEdit extends StatefulWidget {

@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
-import 'package:sprung/sprung.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/components/blur_if_not_subscription.dart';
 import 'package:workout_notepad_v2/components/expanded_page_view.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder.dart';
-import 'package:workout_notepad_v2/data/log_builder/log_builder_date.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder_item.dart';
 import 'package:workout_notepad_v2/data/root.dart';
-import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -21,12 +17,9 @@ import 'package:workout_notepad_v2/views/logs/graphs/graph_custom.dart';
 import 'package:workout_notepad_v2/views/logs/graphs/graph_range_picker.dart';
 import 'package:workout_notepad_v2/views/logs/graphs/graph_renderer.dart';
 import 'package:workout_notepad_v2/views/logs/logs_calendar.dart';
-import 'package:workout_notepad_v2/views/logs/logs_cat_indiv.dart';
 import 'package:workout_notepad_v2/views/logs/logs_default_page.dart';
-import 'package:workout_notepad_v2/views/logs/post_workout.dart';
 import 'package:workout_notepad_v2/views/logs/root.dart';
 import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
-import 'dart:math' as math;
 
 class LogsHome extends StatefulWidget {
   const LogsHome({super.key});

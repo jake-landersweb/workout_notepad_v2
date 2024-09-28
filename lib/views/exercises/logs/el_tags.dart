@@ -1,13 +1,11 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
-import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:workout_notepad_v2/views/exercises/logs/el_premium.dart';
 
 class ELTags extends StatefulWidget {
   const ELTags({
@@ -33,7 +31,6 @@ class _ELTagsState extends State<ELTags> {
 
   @override
   Widget build(BuildContext context) {
-    var dmodel = Provider.of<DataModel>(context);
     if (_isLoading) {
       return LoadingIndicator(
         color: Theme.of(context).colorScheme.primary,

@@ -55,15 +55,15 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
     super.initState();
   }
 
-  Future<void> _postUpdate(Workout w) async {
-    setState(() {
-      _workout = w;
-    });
-    // wait for db to load
-    await Future.delayed(const Duration(milliseconds: 100));
-    w.exercises = await w.getChildren();
-    setState(() {});
-  }
+  // Future<void> _postUpdate(Workout w) async {
+  //   setState(() {
+  //     _workout = w;
+  //   });
+  //   // wait for db to load
+  //   await Future.delayed(const Duration(milliseconds: 100));
+  //   w.exercises = await w.getChildren();
+  //   setState(() {});
+  // }
 
   @override
   Widget build(BuildContext context) {

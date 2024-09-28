@@ -19,7 +19,6 @@ import 'package:workout_notepad_v2/utils/image.dart';
 import 'package:workout_notepad_v2/views/exercises/create_edit_exercise/cee_type.dart';
 import 'package:workout_notepad_v2/views/exercises/create_edit_exercise/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:workout_notepad_v2/views/icon_picker.dart';
 import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
 
 class CEERoot extends StatefulWidget {
@@ -236,32 +235,32 @@ class _CEERootState extends State<CEERoot> {
     );
   }
 
-  Widget _icon(BuildContext context, CreateExerciseModel cemodel) {
-    return Clickable(
-      onTap: () => showIconPicker(
-          context: context,
-          initialIcon: cemodel.exercise.icon,
-          closeOnSelection: true,
-          onSelection: (icon) {
-            setState(() {
-              cemodel.exercise.icon = icon;
-            });
-          }),
-      child: Column(
-        children: [
-          getImageIcon(cemodel.exercise.icon, size: 100),
-          Text(
-            "Edit",
-            style: TextStyle(
-              fontSize: 12,
-              color: Theme.of(context).colorScheme.secondary,
-              fontWeight: FontWeight.w300,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _icon(BuildContext context, CreateExerciseModel cemodel) {
+  //   return Clickable(
+  //     onTap: () => showIconPicker(
+  //         context: context,
+  //         initialIcon: cemodel.exercise.icon,
+  //         closeOnSelection: true,
+  //         onSelection: (icon) {
+  //           setState(() {
+  //             cemodel.exercise.icon = icon;
+  //           });
+  //         }),
+  //     child: Column(
+  //       children: [
+  //         getImageIcon(cemodel.exercise.icon, size: 100),
+  //         Text(
+  //           "Edit",
+  //           style: TextStyle(
+  //             fontSize: 12,
+  //             color: Theme.of(context).colorScheme.secondary,
+  //             fontWeight: FontWeight.w300,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _title(BuildContext context, CreateExerciseModel cemodel) {
     return ContainedList<Widget>(

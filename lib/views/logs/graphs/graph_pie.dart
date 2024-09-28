@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder.dart';
 import 'package:workout_notepad_v2/model/data_model.dart';
-import 'package:workout_notepad_v2/text_themes.dart';
-import 'package:workout_notepad_v2/utils/color.dart';
 import 'package:workout_notepad_v2/utils/tuple.dart';
 import 'package:workout_notepad_v2/views/logs/graphs/graph_legend.dart';
 

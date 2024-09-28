@@ -1,9 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
-import 'package:workout_notepad_v2/components/action_cell.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/model/root.dart';
@@ -12,9 +10,7 @@ import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/overview/previous_workout.dart';
 import 'package:workout_notepad_v2/views/overview/workout_progress.dart';
 import 'package:workout_notepad_v2/views/root.dart';
-import 'package:workout_notepad_v2/views/workouts/create_edit/root.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/launch_workout.dart';
-import 'package:workout_notepad_v2/views/workouts/workout_cell_new.dart';
 
 class OverviewHome extends StatefulWidget {
   const OverviewHome({super.key});
@@ -62,7 +58,8 @@ class _OverviewHomeState extends State<OverviewHome> {
                         .withOpacity(0.75),
                   ),
                 ),
-                Text("Jake Landers", style: ttLargeLabel(context)),
+                Text(dmodel.user?.getName() ?? "Unknown User",
+                    style: ttLargeLabel(context)),
               ],
             ),
           ],

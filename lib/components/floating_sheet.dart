@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/components/root.dart';
-import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
 /// Shows a floating sheet with padding based on the platform

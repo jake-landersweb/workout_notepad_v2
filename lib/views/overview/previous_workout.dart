@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:workout_notepad_v2/components/graph_circle.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
@@ -219,29 +218,29 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
                             previousValue + element.reps)));
   }
 
-  double _getNumSetsNotWarmup(WorkoutLog log) {
-    return log.exerciseLogs.fold(
-          0,
-          (previousValue, element) =>
-              previousValue +
-              element.fold(
-                0,
-                (previousValue, element) =>
-                    previousValue +
-                    element.metadata.fold(
-                      0,
-                      (previousValue, element) =>
-                          previousValue +
-                          (element.tags.firstWhereOrNull(
-                                      (element) => element.title == "Warmup") ==
-                                  null
-                              ? 1
-                              : 0),
-                    ),
-              ),
-        ) /
-        _getTotalSets(log);
-  }
+  // double _getNumSetsNotWarmup(WorkoutLog log) {
+  //   return log.exerciseLogs.fold(
+  //         0,
+  //         (previousValue, element) =>
+  //             previousValue +
+  //             element.fold(
+  //               0,
+  //               (previousValue, element) =>
+  //                   previousValue +
+  //                   element.metadata.fold(
+  //                     0,
+  //                     (previousValue, element) =>
+  //                         previousValue +
+  //                         (element.tags.firstWhereOrNull(
+  //                                     (element) => element.title == "Warmup") ==
+  //                                 null
+  //                             ? 1
+  //                             : 0),
+  //                   ),
+  //             ),
+  //       ) /
+  //       _getTotalSets(log);
+  // }
 
   List<Tuple2<String, int>> _getTagsData(WorkoutLog log) {
     List<Tuple2<String, int>> tags = [];

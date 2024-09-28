@@ -20,6 +20,4 @@ class _ImgagePickerState extends State<ImgagePicker> {
       child: Container(),
     );
   }
-
-  Future<void> _handleUrl(String url) async {}
 }

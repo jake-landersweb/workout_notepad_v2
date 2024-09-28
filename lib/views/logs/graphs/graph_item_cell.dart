@@ -123,11 +123,11 @@ class _GraphItemCellState extends State<GraphItemCell> {
     }
   }
 
-  Widget _getPartialRow(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [],
-    );
-  }
+  // Widget _getPartialRow(BuildContext context) {
+  //   return Row(
+  //     mainAxisSize: MainAxisSize.min,
+  //     crossAxisAlignment: CrossAxisAlignment.center,
+  //     children: [],
+  //   );
+  // }
 }

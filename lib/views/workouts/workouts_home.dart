@@ -4,15 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/back_button.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/components/section.dart';
-import 'package:workout_notepad_v2/components/wrapped_button.dart';
-import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
-import 'package:intl/intl.dart';
-
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/views/workouts/create_edit/root.dart';
-import 'package:workout_notepad_v2/views/workouts/launch/launch_workout.dart';
 
 class WorkoutsHome extends StatefulWidget {
   const WorkoutsHome({

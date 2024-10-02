@@ -37,6 +37,8 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
+    namespace = "com.landersweb.workout_notepad_v2"
+    
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 

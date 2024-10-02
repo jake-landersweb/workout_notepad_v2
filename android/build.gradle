@@ -11,7 +11,7 @@ buildscript {
         // FlutterFire Configuration
         classpath 'com.google.gms:google-services:4.3.14'
         // NEW RELIC
-        classpath "com.newrelic.agent.android:agent-gradle-plugin:6.10.0"
+        classpath "com.newrelic.agent.android:agent-gradle-plugin:7.6.0"
     }
 }
 

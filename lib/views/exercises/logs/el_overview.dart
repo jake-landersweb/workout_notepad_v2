@@ -36,6 +36,7 @@ class _ELOverviewState extends State<ELOverview> {
 
   Widget _overview(BuildContext context, ELModel elmodel) {
     switch (elmodel.exercise.type) {
+      case ExerciseType.distance:
       case ExerciseType.weight:
       case ExerciseType.timed:
       case ExerciseType.duration:
@@ -121,6 +122,7 @@ class _ELOverviewState extends State<ELOverview> {
             ),
           ],
         );
+      case ExerciseType.stretch:
       case ExerciseType.bw:
         return Column(
           children: [

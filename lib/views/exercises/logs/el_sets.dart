@@ -208,9 +208,12 @@ class _ELSetsState extends State<ELSets> {
 
   String _getHoverTitle(double val) {
     switch (widget.exercise.type) {
+      case ExerciseType.stretch:
       case ExerciseType.bw:
       case ExerciseType.weight:
         return val.toStringAsFixed(2);
+      case ExerciseType.distance:
+        return "TODO 5";
       case ExerciseType.timed:
       case ExerciseType.duration:
         switch (_type) {

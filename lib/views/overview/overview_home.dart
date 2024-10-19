@@ -252,6 +252,7 @@ class _OverviewHomeState extends State<OverviewHome> {
   }
 
   Widget _exercises(BuildContext context, DataModel dmodel) {
+    var all = dmodel.exercises;
     return Section(
       "Exercises",
       trailingWidget: Opacity(
@@ -273,16 +274,28 @@ class _OverviewHomeState extends State<OverviewHome> {
       ),
       child: Column(
         children: [
-          for (var i in dmodel.exercises.slice(0, 5))
-            ExerciseCell(
-              exercise: i,
-              onTap: () {
-                cupertinoSheet(
-                  context: context,
-                  builder: (context) => ExerciseDetail(exercise: i),
-                );
-              },
-            ),
+          if (all.length > 5)
+            for (var i in dmodel.exercises.slice(0, 5))
+              ExerciseCell(
+                exercise: i,
+                onTap: () {
+                  cupertinoSheet(
+                    context: context,
+                    builder: (context) => ExerciseDetail(exercise: i),
+                  );
+                },
+              )
+          else
+            for (var i in dmodel.exercises)
+              ExerciseCell(
+                exercise: i,
+                onTap: () {
+                  cupertinoSheet(
+                    context: context,
+                    builder: (context) => ExerciseDetail(exercise: i),
+                  );
+                },
+              )
         ],
       ),
     );

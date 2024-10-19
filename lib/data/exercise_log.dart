@@ -282,6 +282,10 @@ class ExerciseLogMeta {
   late String weightPost;
   DateTime? savedDate;
 
+  // after v1.1.0
+  late double distance;
+  late String distancePost;
+
   // not in database
   late bool saved;
   late List<ExerciseLogMetaTag> tags;
@@ -295,6 +299,8 @@ class ExerciseLogMeta {
     required this.weight,
     required this.weightPost,
     this.savedDate,
+    required this.distance,
+    required this.distancePost,
   });
 
   ExerciseLogMeta.init({
@@ -319,6 +325,8 @@ class ExerciseLogMeta {
       ));
     }
     weightPost = "lbs";
+    distance = exercise.distance;
+    distancePost = exercise.distancePost;
   }
 
   ExerciseLogMeta.empty({
@@ -344,6 +352,8 @@ class ExerciseLogMeta {
       );
     }
     weightPost = "lbs";
+    distance = 1;
+    distancePost = "km";
   }
 
   ExerciseLogMeta.from(ExerciseLogMeta m) {
@@ -357,6 +367,8 @@ class ExerciseLogMeta {
     tags = [for (var i in m.tags) i.clone()];
     weightPost = m.weightPost;
     // savedDate = m.savedDate;
+    distance = m.distance;
+    distancePost = m.distancePost;
   }
 
   static Future<ExerciseLogMeta> fromJson(dynamic json, {Database? db}) async {
@@ -369,6 +381,8 @@ class ExerciseLogMeta {
       weight: json['weight'],
       weightPost: json['weightPost'] ?? "lbs",
       savedDate: DateTime.tryParse(json['savedDate'] ?? ""),
+      distance: json['distance'] ?? 0,
+      distancePost: json['distancePost'] ?? "",
     );
     elm.tags = await elm.getTags(db: db) ?? [];
     return elm;
@@ -384,6 +398,8 @@ class ExerciseLogMeta {
       weight: json['weight'],
       weightPost: json['weightPost'] ?? "lbs",
       savedDate: DateTime.tryParse(json['savedDate'] ?? ""),
+      distance: json['distance'] ?? 0,
+      distancePost: json['distancePost'] ?? "",
     );
     elm.tags = [for (var i in json['tags']) ExerciseLogMetaTag.fromJson(i)];
     elm.saved = json['saved'];
@@ -450,6 +466,8 @@ class ExerciseLogMeta {
         "weight": weight,
         "weightPost": weightPost,
         "savedDate": savedDate?.toString(),
+        "distance": distance,
+        "distancePost": distancePost,
       };
 
   Map<String, dynamic> toDump() => {
@@ -463,6 +481,8 @@ class ExerciseLogMeta {
         "tags": [for (var i in tags) i.toDump()],
         "saved": saved,
         "savedDate": savedDate?.toString(),
+        "distance": distance,
+        "distancePost": distancePost,
       };
 }
 

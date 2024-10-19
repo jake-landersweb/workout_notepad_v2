@@ -544,6 +544,8 @@ class _Cell extends StatelessWidget {
 
   Widget _post(BuildContext context) {
     switch (type) {
+      case ExerciseType.distance:
+        return Text("TODO 1");
       case ExerciseType.weight:
         return Row(
           children: [
@@ -568,6 +570,7 @@ class _Cell extends StatelessWidget {
             Expanded(child: _itemCell(context, "", formatHHMMSS(time))),
           ],
         );
+      case ExerciseType.stretch:
       case ExerciseType.bw:
         return Row(
           children: [
@@ -763,6 +766,8 @@ class _LaunchCellLogState extends State<LaunchCellLog> {
 
   Widget _getContent(BuildContext context) {
     switch (widget.type) {
+      case ExerciseType.distance:
+        return Text("TODO 2");
       case ExerciseType.weight:
         return Row(
           children: [
@@ -794,6 +799,7 @@ class _LaunchCellLogState extends State<LaunchCellLog> {
             ),
           ],
         );
+      case ExerciseType.stretch:
       case ExerciseType.bw:
         return Row(
           children: [
@@ -846,7 +852,7 @@ class _LaunchCellLogState extends State<LaunchCellLog> {
           spacing: 8,
           onChanged: (val) {
             setState(() {
-              _weight = val;
+              _weight = val as int;
             });
           },
           picker: SizedBox(

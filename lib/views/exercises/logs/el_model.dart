@@ -79,6 +79,8 @@ class ELModel extends ChangeNotifier {
       case ExerciseType.timed:
       case ExerciseType.duration:
         return formatHHMMSS(_max.round());
+      case ExerciseType.distance:
+      case ExerciseType.stretch:
       case ExerciseType.bw:
         throw "unimplemented";
     }
@@ -91,6 +93,8 @@ class ELModel extends ChangeNotifier {
       case ExerciseType.timed:
       case ExerciseType.duration:
         return formatHHMMSS(_min.round());
+      case ExerciseType.distance:
+      case ExerciseType.stretch:
       case ExerciseType.bw:
         throw "unimplemented";
     }
@@ -104,6 +108,8 @@ class ELModel extends ChangeNotifier {
       case ExerciseType.timed:
       case ExerciseType.duration:
         return formatHHMMSS(a.round());
+      case ExerciseType.distance:
+      case ExerciseType.stretch:
       case ExerciseType.bw:
         throw "unimplemented";
     }

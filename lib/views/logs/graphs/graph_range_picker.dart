@@ -148,7 +148,7 @@ class _GraphRangePickerState extends State<GraphRangePicker> {
           intialValue: _date.dateRangeModifier,
           minValue: 1,
           onChanged: (val) {
-            _date.dateRangeModifier = val;
+            _date.dateRangeModifier = val as int;
             setState(() {
               _range = _date.getRange();
             });

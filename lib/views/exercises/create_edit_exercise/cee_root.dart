@@ -7,6 +7,7 @@ import 'package:workout_notepad_v2/components/contained_list.dart';
 import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
 import 'package:workout_notepad_v2/components/field.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
+import 'package:workout_notepad_v2/components/number_picker.dart';
 
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/components/section.dart';
@@ -223,7 +224,7 @@ class _CEERootState extends State<CEERoot> {
           "Category",
           initOpen: true,
           allowsCollapse: true,
-          headerPadding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+          headerPadding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
           child: _category(context, cemodel, dmodel),
         ),
         for (var i in _setBody(context, cemodel))
@@ -416,6 +417,17 @@ class _CEERootState extends State<CEERoot> {
 
   List<Widget> _setBody(BuildContext context, CreateExerciseModel cemodel) {
     switch (cemodel.exercise.type) {
+      case ExerciseType.distance:
+        return [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: _sets(context, cemodel),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: _distance(context, cemodel),
+          ),
+        ];
       case ExerciseType.timed:
       case ExerciseType.duration:
         return [
@@ -449,7 +461,7 @@ class _CEERootState extends State<CEERoot> {
         minValue: 0,
         intialValue: cemodel.exercise.sets,
         onChanged: (val) {
-          cemodel.exercise.sets = val;
+          cemodel.exercise.sets = val as int;
         },
       ),
     );
@@ -462,7 +474,7 @@ class _CEERootState extends State<CEERoot> {
         minValue: 0,
         intialValue: cemodel.exercise.reps,
         onChanged: (val) {
-          cemodel.exercise.reps = val;
+          cemodel.exercise.reps = val as int;
         },
       ),
     );
@@ -470,7 +482,10 @@ class _CEERootState extends State<CEERoot> {
 
   Widget _time(BuildContext context, CreateExerciseModel cemodel) {
     return comp.LabeledWidget(
-      label: cemodel.exercise.type == ExerciseType.timed ? "Time" : "Goal Time",
+      label: [ExerciseType.timed, ExerciseType.distance]
+              .contains(cemodel.exercise.type)
+          ? "Goal Time"
+          : "Time",
       child: Row(
         children: [
           Expanded(
@@ -492,7 +507,7 @@ class _CEERootState extends State<CEERoot> {
                         textFontSize: 50,
                         maxValue: 99,
                         onChanged: (val) {
-                          cemodel.exercise.setHours(val);
+                          cemodel.exercise.setHours(val as int);
                         },
                       ),
                     ),
@@ -533,7 +548,7 @@ class _CEERootState extends State<CEERoot> {
                         textFontSize: 50,
                         maxValue: 59,
                         onChanged: (val) {
-                          cemodel.exercise.setMinutes(val);
+                          cemodel.exercise.setMinutes(val as int);
                         },
                       ),
                     ),
@@ -574,7 +589,7 @@ class _CEERootState extends State<CEERoot> {
                         textFontSize: 50,
                         maxValue: 59,
                         onChanged: (val) {
-                          cemodel.exercise.setSeconds(val);
+                          cemodel.exercise.setSeconds(val as int);
                         },
                       ),
                     ),
@@ -586,6 +601,21 @@ class _CEERootState extends State<CEERoot> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _distance(BuildContext context, CreateExerciseModel cemodel) {
+    return comp.LabeledWidget(
+      label: "Distance",
+      child: comp.NumberPicker(
+        minValue: 0.0,
+        intialValue: cemodel.exercise.distance,
+        incrementValue: 0.1,
+        customFormatter: DoubleTextInputFormatter(maxValue: 999, minValue: 0),
+        onChanged: (val) {
+          cemodel.exercise.distance = val.toDouble();
+        },
       ),
     );
   }

@@ -1,0 +1,11 @@
+ALTER TABLE exercise ADD COLUMN distance DOUBLE NOT NULL DEFAULT 0.0;
+--
+ALTER TABLE exercise ADD COLUMN distancePost TEXT NOT NULL DEFAULT "";
+--
+ALTER TABLE workout_exercise ADD COLUMN distance DOUBLE NOT NULL DEFAULT 0.0;
+--
+ALTER TABLE workout_exercise ADD COLUMN distancePost TEXT NOT NULL DEFAULT "";
+--
+ALTER TABLE exercise_log_meta ADD COLUMN distance DOUBLE NOT NULL DEFAULT 0.0;
+--
+ALTER TABLE exercise_log_meta ADD COLUMN distancePost TEXT NOT NULL DEFAULT "";

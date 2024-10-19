@@ -37,10 +37,16 @@ class _CEETypeState extends State<CEEType> {
       switch (_type) {
         case ExerciseType.bw:
         case ExerciseType.weight:
-          return [ExerciseType.weight, ExerciseType.bw];
+        case ExerciseType.stretch:
+          return [ExerciseType.weight, ExerciseType.bw, ExerciseType.stretch];
         case ExerciseType.timed:
         case ExerciseType.duration:
-          return [ExerciseType.duration, ExerciseType.timed];
+        case ExerciseType.distance:
+          return [
+            ExerciseType.duration,
+            ExerciseType.timed,
+            ExerciseType.distance
+          ];
       }
     }
   }
@@ -83,35 +89,32 @@ class _CEETypeState extends State<CEEType> {
         ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Row(
+          child: Column(
             children: [
-              Image.asset(
-                exerciseTypeIcon(type),
-                height: 60,
-                width: 60,
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(exerciseTypeTitle(type), style: ttSubTitle(context)),
-                    const SizedBox(height: 2),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            exerciseTypeDesc(type),
-                            style: ttBody(
-                              context,
-                              color: AppColors.subtext(context),
-                            ),
-                          ),
-                        ),
-                      ],
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    exerciseTypeIcon(type),
+                    height: 30,
+                    width: 30,
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Text(
+                      exerciseTypeTitle(type),
+                      style: ttLabel(context),
                     ),
-                  ],
-                ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(exerciseTypeDesc(type)),
+                  ),
+                ],
               ),
             ],
           ),

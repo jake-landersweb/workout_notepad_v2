@@ -213,6 +213,9 @@ class _ELDistributionState extends State<ELDistribution> {
 
   String _getHoverTitle(double val) {
     switch (widget.exercise.type) {
+      case ExerciseType.distance:
+        return "TODO 4";
+      case ExerciseType.stretch:
       case ExerciseType.bw:
       case ExerciseType.weight:
         return val.toStringAsFixed(2);

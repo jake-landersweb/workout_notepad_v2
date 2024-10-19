@@ -149,6 +149,8 @@ class ELCell extends StatelessWidget {
 
   Widget _post(BuildContext context, ExerciseLogMeta meta) {
     switch (log.type) {
+      case ExerciseType.distance:
+        return Text("TODO 3");
       case ExerciseType.weight:
         return Row(
           children: [
@@ -182,6 +184,7 @@ class ELCell extends StatelessWidget {
             ),
           ],
         );
+      case ExerciseType.stretch:
       case ExerciseType.bw:
         return Row(
           children: [

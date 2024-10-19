@@ -25,6 +25,8 @@ class WorkoutExercise extends Exercise {
     required super.reps,
     required super.time,
     super.filename,
+    required super.distance,
+    required super.distancePost,
   });
 
   // WorkoutExercise.init(Workout w, Exercise e, ExerciseChildArgs args)
@@ -74,6 +76,8 @@ class WorkoutExercise extends Exercise {
         sets: sets,
         time: time,
         filename: filename,
+        distance: distance,
+        distancePost: distancePost,
       );
 
   WorkoutExercise clone(Workout workout) => WorkoutExercise(
@@ -94,6 +98,8 @@ class WorkoutExercise extends Exercise {
         sets: sets,
         time: time,
         filename: filename,
+        distance: distance,
+        distancePost: distancePost,
       );
 
   WorkoutExercise.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
@@ -122,6 +128,9 @@ class WorkoutExercise extends Exercise {
       "sets": sets,
       "reps": reps,
       "time": time,
+      // TODO -- maybe add filename here?
+      "distance": distance,
+      "distancePost": distancePost,
     };
   }
 
@@ -138,6 +147,9 @@ class WorkoutExercise extends Exercise {
       "sets": sets,
       "reps": reps,
       "time": time,
+      // TODO -- maybe add filename here?
+      "distance": distance,
+      "distancePost": distancePost,
     };
   }
 

@@ -108,7 +108,7 @@ class _TimePickerState extends State<TimePicker> {
                           TimeInputFormatter(maxValue: 99, minValue: 0),
                       onChanged: (val) {
                         setState(() {
-                          _hours = val;
+                          _hours = val as int;
                         });
                         widget.onChanged(_getSeconds());
                       },
@@ -141,7 +141,7 @@ class _TimePickerState extends State<TimePicker> {
                       spacing: 8,
                       onChanged: (val) {
                         setState(() {
-                          _minutes = val;
+                          _minutes = val as int;
                         });
                         widget.onChanged(_getSeconds());
                       },
@@ -174,7 +174,7 @@ class _TimePickerState extends State<TimePicker> {
                       spacing: 8,
                       onChanged: (val) {
                         setState(() {
-                          _seconds = val;
+                          _seconds = val as int;
                         });
                         widget.onChanged(_getSeconds());
                       },

@@ -29,14 +29,15 @@ class NumberPicker extends StatefulWidget {
     this.contain = true,
     this.customFormatter,
     this.initialValueStr,
+    this.incrementValue = 1,
   });
-  final Function(int val) onChanged;
-  final int? intialValue;
+  final Function(num val) onChanged;
+  final num? intialValue;
   final double textFontSize;
   final double buttonTextSize;
   final FontWeight fontWeight;
-  final int maxValue;
-  final int minValue;
+  final num maxValue;
+  final num minValue;
   final bool showPicker;
   final Widget? topButtonChild;
   final Widget? bottomButtonChild;
@@ -49,12 +50,13 @@ class NumberPicker extends StatefulWidget {
   final bool contain;
   final TextInputFormatter? customFormatter;
   final String? initialValueStr;
+  final num incrementValue;
 
   @override
   State<NumberPicker> createState() => _NumberPickerState();
 }
 
-class _NumberPickerState extends State<NumberPicker> {
+class _NumberPickerState<T extends num> extends State<NumberPicker> {
   late TextEditingController _controller;
   bool clear = true;
 
@@ -163,9 +165,9 @@ class _NumberPickerState extends State<NumberPicker> {
             onTap();
           } else {
             if (isPlus) {
-              int? tmp = int.tryParse(_controller.text);
+              num? tmp = num.tryParse(_controller.text);
               if (tmp != null) {
-                tmp += 1;
+                tmp += widget.incrementValue;
                 if (tmp > widget.maxValue) {
                   tmp = widget.maxValue;
                 }
@@ -175,9 +177,9 @@ class _NumberPickerState extends State<NumberPicker> {
                 });
               }
             } else {
-              int? tmp = int.tryParse(_controller.text);
+              num? tmp = num.tryParse(_controller.text);
               if (tmp != null) {
-                tmp -= 1;
+                tmp -= widget.incrementValue;
                 if (tmp < widget.minValue) {
                   tmp = widget.minValue;
                 }
@@ -224,7 +226,7 @@ class _NumberPickerState extends State<NumberPicker> {
           formatters: [
             FilteringTextInputFormatter.digitsOnly,
             widget.customFormatter ??
-                _TextInputFormatter(
+                IntTextInputFormatter(
                   maxValue: widget.maxValue,
                   minValue: widget.minValue,
                 ),
@@ -236,7 +238,7 @@ class _NumberPickerState extends State<NumberPicker> {
           ),
           onChanged: (val) {
             if (val != "") {
-              int? tmp = int.tryParse(val);
+              num? tmp = num.tryParse(val);
               if (tmp != null) {
                 clear = false;
                 widget.onChanged(tmp);
@@ -249,11 +251,11 @@ class _NumberPickerState extends State<NumberPicker> {
   }
 }
 
-class _TextInputFormatter extends TextInputFormatter {
-  late int maxValue;
-  late int minValue;
+class IntTextInputFormatter extends TextInputFormatter {
+  late num maxValue;
+  late num minValue;
 
-  _TextInputFormatter({
+  IntTextInputFormatter({
     required this.maxValue,
     required this.minValue,
   });
@@ -277,10 +279,10 @@ class _TextInputFormatter extends TextInputFormatter {
     }
 
     if (tmp > maxValue) {
-      tmp = maxValue;
+      tmp = maxValue as int;
     }
     if (tmp < minValue) {
-      tmp = minValue;
+      tmp = minValue as int;
     }
 
     String newText = tmp.toString();
@@ -289,6 +291,60 @@ class _TextInputFormatter extends TextInputFormatter {
       baseOffset: math.min(newText.length, newText.length),
       extentOffset: math.min(newText.length, newText.length),
     );
+
+    return TextEditingValue(
+      text: newText,
+      selection: newSelection,
+      composing: TextRange.empty,
+    );
+  }
+}
+
+class DoubleTextInputFormatter extends TextInputFormatter {
+  late double maxValue;
+  late double minValue;
+
+  DoubleTextInputFormatter({
+    required this.maxValue,
+    required this.minValue,
+  });
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    TextSelection newSelection = newValue.selection;
+    String value = newValue.text;
+
+    if (value.isEmpty) {
+      value = "0.0";
+    }
+
+    double? tmp = double.tryParse(value);
+
+    if (tmp == null) {
+      return oldValue;
+    }
+
+    if (tmp > maxValue) {
+      tmp = maxValue;
+    }
+    if (tmp < minValue) {
+      tmp = minValue;
+    }
+    print(tmp);
+
+    String newText = tmp.toStringAsFixed(1);
+
+    print(newText);
+
+    newSelection = newValue.selection.copyWith(
+      baseOffset: math.min(newText.length, newText.length),
+      extentOffset: math.min(newText.length, newText.length),
+    );
+
+    print(newSelection);
 
     return TextEditingValue(
       text: newText,

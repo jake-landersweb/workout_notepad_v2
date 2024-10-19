@@ -9,7 +9,7 @@ import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
-enum ExerciseType { weight, timed, duration, bw }
+enum ExerciseType { weight, timed, duration, bw, distance, stretch }
 
 ExerciseType exerciseTypeFromJson(int type) {
   switch (type) {
@@ -21,6 +21,10 @@ ExerciseType exerciseTypeFromJson(int type) {
       return ExerciseType.duration;
     case 3:
       return ExerciseType.bw;
+    case 4:
+      return ExerciseType.distance;
+    case 5:
+      return ExerciseType.stretch;
     default:
       print(
           "Error, there was a default value in de-serializing exercise type $type");
@@ -38,19 +42,27 @@ String exerciseTypeTitle(ExerciseType type) {
       return "Count-down";
     case ExerciseType.bw:
       return "Body-weight";
+    case ExerciseType.distance:
+      return "Distance";
+    case ExerciseType.stretch:
+      return "Stretch";
   }
 }
 
 String exerciseTypeDesc(ExerciseType type) {
   switch (type) {
     case ExerciseType.weight:
-      return "An exercise where you track your reps completed and weight lifted for every set. This is the default exercise type and suitable for most exericses in a traditional workout plan.";
+      return "An exercise where you track your reps completed and weight lifted for every set.";
     case ExerciseType.timed:
-      return "This gives you a timer that counts up from 00:00, giving you an open goal to either complete the exercise in less than the time, or edure the exercise for longer than this time.";
+      return "This gives you a timer that counts up from 00:00, giving you an open goal to reach.";
     case ExerciseType.duration:
-      return "An exercise with a traditional count-down timer. This is good for ab workouts where you want to hold something for x minutes, and want the convenience of a timer in the app.";
+      return "An exercise with a traditional count-down timer. Gives you the convenience of a count-down timer.";
     case ExerciseType.bw:
-      return "Suitable for workouts where you are not moving any weight. This can be air squats, pullups, burpees, etc. If you do plan on adding weight later, either create another exercise or use a weighed exercise with weight 0.";
+      return "Exercises where you are not pushing any weight, such as calisthenics or air squats.";
+    case ExerciseType.distance:
+      return "For exercises where you are trying to track a distance. Includes the distance and the time elapsed.";
+    case ExerciseType.stretch:
+      return "For exercises that are stretching or warmups. Logging is turned off by default.";
   }
 }
 
@@ -64,6 +76,10 @@ String exerciseTypeIcon(ExerciseType type) {
       return "assets/icons/clock-96.png";
     case ExerciseType.bw:
       return "assets/icons/sit-ups-96.png";
+    case ExerciseType.distance:
+      return "assets/icons/exercise-96.png";
+    case ExerciseType.stretch:
+      return "assets/icons/floating-guru-skin-type-2-96.png";
   }
 }
 
@@ -76,6 +92,10 @@ Color exerciseTypeColor(ExerciseType type) {
     case ExerciseType.duration:
       return Colors.blue[300]!;
     case ExerciseType.bw:
+      return Colors.yellow[700]!;
+    case ExerciseType.distance:
+      return Colors.yellow[700]!;
+    case ExerciseType.stretch:
       return Colors.yellow[700]!;
   }
 }
@@ -90,6 +110,10 @@ int exerciseTypeToJson(ExerciseType type) {
       return 2;
     case ExerciseType.bw:
       return 3;
+    case ExerciseType.distance:
+      return 4;
+    case ExerciseType.stretch:
+      return 5;
   }
 }
 
@@ -106,6 +130,10 @@ class Exercise {
   late int time;
   String? filename;
 
+  // after v1.1.0
+  late double distance;
+  late String distancePost;
+
   Exercise({
     required this.exerciseId,
     required this.title,
@@ -118,6 +146,8 @@ class Exercise {
     required this.reps,
     required this.time,
     this.filename,
+    required this.distance,
+    required this.distancePost,
   });
 
   Exercise copy() => Exercise(
@@ -132,6 +162,8 @@ class Exercise {
         sets: sets,
         time: time,
         filename: filename,
+        distance: distance,
+        distancePost: distancePost,
       );
 
   // create a copy of sorts, mostly helpful for implementations
@@ -148,6 +180,8 @@ class Exercise {
     reps = e.reps;
     time = e.time;
     filename = e.filename;
+    distance = e.distance;
+    distancePost = e.distancePost;
   }
 
   // for converting to json
@@ -163,6 +197,8 @@ class Exercise {
     reps = json['reps'];
     time = json['time'];
     filename = json['fname'];
+    distance = json['distance'] ?? 0;
+    distancePost = json['distancePost'] ?? "";
   }
 
   Exercise.empty() {
@@ -176,6 +212,8 @@ class Exercise {
     sets = 1;
     reps = 1;
     time = 0;
+    distance = 1;
+    distancePost = "km";
   }
 
   Widget getIcon(List<Category> categories, {double? size}) {
@@ -202,6 +240,8 @@ class Exercise {
       "sets": sets,
       "time": time,
       "fname": filename,
+      "distance": distance,
+      "distancePost": distancePost,
     };
   }
 
@@ -229,6 +269,7 @@ class Exercise {
       s = "$sets ";
     }
     switch (type) {
+      // TODO -- add the info here
       case ExerciseType.timed:
       case ExerciseType.duration:
         return TextSpan(

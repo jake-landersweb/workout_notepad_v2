@@ -77,7 +77,7 @@ class _EditableExerciseItemCellState extends State<EditableExerciseItemCell> {
           showPicker: false,
           textFontSize: 40,
           intialValue: widget.initialValue,
-          onChanged: (val) => widget.onChanged(val),
+          onChanged: (val) => widget.onChanged(val as int),
         ),
         Padding(
           padding: const EdgeInsets.all(4.0),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:workout_notepad_v2/components/number_picker.dart';
 import 'package:workout_notepad_v2/components/time_picker.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
@@ -36,12 +37,14 @@ class ExerciseItemGoup extends StatelessWidget {
 
   Widget _getSecond(BuildContext context) {
     switch (exercise.type) {
+      case ExerciseType.stretch: // TODO -- maybe change this
       case ExerciseType.bw:
       case ExerciseType.weight:
         return ExerciseItemCell(
           label: "REPS",
           val: exercise.reps,
         );
+      case ExerciseType.distance:
       case ExerciseType.timed:
       case ExerciseType.duration:
         return ExerciseItemCell(
@@ -109,6 +112,7 @@ class _EditableExerciseItemGroupState extends State<EditableExerciseItemGroup> {
 
   Widget _getSecond(BuildContext context) {
     switch (widget.exercise.type) {
+      case ExerciseType.stretch:
       case ExerciseType.bw:
       case ExerciseType.weight:
         return EditableExerciseItemCell(
@@ -123,6 +127,8 @@ class _EditableExerciseItemGroupState extends State<EditableExerciseItemGroup> {
             }
           },
         );
+      case ExerciseType.distance:
+        return _distance(context, widget.exercise);
       case ExerciseType.timed:
       case ExerciseType.duration:
         return _time(context, widget.exercise);
@@ -159,7 +165,7 @@ class _EditableExerciseItemGroupState extends State<EditableExerciseItemGroup> {
           Padding(
             padding: const EdgeInsets.all(4.0),
             child: Text(
-              e.type == ExerciseType.timed ? "TIME" : "GOAL TIME",
+              e.type == ExerciseType.timed ? "GOAL TIME" : "TIME",
               style: TextStyle(
                 fontSize: 12,
                 color: Theme.of(context).primaryColor,
@@ -168,6 +174,38 @@ class _EditableExerciseItemGroupState extends State<EditableExerciseItemGroup> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _distance(BuildContext context, Exercise e) {
+    return Stack(
+      alignment: Alignment.topLeft,
+      children: [
+        NumberPicker(
+          showPicker: false,
+          textFontSize: 40,
+          intialValue: 1.0,
+          incrementValue: 0.1,
+          onChanged: (val) {
+            setState(() {
+              e.distance = val as double;
+            });
+            if (widget.onChanged != null) {
+              widget.onChanged!();
+            }
+          },
+        ),
+        Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Text(
+            "Distance",
+            style: TextStyle(
+              fontSize: 12,
+              color: Theme.of(context).primaryColor,
+            ),
+          ),
+        ),
+      ],
     );
   }
 

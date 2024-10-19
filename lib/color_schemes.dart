@@ -33,40 +33,41 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
       brightness: brightness,
       colorScheme: Theme.of(context).colorScheme.copyWith(
             primary: dmodel.color,
-            background: AppColors.background(context),
+            surface: AppColors.background(context),
+            onPrimaryContainer: Colors.white,
           ),
       // textTheme: GoogleFonts.poppinsTextTheme(),
       textTheme: GoogleFonts.soraTextTheme(),
       filledButtonTheme: FilledButtonThemeData(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.resolveWith(
+          backgroundColor: WidgetStateProperty.resolveWith(
             (states) => dmodel.color,
           ),
-          textStyle: MaterialStateProperty.resolveWith(
+          textStyle: WidgetStateProperty.resolveWith(
             (states) => const TextStyle(fontSize: 18),
           ),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: ButtonStyle(
-          textStyle: MaterialStateProperty.resolveWith(
+          textStyle: WidgetStateProperty.resolveWith(
             (states) => const TextStyle(fontSize: 18),
           ),
         ),
       ),
       switchTheme: SwitchThemeData(
-        thumbColor: MaterialStateProperty.resolveWith(
+        thumbColor: WidgetStateProperty.resolveWith(
           (states) => AppColors.cell(context),
         ),
-        trackColor: MaterialStateProperty.resolveWith(
+        trackColor: WidgetStateProperty.resolveWith(
           (states) {
-            if (states.contains(MaterialState.selected)) {
+            if (states.contains(WidgetState.selected)) {
               return primaryColor;
             }
             return Colors.transparent;
           },
         ),
-        trackOutlineColor: MaterialStateProperty.resolveWith(
+        trackOutlineColor: WidgetStateProperty.resolveWith(
           (states) => AppColors.divider(context),
         ),
       ),
@@ -75,8 +76,8 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
         dividerColor: AppColors.divider(context),
         surfaceTintColor: Colors.transparent,
         headerForegroundColor: AppColors.text(context),
-        dayBackgroundColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.selected)) {
+        dayBackgroundColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
             return primaryColor;
           }
           return Colors.transparent;
@@ -84,7 +85,7 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
       ),
       textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
-          textStyle: MaterialStateProperty.resolveWith(
+          textStyle: WidgetStateProperty.resolveWith(
             (states) => const TextStyle(fontSize: 18),
           ),
         ),

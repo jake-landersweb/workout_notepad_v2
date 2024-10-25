@@ -31,6 +31,7 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
       useMaterial3: true,
       extensions: [this],
       brightness: brightness,
+      canvasColor: AppColors.background(context),
       colorScheme: Theme.of(context).colorScheme.copyWith(
             primary: dmodel.color,
             surface: AppColors.background(context),

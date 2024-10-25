@@ -10,9 +10,11 @@ class CategoryCell extends StatelessWidget {
     super.key,
     required this.categoryId,
     this.padding = const EdgeInsets.all(0),
+    this.backgroundColor,
   });
   final String categoryId;
   final EdgeInsets padding;
+  final Color? backgroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +29,7 @@ class CategoryCell extends StatelessWidget {
           border: Border.all(
             color: AppColors.divider(context),
           ),
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(8),
         ),
         child: Padding(

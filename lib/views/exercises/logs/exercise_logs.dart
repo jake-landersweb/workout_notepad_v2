@@ -135,7 +135,7 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
                         style: ttTitle(context, size: 24),
                       ),
                       const SizedBox(height: 8),
-                      _navigation(context, elmodel),
+                      // _navigation(context, elmodel),
                     ],
                   ),
                 ),
@@ -211,10 +211,10 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
             ]
           : [
               const ELOverview(),
-              BlurIfNotSubscription(
-                  child: ELDistribution(exercise: elmodel.exercise)),
-              BlurIfNotSubscription(child: ELSets(exercise: elmodel.exercise)),
-              BlurIfNotSubscription(child: ELTags(exercise: elmodel.exercise)),
+              // BlurIfNotSubscription(
+              //     child: ELDistribution(exercise: elmodel.exercise)),
+              // BlurIfNotSubscription(child: ELSets(exercise: elmodel.exercise)),
+              // BlurIfNotSubscription(child: ELTags(exercise: elmodel.exercise)),
             ],
     );
   }

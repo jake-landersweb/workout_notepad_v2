@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/components/blur_if_not_subscription.dart';
@@ -20,6 +21,7 @@ import 'package:workout_notepad_v2/views/logs/logs_calendar.dart';
 import 'package:workout_notepad_v2/views/logs/logs_default_page.dart';
 import 'package:workout_notepad_v2/views/logs/root.dart';
 import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
+import 'package:workout_notepad_v2/views/root.dart';
 
 class LogsHome extends StatefulWidget {
   const LogsHome({super.key});
@@ -34,6 +36,7 @@ class _LogsHomeState extends State<LogsHome> {
   @override
   void initState() {
     _keys = _generateKeys();
+    _getRecentExercises();
     super.initState();
   }
 
@@ -59,6 +62,13 @@ class _LogsHomeState extends State<LogsHome> {
       isLarge: true,
       horizontalSpacing: 0,
       largeTitlePadding: const EdgeInsets.only(left: 16),
+      refreshable: true,
+      onRefresh: () async {
+        await _getRecentExercises();
+        setState(() {
+          _keys = _generateKeys();
+        });
+      },
       trailing: [
         AddButton(
           onTap: () {
@@ -191,6 +201,28 @@ class _LogsHomeState extends State<LogsHome> {
                 ),
               ],
             ),
+            Section(
+              "Recent Exercises",
+              headerPadding: const EdgeInsets.fromLTRB(16, 32, 16, 16),
+              trailingWidget: Opacity(
+                opacity: 0.7,
+                child: Clickable(
+                  onTap: () {
+                    navigate(
+                      context: context,
+                      builder: (context) => RecentExercises(),
+                    );
+                  },
+                  child: const Row(
+                    children: [
+                      Text("All"),
+                      Icon(Icons.arrow_right_alt),
+                    ],
+                  ),
+                ),
+              ),
+              child: _recentExercisesView(context),
+            ),
             _customGraphs(context),
             _category(context),
             _tag(context),
@@ -212,12 +244,6 @@ class _LogsHomeState extends State<LogsHome> {
                     Icons.list,
                     Colors.green[200]!,
                     const LogsPreviousWorkouts(),
-                  ),
-                  Tuple4(
-                    "Recent Exercises",
-                    Icons.update_rounded,
-                    Colors.purple[200]!,
-                    const RecentExercises(),
                   ),
                 ],
                 onChildTap: (context, item, index) =>
@@ -313,6 +339,41 @@ class _LogsHomeState extends State<LogsHome> {
           ],
         ),
       ],
+    );
+  }
+
+  Widget _recentExercisesView(BuildContext context) {
+    DataModel dmodel = context.watch();
+
+    if (_isLoadingExercies) {
+      return LoadingIndicator();
+    }
+
+    if (_recentExercises.isEmpty) {
+      return Text("Empty");
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        children: [
+          for (var i in _recentExercises)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ExerciseCell(
+                  exercise: i,
+                  onTap: () {
+                    cupertinoSheet(
+                      context: context,
+                      builder: (context) => ExerciseDetail(exercise: i),
+                    );
+                  },
+                ),
+              ],
+            ),
+        ],
+      ),
     );
   }
 
@@ -538,5 +599,35 @@ class _LogsHomeState extends State<LogsHome> {
       // ValueKey(uuid.v4()),
       // ValueKey(uuid.v4()),
     ];
+  }
+
+  bool _isLoadingExercies = true;
+  List<Exercise> _recentExercises = [];
+  Future<void> _getRecentExercises() async {
+    setState(() {
+      _isLoadingExercies = true;
+      _recentExercises.clear();
+    });
+    try {
+      var db = await DatabaseProvider().database;
+      var response = await db.rawQuery("""
+            SELECT e.* FROM exercise_log el
+            JOIN exercise e ON el.exerciseId = e.exerciseId
+            ORDER BY el.created DESC LIMIT 5
+          """);
+      for (var i in response) {
+        _recentExercises.add(Exercise.fromJson(i));
+      }
+    } catch (e) {
+      print(e);
+      NewrelicMobile.instance.recordError(
+        e,
+        StackTrace.current,
+        attributes: {"err_code": "logs_recent_exercises"},
+      );
+    }
+    setState(() {
+      _isLoadingExercies = false;
+    });
   }
 }

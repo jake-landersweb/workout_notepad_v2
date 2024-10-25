@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:workout_notepad_v2/components/root.dart';
+import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
@@ -17,7 +18,7 @@ class RecentExercises extends StatefulWidget {
 }
 
 class _RecentExercisesState extends State<RecentExercises> {
-  List<ExerciseLog> _logs = [];
+  List<Exercise> _logs = [];
   bool _loaded = false;
 
   @override
@@ -41,33 +42,16 @@ class _RecentExercisesState extends State<RecentExercises> {
             const NoLogs()
           else
             for (var i in _logs)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Clickable(
-                  onTap: () {
-                    showMaterialModalBottomSheet(
-                      context: context,
-                      builder: (context) =>
-                          ExerciseLogs(exerciseId: i.exerciseId),
-                    );
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.cell(context),
-                      borderRadius: BorderRadius.circular(10),
+              Clickable(
+                onTap: () {
+                  cupertinoSheet(
+                    context: context,
+                    builder: (context) => ExerciseDetail(
+                      exercise: i,
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 8, 0, 0),
-                          child: Text(i.title, style: ttLabel(context)),
-                        ),
-                        ELCell(log: i),
-                      ],
-                    ),
-                  ),
-                ),
+                  );
+                },
+                child: ExerciseCell(exercise: i),
               ),
         ],
       ),
@@ -77,10 +61,13 @@ class _RecentExercisesState extends State<RecentExercises> {
   Future<void> _init() async {
     try {
       var db = await DatabaseProvider().database;
-      var response = await db.rawQuery(
-          "SELECT * FROM exercise_log ORDER BY created DESC LIMIT 20");
+      var response = await db.rawQuery("""
+            SELECT e.* FROM exercise_log el
+            JOIN exercise e ON el.exerciseId = e.exerciseId
+            ORDER BY el.created DESC LIMIT 20
+          """);
       for (var i in response) {
-        _logs.add(await ExerciseLog.fromJson(i));
+        _logs.add(Exercise.fromJson(i));
       }
       setState(() {});
     } catch (e) {

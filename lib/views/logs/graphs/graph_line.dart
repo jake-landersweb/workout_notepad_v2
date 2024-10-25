@@ -27,8 +27,8 @@ class GraphLine extends StatelessWidget {
     }
     return LineChart(
       LineChartData(
-        maxY: data.reduce((a, b) => a.v2 > b.v2 ? a : b).v2 * 1.2,
-        minY: 0,
+        maxY: data.reduce((a, b) => a.v2 > b.v2 ? a : b).v2 * 1.1,
+        minY: data.reduce((a, b) => a.v2 < b.v2 ? a : b).v2 * 0.9,
         gridData: FlGridData(show: false),
         borderData: FlBorderData(show: false),
         lineTouchData: LineTouchData(

@@ -10,6 +10,7 @@ import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/components/raw_reorderable_list.dart';
+import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/components/wrapped_button.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/root.dart';
@@ -35,6 +36,7 @@ class LWConfigure extends StatefulWidget {
   final Future<bool> Function(
     List<List<WorkoutExercise>> exercises,
     List<List<ExerciseLog>> logs,
+    String newTitle,
   ) onSave;
 
   @override
@@ -43,6 +45,7 @@ class LWConfigure extends StatefulWidget {
 
 class _LWConfigureState extends State<LWConfigure> {
   late List<Tuple3<String, List<WorkoutExercise>, List<ExerciseLog>>> _items;
+  late TextEditingController _controller;
 
   @override
   void initState() {
@@ -52,6 +55,8 @@ class _LWConfigureState extends State<LWConfigure> {
       _items
           .add(Tuple3(uuid.v4(), widget.exercises[i], widget.exerciseLogs[i]));
     }
+
+    _controller = TextEditingController(text: widget.workoutLog.title);
     super.initState();
   }
 
@@ -78,6 +83,26 @@ class _LWConfigureState extends State<LWConfigure> {
       leading: const [CancelButton()],
       horizontalSpacing: 0,
       children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Container(
+            decoration: BoxDecoration(
+              color: AppColors.cell(context),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
+              child: Field(
+                labelText: "Title",
+                controller: _controller,
+                hasClearButton: true,
+                charLimit: 30,
+                showCharacters: true,
+                onChanged: (val) {},
+              ),
+            ),
+          ),
+        ),
         RawReorderableList<
             Tuple3<String, List<WorkoutExercise>, List<ExerciseLog>>>(
           items: _items,
@@ -228,13 +253,13 @@ class _LWConfigureState extends State<LWConfigure> {
       var db = await DatabaseProvider().database;
       await db.transaction((txn) async {
         // remove all exercises
-        int r = await txn.rawDelete(
-          "DELETE FROM workout_exercise WHERE workoutId = ?",
-          [widget.workout.workoutId],
-        );
-        if (r == 0) {
-          throw "There was an issue deleting the exercises when reordering";
-        }
+        // int r = await txn.rawDelete(
+        //   "DELETE FROM workout_exercise WHERE workoutId = ?",
+        //   [widget.workout.workoutId],
+        // );
+        // if (r == 0) {
+        //   throw "There was an issue deleting the exercises when reordering";
+        // }
 
         // re-add exercises
         for (int i = 0; i < _items.length; i++) {
@@ -244,16 +269,17 @@ class _LWConfigureState extends State<LWConfigure> {
             _items[i].v2[j].supersetOrder = j;
             _items[i].v3[j].exerciseOrder = i;
             _items[i].v3[j].supersetOrder = j;
-            r = await txn.insert("workout_exercise", _items[i].v2[j].toMap());
-            if (r == 0) {
-              throw "There was an issue re-adding the exercises when re-ordering";
-            }
+            // r = await txn.insert("workout_exercise", _items[i].v2[j].toMap());
+            // if (r == 0) {
+            //   throw "There was an issue re-adding the exercises when re-ordering";
+            // }
           }
         }
       });
       await widget.onSave(
         _items.map((e) => e.v2).toList(),
         _items.map((e) => e.v3).toList(),
+        _controller.text,
       );
       return true;
     } catch (e) {

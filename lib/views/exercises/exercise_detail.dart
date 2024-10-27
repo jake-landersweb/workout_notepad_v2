@@ -421,10 +421,12 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
               title: "Raw Data",
               description: "View the raw log data",
               onTap: () {
-                showMaterialModalBottomSheet(
+                cupertinoSheet(
                   context: context,
-                  enableDrag: true,
-                  builder: (context) => ExerciseLogs(exerciseId: e.exerciseId),
+                  builder: (context) => ExerciseLogs(
+                    exerciseId: e.exerciseId,
+                    isInteractive: false,
+                  ),
                 );
               },
               index: 3,

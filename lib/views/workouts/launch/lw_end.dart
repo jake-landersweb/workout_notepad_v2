@@ -27,102 +27,92 @@ class _LWEndState extends State<LWEnd> {
     return SingleChildScrollView(
       physics:
           const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
-      child: Column(
-        children: [
-          const SizedBox(height: 16),
-          ContainedList<Tuple4<IconData, String, Color, AsyncCallback>>(
-            childPadding: EdgeInsets.zero,
-            children: [
-              Tuple4(
-                Icons.add,
-                "Add Another Exercise",
-                Colors.green[300]!,
-                () async {
-                  cupertinoSheet(
-                    context: context,
-                    builder: (context) => SelectExercise(
-                      onSelect: (e) {
-                        lmodel.addExercise(
-                          lmodel.state.exercises.length,
-                          0,
-                          e,
-                          dmodel.tags
-                              .firstWhereOrNull((element) => element.isDefault),
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
-              Tuple4(
-                Icons.splitscreen,
-                "Save As Template",
-                Colors.blue[300]!,
-                () async {
-                  await showFloatingSheet(
-                    context: context,
-                    builder: (context) => LWSaveAsTemplate(
-                      initTitle: lmodel.state.workout.title,
-                    ),
-                  );
-                },
-              ),
-              Tuple4(
-                Icons.close_rounded,
-                "Cancel Workout",
-                Colors.red[300]!,
-                () async {
-                  await showAlert(
-                    context: context,
-                    title: "Are You Sure?",
-                    body: const Text(
-                        "If you cancel your workout, all progress will be lost."),
-                    cancelText: "Go Back",
-                    onCancel: () {},
-                    cancelBolded: true,
-                    submitColor: Colors.red,
-                    submitText: "Yes",
-                    onSubmit: () {
-                      Navigator.of(context, rootNavigator: true).pop();
-                      dmodel.stopWorkout(isCancel: true);
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            WrappedButton(
+              title: "Add Another Exercise",
+              icon: Icons.add,
+              iconBg: Colors.green[300],
+              onTap: () {
+                cupertinoSheet(
+                  context: context,
+                  builder: (context) => SelectExercise(
+                    onSelect: (e) {
+                      lmodel.addExercise(
+                        lmodel.state.exercises.length,
+                        0,
+                        e,
+                        dmodel.tags
+                            .firstWhereOrNull((element) => element.isDefault),
+                      );
                     },
-                  );
-                },
-              ),
-              Tuple4(
-                Icons.star_rounded,
-                "Finish Workout",
-                Colors.orange[200]!,
-                () async {
-                  await showAlert(
-                    context: context,
-                    title: "Are You Sure?",
-                    body: const Text(
-                        "Once you finish a workout, you cannot go back and modify it."),
-                    cancelText: "Go Back",
-                    onCancel: () {},
-                    submitBolded: true,
-                    submitText: "Finish",
-                    onSubmit: () async {
-                      Navigator.of(context, rootNavigator: true).pop();
-                      await lmodel.handleFinish(context, dmodel);
-                    },
-                  );
-                },
-              ),
-            ],
-            onChildTap: (context, item, _) async {
-              await item.v4();
-            },
-            childBuilder: (context, item, _) {
-              return WrappedButton(
-                title: item.v2,
-                icon: item.v1,
-                iconBg: item.v3,
-              );
-            },
-          ),
-        ],
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 8),
+            WrappedButton(
+              title: "Save As Template",
+              icon: Icons.splitscreen,
+              iconBg: Colors.blue[300]!,
+              onTap: () async {
+                await showFloatingSheet(
+                  context: context,
+                  builder: (context) => LWSaveAsTemplate(
+                    initTitle: lmodel.state.workout.title,
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 8),
+            WrappedButton(
+              title: "Cancel",
+              icon: Icons.cancel_outlined,
+              iconBg: Colors.red[300]!,
+              onTap: () async {
+                await showAlert(
+                  context: context,
+                  title: "Are You Sure?",
+                  body: const Text(
+                      "If you cancel your workout, all progress will be lost."),
+                  cancelText: "Go Back",
+                  onCancel: () {},
+                  cancelBolded: true,
+                  submitColor: Colors.red,
+                  submitText: "Yes",
+                  onSubmit: () {
+                    Navigator.of(context, rootNavigator: true).pop();
+                    dmodel.stopWorkout(isCancel: true);
+                  },
+                );
+              },
+            ),
+            const SizedBox(height: 8),
+            WrappedButton(
+              title: "Finish Exercise",
+              icon: Icons.star_rounded,
+              iconBg: Colors.orange[200]!,
+              onTap: () async {
+                await showAlert(
+                  context: context,
+                  title: "Are You Sure?",
+                  body: const Text(
+                      "Once you finish a workout, you cannot go back and modify it."),
+                  cancelText: "Go Back",
+                  onCancel: () {},
+                  submitBolded: true,
+                  submitText: "Finish",
+                  onSubmit: () async {
+                    Navigator.of(context, rootNavigator: true).pop();
+                    await lmodel.handleFinish(context, dmodel);
+                  },
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

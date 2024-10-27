@@ -32,10 +32,10 @@ class _SelectExerciseState extends State<SelectExercise> {
         const SizedBox(height: 16),
         WrappedButton(
           title: "Create New",
-          type: WrappedButtonType.main,
+          type: WrappedButtonType.standard,
           icon: Icons.add_rounded,
-          iconBg: AppColors.cell(context)[500],
-          iconFg: AppColors.subtext(context),
+          iconBg: Theme.of(context).colorScheme.primary,
+          iconFg: Colors.white,
           onTap: () {
             cupertinoSheet(
               context: context,

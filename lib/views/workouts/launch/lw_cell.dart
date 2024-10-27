@@ -22,6 +22,7 @@ import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/exercises/select_exercise.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/lw_model.dart';
+import 'package:workout_notepad_v2/views/workouts/launch/lw_time.dart';
 
 class LWCell extends StatefulWidget {
   const LWCell({
@@ -51,7 +52,8 @@ class _LWCellState extends State<LWCell> {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: WrappedButton(
             title: "Add Super-set",
-            type: WrappedButtonType.main,
+            type: WrappedButtonType.standard,
+            icon: Icons.add,
             onTap: () {
               cupertinoSheet(
                 context: context,
@@ -83,8 +85,103 @@ class _LWCellState extends State<LWCell> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(e.title, style: ttSubTitle(context)),
-        const SizedBox(height: 4),
+        // Text(e.title, style: ttSubTitle(context)),
+        Section(
+          e.title,
+          allowsCollapse: true,
+          initOpen: false,
+          headerPadding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  _actionCell(
+                    context,
+                    Icons.info_outline,
+                    "Details",
+                    () {
+                      cupertinoSheet(
+                        context: context,
+                        builder: (context) => ExerciseDetail(
+                          showEdit: false,
+                          exerciseId:
+                              lmodel.state.exercises[widget.i][j].exerciseId,
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 4),
+                  _actionCell(
+                    context,
+                    Icons.bar_chart_rounded,
+                    "Graphs",
+                    () {
+                      cupertinoSheet(
+                        context: context,
+                        builder: (context) => ExerciseLogs(
+                          exerciseId:
+                              lmodel.state.exercises[widget.i][j].exerciseId,
+                          isInteractive: false,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  _actionCell(
+                    context,
+                    Icons.cached_rounded,
+                    "Swap Exercise",
+                    () {
+                      cupertinoSheet(
+                        context: context,
+                        builder: (context) => SelectExercise(
+                          title: "Swap Exercise",
+                          onSelect: (e) {
+                            lmodel.addExercise(
+                              widget.i,
+                              j,
+                              e,
+                              dmodel.tags.firstWhereOrNull(
+                                  (element) => element.isDefault),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 4),
+                  _actionCell(
+                    context,
+                    Icons.delete_outline_outlined,
+                    "Remove",
+                    () async {
+                      await showAlert(
+                        context: context,
+                        title: "Delete Exercise",
+                        body: const Text(
+                          "Are you sure? You can re-add this at any time.",
+                        ),
+                        cancelText: "Cancel",
+                        onCancel: () {},
+                        cancelBolded: true,
+                        submitText: "Delete",
+                        submitColor: Colors.red,
+                        onSubmit: () async {
+                          await lmodel.removeExercise(widget.i, j);
+                        },
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
         if (e.type == ExerciseType.duration)
           Padding(
             padding: const EdgeInsets.only(bottom: 16.0),
@@ -149,137 +246,14 @@ class _LWCellState extends State<LWCell> {
             ),
           ),
         ClipRRect(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(15),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Clickable(
-                      onTap: () {
-                        cupertinoSheet(
-                          context: context,
-                          builder: (context) => ExerciseLogs(
-                            exerciseId:
-                                lmodel.state.exercises[widget.i][j].exerciseId,
-                            isInteractive: false,
-                          ),
-                        );
-                      },
-                      child: Container(
-                        color: AppColors.cell(context)[300],
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 2.0),
-                          child: Center(
-                            child: Icon(
-                              Icons.bar_chart_rounded,
-                              color: AppColors.cell(context)[900],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 1),
-                  Expanded(
-                    child: Clickable(
-                      onTap: () {
-                        cupertinoSheet(
-                          context: context,
-                          builder: (context) => ExerciseDetail(
-                            showEdit: false,
-                            exerciseId:
-                                lmodel.state.exercises[widget.i][j].exerciseId,
-                          ),
-                        );
-                      },
-                      child: Container(
-                        color: AppColors.cell(context)[300],
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 2.0),
-                          child: Center(
-                            child: Icon(
-                              Icons.info_outline,
-                              color: AppColors.cell(context)[900],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 1),
-                  Expanded(
-                    child: Clickable(
-                      onTap: () async {
-                        cupertinoSheet(
-                          context: context,
-                          builder: (context) => SelectExercise(
-                            title: "Swap Exercise",
-                            onSelect: (e) {
-                              lmodel.addExercise(
-                                widget.i,
-                                j,
-                                e,
-                                dmodel.tags.firstWhereOrNull(
-                                    (element) => element.isDefault),
-                              );
-                            },
-                          ),
-                        );
-                      },
-                      child: Container(
-                        color: AppColors.cell(context)[300],
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 2.0),
-                          child: Center(
-                            child: Icon(
-                              Icons.cached_rounded,
-                              color: AppColors.cell(context)[900],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 1),
-                  Expanded(
-                    child: Clickable(
-                      onTap: () async {
-                        await showAlert(
-                          context: context,
-                          title: "Delete Exercise",
-                          body: const Text(
-                            "Are you sure? You can re-add this at any time.",
-                          ),
-                          cancelText: "Cancel",
-                          onCancel: () {},
-                          cancelBolded: true,
-                          submitText: "Delete",
-                          submitColor: Colors.red,
-                          onSubmit: () async {
-                            await lmodel.removeExercise(widget.i, j);
-                          },
-                        );
-                      },
-                      child: Container(
-                        color: AppColors.cell(context)[300],
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 2.0),
-                          child: Center(
-                            child: Icon(
-                              Icons.delete_rounded,
-                              color: AppColors.cell(context)[900],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
               Container(
-                color: AppColors.cell(context),
+                decoration: BoxDecoration(
+                  color: AppColors.cell(context),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -301,7 +275,7 @@ class _LWCellState extends State<LWCell> {
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
-                              color: AppColors.cell(context)[600],
+                              color: Theme.of(context).colorScheme.primary,
                             ),
                             child: Padding(
                               padding: const EdgeInsets.all(4.0),
@@ -326,6 +300,36 @@ class _LWCellState extends State<LWCell> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _actionCell(
+    BuildContext context,
+    IconData icon,
+    String title,
+    VoidCallback onTap,
+  ) {
+    return Expanded(
+      child: Clickable(
+        onTap: onTap,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: AppColors.cell(context),
+          ),
+          padding: EdgeInsets.all(8),
+          child: Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon),
+                const SizedBox(width: 4),
+                Text(title),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -372,13 +376,31 @@ class _LWCellState extends State<LWCell> {
                     onTagClick: (tag) => lmodel.onTagClick(widget.i, j, i, tag),
                   ),
                   SizedBox(
-                    height: 24,
-                    child: Center(
-                      child: Text(
-                        getTimeBetweenText(lmodel, j, i),
-                        style: ttcaption(context),
-                      ),
-                    ),
+                    height: 32,
+                    child: i <
+                            lmodel.state.exerciseLogs[widget.i][j].metadata
+                                    .length -
+                                1
+                        ? Row(
+                            children: [
+                              Expanded(
+                                child: Divider(
+                                  color: AppColors.divider(context),
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: getTimeBetween(lmodel, j, i),
+                              ),
+                              Expanded(
+                                child: Divider(
+                                  color: AppColors.divider(context),
+                                ),
+                              ),
+                            ],
+                          )
+                        : null,
                   ),
                 ],
               ),
@@ -391,22 +413,32 @@ class _LWCellState extends State<LWCell> {
     );
   }
 
-  String getTimeBetweenText(LaunchWorkoutModel lmodel, int j, int i) {
+  Widget getTimeBetween(LaunchWorkoutModel lmodel, int j, int i) {
     try {
       if (i == lmodel.state.exerciseLogs[widget.i][j].metadata.length - 1) {
-        return "";
+        return Container();
       }
 
-      if (lmodel.state.exerciseLogs[widget.i][j].metadata[i].saved &&
-          lmodel.state.exerciseLogs[widget.i][j].metadata[i + 1].saved) {
-        return lmodel.state.exerciseLogs[widget.i][j].metadata[i + 1]
-            .savedDifference(
-                lmodel.state.exerciseLogs[widget.i][j].metadata[i].savedDate);
+      if (lmodel.state.exerciseLogs[widget.i][j].metadata[i].saved) {
+        if (lmodel.state.exerciseLogs[widget.i][j].metadata[i + 1].saved) {
+          return Text(
+            lmodel.state.exerciseLogs[widget.i][j].metadata[i + 1]
+                .savedDifference(lmodel
+                    .state.exerciseLogs[widget.i][j].metadata[i].savedDate),
+            style: ttcaption(context),
+          );
+        } else {
+          return LWTime(
+            start:
+                lmodel.state.exerciseLogs[widget.i][j].metadata[i].savedDate!,
+            style: ttcaption(context),
+          );
+        }
       }
-      return "";
+      return Container();
     } catch (e) {
       // to allow for out-of-bounds index checks when animating
-      return "";
+      return Container();
     }
   }
 
@@ -458,41 +490,8 @@ class _Cell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    return Column(
       children: [
-        Expanded(
-          flex: 2,
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  title,
-                  style: ttBody(context),
-                ),
-                if (tags.isNotEmpty && saved)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 2),
-                    child: Column(
-                      children: [
-                        for (var i in tags)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 2.0),
-                            child: ColoredCell(
-                              isTag: true,
-                              size: ColoredCellSize.small,
-                              title: i.title,
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
         Clickable(
           onTap: () {
             showFloatingSheet(
@@ -516,28 +515,102 @@ class _Cell extends StatelessWidget {
             );
           },
           child: Container(
-            decoration: BoxDecoration(
-              color: saved ? AppColors.cell(context)[600] : Colors.transparent,
-              border:
-                  Border.all(color: AppColors.cell(context)[600]!, width: 2),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            height: 30,
-            width: 30,
-            child: saved
-                ? Center(
-                    child: Icon(
-                      Icons.check,
-                      color: AppColors.cell(context),
+            color: AppColors.cell(context),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          title,
+                          style: ttBody(context),
+                        ),
+                        if (tags.isNotEmpty && saved)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Wrap(
+                              spacing: 4,
+                              runSpacing: 4,
+                              children: [
+                                for (var i in tags)
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: ColorUtil.random(i.title),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    height: 10,
+                                    width: 10,
+                                  ),
+                              ],
+                            ),
+                          ),
+                      ],
                     ),
-                  )
-                : null,
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    color: saved
+                        ? Theme.of(context).colorScheme.primary
+                        : Colors.transparent,
+                    border: Border.all(
+                        color: Theme.of(context).colorScheme.primary, width: 2),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  height: 30,
+                  width: 30,
+                  child: saved
+                      ? Center(
+                          child: Icon(
+                            Icons.check,
+                            color: AppColors.cell(context),
+                          ),
+                        )
+                      : null,
+                ),
+                Expanded(
+                  flex: 3,
+                  child: _post(context),
+                ),
+              ],
+            ),
           ),
         ),
-        Expanded(
-          flex: 3,
-          child: _post(context),
-        ),
+        // if (tags.isNotEmpty && saved)
+        //   Row(
+        //     children: [
+        //       Expanded(
+        //         child: Padding(
+        //           padding: const EdgeInsets.fromLTRB(4, 4, 4, 0),
+        //           child: Wrap(
+        //             spacing: 4,
+        //             runSpacing: 4,
+        //             children: [
+        //               for (var i in tags)
+        //                 Container(
+        //                   decoration: BoxDecoration(
+        //                     color: ColorUtil.random(i.title),
+        //                     shape: BoxShape.circle,
+        //                   ),
+        //                   height: 10,
+        //                   width: 10,
+        //                 ),
+        //               // ColoredCell(
+        //               //   isTag: true,
+        //               //   size: ColoredCellSize.small,
+        //               //   title: i.title,
+        //               // ),
+        //             ],
+        //           ),
+        //         ),
+        //       ),
+        //     ],
+        //   ),
       ],
     );
   }

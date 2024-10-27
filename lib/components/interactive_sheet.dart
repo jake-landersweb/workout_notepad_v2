@@ -9,10 +9,12 @@ class InteractiveSheet extends StatefulWidget {
     required this.header,
     required this.builder,
     this.headerPadding = const EdgeInsets.fromLTRB(16, 0, 16, 16),
+    this.headerColor,
   });
   final Widget Function(BuildContext context) header;
   final Widget Function(BuildContext context) builder;
   final EdgeInsets headerPadding;
+  final Color? headerColor;
 
   @override
   State<InteractiveSheet> createState() => _InteractiveSheetState();
@@ -47,6 +49,9 @@ class _InteractiveSheetState extends State<InteractiveSheet> {
       child: Column(
         children: [
           _header(context),
+          Divider(
+            color: AppColors.divider(context),
+          ),
           Expanded(
             child: widget.builder(context),
           ),
@@ -61,7 +66,8 @@ class _InteractiveSheetState extends State<InteractiveSheet> {
       duration: const Duration(milliseconds: 500),
       curve: Sprung(36),
       child: Container(
-        color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
+        color: widget.headerColor ??
+            Theme.of(context).colorScheme.primary.withOpacity(0.15),
         child: SafeArea(
           top: true,
           bottom: false,

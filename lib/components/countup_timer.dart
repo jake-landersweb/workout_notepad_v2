@@ -128,7 +128,9 @@ class _CountupTimerState extends State<CountupTimer> {
                 },
                 child: Container(
                   decoration: BoxDecoration(
-                    color: AppColors.cell(context)[800],
+                    color: controller.isActive
+                        ? AppColors.cell(context)
+                        : Theme.of(context).colorScheme.primary,
                     borderRadius: BorderRadius.circular(5),
                   ),
                   height: 40,
@@ -140,13 +142,17 @@ class _CountupTimerState extends State<CountupTimer> {
                           controller.isActive
                               ? Icons.stop_rounded
                               : Icons.play_arrow_rounded,
-                          color: AppColors.cell(context),
+                          color: controller.isActive
+                              ? AppColors.text(context)
+                              : AppColors.cell(context),
                         ),
                         const SizedBox(width: 8),
                         Text(
                           controller.isActive ? "Finish" : "Start",
                           style: TextStyle(
-                            color: AppColors.cell(context)[50],
+                            color: controller.isActive
+                                ? AppColors.text(context)
+                                : AppColors.cell(context)[50],
                             fontSize: 16,
                           ),
                         )

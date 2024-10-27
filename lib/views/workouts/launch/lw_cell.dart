@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/alert.dart';
 
 import 'package:workout_notepad_v2/components/clickable.dart';
-import 'package:workout_notepad_v2/components/colored_cell.dart';
 import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
 import 'package:workout_notepad_v2/components/floating_sheet.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;

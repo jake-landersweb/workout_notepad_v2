@@ -1,13 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
-import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/exercises/select_exercise.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/lw_model.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/lw_save_template.dart';

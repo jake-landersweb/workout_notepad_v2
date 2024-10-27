@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
-import 'package:workout_notepad_v2/components/blur_if_not_subscription.dart';
-import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/data/root.dart';
@@ -10,9 +8,6 @@ import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:workout_notepad_v2/views/exercises/logs/el_distribution.dart';
-import 'package:workout_notepad_v2/views/exercises/logs/el_sets.dart';
-import 'package:workout_notepad_v2/views/exercises/logs/el_tags.dart';
 import 'package:workout_notepad_v2/views/logs/no_logs.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 
@@ -168,35 +163,35 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
     Icons.pie_chart,
   ];
 
-  Widget _navigation(BuildContext context, ELModel elmodel) {
-    return Row(
-      children: [
-        for (int i = 0; i < navItems.length; i++)
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: _navCell(context, i, navItems[i], elmodel),
-          )
-      ],
-    );
-  }
+  // Widget _navigation(BuildContext context, ELModel elmodel) {
+  //   return Row(
+  //     children: [
+  //       for (int i = 0; i < navItems.length; i++)
+  //         Padding(
+  //           padding: const EdgeInsets.only(right: 8.0),
+  //           child: _navCell(context, i, navItems[i], elmodel),
+  //         )
+  //     ],
+  //   );
+  // }
 
-  Widget _navCell(
-      BuildContext context, int index, IconData icon, ELModel elmodel) {
-    return Clickable(
-      onTap: () {
-        elmodel.setPage(index);
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: Icon(
-          icon,
-          color: index == elmodel.index
-              ? AppColors.cell(context)
-              : AppColors.subtext(context),
-        ),
-      ),
-    );
-  }
+  // Widget _navCell(
+  //     BuildContext context, int index, IconData icon, ELModel elmodel) {
+  //   return Clickable(
+  //     onTap: () {
+  //       elmodel.setPage(index);
+  //     },
+  //     child: Padding(
+  //       padding: const EdgeInsets.all(4.0),
+  //       child: Icon(
+  //         icon,
+  //         color: index == elmodel.index
+  //             ? AppColors.cell(context)
+  //             : AppColors.subtext(context),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _content(BuildContext context, ELModel elmodel) {
     return PageView(

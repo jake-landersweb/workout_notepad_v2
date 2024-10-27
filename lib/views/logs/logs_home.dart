@@ -343,8 +343,6 @@ class _LogsHomeState extends State<LogsHome> {
   }
 
   Widget _recentExercisesView(BuildContext context) {
-    DataModel dmodel = context.watch();
-
     if (_isLoadingExercies) {
       return LoadingIndicator();
     }

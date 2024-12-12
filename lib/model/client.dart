@@ -65,19 +65,19 @@ class Client {
   }
 }
 
-class PurchaseClient {
+class GoClient {
   // base url that entire app will run off
-  static const host = PURCHASE_HOST;
+  static const host = GO_HOST;
   static const defaultHeaders = {
     "Content-type": "application/json",
-    "x-api-key": PURCHASE_API_KEY,
+    "x-api-key": GO_API_KEY,
   };
 
   // http client, needed for all requests
   final http.Client client;
 
   // init the class and make sure it has an inherited client
-  const PurchaseClient({
+  const GoClient({
     required this.client,
   });
 

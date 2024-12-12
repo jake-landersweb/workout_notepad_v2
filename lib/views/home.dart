@@ -7,6 +7,7 @@ import 'package:workout_notepad_v2/components/root.dart';
 
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/workout_templates/wt_home.dart';
 import 'package:workout_notepad_v2/views/logs/post_workout.dart';
 import 'package:workout_notepad_v2/views/logs/root.dart';
 import 'package:workout_notepad_v2/views/overview/root.dart';
@@ -16,7 +17,7 @@ import 'package:workout_notepad_v2/views/welcome.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/launch_workout.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/lw_time.dart';
 
-enum HomeScreen { logs, overview, exercises, profile }
+enum HomeScreen { logs, overview, exercises, profile, discover }
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -93,6 +94,8 @@ class _HomeState extends State<Home> {
         return const Profile();
       case HomeScreen.logs:
         return const LogsHome();
+      case HomeScreen.discover:
+        return const DiscoverHome();
     }
   }
 
@@ -252,11 +255,18 @@ class _HomeState extends State<Home> {
                         "Dashboard",
                         HomeScreen.overview,
                       ),
+                      _barRow(
+                        context,
+                        dmodel,
+                        LineIcons.compass,
+                        "Discover",
+                        HomeScreen.discover,
+                      ),
                       // _barRow(
                       //   context,
                       //   dmodel,
                       //   LineIcons.dumbbell,
-                      //   "Exercises",
+                      //   "Templates",
                       //   HomeScreen.exercises,
                       // ),
                       _barRow(

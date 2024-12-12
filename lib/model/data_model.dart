@@ -18,6 +18,7 @@ import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/snapshot.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
+import 'package:workout_notepad_v2/data/workout_template.dart';
 import 'package:workout_notepad_v2/model/client.dart';
 import 'package:workout_notepad_v2/model/pocketbaseAuth.dart';
 import 'package:workout_notepad_v2/model/root.dart';
@@ -55,7 +56,7 @@ class DataModel extends ChangeNotifier {
 
   // global client to use
   final client = Client(client: http.Client());
-  final purchaseClient = PurchaseClient(client: http.Client());
+  final purchaseClient = GoClient(client: http.Client());
 
   PocketBase? pb;
 
@@ -705,6 +706,10 @@ class DataModel extends ChangeNotifier {
 
   List<Snapshot> _snapshots = [];
   List<Snapshot> get snapshots => _snapshots;
+
+  // templates
+  List<WorkoutTemplate>? remoteTemplates;
+  bool loadingRemoteTemplates = true;
 
   Future<void> logout(BuildContext context) async {
     // create a snapshot of their data

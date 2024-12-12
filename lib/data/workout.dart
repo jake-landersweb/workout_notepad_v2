@@ -27,6 +27,8 @@ class Workout {
   late String updated;
   late bool template;
 
+  int? workoutTemplateId;
+
   // not stored in database
   late List<String> categories;
   late List<List<WorkoutExercise>> exercises;
@@ -41,6 +43,7 @@ class Workout {
     required this.template,
     required this.categories,
     required this.exercises,
+    this.workoutTemplateId,
   });
 
   Workout.init() {
@@ -68,6 +71,7 @@ class Workout {
         exercises: [
           for (var i in exercises) [for (var j in i) j.clone(this)]
         ],
+        workoutTemplateId: workoutTemplateId,
       );
 
   static Future<Workout> fromJson(Map<String, dynamic> json) async {
@@ -81,6 +85,7 @@ class Workout {
       updated: json['updated'],
       categories: [],
       exercises: [],
+      workoutTemplateId: json['workout_template_id'],
     );
     w.exercises = await w.getChildren();
     w.categories = await w.getCategories();
@@ -94,6 +99,7 @@ class Workout {
       "icon": icon,
       "template": template ? 1 : 0,
       "description": description,
+      "workoutTemplateId": workoutTemplateId,
     };
   }
 
@@ -106,6 +112,7 @@ class Workout {
       "icon": icon,
       "created": created,
       "updated": updated,
+      "workoutTemplateId": workoutTemplateId,
     };
   }
 

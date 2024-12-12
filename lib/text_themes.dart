@@ -58,11 +58,13 @@ TextStyle ttBody(
   Color? color,
   double? size,
   FontWeight? fontWeight,
+  double? height,
 }) {
   return TextStyle(
     fontSize: size ?? 14,
     color: color ?? AppColors.text(context),
     fontWeight: fontWeight ?? FontWeight.w500,
+    height: height,
   );
 }
 
@@ -73,8 +75,8 @@ TextStyle ttcaption(
   FontWeight? fontWeight,
 }) {
   return TextStyle(
-    fontSize: size ?? 12,
-    color: color ?? AppColors.text(context).withOpacity(0.5),
-    fontWeight: fontWeight ?? FontWeight.w600,
+    fontSize: size ?? 14,
+    fontWeight: fontWeight ?? FontWeight.w400,
+    color: color ?? AppColors.text(context).withValues(alpha: 0.7),
   );
 }

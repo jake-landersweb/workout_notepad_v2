@@ -16,6 +16,7 @@ import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/env.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/model/search_model.dart';
+import 'package:workout_notepad_v2/model/workout_template_model.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/functions.dart';
 import 'package:workout_notepad_v2/views/account/anon_create.dart';
@@ -132,6 +133,7 @@ class MyApp extends StatelessWidget {
         providers: [
           ChangeNotifierProvider(create: (context) => DataModel()),
           ChangeNotifierProvider(create: (context) => SearchModel()),
+          ChangeNotifierProvider(create: (context) => WorkoutTemplateModel()),
         ],
         builder: (context, child) {
           return _body(context);

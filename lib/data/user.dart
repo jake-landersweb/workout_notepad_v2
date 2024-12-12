@@ -315,26 +315,24 @@ class User {
   }
 
   Widget avatar(BuildContext context, {double size = 120}) {
-    if (offline) {
-      return Container(
-        width: size,
-        height: size,
-        decoration: const BoxDecoration(shape: BoxShape.circle),
-        child: Align(
-          child: ClipOval(
-            child: SvgPicture.asset(
-              "assets/svg/default_profile.svg",
-              height: size,
-              fit: BoxFit.fitHeight,
-              placeholderBuilder: (context) {
-                return LoadingIndicator(
-                    color: Theme.of(context).colorScheme.primary);
-              },
-            ),
+    var offlineAvatar = Container(
+      width: size,
+      height: size,
+      decoration: const BoxDecoration(shape: BoxShape.circle),
+      child: Align(
+        child: ClipOval(
+          child: SvgPicture.asset(
+            "assets/svg/default_profile.svg",
+            height: size,
+            fit: BoxFit.fitHeight,
+            placeholderBuilder: (context) {
+              return LoadingIndicator(
+                  color: Theme.of(context).colorScheme.primary);
+            },
           ),
         ),
-      );
-    }
+      ),
+    );
     // var defaultAvatar = SvgPicture.network(
     //   "https://source.boringavatars.com/beam/120/$userId?colors=418A2F,DD7373,4B3F72,283044",
     //   height: size,
@@ -346,16 +344,20 @@ class User {
     if (imgUrl == null ||
         imgUrl == "" ||
         (imgUrl?.contains("default") ?? false)) {
-      return Container(
-        width: size,
-        height: size,
-        decoration: const BoxDecoration(shape: BoxShape.circle),
-        child: Align(
-          child: ClipOval(
-            child: defaultAvatar(context),
+      if (offline) {
+        return offlineAvatar;
+      } else {
+        return Container(
+          width: size,
+          height: size,
+          decoration: const BoxDecoration(shape: BoxShape.circle),
+          child: Align(
+            child: ClipOval(
+              child: defaultAvatar(context),
+            ),
           ),
-        ),
-      );
+        );
+      }
     } else if (imgUrl!.contains("http")) {
       return Container(
         width: size,
@@ -368,7 +370,11 @@ class User {
               height: size,
               fit: BoxFit.fitHeight,
               errorBuilder: (context, error, stackTrace) {
-                return defaultAvatar(context);
+                if (offline) {
+                  return offlineAvatar;
+                } else {
+                  return defaultAvatar(context);
+                }
               },
               loadingBuilder: (context, child, loadingProgress) {
                 if (loadingProgress == null) {
@@ -392,8 +398,8 @@ class User {
 
   Widget defaultAvatar(BuildContext context, {double size = 120}) {
     return SvgPicture.network(
-      "$PURCHASE_HOST/users/$userId/avatar",
-      headers: const {"x-api-key": PURCHASE_API_KEY},
+      "$GO_HOST/users/$userId/avatar",
+      headers: const {"x-api-key": GO_API_KEY},
       height: size,
       fit: BoxFit.fitHeight,
       placeholderBuilder: (context) {

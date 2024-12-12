@@ -66,7 +66,7 @@ class SubscriptionRecord {
   }
 
   static Future<SubscriptionRecord?> fromUserId(String userId) async {
-    var client = PurchaseClient(client: http.Client());
+    var client = GoClient(client: http.Client());
     var response = await client.fetch("/users/$userId/subscription");
     client.client.close();
 

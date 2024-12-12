@@ -154,7 +154,7 @@ class Exercise {
   Exercise.fromJson(dynamic json) {
     exerciseId = json['exerciseId'];
     title = json['title'];
-    category = json['category'];
+    category = json['category'].toString();
     description = json['description'];
     difficulty = json['difficulty'] ?? "";
     icon = json['icon'];

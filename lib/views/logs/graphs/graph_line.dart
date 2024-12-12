@@ -135,7 +135,7 @@ class GraphLine extends StatelessWidget {
         show: true,
         getDotPainter: (p0, p1, p2, p3) {
           return FlDotCirclePainter(
-            radius: 5,
+            radius: 1,
             color: color,
             strokeWidth: 0,
           );

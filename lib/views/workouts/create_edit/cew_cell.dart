@@ -34,10 +34,9 @@ class _CEWCellState extends State<CEWCell> {
             borderRadius: const BorderRadius.only(
               topRight: Radius.circular(10),
             ),
-            child: RawReorderableList<WorkoutExercise>(
-              items: cmodel.workout.exercises[widget.i],
-              areItemsTheSame: (p0, p1) =>
-                  p0.workoutExerciseId == p1.workoutExerciseId,
+            child: RawReorderableList<Exercise>(
+              items: cmodel.workout.getExercises()[widget.i],
+              areItemsTheSame: (p0, p1) => p0.getUniqueId() == p1.getUniqueId(),
               header: const SizedBox(height: 0),
               footer: const SizedBox(height: 0),
               onReorderFinished: (item, from, to, newItems) {
@@ -109,7 +108,7 @@ class _CEWCellState extends State<CEWCell> {
     BuildContext context,
     CEWModel cmodel,
     int j,
-    WorkoutExercise item,
+    Exercise item,
     Handle handle,
     bool inDrag,
   ) {

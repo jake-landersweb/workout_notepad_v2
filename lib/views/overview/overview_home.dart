@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout.dart';
+import 'package:workout_notepad_v2/data/workout_template.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -123,14 +124,14 @@ class _OverviewHomeState extends State<OverviewHome> {
                       title: "Select Template",
                       leading: const [CloseButton2()],
                       children: [
-                        if (dmodel.workoutTemplates.isNotEmpty)
+                        if (dmodel.defaultWorkouts.isNotEmpty)
                           Section(
                             "Default Templates",
                             allowsCollapse: true,
                             initOpen: dmodel.workouts.isEmpty,
                             child: Column(
                               children: [
-                                for (var i in dmodel.workoutTemplates)
+                                for (var i in dmodel.defaultWorkouts)
                                   Padding(
                                     padding: const EdgeInsets.only(bottom: 8.0),
                                     child: Clickable(
@@ -207,6 +208,8 @@ class _OverviewHomeState extends State<OverviewHome> {
           const WorkoutProgress(),
         const PreviousWorkout(),
         _templates(context, dmodel),
+        if (dmodel.workoutTemplates.isNotEmpty)
+          _remoteTemplates(context, dmodel),
         _exercises(context, dmodel),
         const SizedBox(height: 100),
       ],
@@ -214,7 +217,7 @@ class _OverviewHomeState extends State<OverviewHome> {
   }
 
   Widget _templates2(BuildContext context, DataModel dmodel) {
-    List<Workout> _all = dmodel.workouts + dmodel.workoutTemplates;
+    List<Workout> _all = dmodel.workouts + dmodel.defaultWorkouts;
 
     return Section(
       "My Templates",
@@ -263,9 +266,49 @@ class _OverviewHomeState extends State<OverviewHome> {
   }
 
   Widget _templates(BuildContext context, DataModel dmodel) {
-    List<Workout> _all = dmodel.workouts + dmodel.workoutTemplates;
+    List<Workout> _all = dmodel.workouts + dmodel.defaultWorkouts;
     return Section(
-      "Templates",
+      "My Templates",
+      trailingWidget: Opacity(
+        opacity: 0.7,
+        child: Clickable(
+          onTap: () {
+            navigate(
+              context: context,
+              builder: (context) => const WorkoutsHome(),
+            );
+          },
+          child: const Row(
+            children: [
+              Text("All"),
+              Icon(Icons.arrow_right_alt),
+            ],
+          ),
+        ),
+      ),
+      child: Column(
+        children: [
+          if (_all.length < 3)
+            for (var i in _all)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: WorkoutCell(workout: i),
+              )
+          else
+            for (var i in _all.slice(0, 3))
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: WorkoutCell(workout: i),
+              ),
+        ],
+      ),
+    );
+  }
+
+  Widget _remoteTemplates(BuildContext context, DataModel dmodel) {
+    List<WorkoutTemplate> _all = dmodel.workoutTemplates;
+    return Section(
+      "Saved Templates",
       trailingWidget: Opacity(
         opacity: 0.7,
         child: Clickable(

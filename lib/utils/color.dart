@@ -107,6 +107,10 @@ extension AppColors on Color {
     return text(context).withOpacity(0.065);
   }
 
+  static Color border(BuildContext context) {
+    return text(context).withValues(alpha: 0.15);
+  }
+
   static Color error() {
     return ColorUtil.hexToColor("#CE4760");
   }

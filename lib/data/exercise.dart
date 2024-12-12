@@ -188,8 +188,9 @@ class Exercise {
     return getImageIcon(match.icon, size: size);
   }
 
-  // method implementations
-  Map<String, dynamic> toMap() {
+  // helpful function for getting exercise values inside of
+  // a workout template, where an exercise needs to be imported
+  Map<String, dynamic> rootExerciseMap() {
     return {
       "exerciseId": exerciseId,
       "category": category,
@@ -203,6 +204,11 @@ class Exercise {
       "time": time,
       "fname": filename,
     };
+  }
+
+  // method implementations
+  Map<String, dynamic> toMap() {
+    return rootExerciseMap();
   }
 
   // easy printing
@@ -338,5 +344,9 @@ class Exercise {
       w.add(Exercise.fromJson(i));
     }
     return w;
+  }
+
+  Comparable getUniqueId() {
+    return exerciseId;
   }
 }

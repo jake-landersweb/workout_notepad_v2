@@ -118,13 +118,25 @@ class GraphLine extends StatelessWidget {
 
   LineChartBarData _getLineData(Color color, List<Tuple2<Object, num>> data) {
     return LineChartBarData(
-      spots: [
-        for (var i in data)
-          FlSpot(
-            (i.v1 as DateTime).millisecondsSinceEpoch.toDouble(),
-            i.v2.toDouble(),
-          ),
-      ],
+      spots: data.length == 1
+          ? [
+              // use two data points to show a line on a single data point
+              FlSpot(
+                (data[0].v1 as DateTime).millisecondsSinceEpoch.toDouble(),
+                data[0].v2.toDouble(),
+              ),
+              FlSpot(
+                (data[0].v1 as DateTime).millisecondsSinceEpoch.toDouble() + 1,
+                data[0].v2.toDouble(),
+              ),
+            ]
+          : [
+              for (var i in data)
+                FlSpot(
+                  (i.v1 as DateTime).millisecondsSinceEpoch.toDouble(),
+                  i.v2.toDouble(),
+                ),
+            ],
       barWidth: 3,
       color: color,
       isCurved: false,

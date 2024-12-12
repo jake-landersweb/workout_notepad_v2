@@ -24,10 +24,10 @@ class _CEWReorderState extends State<CEWReorder> {
       trailing: const [CancelButton(title: "Done")],
       horizontalSpacing: 0,
       children: [
-        RawReorderableList<List<WorkoutExercise>>(
-          items: cmodel.workout.exercises,
-          areItemsTheSame: (p0, p1) => p0.any((element) => p1.any((element2) =>
-              element.workoutExerciseId == element2.workoutExerciseId)),
+        RawReorderableList<List<Exercise>>(
+          items: cmodel.workout.getExercises(),
+          areItemsTheSame: (p0, p1) => p0.any((element) => p1.any(
+              (element2) => element.getUniqueId() == element2.getUniqueId())),
           header: const SizedBox(height: 72),
           footer: const SizedBox(height: 0),
           onReorderFinished: (item, from, to, newItems) {

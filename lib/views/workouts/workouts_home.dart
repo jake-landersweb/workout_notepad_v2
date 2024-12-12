@@ -55,14 +55,14 @@ class _WorkoutsHomeState extends State<WorkoutsHome> {
                       ),
                   ],
                 )),
-          if (dmodel.workoutTemplates.isNotEmpty)
+          if (dmodel.defaultWorkouts.isNotEmpty)
             Section(
               "Default Templates",
               allowsCollapse: true,
               initOpen: false,
               child: Column(
                 children: [
-                  for (var i in dmodel.workoutTemplates)
+                  for (var i in dmodel.defaultWorkouts)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
                       child: WorkoutCell(workout: i),

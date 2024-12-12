@@ -95,7 +95,7 @@ class _HomeState extends State<Home> {
       case HomeScreen.logs:
         return const LogsHome();
       case HomeScreen.discover:
-        return const DiscoverHome();
+        return const WTHome();
     }
   }
 

@@ -19,6 +19,7 @@ import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/snapshot.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/data/workout_template.dart';
+import 'package:workout_notepad_v2/data/workout_template_exercise.dart';
 import 'package:workout_notepad_v2/model/client.dart';
 import 'package:workout_notepad_v2/model/pocketbaseAuth.dart';
 import 'package:workout_notepad_v2/model/root.dart';
@@ -379,6 +380,12 @@ class DataModel extends ChangeNotifier {
       return;
     }
 
+    // var db = await DatabaseProvider().database;
+    // await db.rawQuery("DELETE FROM workout_template");
+    // var db = await DatabaseProvider().database;
+    // var resp = await db.rawQuery("SELECT * FROM workout_template_exercise");
+    // print(resp);
+
     // get the saved user
     user = User.fromJson(jsonDecode(prefs.getString("user")!));
 
@@ -621,32 +628,41 @@ class DataModel extends ChangeNotifier {
   }
 
   Future<void> fetchData({bool checkData = true}) async {
-    var db = await DatabaseProvider().database;
-    var getC = Category.getList(db: db);
-    var getW = Workout.getList(db: db);
-    var getWt = Workout.getTemplates(db: db);
-    var getE = Exercise.getList(db: db);
-    var getT = Tag.getList(db: db);
+    try {
+      var db = await DatabaseProvider().database;
+      var getC = Category.getList(db: db);
+      var getW = Workout.getList(db: db);
+      var getDw = Workout.getTemplates(db: db);
+      var getWt = WorkoutTemplate.getLocalTemplates(db: db);
+      var getE = Exercise.getList(db: db);
+      var getT = Tag.getList(db: db);
 
-    // run all asynchronously at the same time
-    List<dynamic> results = await Future.wait([getC, getW, getWt, getE, getT]);
+      // run all asynchronously at the same time
+      List<dynamic> results = await Future.wait(
+        [getC, getW, getDw, getWt, getE, getT],
+      );
 
-    _categories = results[0];
-    _workouts = results[1];
-    _workoutTemplates = results[2];
-    _exercises = results[3];
-    _tags = results[4];
+      _categories = results[0];
+      _workouts = results[1];
+      _defaultWorkouts = results[2];
+      _workoutTemplates = results[3];
+      _exercises = results[4];
+      _tags = results[5];
 
-    // check if the user has data
-    if (checkData) {
-      if (workouts.isEmpty && exercises.isEmpty) {
-        print("user has no data, adding basic data");
-        // add some base categories and tags
-        await importDefaults();
-        hasNoData = true;
+      // check if the user has data
+      if (checkData) {
+        if (workouts.isEmpty && exercises.isEmpty) {
+          print("user has no data, adding basic data");
+          // add some base categories and tags
+          await importDefaults();
+          hasNoData = true;
+        }
       }
+      notifyListeners();
+    } catch (error, stack) {
+      print(error);
+      print(stack);
     }
-    notifyListeners();
   }
 
   bool? _lightStatus;
@@ -670,10 +686,17 @@ class DataModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<Workout> _workoutTemplates = [];
-  List<Workout> get workoutTemplates => _workoutTemplates;
+  List<Workout> _defaultWorkouts = [];
+  List<Workout> get defaultWorkouts => _defaultWorkouts;
+  Future<void> refreshDefaultWorkouts() async {
+    _defaultWorkouts = await Workout.getTemplates();
+    notifyListeners();
+  }
+
+  List<WorkoutTemplate> _workoutTemplates = [];
+  List<WorkoutTemplate> get workoutTemplates => _workoutTemplates;
   Future<void> refreshWorkoutTemplates() async {
-    _workoutTemplates = await Workout.getTemplates();
+    _workoutTemplates = await WorkoutTemplate.getLocalTemplates();
     notifyListeners();
   }
 
@@ -782,7 +805,16 @@ class DataModel extends ChangeNotifier {
     );
     if (workoutState!.exercises.isEmpty) {
       // get the exercise children
-      workoutState!.exercises = await workoutState!.workout.getChildren();
+      if (workoutState!.workout is WorkoutTemplate) {
+        workoutState!.exercises = workoutState!.workout
+            .getExercises()
+            .map((group) => group
+                .map((e) => (e as WorkoutTemplateExercise).toWorkoutExercise())
+                .toList())
+            .toList();
+      } else {
+        workoutState!.exercises = await workoutState!.workout.getChildren();
+      }
     }
 
     // create the exercise log state

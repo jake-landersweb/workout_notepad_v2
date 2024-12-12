@@ -1,19 +1,21 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/workout_template.dart';
+import 'package:workout_notepad_v2/model/data_model.dart';
 import 'package:workout_notepad_v2/model/workout_template_model.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:workout_notepad_v2/views/workout_templates/wt_cell.dart';
+import 'package:workout_notepad_v2/views/root.dart';
 
-class DiscoverHome extends StatefulWidget {
-  const DiscoverHome({super.key});
+class WTHome extends StatefulWidget {
+  const WTHome({super.key});
 
   @override
-  State<DiscoverHome> createState() => _DiscoverHomeState();
+  State<WTHome> createState() => _WTHomeState();
 }
 
-class _DiscoverHomeState extends State<DiscoverHome> {
+class _WTHomeState extends State<WTHome> {
   @override
   void initState() {
     super.initState();
@@ -36,24 +38,54 @@ class _DiscoverHomeState extends State<DiscoverHome> {
           },
           children: [
             const SizedBox(height: 16),
-            if (model.loadingRemoteTemplates)
-              const LoadingIndicator()
-            else if (model.remoteTemplates == null ||
-                model.remoteTemplates!.isEmpty)
-              const Text("No templates found")
-            else
-              _body(context, model.remoteTemplates!),
+            _build(context, model),
           ],
         );
       },
     );
   }
 
+  Widget _build(BuildContext context, WorkoutTemplateModel model) {
+    switch (model.remoteTemplateStatus) {
+      case LoadingStatus.loading:
+        return const LoadingIndicator();
+      case LoadingStatus.error:
+        // TODO: add a better error screen
+        return const Text("There was an error");
+      case LoadingStatus.done:
+        if (model.remoteTemplates == null || model.remoteTemplates!.isEmpty) {
+          // TODO: add a better empty screen
+          return const Text("No templates found");
+        } else {
+          return _body(context, model.remoteTemplates!);
+        }
+    }
+  }
+
   Widget _body(BuildContext context, List<WorkoutTemplate> templates) {
+    var localTemplates = context.select(
+      (DataModel value) => value.workoutTemplates,
+    );
+
     return Column(
       children: [
-        for (var i in templates) WTCell(wt: i),
+        for (var i in templates) _workoutCell(context, i, localTemplates),
       ],
+    );
+  }
+
+  Widget _workoutCell(
+    BuildContext context,
+    WorkoutTemplate template,
+    List<WorkoutTemplate> localTemplates,
+  ) {
+    var t = localTemplates.firstWhereOrNull((t) => t.id == template.id);
+    return WorkoutCell(
+      workout: t ?? template,
+      allowActions: t != null,
+      isTemplate: t == null,
+      showBookmark: true,
+      bookmarkFilled: t != null,
     );
   }
 

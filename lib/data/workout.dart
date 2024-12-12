@@ -1,11 +1,13 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/data/workout_snapshot.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/utils/color.dart';
 import 'package:workout_notepad_v2/utils/icons.dart';
 
 class WorkoutCloneObject {
@@ -27,11 +29,9 @@ class Workout {
   late String updated;
   late bool template;
 
-  int? workoutTemplateId;
-
   // not stored in database
   late List<String> categories;
-  late List<List<WorkoutExercise>> exercises;
+  List<List<WorkoutExercise>> _exercises = [];
 
   Workout({
     required this.workoutId,
@@ -42,9 +42,10 @@ class Workout {
     required this.updated,
     required this.template,
     required this.categories,
-    required this.exercises,
-    this.workoutTemplateId,
-  });
+    List<List<WorkoutExercise>>? exercises,
+  }) {
+    _exercises = exercises ?? [];
+  }
 
   Workout.init() {
     var uuid = const Uuid();
@@ -56,7 +57,7 @@ class Workout {
     updated = "";
     template = false;
     categories = [];
-    exercises = [];
+    _exercises = [];
   }
 
   Workout copy() => Workout(
@@ -69,9 +70,8 @@ class Workout {
         updated: updated,
         categories: [for (var i in categories) i],
         exercises: [
-          for (var i in exercises) [for (var j in i) j.clone(this)]
+          for (var i in _exercises) [for (var j in i) j.clone(this)]
         ],
-        workoutTemplateId: workoutTemplateId,
       );
 
   static Future<Workout> fromJson(Map<String, dynamic> json) async {
@@ -85,9 +85,8 @@ class Workout {
       updated: json['updated'],
       categories: [],
       exercises: [],
-      workoutTemplateId: json['workout_template_id'],
     );
-    w.exercises = await w.getChildren();
+    w._exercises = await w.getChildren();
     w.categories = await w.getCategories();
     return w;
   }
@@ -99,7 +98,6 @@ class Workout {
       "icon": icon,
       "template": template ? 1 : 0,
       "description": description,
-      "workoutTemplateId": workoutTemplateId,
     };
   }
 
@@ -112,7 +110,6 @@ class Workout {
       "icon": icon,
       "created": created,
       "updated": updated,
-      "workoutTemplateId": workoutTemplateId,
     };
   }
 
@@ -260,6 +257,120 @@ class Workout {
       snapshots.add(WorkoutSnapshot.fromJson(i));
     }
     return snapshots;
+  }
+
+  // --------------------------------
+  // Exercise operations
+  // --------------------------------
+  List<List<Exercise>> getExercises() {
+    return _exercises;
+  }
+
+  void setExercises(List<List<Exercise>> exercises) {
+    _exercises = exercises
+        .map((group) =>
+            group.map((e) => WorkoutExercise.fromExercise(this, e)).toList())
+        .toList();
+  }
+
+  void setSuperSets(int i, List<Exercise> exercises) {
+    _exercises[i] =
+        exercises.map((e) => WorkoutExercise.fromExercise(this, e)).toList();
+  }
+
+  void addExercise(int i, Exercise e) {
+    var we = WorkoutExercise.fromExercise(this, e);
+    while (_exercises.length <= i) {
+      _exercises.add([]);
+    }
+
+    // set superset id if need to
+    if (_exercises[i].isNotEmpty) {
+      we.supersetId = _exercises[i][0].supersetId;
+    }
+    _exercises[i].add(we);
+  }
+
+  void removeExercise(int i) {
+    _exercises.removeAt(i);
+  }
+
+  void removeSuperSet(int i, int j) {
+    _exercises[i].removeAt(j);
+    if (_exercises[i].isEmpty) {
+      _exercises.removeAt(i);
+    }
+  }
+
+  List<Exercise> getFlatExercises({int? limit}) {
+    if (limit == null) {
+      return _exercises.flattened.toList();
+    }
+    if (_exercises.flattened.length > limit) {
+      return _exercises.flattened.toList().slice(0, limit);
+    }
+    return _exercises.flattened.toList();
+  }
+  // --------------------------------
+
+  Future<bool> handleInsert({Database? db}) async {
+    try {
+      db ??= await DatabaseProvider().database;
+
+      bool response = await db.transaction((txn) async {
+        // when updating, remove all existing exercises
+        await txn.delete(
+          "workout_exercise",
+          where: "workoutId = ?",
+          whereArgs: [workoutId],
+        );
+
+        // loop through all exercises and group and add as supersets
+        var uuid = const Uuid();
+        for (int i = 0; i < _exercises.length; i++) {
+          var supersetId = uuid.v4();
+          for (int j = 0; j < _exercises[i].length; j++) {
+            // configure the exercise fields
+            _exercises[i][j].exerciseOrder = i;
+            _exercises[i][j].supersetId = supersetId;
+            _exercises[i][j].supersetOrder = j;
+            var r =
+                await txn.insert("workout_exercise", _exercises[i][j].toMap());
+            if (r == 0) {
+              return false;
+            }
+          }
+        }
+
+        // add or update the workout
+        var r = await txn.insert(
+          "workout",
+          toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+
+        if (r == 0) {
+          return false;
+        }
+
+        return true;
+      });
+
+      if (!response) {
+        throw "There was an issue completing the transaction";
+      }
+
+      return true;
+    } catch (error, stack) {
+      print(error);
+      print(stack);
+      NewrelicMobile.instance.recordError(error, stack);
+      return false;
+    }
+  }
+
+  Color? getBackgroundColor(BuildContext context) {
+    return null;
   }
 
   @override

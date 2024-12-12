@@ -95,7 +95,9 @@ class DatabaseProvider {
 
   Future<void> runMigrations(Database db) async {
     try {
-      const migrations = [2, 3];
+      const migrations = [2, 3, 4];
+
+      // await db.rawQuery("DELETE FROM migrations WHERE id = 4");
 
       for (var i in migrations) {
         print("----");

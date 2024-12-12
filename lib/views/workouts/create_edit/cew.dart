@@ -60,7 +60,7 @@ class _CEWState extends State<CEW> {
                   parent: BouncingScrollPhysics(),
                 ),
                 children: [
-                  for (int i = 0; i < cmodel.workout.exercises.length; i++)
+                  for (int i = 0; i < cmodel.workout.getExercises().length; i++)
                     Padding(
                       padding: const EdgeInsets.only(top: 16.0),
                       child: CEWCell(i: i),
@@ -91,7 +91,7 @@ class _CEWState extends State<CEW> {
                               builder: (context) => SelectExercise(
                                 onSelect: (e) {
                                   cmodel.addExercise(
-                                    cmodel.workout.exercises.length,
+                                    cmodel.workout.getExercises().length,
                                     e,
                                   );
                                 },

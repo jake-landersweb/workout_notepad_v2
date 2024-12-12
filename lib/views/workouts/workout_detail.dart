@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
@@ -13,6 +14,7 @@ import 'package:workout_notepad_v2/components/header_bar.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 
 import 'package:workout_notepad_v2/components/root.dart' as comp;
+import 'package:workout_notepad_v2/data/workout_template.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -27,13 +29,17 @@ class WorkoutDetail extends StatefulWidget {
   WorkoutDetail({
     super.key,
     required this.workout,
+    bool? allowActions,
+    this.isTemplate = false,
   }) {
     isCupertino = false;
-    showButtons = true;
+    showButtons = allowActions ?? true;
+    allowEdit = allowActions ?? true;
   }
   WorkoutDetail.small({
     super.key,
     required this.workout,
+    this.isTemplate = false,
   }) {
     isCupertino = true;
     showButtons = false;
@@ -41,6 +47,8 @@ class WorkoutDetail extends StatefulWidget {
   late Workout workout;
   late bool isCupertino;
   late bool showButtons;
+  late bool allowEdit;
+  final bool isTemplate;
 
   @override
   State<WorkoutDetail> createState() => _WorkoutDetailState();
@@ -85,7 +93,8 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
         largeTitlePadding: const EdgeInsets.only(left: 16),
         leading: const [comp.BackButton2()],
         trailing: [
-          if (dmodel.workoutState?.workout.workoutId != _workout.workoutId)
+          if (dmodel.workoutState?.workout.workoutId != _workout.workoutId &&
+              widget.allowEdit)
             comp.EditButton(
               onTap: () {
                 showMaterialModalBottomSheet(
@@ -128,6 +137,7 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
                 ),
               ),
             ),
+          if (widget.isTemplate) _importButton(context, dmodel),
           const SizedBox(height: 16),
           if (widget.showButtons)
             Column(
@@ -137,34 +147,35 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
                 const SizedBox(height: 16),
               ],
             ),
-          for (int i = 0; i < _workout.exercises.length; i++)
+          for (int i = 0; i < _workout.getExercises().length; i++)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
               child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.cell(context),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    children: [
-                      for (int j = 0; j < _workout.exercises[i].length; j++)
-                        Column(
-                          children: [
-                            ExerciseCell(
-                              exercise: _workout.exercises[i][j],
-                              padding: EdgeInsets.zero,
-                              showBackground: false,
+                decoration: BoxDecoration(
+                  color: AppColors.cell(context),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  children: [
+                    for (int j = 0; j < _workout.getExercises()[i].length; j++)
+                      Column(
+                        children: [
+                          ExerciseCell(
+                            exercise: _workout.getExercises()[i][j],
+                            padding: EdgeInsets.zero,
+                            showBackground: false,
+                          ),
+                          if (j < _workout.getExercises()[i].length - 1)
+                            Container(
+                              color: AppColors.divider(context),
+                              height: 1,
+                              width: double.infinity,
                             ),
-                            if (j < _workout.exercises[i].length - 1)
-                              Container(
-                                color: AppColors.divider(context),
-                                height: 1,
-                                width: double.infinity,
-                              ),
-                          ],
-                        ),
-                    ],
-                  )),
+                        ],
+                      ),
+                  ],
+                ),
+              ),
             )
                 .animate(delay: (50 * i).ms)
                 .slideX(
@@ -175,6 +186,48 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
         ],
       ),
     ];
+  }
+
+  Widget _importButton(BuildContext context, DataModel dmodel) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      child: Clickable(
+        onTap: () async {
+          if (widget.workout is WorkoutTemplate) {
+            var success = await widget.workout.handleInsert();
+            if (success) {
+              snackbarStatus(
+                context,
+                "Successfully imported the template",
+              );
+
+              // reload the templates
+              await dmodel.refreshWorkoutTemplates();
+              Navigator.of(context).pop();
+            } else {
+              snackbarErr(
+                context,
+                "There was an issue importing the workout template",
+              );
+            }
+          }
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primary,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          width: double.infinity,
+          padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+          child: Center(
+            child: Text(
+              "Save Template",
+              style: ttLabel(context, color: Colors.white),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _actions(BuildContext context, DataModel dmodel) {
@@ -266,22 +319,42 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
                   onSubmit: () async {
                     try {
                       var db = await DatabaseProvider().database;
-                      await db.transaction((txn) async {
-                        await txn.rawDelete(
-                          "DELETE FROM workout_exercise WHERE workoutId = ?",
-                          [_workout.workoutId],
+                      if (_workout is WorkoutTemplate) {
+                        var template = _workout as WorkoutTemplate;
+                        await db.transaction((txn) async {
+                          await txn.rawDelete(
+                            "DELETE FROM workout_template_exercise WHERE workoutTemplateId = ?",
+                            [template.id],
+                          );
+                          await txn.rawDelete(
+                            "DELETE FROM workout_template WHERE id = ?",
+                            [template.id],
+                          );
+                        });
+                        await dmodel.fetchData();
+                        Navigator.of(context).pop();
+                        snackbarStatus(
+                          context,
+                          "Successfully deleted the workout",
                         );
-                        await txn.rawDelete(
-                          "DELETE FROM workout WHERE workoutId = ?",
-                          [_workout.workoutId],
+                      } else {
+                        await db.transaction((txn) async {
+                          await txn.rawDelete(
+                            "DELETE FROM workout_exercise WHERE workoutId = ?",
+                            [_workout.workoutId],
+                          );
+                          await txn.rawDelete(
+                            "DELETE FROM workout WHERE workoutId = ?",
+                            [_workout.workoutId],
+                          );
+                        });
+                        await dmodel.fetchData();
+                        Navigator.of(context).pop();
+                        snackbarStatus(
+                          context,
+                          "Successfully deleted the workout",
                         );
-                      });
-                      await dmodel.fetchData();
-                      Navigator.of(context).pop();
-                      snackbarStatus(
-                        context,
-                        "Successfully deleted the workout",
-                      );
+                      }
                     } catch (e) {
                       print(e);
                       NewrelicMobile.instance.recordError(

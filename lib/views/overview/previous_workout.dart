@@ -83,7 +83,17 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
       ),
       child: AspectRatio(
         aspectRatio: 1.1,
-        child: _body(context),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.cell(context),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.border(context), width: 3),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: _body(context),
+          ),
+        ),
       ),
     );
   }
@@ -399,102 +409,78 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
   }
 
   Widget _view(BuildContext context, WorkoutLog log) {
-    return Container(
-      decoration: BoxDecoration(
-          color: AppColors.cell(context),
-          borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        WorkoutLogCellAlt(
+          log: log,
+          endContent: Container(),
+        ),
+        const SizedBox(height: 4),
+        Row(
           children: [
-            WorkoutLogCellAlt(
-              log: log,
-              endContent: Container(),
-            ),
-            const SizedBox(height: 8),
-            _cell(
-              context,
-              _attributeCell(
+            Expanded(
+              child: _cell(
                 context,
-                "Duration",
-                formatHHMMSS(log.duration),
+                _attributeCell(
+                  context,
+                  "Exercises",
+                  log.exerciseLogs.length.toString(),
+                  vertical: true,
+                ),
               ),
             ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                Expanded(
-                  child: _cell(
-                    context,
-                    _attributeCell(
-                      context,
-                      "Exercises",
-                      log.exerciseLogs.length.toString(),
-                      vertical: true,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Expanded(
-                  child: _cell(
-                    context,
-                    _attributeCell(
-                      context,
-                      "Sets",
-                      _getTotalSets(log).toString(),
-                      vertical: true,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 4),
-                Expanded(
-                  child: _cell(
-                    context,
-                    _attributeCell(
-                      context,
-                      "Reps",
-                      _getTotalReps(log).toString(),
-                      vertical: true,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
+            const SizedBox(width: 4),
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Row(
-                    //   children: [
-                    //     GraphCircle(
-                    //       value: _getNumSetsNotWarmup(log),
-                    //     ),
-                    //     const SizedBox(width: 16),
-                    //     Text("% Working Sets", style: ttLabel(context)),
-                    //   ],
-                    // ),
-                    // const SizedBox(height: 8),
-                    Expanded(
-                      child: _pieChart(
-                        context,
-                        "Tag Dist.",
-                        _getTagsData(log),
-                        expanded: true,
-                        showHeader: false,
-                      ),
-                    ),
-                  ],
+              child: _cell(
+                context,
+                _attributeCell(
+                  context,
+                  "Sets",
+                  _getTotalSets(log).toString(),
+                  vertical: true,
+                ),
+              ),
+            ),
+            const SizedBox(width: 4),
+            Expanded(
+              child: _cell(
+                context,
+                _attributeCell(
+                  context,
+                  "Reps",
+                  _getTotalReps(log).toString(),
+                  vertical: true,
                 ),
               ),
             ),
           ],
         ),
-      ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(0),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: _pieChart(
+                    context,
+                    "Tag Dist.",
+                    _getTagsData(log),
+                    expanded: true,
+                    showHeader: false,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Expanded(
+                  child: _weightBySet(context, log),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -586,12 +572,12 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
     return tags;
   }
 
-  Widget _cell(BuildContext context, Widget value, {double height = 60}) {
+  Widget _cell(BuildContext context, Widget value, {double height = 50}) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.cell(context)[300],
-        border: Border.all(color: AppColors.divider(context)),
+        // color: AppColors.cell(context)[300],
         borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.border(context)),
       ),
       width: double.infinity,
       height: height,
@@ -612,7 +598,7 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
           Text(
             value,
             style: const TextStyle(
-              fontSize: 32,
+              fontSize: 24,
               fontWeight: FontWeight.w600,
               height: 1,
             ),
@@ -648,39 +634,53 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
     bool showHeader = true,
     bool expanded = false,
   }) {
+    final pieSections = data.map((i) {
+      final color = ColorUtil.random(i.v1);
+      return PieChartSectionData(
+        value: i.v2.toDouble(),
+        color: color,
+        title: "",
+      );
+    }).toList();
+
     Widget content = PieChart(
-      PieChartData(
-        sections: [
-          for (var i in data)
-            PieChartSectionData(
-              value: i.v2.toDouble(),
-              color: ColorUtil.random(i.v1),
-              title: "",
-            ),
-        ],
-      ),
+      PieChartData(sections: pieSections),
     );
-    Widget legend = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (var i in data)
-          Row(
+
+    Widget legend = Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.border(context)),
+      ),
+      height: expanded ? double.infinity : 60,
+      child: GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 4,
+          mainAxisSpacing: 4,
+          childAspectRatio: 2.5,
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 4),
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          return Row(
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: ColorUtil.random(i.v1),
+                  color: ColorUtil.random(data[index].v1),
                   shape: BoxShape.circle,
                 ),
                 height: 10,
                 width: 10,
               ),
               const SizedBox(width: 4),
-              Text(i.v1, style: ttcaption(context)),
+              Expanded(child: Text(data[index].v1, style: ttcaption(context))),
             ],
-          ),
-      ],
+          );
+        },
+      ),
     );
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.cell(context),
@@ -698,46 +698,25 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Center(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(child: content),
-                      const SizedBox(width: 16),
-                      legend,
-                    ],
-                  ),
+                child: Row(
+                  children: [
+                    Expanded(flex: 1, child: content),
+                    const SizedBox(width: 16),
+                    Expanded(flex: 2, child: legend),
+                  ],
                 ),
               ),
             )
           else
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Center(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      height: 80,
-                      width: 80,
-                      child: PieChart(
-                        PieChartData(
-                          sections: [
-                            for (var i in data)
-                              PieChartSectionData(
-                                value: i.v2.toDouble(),
-                                color: ColorUtil.random(i.v1),
-                                title: "",
-                              ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    legend,
-                  ],
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(height: 80, width: 80, child: content),
+                  const SizedBox(width: 16),
+                  Flexible(child: legend),
+                ],
               ),
             ),
         ],

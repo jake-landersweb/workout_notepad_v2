@@ -259,7 +259,7 @@ class LogBuilder {
       case LBGrouping.WORKOUT:
         var workout = dmodel.workouts
                 .firstWhereOrNull((element) => element.workoutId == item.v1) ??
-            dmodel.workoutTemplates
+            dmodel.defaultWorkouts
                 .firstWhereOrNull((element) => element.workoutId == item.v1);
         if (!includeValue) {
           return workout?.title ?? item.v1.toString();

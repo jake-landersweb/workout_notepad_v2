@@ -44,10 +44,10 @@ class ExerciseCell extends StatelessWidget {
       child: showBackground
           ? Container(
               decoration: BoxDecoration(
-                  color: AppColors.cell(context),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                      color: borderColor ?? AppColors.cell(context))),
+                color: AppColors.cell(context),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: AppColors.border(context), width: 3),
+              ),
               child: _content(context),
             )
           : _content(context),

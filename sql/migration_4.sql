@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS workout_template (
     estTime TEXT,
     backgroundColor TEXT,
     imageId TEXT,
-    sha256 TEXT,
+    sha256 TEXT NOT NULL,
 
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,

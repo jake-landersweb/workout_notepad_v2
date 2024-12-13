@@ -81,6 +81,7 @@ class GraphRenderer extends StatelessWidget {
             decoration: BoxDecoration(
               color: logBuilder.backgroundColor ?? AppColors.cell(context),
               borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.border(context), width: 3),
             ),
             child: Padding(
               padding: const EdgeInsets.all(8.0),

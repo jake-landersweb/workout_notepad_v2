@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/workout_template.dart';
 import 'package:workout_notepad_v2/model/data_model.dart';
-import 'package:workout_notepad_v2/model/workout_template_model.dart';
+import 'package:workout_notepad_v2/views/workout_templates/workout_template_model.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 
@@ -69,7 +69,11 @@ class _WTHomeState extends State<WTHome> {
 
     return Column(
       children: [
-        for (var i in templates) _workoutCell(context, i, localTemplates),
+        for (var i in templates)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: _workoutCell(context, i, localTemplates),
+          ),
       ],
     );
   }

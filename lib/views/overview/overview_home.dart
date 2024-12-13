@@ -12,6 +12,7 @@ import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/overview/previous_workout.dart';
 import 'package:workout_notepad_v2/views/overview/workout_progress.dart';
 import 'package:workout_notepad_v2/views/root.dart';
+import 'package:workout_notepad_v2/views/workout_templates/wt_saved.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/launch_workout.dart';
 
 class OverviewHome extends StatefulWidget {
@@ -288,14 +289,14 @@ class _OverviewHomeState extends State<OverviewHome> {
       ),
       child: Column(
         children: [
-          if (_all.length < 3)
+          if (_all.length < 2)
             for (var i in _all)
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: WorkoutCell(workout: i),
               )
           else
-            for (var i in _all.slice(0, 3))
+            for (var i in _all.slice(0, 2))
               Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: WorkoutCell(workout: i),
@@ -315,7 +316,7 @@ class _OverviewHomeState extends State<OverviewHome> {
           onTap: () {
             navigate(
               context: context,
-              builder: (context) => const WorkoutsHome(),
+              builder: (context) => const WTSaved(),
             );
           },
           child: const Row(

@@ -118,6 +118,8 @@ class WorkoutTemplateExercise extends Exercise {
     exerciseOrder = 0;
     supersetId = uuid.v4();
     supersetOrder = 0;
+    createdAt = DateTime.now();
+    updatedAt = DateTime.now();
   }
 
   WorkoutExercise toWorkoutExercise() {

@@ -1,17 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-import 'package:workout_notepad_v2/components/cancel_button.dart';
-import 'package:workout_notepad_v2/components/clickable.dart';
-import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
-import 'package:workout_notepad_v2/components/header_bar.dart';
-import 'package:workout_notepad_v2/components/raw_reorderable_list.dart';
 import 'package:workout_notepad_v2/components/root.dart';
-import 'package:workout_notepad_v2/components/wrapped_button.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
@@ -19,6 +11,7 @@ import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/exercises/select_exercise.dart';
+import 'package:workout_notepad_v2/views/workouts/create_edit/cew_configure.dart';
 
 class LWConfigure extends StatefulWidget {
   const LWConfigure({
@@ -44,13 +37,18 @@ class LWConfigure extends StatefulWidget {
 }
 
 class _LWConfigureState extends State<LWConfigure> {
+  late List<List<WorkoutExercise>> _exercises = [];
   late List<Tuple3<String, List<WorkoutExercise>, List<ExerciseLog>>> _items;
   late TextEditingController _controller;
+  bool _isReordering = true;
 
   @override
   void initState() {
     _items = [];
     var uuid = const Uuid();
+    _exercises = widget.exercises
+        .map((group) => group.map((e) => e.copy()).toList())
+        .toList();
     for (int i = 0; i < widget.exercises.length; i++) {
       _items
           .add(Tuple3(uuid.v4(), widget.exercises[i], widget.exerciseLogs[i]));
@@ -83,6 +81,7 @@ class _LWConfigureState extends State<LWConfigure> {
       leading: const [CancelButton()],
       horizontalSpacing: 0,
       children: [
+        const SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Container(
@@ -97,123 +96,45 @@ class _LWConfigureState extends State<LWConfigure> {
                 controller: _controller,
                 hasClearButton: true,
                 charLimit: 30,
+                textCapitalization: TextCapitalization.words,
                 showCharacters: true,
                 onChanged: (val) {},
               ),
             ),
           ),
         ),
-        RawReorderableList<
-            Tuple3<String, List<WorkoutExercise>, List<ExerciseLog>>>(
-          items: _items,
-          areItemsTheSame: (p0, p1) => p0.v1 == p1.v1,
-          header: const SizedBox(height: 16),
-          footer: const SizedBox(height: 0),
-          onReorderFinished: (item, from, to, newItems) {
+        CEWConfigure(
+          exercises: _exercises,
+          onReorderFinish: (exercises) {
             setState(() {
-              _items = newItems;
+              _exercises = exercises as List<List<WorkoutExercise>>;
             });
           },
-          slideBuilder: (item, index) {
-            return ActionPane(
-              extentRatio: 0.3,
-              motion: const DrawerMotion(),
-              children: [
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Row(
-                      children: [
-                        SlidableAction(
-                          borderRadius: BorderRadius.circular(10),
-                          onPressed: (context) async {
-                            await Future.delayed(
-                              const Duration(milliseconds: 100),
-                            );
-                            setState(() {
-                              _items.removeAt(index);
-                            });
-                          },
-                          icon: LineIcons.alternateTrash,
-                          foregroundColor: Colors.white,
-                          backgroundColor: AppColors.error(),
-                        ),
-                        const SizedBox(width: 16),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            );
+          removeAt: (index) {
+            setState(() {
+              _exercises.removeAt(index);
+            });
           },
-          builder: (item, index, handle, inDrag) {
-            return Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(5),
-                child: Container(
-                  color: inDrag
-                      ? AppColors.cell(context)[50]
-                      : AppColors.cell(context),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              for (var i in item.v2)
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 4.0),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          color: AppColors.text(context)
-                                              .withOpacity(0.4),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        height: 6,
-                                        width: 6,
-                                      ),
-                                      i.getIcon(dmodel.categories, size: 40),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                          child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: Text("${i.title}"),
-                                              ),
-                                            ],
-                                          ),
-                                          i.info(
-                                            context,
-                                            style: ttBody(
-                                              context,
-                                              color: AppColors.subtext(context),
-                                            ),
-                                          )
-                                        ],
-                                      )),
-                                    ],
-                                  ),
-                                ),
-                            ],
-                          ),
-                        ),
-                        handle,
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            );
+          isReordering: _isReordering,
+          onGroupReorder: (int i, List<Exercise> group) {
+            setState(() {
+              _exercises[i] = group as List<WorkoutExercise>;
+            });
+          },
+          removeSuperset: (int i, int j) {
+            setState(() {
+              _exercises[i].removeAt(j);
+            });
+          },
+          addExercise: (int index, Exercise e) {
+            setState(() {
+              _exercises[index].add(
+                WorkoutExercise.fromExercise(widget.workout, e),
+              );
+            });
+          },
+          sState: () {
+            setState(() {});
           },
         ),
         Padding(

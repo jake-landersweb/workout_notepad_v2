@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
-import 'package:workout_notepad_v2/data/workout.dart';
+import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
-import 'package:workout_notepad_v2/utils/color.dart';
+import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/exercises/select_exercise.dart';
-import 'package:workout_notepad_v2/views/workouts/create_edit/cew_reorder.dart';
+import 'package:workout_notepad_v2/views/workouts/create_edit/cew_configure.dart';
 import 'package:workout_notepad_v2/views/workouts/create_edit/root.dart';
 
 class CEW extends StatefulWidget {
@@ -24,6 +26,8 @@ class CEW extends StatefulWidget {
 }
 
 class _CEWState extends State<CEW> {
+  bool _isReordering = false;
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -51,59 +55,48 @@ class _CEWState extends State<CEW> {
     return Scaffold(
       body: InteractiveSheet(
         header: ((context) => _header(context, dmodel, cmodel)),
+        headerColor: AppColors.background(context),
         builder: (context) {
-          return Stack(
+          return ListView(
+            padding: EdgeInsets.zero,
             children: [
-              ListView(
-                padding: EdgeInsets.zero,
-                physics: const AlwaysScrollableScrollPhysics(
-                  parent: BouncingScrollPhysics(),
-                ),
-                children: [
-                  for (int i = 0; i < cmodel.workout.getExercises().length; i++)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16.0),
-                      child: CEWCell(i: i),
-                    ),
-                  const SizedBox(height: 100),
-                ],
+              Consumer<CEWModel>(
+                builder: (context, model, child) {
+                  return CEWConfigure(
+                    exercises: model.workout.getExercises(),
+                    onReorderFinish: (exercises) {
+                      setState(() {
+                        model.workout.setExercises(exercises);
+                      });
+                    },
+                    removeAt: (index) {
+                      setState(() {
+                        model.workout.removeExercise(index);
+                      });
+                    },
+                    isReordering: _isReordering,
+                    onGroupReorder: (int i, List<Exercise> group) {
+                      setState(() {
+                        model.workout.setSuperSets(i, group);
+                      });
+                    },
+                    removeSuperset: (int i, int j) {
+                      setState(() {
+                        model.workout.removeSuperSet(i, j);
+                      });
+                    },
+                    addExercise: (int index, Exercise e) {
+                      setState(() {
+                        model.workout.addExercise(index, e);
+                      });
+                    },
+                    sState: () {
+                      setState(() {});
+                    },
+                  );
+                },
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  color: AppColors.cell(context)[500],
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        children: [
-                          _bottomItem(context, "Re-Order", () {
-                            cupertinoSheet(
-                              context: context,
-                              enableDrag: false,
-                              builder: (context) => const CEWReorder(),
-                            );
-                          }),
-                          const SizedBox(width: 1),
-                          _bottomItem(context, "Add Exercises", () {
-                            cupertinoSheet(
-                              context: context,
-                              builder: (context) => SelectExercise(
-                                onSelect: (e) {
-                                  cmodel.addExercise(
-                                    cmodel.workout.getExercises().length,
-                                    e,
-                                  );
-                                },
-                              ),
-                            );
-                          }),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              const SizedBox(height: 100),
             ],
           );
         },
@@ -160,20 +153,75 @@ class _CEWState extends State<CEW> {
             color: AppColors.text(context),
           ),
           textCapitalization: TextCapitalization.words,
-          labelText: "Title",
+          labelText: "",
           onChanged: (val) => cmodel.setTitle(val),
         ),
-        Field(
-          fieldPadding: const EdgeInsets.symmetric(horizontal: 16),
-          showBackground: false,
-          value: cmodel.workout.description,
-          highlightColor: dmodel.color,
-          charLimit: 150,
-          style: TextStyle(color: AppColors.subtext(context)),
-          labelText: "Description",
-          onChanged: (val) => cmodel.setDescription(val),
+        Row(
+          children: [
+            Expanded(
+              child: _headerButton(
+                context,
+                Icons.description_outlined,
+                () {},
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _headerButton(
+                context,
+                _isReordering ? Icons.check_circle_outline : Icons.reorder,
+                () {
+                  setState(() {
+                    _isReordering = !_isReordering;
+                  });
+                },
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _headerButton(
+                context,
+                Icons.add_circle_outline,
+                () {
+                  cupertinoSheet(
+                    context: context,
+                    builder: (context) => SelectExercise(
+                      onSelect: (e) {
+                        cmodel.addExercise(
+                          cmodel.workout.getExercises().length,
+                          e,
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ],
+    );
+  }
+
+  Widget _headerButton(
+    BuildContext context,
+    IconData icon,
+    VoidCallback onTap,
+  ) {
+    return Clickable(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.cell(context),
+          border: Border.all(color: AppColors.border(context), width: 3),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        padding: EdgeInsets.all(4),
+        child: Icon(
+          icon,
+          color: AppColors.text(context).withValues(alpha: 0.7),
+        ),
+      ),
     );
   }
 

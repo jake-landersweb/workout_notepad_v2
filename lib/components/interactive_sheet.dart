@@ -50,7 +50,7 @@ class _InteractiveSheetState extends State<InteractiveSheet> {
         children: [
           _header(context),
           Divider(
-            color: AppColors.divider(context),
+            color: AppColors.border(context),
           ),
           Expanded(
             child: widget.builder(context),

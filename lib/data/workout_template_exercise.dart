@@ -13,6 +13,8 @@ class WorkoutTemplateExercise extends Exercise {
   late DateTime createdAt;
   late DateTime updatedAt;
 
+  late String _uuid;
+
   WorkoutTemplateExercise({
     required this.id,
     required this.isImport,
@@ -33,7 +35,10 @@ class WorkoutTemplateExercise extends Exercise {
     required super.reps,
     required super.time,
     super.filename,
-  });
+    String? uid,
+  }) {
+    _uuid = uid ?? Uuid().v4();
+  }
 
   @override
   WorkoutTemplateExercise copy() => WorkoutTemplateExercise(
@@ -55,6 +60,7 @@ class WorkoutTemplateExercise extends Exercise {
         sets: sets,
         reps: reps,
         time: time,
+        uid: _uuid,
       );
 
   WorkoutTemplateExercise.fromJson(Map<String, dynamic> json)
@@ -67,12 +73,12 @@ class WorkoutTemplateExercise extends Exercise {
     supersetOrder = json['supersetOrder'];
     createdAt = DateTime.parse(json['createdAt']);
     updatedAt = DateTime.parse(json['updatedAt']);
+    _uuid = Uuid().v4();
   }
 
   @override
   Map<String, dynamic> toMap() {
     return {
-      'id': id,
       'workoutTemplateId': workoutTemplateId,
       'exerciseId': exerciseId,
       'exerciseOrder': exerciseOrder,
@@ -120,6 +126,7 @@ class WorkoutTemplateExercise extends Exercise {
     supersetOrder = 0;
     createdAt = DateTime.now();
     updatedAt = DateTime.now();
+    _uuid = Uuid().v4();
   }
 
   WorkoutExercise toWorkoutExercise() {
@@ -144,6 +151,6 @@ class WorkoutTemplateExercise extends Exercise {
 
   @override
   Comparable getUniqueId() {
-    return id;
+    return _uuid;
   }
 }

@@ -14,6 +14,7 @@ class Clickable extends StatefulWidget {
     this.duration = const Duration(milliseconds: 50),
     this.tappedOpacity = 0.4,
     this.showTap = true,
+    this.disabled = false,
   });
 
   final VoidCallback onTap;
@@ -21,6 +22,7 @@ class Clickable extends StatefulWidget {
   final Duration duration;
   final double tappedOpacity;
   final bool showTap;
+  final bool disabled;
 
   @override
   State<Clickable> createState() => _ClickableState();
@@ -32,6 +34,9 @@ class _ClickableState extends State<Clickable> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.disabled) {
+      return widget.child;
+    }
     if (widget.showTap) {
       return GestureDetector(
         onTap: () => widget.onTap(),

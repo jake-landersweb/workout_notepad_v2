@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/components/root.dart';
+import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
 /// Shows a floating sheet with padding based on the platform
@@ -81,6 +82,7 @@ class FloatingSheet extends StatefulWidget {
     this.icon,
     this.useRoot = false,
     this.childSpace = 8,
+    this.closeText,
   }) : super(key: key);
 
   final String title;
@@ -90,6 +92,7 @@ class FloatingSheet extends StatefulWidget {
   final IconData? icon;
   final bool useRoot;
   final double childSpace;
+  final String? closeText;
 
   @override
   State<FloatingSheet> createState() => _FloatingSheetState();
@@ -124,10 +127,15 @@ class _FloatingSheetState extends State<FloatingSheet> {
                       onTap: () =>
                           Navigator.of(context, rootNavigator: widget.useRoot)
                               .pop(),
-                      child: Icon(
-                        widget.icon ?? Icons.close,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+                      child: widget.closeText == null
+                          ? Icon(
+                              widget.icon ?? Icons.close,
+                              color: Theme.of(context).colorScheme.primary,
+                            )
+                          : Text(
+                              widget.closeText!,
+                              style: ttLabel(context),
+                            ),
                     ),
                   ],
                 ),

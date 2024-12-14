@@ -8,7 +8,7 @@ import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/color.dart';
 import 'package:workout_notepad_v2/views/workouts/create_edit/cew_group_configure.dart';
 
-class CEWConfigure extends StatelessWidget {
+class CEWConfigure<T extends Exercise> extends StatelessWidget {
   const CEWConfigure({
     super.key,
     required this.exercises,
@@ -20,13 +20,13 @@ class CEWConfigure extends StatelessWidget {
     required this.isReordering,
     required this.sState,
   });
-  final List<List<Exercise>> exercises;
-  final void Function(List<List<Exercise>> exercises) onReorderFinish;
+  final List<List<T>> exercises;
+  final void Function(List<List<T>> exercises) onReorderFinish;
   final void Function(int index) removeAt;
   final bool isReordering;
 
   // for groups
-  final void Function(int i, List<Exercise> group) onGroupReorder;
+  final void Function(int i, List<T> group) onGroupReorder;
   final void Function(int i, int j) removeSuperset;
   final void Function(int index, Exercise e) addExercise;
   final VoidCallback sState;
@@ -34,13 +34,15 @@ class CEWConfigure extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
-    return RawReorderableList<List<Exercise>>(
+    return RawReorderableList<List<T>>(
       items: exercises,
       areItemsTheSame: (p0, p1) => p0[0].getUniqueId() == p1[0].getUniqueId(),
       header: const SizedBox(height: 8),
       footer: const SizedBox(height: 0),
       onReorderFinished: (item, from, to, newItems) {
-        onReorderFinish(newItems);
+        List<T> movedSublist = exercises.removeAt(from);
+        exercises.insert(to, movedSublist);
+        onReorderFinish(exercises);
       },
       slideBuilder: (item, index) {
         if (!isReordering) {
@@ -82,15 +84,15 @@ class CEWConfigure extends StatelessWidget {
             onTap: () {
               cupertinoSheet(
                 context: context,
-                builder: (context) => CEWGroupConfigure(
+                builder: (context) => CEWGroupConfigure<T>(
                   group: item,
-                  onReorder: (List<Exercise> group) {
+                  onReorder: (List<T> group) {
                     onGroupReorder(index, group);
                   },
                   removeExercise: (int j) {
                     removeSuperset(index, j);
                   },
-                  addExercise: (int j, Exercise e) {
+                  onAddToGroup: (int j, Exercise e) {
                     addExercise(index, e);
                   },
                   sState: () {},

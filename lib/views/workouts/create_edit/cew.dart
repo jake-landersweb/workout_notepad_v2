@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
-import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/exercises/select_exercise.dart';
 import 'package:workout_notepad_v2/views/workouts/create_edit/cew_configure.dart';
@@ -17,9 +14,11 @@ class CEW extends StatefulWidget {
     super.key,
     this.workout,
     this.onAction,
+    this.updateDatabase = true,
   });
   final Workout? workout;
   final Function(Workout workout)? onAction;
+  final bool updateDatabase;
 
   @override
   State<CEW> createState() => _CEWState();
@@ -116,15 +115,22 @@ class _CEWState extends State<CEW> {
               onTap: () async {
                 var valid = cmodel.isValid();
                 if (valid.v2) {
-                  var response = await cmodel.action();
-                  if (response) {
-                    await dmodel.fetchData();
+                  if (widget.updateDatabase) {
+                    var response = await cmodel.action();
+                    if (response) {
+                      await dmodel.fetchData();
+                      if (widget.onAction != null) {
+                        widget.onAction!(cmodel.workout);
+                      }
+                      Navigator.of(context, rootNavigator: true).pop();
+                    } else {
+                      snackbarErr(context, "There was an unknown issue");
+                    }
+                  } else {
                     if (widget.onAction != null) {
                       widget.onAction!(cmodel.workout);
                     }
                     Navigator.of(context, rootNavigator: true).pop();
-                  } else {
-                    snackbarErr(context, "There was an unknown issue");
                   }
                 } else {
                   snackbarErr(context, valid.v1);
@@ -162,7 +168,42 @@ class _CEWState extends State<CEW> {
               child: _headerButton(
                 context,
                 Icons.description_outlined,
-                () {},
+                () {
+                  showFloatingSheet(
+                      context: context,
+                      builder: (context) {
+                        return FloatingSheet(
+                          title: "Description",
+                          closeText: "Done",
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.cell(context),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 16.0),
+                              child: Field(
+                                fieldPadding:
+                                    const EdgeInsets.symmetric(horizontal: 16),
+                                showBackground: false,
+                                maxLines: 3,
+                                value: cmodel.workout.description,
+                                highlightColor: dmodel.color,
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColors.text(context),
+                                ),
+                                textCapitalization:
+                                    TextCapitalization.sentences,
+                                labelText: "",
+                                onChanged: (val) => cmodel.setDescription(val),
+                              ),
+                            ),
+                          ),
+                        );
+                      });
+                },
               ),
             ),
             const SizedBox(width: 8),
@@ -220,31 +261,6 @@ class _CEWState extends State<CEW> {
         child: Icon(
           icon,
           color: AppColors.text(context).withValues(alpha: 0.7),
-        ),
-      ),
-    );
-  }
-
-  Widget _bottomItem(BuildContext context, String title, VoidCallback onTap) {
-    return Expanded(
-      child: Clickable(
-        onTap: onTap,
-        child: Container(
-          color: AppColors.cell(context)[200],
-          child: SafeArea(
-            top: false,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0),
-              child: Text(
-                title,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-          ),
         ),
       ),
     );

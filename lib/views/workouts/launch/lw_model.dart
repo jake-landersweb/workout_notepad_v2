@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:path_provider/path_provider.dart';
@@ -579,24 +580,24 @@ class LaunchWorkoutModel extends ChangeNotifier {
       }
 
       // create a snapshot of the workout
-      if (dmodel.hasValidSubscription()) {
-        try {
-          var snp = await state.workout.toSnapshot(db);
-          await db.insert("workout_snapshot", snp.toMap());
-        } catch (error) {
-          print(error);
-          NewrelicMobile.instance.recordError(
-            error,
-            StackTrace.current,
-            attributes: {
-              "err_code": "workout_snapshot",
-              "state": jsonEncode(state.toMap()),
-            },
-          );
-          return Tuple2(false,
-              "Your workout was successfully saved, but there was an issue creating a snapshot of the workout. You can safely cancel this workout and not lose progress.");
-        }
-      }
+      // if (dmodel.hasValidSubscription()) {
+      //   try {
+      //     var snp = await state.workout.toSnapshot(db);
+      //     await db.insert("workout_snapshot", snp.toMap());
+      //   } catch (error) {
+      //     print(error);
+      //     NewrelicMobile.instance.recordError(
+      //       error,
+      //       StackTrace.current,
+      //       attributes: {
+      //         "err_code": "workout_snapshot",
+      //         "state": jsonEncode(state.toMap()),
+      //       },
+      //     );
+      //     return Tuple2(false,
+      //         "Your workout was successfully saved, but there was an issue creating a snapshot of the workout. You can safely cancel this workout and not lose progress.");
+      //   }
+      // }
 
       await dmodel.stopWorkout();
       return Tuple2(true, "");
@@ -689,6 +690,55 @@ class LaunchWorkoutModel extends ChangeNotifier {
         response.v2,
         duration: const Duration(seconds: 6),
       );
+    }
+  }
+
+  bool handleEdit(DataModel dmodel, Workout workout) {
+    try {
+      // construct a map of workoutExerciseId
+      Iterable<ExerciseLog> existingLogs = state.exerciseLogs.flattened;
+      print(existingLogs.map((e) => "${e.workoutExerciseId}"));
+
+      // hold a reference of the new logs
+      List<List<ExerciseLog>> newLogs = [];
+
+      var exercises = workout.getExercises() as List<List<WorkoutExercise>>;
+      print(exercises.flattened.map((e) => "${e.workoutExerciseId}"));
+
+      // loop over the new exercises, and attempt to match the log to the
+      for (var group in exercises) {
+        List<ExerciseLog> logGroup = [];
+        for (var exercise in group) {
+          var log = existingLogs.firstWhereOrNull(
+            (l) => l.workoutExerciseId == exercise.workoutExerciseId,
+          );
+          if (log == null) {
+            print("LOG IS NULL");
+            var wl = ExerciseLog.workoutInit(
+              workoutLog: state.wl,
+              exercise: exercise,
+              defaultTag:
+                  dmodel.tags.firstWhereOrNull((element) => element.isDefault),
+            );
+            logGroup.add(wl);
+          } else {
+            logGroup.add(log);
+          }
+        }
+        newLogs.add(logGroup);
+      }
+
+      // set the new values
+      state.exercises = exercises;
+      state.exerciseLogs = newLogs;
+      state.wl.title = workout.title;
+      state.wl.description = workout.description;
+      notifyListeners();
+      return true;
+    } catch (error, stack) {
+      print(error);
+      print(stack);
+      return false;
     }
   }
 }

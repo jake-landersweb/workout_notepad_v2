@@ -7,19 +7,19 @@ import 'package:workout_notepad_v2/utils/color.dart';
 import 'package:workout_notepad_v2/views/exercises/exercise_item_group.dart';
 import 'package:workout_notepad_v2/views/exercises/select_exercise.dart';
 
-class CEWGroupConfigure extends StatelessWidget {
+class CEWGroupConfigure<T extends Exercise> extends StatelessWidget {
   const CEWGroupConfigure({
     super.key,
     required this.group,
     required this.onReorder,
     required this.removeExercise,
-    required this.addExercise,
+    required this.onAddToGroup,
     required this.sState,
   });
-  final List<Exercise> group;
-  final void Function(List<Exercise> group) onReorder;
+  final List<T> group;
+  final void Function(List<T> group) onReorder;
   final void Function(int j) removeExercise;
-  final void Function(int j, Exercise e) addExercise;
+  final void Function(int j, Exercise e) onAddToGroup;
   final VoidCallback sState;
 
   @override
@@ -33,13 +33,15 @@ class CEWGroupConfigure extends StatelessWidget {
       ],
       horizontalSpacing: 0,
       children: [
-        RawReorderableList<Exercise>(
+        RawReorderableList<T>(
           items: group,
           areItemsTheSame: (p0, p1) => p0.getUniqueId() == p1.getUniqueId(),
           header: const SizedBox(height: 16),
           footer: const SizedBox(height: 0),
           onReorderFinished: (item, from, to, newItems) {
-            onReorder(newItems);
+            T movedSublist = group.removeAt(from);
+            group.insert(to, movedSublist);
+            onReorder(group);
           },
           slideBuilder: (item, index) {
             return ActionPane(
@@ -118,7 +120,7 @@ class CEWGroupConfigure extends StatelessWidget {
                 context: context,
                 builder: (context) => SelectExercise(
                   onSelect: (e) {
-                    addExercise(group.length, e);
+                    onAddToGroup(group.length, e);
                   },
                 ),
               );

@@ -70,7 +70,7 @@ class Workout {
         updated: updated,
         categories: [for (var i in categories) i],
         exercises: [
-          for (var i in _exercises) [for (var j in i) j.clone(this)]
+          for (var i in _exercises) [for (var j in i) j.copy()]
         ],
       );
 
@@ -267,19 +267,30 @@ class Workout {
   }
 
   void setExercises(List<List<Exercise>> exercises) {
-    _exercises = exercises
-        .map((group) =>
-            group.map((e) => WorkoutExercise.fromExercise(this, e)).toList())
-        .toList();
+    print(exercises.runtimeType);
+    if (exercises is List<List<WorkoutExercise>>) {
+      print("ARE WORKOUT EXERCISES");
+      _exercises = exercises;
+    } else {
+      print("ARE NOT WORKOUT EXERCISES");
+      _exercises = exercises
+          .map((group) =>
+              group.map((e) => WorkoutExercise.fromExercise(this, e)).toList())
+          .toList();
+    }
   }
 
   void setSuperSets(int i, List<Exercise> exercises) {
-    _exercises[i] =
-        exercises.map((e) => WorkoutExercise.fromExercise(this, e)).toList();
+    if (exercises is List<WorkoutExercise>) {
+      _exercises[i] = exercises;
+    } else {
+      _exercises[i] =
+          exercises.map((e) => WorkoutExercise.fromExercise(this, e)).toList();
+    }
   }
 
   void addExercise(int i, Exercise e) {
-    var we = WorkoutExercise.fromExercise(this, e);
+    var we = e is WorkoutExercise ? e : WorkoutExercise.fromExercise(this, e);
     while (_exercises.length <= i) {
       _exercises.add([]);
     }

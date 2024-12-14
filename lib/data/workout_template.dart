@@ -248,23 +248,34 @@ class WorkoutTemplate extends Workout {
 
   @override
   void setExercises(List<List<Exercise>> exercises) {
-    _exercises = exercises
-        .map((group) => group
-            .map((e) => WorkoutTemplateExercise.fromExercise(this, e))
-            .toList())
-        .toList();
+    if (exercises is List<List<WorkoutTemplateExercise>>) {
+      _exercises = exercises;
+    } else {
+      _exercises = exercises
+          .map((group) => group
+              .map((e) => WorkoutTemplateExercise.fromExercise(this, e))
+              .toList())
+          .toList();
+    }
   }
 
   @override
   void setSuperSets(int i, List<Exercise> exercises) {
-    _exercises[i] = exercises
-        .map((e) => WorkoutTemplateExercise.fromExercise(this, e))
-        .toList();
+    if (exercises is List<WorkoutTemplateExercise>) {
+      _exercises[i] = exercises;
+    } else {
+      _exercises[i] = exercises
+          .map((e) => WorkoutTemplateExercise.fromExercise(this, e))
+          .toList();
+    }
   }
 
   @override
   void addExercise(int i, Exercise e) {
-    var we = WorkoutTemplateExercise.fromExercise(this, e);
+    print("CALLING TEMPLATE EXERCISE");
+    var we = e is WorkoutTemplateExercise
+        ? e
+        : WorkoutTemplateExercise.fromExercise(this, e);
     while (_exercises.length <= i) {
       _exercises.add([]);
     }

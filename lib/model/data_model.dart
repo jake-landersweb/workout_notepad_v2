@@ -822,13 +822,12 @@ class DataModel extends ChangeNotifier {
       List<ExerciseLog> logs = [];
       for (int j = 0; j < workoutState!.exercises[i].length; j++) {
         // create the log group for each exercise
-        logs.add(
-          ExerciseLog.workoutInit(
-            workoutLog: workoutState!.wl,
-            exercise: workoutState!.exercises[i][j],
-            defaultTag: tags.firstWhereOrNull((element) => element.isDefault),
-          ),
+        var wl = ExerciseLog.workoutInit(
+          workoutLog: workoutState!.wl,
+          exercise: workoutState!.exercises[i][j],
+          defaultTag: tags.firstWhereOrNull((element) => element.isDefault),
         );
+        logs.add(wl);
       }
       workoutState!.exerciseLogs.add(logs);
     }

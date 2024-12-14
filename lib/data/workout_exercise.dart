@@ -1,6 +1,5 @@
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/data/root.dart';
-import 'package:workout_notepad_v2/data/workout_template.dart';
 
 class WorkoutExercise extends Exercise {
   late String workoutExerciseId;

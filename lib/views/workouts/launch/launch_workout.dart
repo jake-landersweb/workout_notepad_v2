@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
@@ -10,11 +11,13 @@ import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/data/collection.dart';
+import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/workouts/create_edit/root.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/lw_cell.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/lw_configure.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/lw_end.dart';
@@ -225,22 +228,30 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
             ),
             Clickable(
               onTap: () {
-                cupertinoSheet(
+                showMaterialModalBottomSheet(
                   context: context,
-                  builder: (context) => LWConfigure(
-                    exercises: lmodel.state.exercises,
-                    exerciseLogs: lmodel.state.exerciseLogs,
-                    workout: lmodel.state.workout,
-                    workoutLog: lmodel.state.wl,
-                    onSave: (exercises, logs, newTitle) async {
-                      lmodel.state.exercises = exercises;
-                      lmodel.state.exerciseLogs = logs;
-                      lmodel.state.wl.title = newTitle;
-                      lmodel.refresh();
-                      // await dmodel.refreshWorkouts();
-                      return true;
-                    },
-                  ),
+                  useRootNavigator: true,
+                  builder: (context) {
+                    return CEW(
+                      workout: Workout(
+                        workoutId: "",
+                        title: lmodel.state.wl.title,
+                        description: lmodel.state.wl.description,
+                        icon: "",
+                        created: "",
+                        updated: "",
+                        template: false,
+                        categories: [],
+                        exercises: lmodel.state.exercises,
+                      ),
+                      updateDatabase: false,
+                      onAction: (workout) {
+                        if (!lmodel.handleEdit(dmodel, workout)) {
+                          snackbarErr(context, "Failed to save your changes");
+                        }
+                      },
+                    );
+                  },
                 );
               },
               child: Padding(
@@ -251,134 +262,13 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
                 ),
               ),
             ),
-            // PopupMenuButton<PopupState>(
-            //   padding: EdgeInsets.zero,
-            //   icon: Icon(
-            //     Icons.more_vert_rounded,
-            //     color: AppColors.subtext(context),
-            //   ),
-            //   // Callback that sets the selected popup menu item.
-            //   onSelected: (PopupState item) async {
-            //     switch (item) {
-            //       case PopupState.minimize:
-            //         // hide the workout launch view
-            //         Navigator.of(context, rootNavigator: true).pop();
-            //         break;
-            //       case PopupState.finish:
-            //         showAlert(
-            //           context: context,
-            //           title: "Are You Sure?",
-            //           body: const Text(
-            //               "Once you finish a workout, you cannot go back and modify it."),
-            //           cancelText: "Go Back",
-            //           onCancel: () {},
-            //           submitBolded: true,
-            //           submitText: "Finish",
-            //           onSubmit: () async {
-            //             Navigator.of(context, rootNavigator: true).pop();
-            //             await lmodel.handleFinish(context, dmodel);
-            //           },
-            //         );
-            //         break;
-            //       case PopupState.cancel:
-            //         showAlert(
-            //           context: context,
-            //           title: "Are You Sure?",
-            //           body: const Text(
-            //               "If you cancel your workout, all progress will be lost."),
-            //           cancelText: "Go Back",
-            //           onCancel: () {},
-            //           cancelBolded: true,
-            //           submitColor: Colors.red,
-            //           submitText: "Yes",
-            //           onSubmit: () {
-            //             Navigator.of(context, rootNavigator: true).pop();
-            //             dmodel.stopWorkout(isCancel: true);
-            //           },
-            //         );
-            //         break;
-            //       case PopupState.configure:
-            //         cupertinoSheet(
-            //           context: context,
-            //           builder: (context) => LWConfigure(
-            //             exercises: lmodel.state.exercises,
-            //             exerciseLogs: lmodel.state.exerciseLogs,
-            //             workout: lmodel.state.workout,
-            //             workoutLog: lmodel.state.wl,
-            //             onSave: (exercises, logs) async {
-            //               lmodel.state.exercises = exercises;
-            //               lmodel.state.exerciseLogs = logs;
-            //               lmodel.refresh();
-            //               await dmodel.refreshWorkouts();
-            //               return true;
-            //             },
-            //           ),
-            //         );
-            //     }
-            //   },
-            //   itemBuilder: (BuildContext context) =>
-            //       <PopupMenuEntry<PopupState>>[
-            //     PopupMenuItem<PopupState>(
-            //       value: PopupState.minimize,
-            //       child: Row(
-            //         children: [
-            //           Icon(
-            //             Icons.minimize_rounded,
-            //             color: Theme.of(context).colorScheme.primary,
-            //           ),
-            //           const SizedBox(width: 8),
-            //           const Text("Minimize"),
-            //         ],
-            //       ),
-            //     ),
-            //     PopupMenuItem<PopupState>(
-            //       value: PopupState.cancel,
-            //       child: Row(
-            //         children: [
-            //           Icon(
-            //             Icons.close_rounded,
-            //             color: Theme.of(context).colorScheme.primary,
-            //           ),
-            //           const SizedBox(width: 8),
-            //           const Text("Cancel"),
-            //         ],
-            //       ),
-            //     ),
-            //     PopupMenuItem<PopupState>(
-            //       value: PopupState.finish,
-            //       child: Row(
-            //         children: [
-            //           Icon(
-            //             Icons.star_rounded,
-            //             color: Theme.of(context).colorScheme.primary,
-            //           ),
-            //           const SizedBox(width: 8),
-            //           const Text("Finish"),
-            //         ],
-            //       ),
-            //     ),
-            //     PopupMenuItem<PopupState>(
-            //       value: PopupState.configure,
-            //       child: Row(
-            //         children: [
-            //           Icon(
-            //             Icons.settings_rounded,
-            //             color: Theme.of(context).colorScheme.primary,
-            //           ),
-            //           const SizedBox(width: 8),
-            //           const Text("Configure"),
-            //         ],
-            //       ),
-            //     ),
-            //   ],
-            // ),
           ],
         ),
-        if (lmodel.state.workout.description?.isNotEmpty ?? false)
+        if (lmodel.state.wl.description?.isNotEmpty ?? false)
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: Text(
-              lmodel.state.workout.description!,
+              lmodel.state.wl.description!,
               style: ttBody(
                 context,
                 color: AppColors.subtext(context),

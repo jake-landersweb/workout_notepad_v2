@@ -59,8 +59,9 @@ class WrappedButton extends StatelessWidget {
         color: getBg(context),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-            color: borderColor ?? getBg(context) ?? Colors.transparent,
-            width: 1),
+          color: borderColor ?? getBg(context) ?? Colors.transparent,
+          width: 3,
+        ),
       ),
       child: ConstrainedBox(
         constraints: BoxConstraints(minHeight: height ?? 50),

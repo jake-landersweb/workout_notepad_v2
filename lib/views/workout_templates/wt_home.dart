@@ -7,6 +7,7 @@ import 'package:workout_notepad_v2/model/data_model.dart';
 import 'package:workout_notepad_v2/views/workout_templates/workout_template_model.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
+import 'package:workout_notepad_v2/views/workout_templates/wt_search.dart';
 
 class WTHome extends StatefulWidget {
   const WTHome({super.key});
@@ -27,6 +28,7 @@ class _WTHomeState extends State<WTHome> {
 
   @override
   Widget build(BuildContext context) {
+    var dmodel = context.watch<DataModel>();
     return Consumer<WorkoutTemplateModel>(
       builder: (context, model, child) {
         return HeaderBar(
@@ -38,6 +40,11 @@ class _WTHomeState extends State<WTHome> {
           },
           children: [
             const SizedBox(height: 16),
+            model.header(
+              context: context,
+              dmodel: dmodel,
+            ),
+            const SizedBox(height: 32),
             _build(context, model),
           ],
         );

@@ -7,7 +7,6 @@ import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/data/workout_snapshot.dart';
 import 'package:workout_notepad_v2/model/root.dart';
-import 'package:workout_notepad_v2/utils/color.dart';
 import 'package:workout_notepad_v2/utils/icons.dart';
 
 class WorkoutCloneObject {

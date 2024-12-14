@@ -1,6 +1,5 @@
 // ignore_for_file: must_be_immutable
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
@@ -154,6 +153,8 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
                 decoration: BoxDecoration(
                   color: AppColors.cell(context),
                   borderRadius: BorderRadius.circular(10),
+                  border:
+                      Border.all(color: AppColors.border(context), width: 3),
                 ),
                 child: Column(
                   children: [
@@ -391,6 +392,7 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: AppColors.border(context), width: 3),
         ),
         constraints: BoxConstraints(
           maxWidth: MediaQuery.of(context).size.width / 2.5,

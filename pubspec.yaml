@@ -109,6 +109,7 @@ flutter:
     - sql/migration_2.sql
     - sql/migration_3.sql
     - sql/migration_4.sql
+    - sql/migration_5.sql
     
     - assets/icons/unavailable-96.png
     - assets/icons/bench-press-96.png

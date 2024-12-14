@@ -1,6 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
@@ -8,10 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/blurred_container.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
-import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/data/collection.dart';
-import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/model/root.dart';
@@ -19,7 +16,6 @@ import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/workouts/create_edit/root.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/lw_cell.dart';
-import 'package:workout_notepad_v2/views/workouts/launch/lw_configure.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/lw_end.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/lw_model.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/lw_time.dart';
@@ -281,6 +277,7 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
             decoration: BoxDecoration(
               color: AppColors.cell(context),
               borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.border(context), width: 3),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,

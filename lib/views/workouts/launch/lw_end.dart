@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/exercises/select_exercise.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/lw_model.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/lw_save_template.dart';
@@ -33,6 +34,7 @@ class _LWEndState extends State<LWEnd> {
               title: "Add Another Exercise",
               icon: Icons.add,
               iconBg: Colors.green[300],
+              borderColor: AppColors.border(context),
               onTap: () {
                 cupertinoSheet(
                   context: context,
@@ -55,6 +57,7 @@ class _LWEndState extends State<LWEnd> {
               title: "Save As Template",
               icon: Icons.splitscreen,
               iconBg: Colors.blue[300]!,
+              borderColor: AppColors.border(context),
               onTap: () async {
                 await showFloatingSheet(
                   context: context,
@@ -69,6 +72,7 @@ class _LWEndState extends State<LWEnd> {
               title: "Cancel",
               icon: Icons.cancel_outlined,
               iconBg: Colors.red[300]!,
+              borderColor: AppColors.border(context),
               onTap: () async {
                 await showAlert(
                   context: context,
@@ -92,6 +96,7 @@ class _LWEndState extends State<LWEnd> {
               title: "Finish Exercise",
               icon: Icons.star_rounded,
               iconBg: Colors.orange[200]!,
+              borderColor: AppColors.border(context),
               onTap: () async {
                 await showAlert(
                   context: context,

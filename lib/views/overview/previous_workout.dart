@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
@@ -49,11 +48,10 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
         }
         _weightDistribution.add(weight);
       }
-
-      setState(() {
-        _isLoading = false;
-      });
     }
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -103,226 +101,233 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
       return const Center(child: LoadingIndicator());
     }
     if (_wl == null) {
-      return Center(
-        child: Text("No information available.", style: ttcaption(context)),
+      return Padding(
+        padding: const EdgeInsets.all(32.0),
+        child: Center(
+          child: Text(
+            "Hey! If you want information here, you must workout!",
+            style: ttcaption(context),
+            textAlign: TextAlign.center,
+          ),
+        ),
       );
     }
     // return _view2(context, _wl!);
     return _view(context, _wl!);
   }
 
-  Widget _view2(BuildContext context, WorkoutLog log) {
-    return Column(
-      children: [
-        Expanded(
-          flex: 4,
-          child: Row(
-            children: [
-              Expanded(
-                flex: 3,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .primary
-                        .withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: AppColors.cell(context),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          padding: EdgeInsets.all(8),
-                          child: Icon(LineIcons.clock),
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          formatHHMMSS(log.duration),
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                        Text(
-                          "duration",
-                          style: ttBody(
-                            context,
-                            color:
-                                AppColors.text(context).withValues(alpha: 0.5),
-                            fontWeight: FontWeight.w600,
-                            height: 0.97,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                flex: 4,
-                child: Column(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.blue.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Center(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: AppColors.cell(context),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                padding: EdgeInsets.all(8),
-                                child: Icon(LineIcons.dumbbell),
-                              ),
-                              const SizedBox(width: 14),
-                              Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    log.exerciseLogs.length.toString(),
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w900,
-                                      height: 0.95,
-                                    ),
-                                  ),
-                                  Text(
-                                    "exercises",
-                                    style: ttBody(
-                                      context,
-                                      color: AppColors.text(context)
-                                          .withValues(alpha: 0.5),
-                                      fontWeight: FontWeight.w600,
-                                      height: 0.95,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Expanded(
-                      flex: 2,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.divider(context),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Center(
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: AppColors.cell(context),
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                padding: EdgeInsets.all(8),
-                                child: Icon(LineIcons.barChartAlt),
-                              ),
-                              const SizedBox(width: 14),
-                              Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    _getTotalReps(log).toString(),
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w900,
-                                      height: 0.95,
-                                    ),
-                                  ),
-                                  Text(
-                                    "total reps",
-                                    style: ttBody(
-                                      context,
-                                      color: AppColors.text(context)
-                                          .withOpacity(0.5),
-                                      fontWeight: FontWeight.w600,
-                                      height: 0.95,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 8),
-        Expanded(
-          flex: 3,
-          child: Container(
-            decoration: BoxDecoration(
-              color: AppColors.cell(context),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        "total",
-                        style: ttBody(
-                          context,
-                          color: AppColors.text(context).withValues(alpha: 0.5),
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      Text(
-                        "${_getTotalWeight(log)} lbs",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: _weightBySet(context, log),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget _view2(BuildContext context, WorkoutLog log) {
+  //   return Column(
+  //     children: [
+  //       Expanded(
+  //         flex: 4,
+  //         child: Row(
+  //           children: [
+  //             Expanded(
+  //               flex: 3,
+  //               child: Container(
+  //                 decoration: BoxDecoration(
+  //                   color: Theme.of(context)
+  //                       .colorScheme
+  //                       .primary
+  //                       .withValues(alpha: 0.15),
+  //                   borderRadius: BorderRadius.circular(20),
+  //                 ),
+  //                 child: Center(
+  //                   child: Column(
+  //                     mainAxisSize: MainAxisSize.min,
+  //                     crossAxisAlignment: CrossAxisAlignment.center,
+  //                     children: [
+  //                       Container(
+  //                         decoration: BoxDecoration(
+  //                           color: AppColors.cell(context),
+  //                           borderRadius: BorderRadius.circular(15),
+  //                         ),
+  //                         padding: EdgeInsets.all(8),
+  //                         child: Icon(LineIcons.clock),
+  //                       ),
+  //                       const SizedBox(height: 10),
+  //                       Text(
+  //                         formatHHMMSS(log.duration),
+  //                         style: TextStyle(
+  //                           fontSize: 20,
+  //                           fontWeight: FontWeight.w900,
+  //                         ),
+  //                       ),
+  //                       Text(
+  //                         "duration",
+  //                         style: ttBody(
+  //                           context,
+  //                           color:
+  //                               AppColors.text(context).withValues(alpha: 0.5),
+  //                           fontWeight: FontWeight.w600,
+  //                           height: 0.97,
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //             const SizedBox(width: 8),
+  //             Expanded(
+  //               flex: 4,
+  //               child: Column(
+  //                 children: [
+  //                   Expanded(
+  //                     flex: 2,
+  //                     child: Container(
+  //                       decoration: BoxDecoration(
+  //                         color: Colors.blue.withValues(alpha: 0.15),
+  //                         borderRadius: BorderRadius.circular(20),
+  //                       ),
+  //                       child: Center(
+  //                         child: Row(
+  //                           mainAxisSize: MainAxisSize.min,
+  //                           crossAxisAlignment: CrossAxisAlignment.center,
+  //                           children: [
+  //                             Container(
+  //                               decoration: BoxDecoration(
+  //                                 color: AppColors.cell(context),
+  //                                 borderRadius: BorderRadius.circular(15),
+  //                               ),
+  //                               padding: EdgeInsets.all(8),
+  //                               child: Icon(LineIcons.dumbbell),
+  //                             ),
+  //                             const SizedBox(width: 14),
+  //                             Column(
+  //                               mainAxisSize: MainAxisSize.min,
+  //                               crossAxisAlignment: CrossAxisAlignment.start,
+  //                               children: [
+  //                                 Text(
+  //                                   log.exerciseLogs.length.toString(),
+  //                                   style: TextStyle(
+  //                                     fontSize: 18,
+  //                                     fontWeight: FontWeight.w900,
+  //                                     height: 0.95,
+  //                                   ),
+  //                                 ),
+  //                                 Text(
+  //                                   "exercises",
+  //                                   style: ttBody(
+  //                                     context,
+  //                                     color: AppColors.text(context)
+  //                                         .withValues(alpha: 0.5),
+  //                                     fontWeight: FontWeight.w600,
+  //                                     height: 0.95,
+  //                                   ),
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   const SizedBox(height: 8),
+  //                   Expanded(
+  //                     flex: 2,
+  //                     child: Container(
+  //                       decoration: BoxDecoration(
+  //                         color: AppColors.divider(context),
+  //                         borderRadius: BorderRadius.circular(20),
+  //                       ),
+  //                       child: Center(
+  //                         child: Row(
+  //                           mainAxisSize: MainAxisSize.min,
+  //                           crossAxisAlignment: CrossAxisAlignment.center,
+  //                           children: [
+  //                             Container(
+  //                               decoration: BoxDecoration(
+  //                                 color: AppColors.cell(context),
+  //                                 borderRadius: BorderRadius.circular(15),
+  //                               ),
+  //                               padding: EdgeInsets.all(8),
+  //                               child: Icon(LineIcons.barChartAlt),
+  //                             ),
+  //                             const SizedBox(width: 14),
+  //                             Column(
+  //                               mainAxisSize: MainAxisSize.min,
+  //                               crossAxisAlignment: CrossAxisAlignment.start,
+  //                               children: [
+  //                                 Text(
+  //                                   _getTotalReps(log).toString(),
+  //                                   style: TextStyle(
+  //                                     fontSize: 18,
+  //                                     fontWeight: FontWeight.w900,
+  //                                     height: 0.95,
+  //                                   ),
+  //                                 ),
+  //                                 Text(
+  //                                   "total reps",
+  //                                   style: ttBody(
+  //                                     context,
+  //                                     color: AppColors.text(context)
+  //                                         .withOpacity(0.5),
+  //                                     fontWeight: FontWeight.w600,
+  //                                     height: 0.95,
+  //                                   ),
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //       const SizedBox(height: 8),
+  //       Expanded(
+  //         flex: 3,
+  //         child: Container(
+  //           decoration: BoxDecoration(
+  //             color: AppColors.cell(context),
+  //             borderRadius: BorderRadius.circular(20),
+  //           ),
+  //           child: Row(
+  //             children: [
+  //               Padding(
+  //                 padding: const EdgeInsets.all(16.0),
+  //                 child: Column(
+  //                   mainAxisSize: MainAxisSize.min,
+  //                   crossAxisAlignment: CrossAxisAlignment.center,
+  //                   children: [
+  //                     Text(
+  //                       "total",
+  //                       style: ttBody(
+  //                         context,
+  //                         color: AppColors.text(context).withValues(alpha: 0.5),
+  //                         fontWeight: FontWeight.w600,
+  //                       ),
+  //                     ),
+  //                     Text(
+  //                       "${_getTotalWeight(log)} lbs",
+  //                       style: TextStyle(
+  //                         fontSize: 18,
+  //                         fontWeight: FontWeight.w900,
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //               Expanded(
+  //                 child: Padding(
+  //                   padding: const EdgeInsets.all(8.0),
+  //                   child: _weightBySet(context, log),
+  //                 ),
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _weightBySet(
     BuildContext context,
@@ -511,20 +516,20 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
                             previousValue + element.reps)));
   }
 
-  int _getTotalWeight(WorkoutLog log) {
-    return log.exerciseLogs.fold(
-        0,
-        (previousValue, element) =>
-            previousValue +
-            element.fold(
-                0,
-                (previousValue, element) =>
-                    previousValue +
-                    element.metadata.fold(
-                        0,
-                        (previousValue, element) =>
-                            previousValue + element.weight)));
-  }
+  // int _getTotalWeight(WorkoutLog log) {
+  //   return log.exerciseLogs.fold(
+  //       0,
+  //       (previousValue, element) =>
+  //           previousValue +
+  //           element.fold(
+  //               0,
+  //               (previousValue, element) =>
+  //                   previousValue +
+  //                   element.metadata.fold(
+  //                       0,
+  //                       (previousValue, element) =>
+  //                           previousValue + element.weight)));
+  // }
 
   // double _getNumSetsNotWarmup(WorkoutLog log) {
   //   return log.exerciseLogs.fold(

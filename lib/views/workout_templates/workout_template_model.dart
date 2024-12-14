@@ -1,23 +1,30 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_template.dart';
 import 'package:workout_notepad_v2/model/client.dart';
 import 'package:http/http.dart' as http;
 import 'package:workout_notepad_v2/model/root.dart';
 
 class WorkoutTemplateModel extends ChangeNotifier {
-  WorkoutTemplateModel();
+  WorkoutTemplateModel() {
+    textEditingController = TextEditingController()
+      ..addListener(() {
+        _onTextChanged();
+      });
+  }
 
   final client = GoClient(client: http.Client());
 
   List<WorkoutTemplate>? remoteTemplates;
   LoadingStatus remoteTemplateStatus = LoadingStatus.loading;
 
+  late TextEditingController textEditingController;
+  Timer? _debounce;
+  List<String> categories = [];
+
   Future<List<WorkoutTemplate>?> fetchRemoteTemplates({
-    String? searchText,
-    List<Category>? categories,
     bool reload = false,
   }) async {
     try {
@@ -26,12 +33,11 @@ class WorkoutTemplateModel extends ChangeNotifier {
         remoteTemplateStatus = LoadingStatus.loading;
         notifyListeners();
         String path = "/v2/templates";
-        if ((searchText ?? "").isNotEmpty) {
-          path = "$path?searchText=$searchText";
+        if (textEditingController.text.isNotEmpty) {
+          path = "$path?searchText=${textEditingController.text}";
         }
-        if ((categories ?? []).isNotEmpty) {
-          path =
-              "$path?categories=${categories!.map((i) => i.categoryId).toList()}";
+        if (categories.isNotEmpty) {
+          path = "$path?categories=${categories.join(",")}";
         }
         var response = await client.fetch(path);
         if (response.statusCode != 200) {
@@ -66,5 +72,12 @@ class WorkoutTemplateModel extends ChangeNotifier {
     required int id,
   }) {
     throw UnimplementedError();
+  }
+
+  void _onTextChanged() {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      fetchRemoteTemplates(reload: true);
+    });
   }
 }

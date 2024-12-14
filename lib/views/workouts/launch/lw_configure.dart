@@ -107,6 +107,7 @@ class _LWConfigureState extends State<LWConfigure> {
           exercises: _exercises,
           onReorderFinish: (exercises) {
             setState(() {
+              // ignore: unnecessary_cast
               _exercises = exercises as List<List<WorkoutExercise>>;
             });
           },

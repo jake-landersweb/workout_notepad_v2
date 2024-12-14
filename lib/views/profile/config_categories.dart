@@ -1,7 +1,5 @@
 import 'package:animated_list_plus/animated_list_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:line_icons/line_icons.dart';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
@@ -78,34 +76,34 @@ class _ConfigureCategoriesState extends State<ConfigureCategories> {
                         ..addAll(newItems);
                     });
                   },
-                  slideBuilder: (item, index) {
-                    return ActionPane(
-                      extentRatio: 0.3,
-                      motion: const DrawerMotion(),
-                      children: [
-                        Expanded(
-                          child: Row(children: [
-                            SlidableAction(
-                              onPressed: (context) async {
-                                await Future.delayed(
-                                  const Duration(milliseconds: 100),
-                                );
-                                setState(() {
-                                  _categories.removeAt(index);
-                                });
-                              },
-                              icon: LineIcons.alternateTrash,
-                              label: "Delete",
-                              foregroundColor:
-                                  Theme.of(context).colorScheme.onError,
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.error,
-                            ),
-                          ]),
-                        ),
-                      ],
-                    );
-                  },
+                  // slideBuilder: (item, index) {
+                  //   return ActionPane(
+                  //     extentRatio: 0.3,
+                  //     motion: const DrawerMotion(),
+                  //     children: [
+                  //       Expanded(
+                  //         child: Row(children: [
+                  //           SlidableAction(
+                  //             onPressed: (context) async {
+                  //               await Future.delayed(
+                  //                 const Duration(milliseconds: 100),
+                  //               );
+                  //               setState(() {
+                  //                 _categories.removeAt(index);
+                  //               });
+                  //             },
+                  //             icon: LineIcons.alternateTrash,
+                  //             label: "Delete",
+                  //             foregroundColor:
+                  //                 Theme.of(context).colorScheme.onError,
+                  //             backgroundColor:
+                  //                 Theme.of(context).colorScheme.error,
+                  //           ),
+                  //         ]),
+                  //       ),
+                  //     ],
+                  //   );
+                  // },
                   builder: (item, index, handle, inDrag) {
                     return Padding(
                       padding: const EdgeInsets.only(left: 16),

@@ -170,39 +170,39 @@ class _CEWState extends State<CEW> {
                 Icons.description_outlined,
                 () {
                   showFloatingSheet(
-                      context: context,
-                      builder: (context) {
-                        return FloatingSheet(
-                          title: "Description",
-                          closeText: "Done",
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: AppColors.cell(context),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 16.0),
-                              child: Field(
-                                fieldPadding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                showBackground: false,
-                                maxLines: 3,
-                                value: cmodel.workout.description,
-                                highlightColor: dmodel.color,
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.text(context),
-                                ),
-                                textCapitalization:
-                                    TextCapitalization.sentences,
-                                labelText: "",
-                                onChanged: (val) => cmodel.setDescription(val),
+                    context: context,
+                    builder: (context) {
+                      return FloatingSheet(
+                        title: "Description",
+                        closeText: "Done",
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.cell(context),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 16.0),
+                            child: Field(
+                              fieldPadding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              showBackground: false,
+                              maxLines: 3,
+                              value: cmodel.workout.description,
+                              highlightColor: dmodel.color,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.text(context),
                               ),
+                              textCapitalization: TextCapitalization.sentences,
+                              labelText: "",
+                              onChanged: (val) => cmodel.setDescription(val),
                             ),
                           ),
-                        );
-                      });
+                        ),
+                      );
+                    },
+                  );
                 },
               ),
             ),

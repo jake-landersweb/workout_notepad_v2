@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/root.dart';
-import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/data/workout_template.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
@@ -217,43 +216,43 @@ class _OverviewHomeState extends State<OverviewHome> {
     );
   }
 
-  Widget _templates2(BuildContext context, DataModel dmodel) {
-    List<Workout> _all = dmodel.workouts + dmodel.defaultWorkouts;
+  // Widget _templates2(BuildContext context, DataModel dmodel) {
+  //   List<Workout> _all = dmodel.workouts + dmodel.defaultWorkouts;
 
-    return Section(
-      "My Templates",
-      trailingWidget: Container(),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: [
-            for (var w in _all)
-              Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.cell(context),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  height: MediaQuery.of(context).size.height * 0.23,
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          Text(w.title, style: ttTitle(context)),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
+  //   return Section(
+  //     "My Templates",
+  //     trailingWidget: Container(),
+  //     child: SingleChildScrollView(
+  //       scrollDirection: Axis.horizontal,
+  //       child: Row(
+  //         children: [
+  //           for (var w in _all)
+  //             Padding(
+  //               padding: const EdgeInsets.only(right: 8.0),
+  //               child: Container(
+  //                 decoration: BoxDecoration(
+  //                   color: AppColors.cell(context),
+  //                   borderRadius: BorderRadius.circular(20),
+  //                 ),
+  //                 height: MediaQuery.of(context).size.height * 0.23,
+  //                 child: AspectRatio(
+  //                   aspectRatio: 1,
+  //                   child: Padding(
+  //                     padding: const EdgeInsets.all(8.0),
+  //                     child: Column(
+  //                       children: [
+  //                         Text(w.title, style: ttTitle(context)),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget getIcon(DataModel dmodel, String categoryId) {
     var match = dmodel.categories.firstWhere(

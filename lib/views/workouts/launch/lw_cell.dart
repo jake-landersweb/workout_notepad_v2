@@ -18,6 +18,7 @@ import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/exercises/logs/el_overview_v2.dart';
 import 'package:workout_notepad_v2/views/exercises/select_exercise.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/lw_model.dart';
@@ -53,6 +54,7 @@ class _LWCellState extends State<LWCell> {
             title: "Add Super-set",
             type: WrappedButtonType.standard,
             icon: Icons.add,
+            borderColor: AppColors.border(context),
             onTap: () {
               cupertinoSheet(
                 context: context,
@@ -88,7 +90,7 @@ class _LWCellState extends State<LWCell> {
         Section(
           e.title,
           allowsCollapse: true,
-          initOpen: false,
+          initOpen: true,
           headerPadding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
           child: Column(
             children: [
@@ -116,13 +118,16 @@ class _LWCellState extends State<LWCell> {
                     "Graphs",
                     () {
                       cupertinoSheet(
-                        context: context,
-                        builder: (context) => ExerciseLogs(
-                          exerciseId:
-                              lmodel.state.exercises[widget.i][j].exerciseId,
-                          isInteractive: false,
-                        ),
-                      );
+                          context: context,
+                          builder: (context) => ElOverviewV2(
+                                exercise: lmodel.state.exercises[widget.i][j],
+                              )
+                          // builder: (context) => ExerciseLogs(
+                          //   exerciseId:
+                          //       lmodel.state.exercises[widget.i][j].exerciseId,
+                          //   isInteractive: false,
+                          // ),
+                          );
                     },
                   ),
                 ],
@@ -244,59 +249,58 @@ class _LWCellState extends State<LWCell> {
               },
             ),
           ),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(15),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColors.cell(context),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _default(context, lmodel, j),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 4,
-                          child: Container(),
-                        ),
-                        Clickable(
-                          onTap: () => lmodel.addSet(
-                            widget.i,
-                            j,
-                            dmodel.tags.firstWhereOrNull(
-                                (element) => element.isDefault),
-                          ),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Theme.of(context).colorScheme.primary,
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Icon(
-                                Icons.add,
-                                color: AppColors.cell(context),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 6,
-                          child: Container(),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: AppColors.cell(context),
+                border: Border.all(color: AppColors.border(context), width: 3),
+                borderRadius: BorderRadius.circular(15),
               ),
-            ],
-          ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _default(context, lmodel, j),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 4,
+                        child: Container(),
+                      ),
+                      Clickable(
+                        onTap: () => lmodel.addSet(
+                          widget.i,
+                          j,
+                          dmodel.tags
+                              .firstWhereOrNull((element) => element.isDefault),
+                        ),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(4.0),
+                            child: Icon(
+                              Icons.add,
+                              color: AppColors.cell(context),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        flex: 6,
+                        child: Container(),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -313,8 +317,9 @@ class _LWCellState extends State<LWCell> {
         onTap: onTap,
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
             color: AppColors.cell(context),
+            border: Border.all(color: AppColors.border(context), width: 3),
+            borderRadius: BorderRadius.circular(10),
           ),
           padding: EdgeInsets.all(8),
           child: Center(

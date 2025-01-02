@@ -7,6 +7,7 @@ import 'package:workout_notepad_v2/components/root.dart';
 
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/logs/insights_home.dart';
 import 'package:workout_notepad_v2/views/workout_templates/wt_home.dart';
 import 'package:workout_notepad_v2/views/logs/post_workout.dart';
 import 'package:workout_notepad_v2/views/logs/root.dart';
@@ -17,7 +18,7 @@ import 'package:workout_notepad_v2/views/welcome.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/launch_workout.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/lw_time.dart';
 
-enum HomeScreen { logs, overview, exercises, profile, discover }
+enum HomeScreen { logs, overview, exercises, profile, discover, insights }
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -96,6 +97,8 @@ class _HomeState extends State<Home> {
         return const LogsHome();
       case HomeScreen.discover:
         return const WTHome();
+      case HomeScreen.insights:
+        return const InsightsHome();
     }
   }
 
@@ -113,8 +116,10 @@ class _HomeState extends State<Home> {
           backgroundColor: AppColors.cell(context),
           opacity: 0.5,
           blur: 5,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.divider(context)),
+          borderRadius: BorderRadius.circular(0),
+          border: Border(
+            top: BorderSide(color: AppColors.border(context), width: 2),
+          ),
           child: SafeArea(
             top: false,
             child: Column(
@@ -241,19 +246,12 @@ class _HomeState extends State<Home> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      // _barRow(
-                      //   context,
-                      //   dmodel,
-                      //   LineIcons.box,
-                      //   "Collections",
-                      //   HomeScreen.collections,
-                      // ),
                       _barRow(
                         context,
                         dmodel,
-                        LineIcons.home,
-                        "Dashboard",
-                        HomeScreen.overview,
+                        LineIcons.list,
+                        "Exercises",
+                        HomeScreen.exercises,
                       ),
                       _barRow(
                         context,
@@ -262,27 +260,34 @@ class _HomeState extends State<Home> {
                         "Discover",
                         HomeScreen.discover,
                       ),
-                      // _barRow(
-                      //   context,
-                      //   dmodel,
-                      //   LineIcons.dumbbell,
-                      //   "Templates",
-                      //   HomeScreen.exercises,
-                      // ),
+                      _barRow(
+                        context,
+                        dmodel,
+                        LineIcons.dumbbell,
+                        "Dashboard",
+                        HomeScreen.overview,
+                      ),
                       _barRow(
                         context,
                         dmodel,
                         LineIcons.barChartAlt,
-                        "Logs",
-                        HomeScreen.logs,
+                        "Insights",
+                        HomeScreen.insights,
                       ),
                       _barRow(
                         context,
                         dmodel,
-                        LineIcons.userCircle,
-                        "Settings",
-                        HomeScreen.profile,
+                        LineIcons.pieChart,
+                        "Logs",
+                        HomeScreen.logs,
                       ),
+                      // _barRow(
+                      //   context,
+                      //   dmodel,
+                      //   LineIcons.userCircle,
+                      //   "Settings",
+                      //   HomeScreen.profile,
+                      // ),
                     ],
                   ),
                 ),

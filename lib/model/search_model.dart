@@ -59,6 +59,7 @@ class SearchModel extends ChangeNotifier {
       children: [
         CellWrapper(
           backgroundColor: AppColors.cell(context),
+          border: Border.all(color: AppColors.border(context), width: 3),
           child: Row(
             children: [
               Icon(

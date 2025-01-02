@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:workout_notepad_v2/components/back_button.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
 
 import 'package:workout_notepad_v2/model/root.dart';
@@ -28,7 +27,7 @@ class _ExerciseHomeState extends State<ExerciseHome> {
       body: HeaderBar(
         title: "Exercises",
         isLarge: true,
-        leading: const [BackButton2()],
+        // leading: const [BackButton2()],
         trailing: [
           comp.AddButton(onTap: () {
             comp.cupertinoSheet(

@@ -315,12 +315,12 @@ class User {
   }
 
   Widget avatar(BuildContext context, {double size = 120}) {
-    var offlineAvatar = Container(
-      width: size,
-      height: size,
-      decoration: const BoxDecoration(shape: BoxShape.circle),
-      child: Align(
-        child: ClipOval(
+    var offlineAvatar = ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: SizedBox(
+        width: size,
+        height: size,
+        child: Align(
           child: SvgPicture.asset(
             "assets/svg/default_profile.svg",
             height: size,
@@ -333,38 +333,31 @@ class User {
         ),
       ),
     );
-    // var defaultAvatar = SvgPicture.network(
-    //   "https://source.boringavatars.com/beam/120/$userId?colors=418A2F,DD7373,4B3F72,283044",
-    //   height: size,
-    //   fit: BoxFit.fitHeight,
-    //   placeholderBuilder: (context) {
-    //     return LoadingIndicator(color: Theme.of(context).colorScheme.primary);
-    //   },
-    // );
+
     if (imgUrl == null ||
         imgUrl == "" ||
         (imgUrl?.contains("default") ?? false)) {
       if (offline) {
         return offlineAvatar;
       } else {
-        return Container(
-          width: size,
-          height: size,
-          decoration: const BoxDecoration(shape: BoxShape.circle),
-          child: Align(
-            child: ClipOval(
-              child: defaultAvatar(context),
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: SizedBox(
+            width: size,
+            height: size,
+            child: Align(
+              child: defaultAvatar(context, size: size),
             ),
           ),
         );
       }
     } else if (imgUrl!.contains("http")) {
-      return Container(
-        width: size,
-        height: size,
-        decoration: const BoxDecoration(shape: BoxShape.circle),
-        child: Align(
-          child: ClipOval(
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: SizedBox(
+          width: size,
+          height: size,
+          child: Align(
             child: Image.network(
               imgUrl!,
               height: size,
@@ -373,7 +366,7 @@ class User {
                 if (offline) {
                   return offlineAvatar;
                 } else {
-                  return defaultAvatar(context);
+                  return defaultAvatar(context, size: size);
                 }
               },
               loadingBuilder: (context, child, loadingProgress) {
@@ -391,7 +384,7 @@ class User {
       return _AwsAvatar(
         imgUrl: imgUrl!,
         size: size,
-        defaultAvatar: defaultAvatar(context),
+        defaultAvatar: defaultAvatar(context, size: size),
       );
     }
   }
@@ -409,7 +402,8 @@ class User {
           fit: BoxFit.fitHeight,
           placeholderBuilder: (context) {
             return LoadingIndicator(
-                color: Theme.of(context).colorScheme.primary);
+              color: Theme.of(context).colorScheme.primary,
+            );
           },
         );
       },

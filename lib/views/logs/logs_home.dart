@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
-import 'package:workout_notepad_v2/components/blur_if_not_subscription.dart';
-import 'package:workout_notepad_v2/components/expanded_page_view.dart';
 import 'package:workout_notepad_v2/components/root.dart';
-import 'package:workout_notepad_v2/data/log_builder/log_builder.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder_item.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
@@ -15,13 +10,10 @@ import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/exercises/logs/recent_exercises.dart';
 import 'package:workout_notepad_v2/views/logs/graphs/graph_builder.dart';
 import 'package:workout_notepad_v2/views/logs/graphs/graph_custom.dart';
-import 'package:workout_notepad_v2/views/logs/graphs/graph_range_picker.dart';
-import 'package:workout_notepad_v2/views/logs/graphs/graph_renderer.dart';
 import 'package:workout_notepad_v2/views/logs/logs_calendar.dart';
 import 'package:workout_notepad_v2/views/logs/logs_default_page.dart';
 import 'package:workout_notepad_v2/views/logs/root.dart';
 import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
-import 'package:workout_notepad_v2/views/root.dart';
 
 class LogsHome extends StatefulWidget {
   const LogsHome({super.key});
@@ -31,44 +23,19 @@ class LogsHome extends StatefulWidget {
 }
 
 class _LogsHomeState extends State<LogsHome> {
-  late List<Key> _keys;
-
-  @override
-  void initState() {
-    _keys = _generateKeys();
-    _getRecentExercises();
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => GraphRangeProvider(),
-      builder: (context, _) {
-        return _body(context);
-        // return _body(context);
-      },
-    );
+    return _body(context);
   }
 
   Widget _body(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
-    var graphRange = context.select(
-      (GraphRangeProvider value) => value.getDate,
-    );
 
     return HeaderBar(
-      title: "Log Dashboard",
+      title: "Graphs",
       isLarge: true,
       horizontalSpacing: 0,
       largeTitlePadding: const EdgeInsets.only(left: 16),
-      refreshable: true,
-      onRefresh: () async {
-        await _getRecentExercises();
-        setState(() {
-          _keys = _generateKeys();
-        });
-      },
       trailing: [
         AddButton(
           onTap: () {
@@ -82,147 +49,6 @@ class _LogsHomeState extends State<LogsHome> {
       children: [
         Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-              child: GraphRangeView(
-                date: graphRange,
-                onSave: ((_, date) {
-                  setState(() {
-                    context.read<GraphRangeProvider>().setDate(date);
-                    _keys = _generateKeys();
-                  });
-                }),
-              ),
-            ),
-            CustomPageView(
-              key: _keys[0],
-              duration: Duration.zero,
-              childHorizontalPadding: 16,
-              children: [
-                GraphRenderer(
-                  date: graphRange,
-                  logBuilder: LogBuilder(
-                    title: "Workout Duration",
-                    items: [],
-                    column: LBColumn.WORKOUT_DURATION,
-                    grouping: LBGrouping.DATE,
-                    condensing: LBCondensing.FIRST,
-                    weightNormalization: LBWeightNormalization.KG,
-                    graphType: LBGraphType.BAR,
-                    showLegend: true,
-                    showXAxis: false,
-                    showYAxis: true,
-                    // backgroundColor: Colors.black,
-                    // color: Colors.white,
-                  ),
-                ),
-                GraphRenderer(
-                  date: graphRange,
-                  logBuilder: LogBuilder(
-                    title: "Reps Over Time",
-                    items: [],
-                    column: LBColumn.REPS,
-                    grouping: LBGrouping.DATE,
-                    condensing: LBCondensing.SUM,
-                    weightNormalization: LBWeightNormalization.KG,
-                    graphType: LBGraphType.TIMESERIES,
-                    showLegend: true,
-                    showXAxis: false,
-                    showYAxis: true,
-                  ),
-                ),
-                BlurIfNotSubscription(
-                  child: GraphRenderer(
-                    date: graphRange,
-                    logBuilder: LogBuilder(
-                      title: "Weight Lifted Over Time",
-                      items: [],
-                      column: LBColumn.WEIGHT,
-                      grouping: LBGrouping.DATE,
-                      condensing: LBCondensing.SUM,
-                      weightNormalization: LBWeightNormalization.KG,
-                      graphType: LBGraphType.TIMESERIES,
-                      showLegend: true,
-                      showXAxis: false,
-                      showYAxis: true,
-                    ),
-                  ),
-                ),
-                BlurIfNotSubscription(
-                  child: GraphRenderer(
-                    date: graphRange,
-                    logBuilder: LogBuilder(
-                      title: "Type Distribution",
-                      items: [],
-                      column: LBColumn.REPS,
-                      grouping: LBGrouping.CATEGORY,
-                      condensing: LBCondensing.COUNT,
-                      weightNormalization: LBWeightNormalization.KG,
-                      graphType: LBGraphType.PIE,
-                      showLegend: true,
-                      showXAxis: false,
-                      showYAxis: true,
-                    ),
-                  ),
-                ),
-                BlurIfNotSubscription(
-                  child: GraphRenderer(
-                    date: graphRange,
-                    logBuilder: LogBuilder(
-                      title: "Tag Distribution",
-                      items: [],
-                      column: LBColumn.REPS,
-                      grouping: LBGrouping.TAG,
-                      condensing: LBCondensing.COUNT,
-                      weightNormalization: LBWeightNormalization.KG,
-                      graphType: LBGraphType.PIE,
-                      showLegend: true,
-                      showXAxis: false,
-                      showYAxis: true,
-                    ),
-                  ),
-                ),
-                BlurIfNotSubscription(
-                  child: GraphRenderer(
-                    date: graphRange,
-                    logBuilder: LogBuilder(
-                      title: "Exercise Distribution",
-                      items: [],
-                      column: LBColumn.REPS,
-                      grouping: LBGrouping.EXERCISE,
-                      condensing: LBCondensing.COUNT,
-                      weightNormalization: LBWeightNormalization.KG,
-                      graphType: LBGraphType.PIE,
-                      showLegend: true,
-                      showXAxis: false,
-                      showYAxis: true,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Section(
-              "Recent Exercises",
-              headerPadding: const EdgeInsets.fromLTRB(16, 32, 16, 16),
-              trailingWidget: Opacity(
-                opacity: 0.7,
-                child: Clickable(
-                  onTap: () {
-                    navigate(
-                      context: context,
-                      builder: (context) => RecentExercises(),
-                    );
-                  },
-                  child: const Row(
-                    children: [
-                      Text("All"),
-                      Icon(Icons.arrow_right_alt),
-                    ],
-                  ),
-                ),
-              ),
-              child: _recentExercisesView(context),
-            ),
             _customGraphs(context),
             _category(context),
             _tag(context),
@@ -244,6 +70,12 @@ class _LogsHomeState extends State<LogsHome> {
                     Icons.list,
                     Colors.green[200]!,
                     const LogsPreviousWorkouts(),
+                  ),
+                  Tuple4(
+                    "Recent Exercise Logs",
+                    LineIcons.list,
+                    Colors.red[200]!,
+                    const RecentExercises(),
                   ),
                 ],
                 onChildTap: (context, item, index) =>
@@ -342,39 +174,6 @@ class _LogsHomeState extends State<LogsHome> {
     );
   }
 
-  Widget _recentExercisesView(BuildContext context) {
-    if (_isLoadingExercies) {
-      return LoadingIndicator();
-    }
-
-    if (_recentExercises.isEmpty) {
-      return Text("Empty");
-    }
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        children: [
-          for (var i in _recentExercises)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ExerciseCell(
-                  exercise: i,
-                  onTap: () {
-                    cupertinoSheet(
-                      context: context,
-                      builder: (context) => ExerciseDetail(exercise: i),
-                    );
-                  },
-                ),
-              ],
-            ),
-        ],
-      ),
-    );
-  }
-
   Widget _customGraphs(BuildContext context) {
     DataModel dmodel = context.watch();
     return Section(
@@ -448,7 +247,7 @@ class _LogsHomeState extends State<LogsHome> {
   Widget _category(BuildContext context) {
     DataModel dmodel = context.watch();
     return Section(
-      "Category",
+      "By Category",
       headerPadding: const EdgeInsets.fromLTRB(16, 32, 16, 16),
       allowsCollapse: true,
       initOpen: true,
@@ -588,44 +387,5 @@ class _LogsHomeState extends State<LogsHome> {
         },
       ),
     );
-  }
-
-  List<Key> _generateKeys() {
-    const uuid = Uuid();
-    return [
-      ValueKey(uuid.v4()),
-      // ValueKey(uuid.v4()),
-      // ValueKey(uuid.v4()),
-    ];
-  }
-
-  bool _isLoadingExercies = true;
-  List<Exercise> _recentExercises = [];
-  Future<void> _getRecentExercises() async {
-    setState(() {
-      _isLoadingExercies = true;
-      _recentExercises.clear();
-    });
-    try {
-      var db = await DatabaseProvider().database;
-      var response = await db.rawQuery("""
-            SELECT e.* FROM exercise_log el
-            JOIN exercise e ON el.exerciseId = e.exerciseId
-            ORDER BY el.created DESC LIMIT 5
-          """);
-      for (var i in response) {
-        _recentExercises.add(Exercise.fromJson(i));
-      }
-    } catch (e) {
-      print(e);
-      NewrelicMobile.instance.recordError(
-        e,
-        StackTrace.current,
-        attributes: {"err_code": "logs_recent_exercises"},
-      );
-    }
-    setState(() {
-      _isLoadingExercies = false;
-    });
   }
 }

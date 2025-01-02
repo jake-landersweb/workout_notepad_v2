@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/components/navigate.dart';
 import 'package:workout_notepad_v2/data/root.dart';
+import 'package:workout_notepad_v2/data/workout_template.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 
 import 'package:workout_notepad_v2/text_themes.dart';
@@ -66,18 +67,27 @@ class _WorkoutCellState extends State<WorkoutCell> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                if (widget.showBookmark)
+            if (widget.workout is WorkoutTemplate)
+              Row(
+                children: [
                   Padding(
-                    padding: const EdgeInsets.only(right: 4.0),
-                    child: Icon(
+                    padding: const EdgeInsets.only(bottom: 4.0),
+                    // child: _levelCell((widget.workout as WorkoutTemplate).level),
+                    child:
+                        _levelCell((widget.workout as WorkoutTemplate).level),
+                  ),
+                  const Spacer(),
+                  if (widget.showBookmark)
+                    Icon(
                       widget.bookmarkFilled
                           ? Icons.bookmark
                           : Icons.bookmark_outline,
                       color: AppColors.text(context).withValues(alpha: 0.3),
                     ),
-                  ),
+                ],
+              ),
+            Row(
+              children: [
                 Expanded(
                   child: Text(
                     widget.workout.title,
@@ -104,6 +114,7 @@ class _WorkoutCellState extends State<WorkoutCell> {
                   style: ttcaption(context),
                 ),
               ),
+            const SizedBox(height: 4),
             for (var item in widget.workout.getFlatExercises(limit: 3))
               Padding(
                 padding: const EdgeInsets.only(top: 6.0),
@@ -147,5 +158,34 @@ class _WorkoutCellState extends State<WorkoutCell> {
       padding: const EdgeInsets.only(right: 8.0),
       child: getImageIcon(match.icon, size: 25),
     );
+  }
+
+  Widget _levelCell(String level) {
+    final s = getSwatch(_levelCellColor(level));
+    return Container(
+      decoration: BoxDecoration(
+        color: s[100],
+        border: Border.all(color: s[500]!),
+        borderRadius: BorderRadius.circular(100),
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 8),
+      child: Text(
+        level.capitalize(),
+        style: ttcaption(context, size: 12, color: s[700]),
+      ),
+    );
+  }
+
+  Color _levelCellColor(String level) {
+    switch (level.toLowerCase()) {
+      case "beginner":
+        return Colors.green;
+      case "intermediate":
+        return Colors.amber;
+      case "advanced":
+        return Colors.red;
+      default:
+        return AppColors.background(context);
+    }
   }
 }

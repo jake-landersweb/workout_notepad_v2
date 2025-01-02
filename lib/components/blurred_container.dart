@@ -84,6 +84,9 @@ class BlurredContainer extends StatelessWidget {
       foregroundDecoration: BoxDecoration(
         borderRadius: borderRadius ?? BorderRadius.circular(10),
       ),
+      decoration: BoxDecoration(
+        border: border,
+      ),
       width: width,
       child: ClipRRect(
         borderRadius:

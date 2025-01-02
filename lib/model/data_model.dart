@@ -20,6 +20,7 @@ import 'package:workout_notepad_v2/data/snapshot.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/data/workout_template.dart';
 import 'package:workout_notepad_v2/data/workout_template_exercise.dart';
+import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/model/client.dart';
 import 'package:workout_notepad_v2/model/pocketbaseAuth.dart';
 import 'package:workout_notepad_v2/model/root.dart';
@@ -357,6 +358,12 @@ class DataModel extends ChangeNotifier {
   }
 
   Future<void> init({User? u}) async {
+    // set default metadata for the logger
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    logger.setAttribute("app.version", packageInfo.version);
+    logger.setAttribute("app.buildNumber", packageInfo.buildNumber);
+    logger.setAttribute("app.store", packageInfo.installerStore);
+
     print("INIT");
     loadStatus = LoadStatus.done;
     notifyListeners();
@@ -388,6 +395,11 @@ class DataModel extends ChangeNotifier {
 
     // get the saved user
     user = User.fromJson(jsonDecode(prefs.getString("user")!));
+
+    // set some global logger attributes
+    logger.setAttribute("user.userId", user!.userId);
+    logger.setAttribute("user.subscriptionType", user!.subscriptionType.name);
+    logger.setAttribute("user.email", user!.email ?? "");
 
     print(user?.subscriptionType);
 

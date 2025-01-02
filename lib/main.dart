@@ -14,6 +14,7 @@ import 'package:workout_notepad_v2/color_schemes.dart';
 import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/env.dart';
+import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/model/search_model.dart';
 import 'package:workout_notepad_v2/views/workout_templates/workout_template_model.dart';
@@ -62,28 +63,39 @@ void main() async {
     httpInstrumentationEnabled: true,
   );
 
-  // NewrelicMobile.instance.start(config, () {
-  //   runApp(const MyApp());
-  // });
-  runZonedGuarded(() async {
-    WidgetsFlutterBinding.ensureInitialized();
+  runZonedGuarded(
+    () async {
+      WidgetsFlutterBinding.ensureInitialized();
 
-    FlutterError.onError = NewrelicMobile.onError;
-    await NewrelicMobile.instance.startAgent(config);
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    var _ = FirebaseAnalytics.instance;
+      FlutterError.onError = NewrelicMobile.onError;
+      await NewrelicMobile.instance.startAgent(config);
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+      var _ = FirebaseAnalytics.instance;
 
-    runApp(const MyApp());
-  }, (Object error, StackTrace stackTrace) {
-    NewrelicMobile.instance.recordError(
-      error,
-      stackTrace,
-      attributes: {"err_code": "launch_app"},
-      isFatal: true,
-    );
-  });
+      runApp(const MyApp());
+    },
+    (Object error, StackTrace stackTrace) {
+      logger.exception(
+        error,
+        stackTrace,
+        {"err_code": "launch_app"},
+      );
+      NewrelicMobile.instance.recordError(
+        error,
+        stackTrace,
+        attributes: {"err_code": "launch_app"},
+        isFatal: true,
+      );
+    },
+    zoneSpecification: ZoneSpecification(
+      // override the default printer to re-direct to the logger
+      print: (self, parent, zone, line) {
+        logger.parse(line);
+      },
+    ),
+  );
 }
 
 // for allowing absoute reset when needed

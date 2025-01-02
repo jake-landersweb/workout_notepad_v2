@@ -22,17 +22,7 @@ class _WTSavedState extends State<WTSaved> {
         isLarge: true,
         bottomSpacing: 0,
         leading: const [BackButton2()],
-        trailing: [
-          // AddButton(
-          //   onTap: () {
-          //     showMaterialModalBottomSheet(
-          //       context: context,
-          //       enableDrag: false,
-          //       builder: (context) => const CEW(),
-          //     );
-          //   },
-          // )
-        ],
+        trailing: [],
         children: [
           const SizedBox(height: 16),
           Column(

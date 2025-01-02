@@ -14,6 +14,7 @@ import 'package:workout_notepad_v2/data/root.dart';
 
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/data/workout_template.dart';
+import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -205,6 +206,12 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
               // reload the templates
               await dmodel.refreshWorkoutTemplates();
               Navigator.of(context).pop();
+
+              // send a report that this template was downloaded
+              logger.info("reporting a download for this template");
+              dmodel.purchaseClient.fetch(
+                "/v2/templates/${(widget.workout as WorkoutTemplate).id}/download",
+              );
             } else {
               snackbarErr(
                 context,

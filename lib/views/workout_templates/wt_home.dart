@@ -1,9 +1,12 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/workout_template.dart';
 import 'package:workout_notepad_v2/model/data_model.dart';
+import 'package:workout_notepad_v2/text_themes.dart';
+import 'package:workout_notepad_v2/views/status/error.dart';
 import 'package:workout_notepad_v2/views/workout_templates/workout_template_model.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/root.dart';
@@ -28,24 +31,38 @@ class _WTHomeState extends State<WTHome> {
 
   @override
   Widget build(BuildContext context) {
-    var dmodel = context.watch<DataModel>();
     return Consumer<WorkoutTemplateModel>(
       builder: (context, model, child) {
         return HeaderBar(
           isLarge: true,
           title: "Discover",
           refreshable: true,
+          horizontalSpacing: 0,
+          largeTitlePadding: EdgeInsets.only(left: 16),
           onRefresh: () async {
             await fetchData(reload: true);
           },
+          trailing: [
+            Clickable(
+              onTap: () {
+                navigate(context: context, builder: (context) => WTSearch());
+              },
+              child: Icon(
+                LineIcons.search,
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            )
+          ],
           children: [
-            const SizedBox(height: 16),
-            model.header(
-              context: context,
-              dmodel: dmodel,
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 0, 0),
+              child: Text(
+                "Custom, tailor-made workout templates from experts for you.",
+                style: ttLabel(context, color: AppColors.subtext(context)),
+              ),
             ),
-            const SizedBox(height: 32),
             _build(context, model),
+            const SizedBox(height: 100),
           ],
         );
       },
@@ -53,34 +70,52 @@ class _WTHomeState extends State<WTHome> {
   }
 
   Widget _build(BuildContext context, WorkoutTemplateModel model) {
-    switch (model.remoteTemplateStatus) {
+    switch (model.homeTemplateStatus) {
       case LoadingStatus.loading:
         return const LoadingIndicator();
       case LoadingStatus.error:
-        // TODO: add a better error screen
-        return const Text("There was an error");
+        return const ErrorScreen(
+          title: "There was an issue getting the templates.",
+        );
       case LoadingStatus.done:
-        if (model.remoteTemplates == null || model.remoteTemplates!.isEmpty) {
-          // TODO: add a better empty screen
-          return const Text("No templates found");
-        } else {
-          return _body(context, model.remoteTemplates!);
-        }
+        return _body(context, model.homepageData!);
     }
   }
 
-  Widget _body(BuildContext context, List<WorkoutTemplate> templates) {
+  Widget _body(BuildContext context, Map<String, List<WorkoutTemplate>> data) {
     var localTemplates = context.select(
       (DataModel value) => value.workoutTemplates,
     );
 
     return Column(
       children: [
-        for (var i in templates)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 16.0),
-            child: _workoutCell(context, i, localTemplates),
-          ),
+        for (var item in data.entries)
+          if (item.value.isNotEmpty)
+            Section(
+              item.key,
+              allowsCollapse: true,
+              initOpen: true,
+              headerPadding: const EdgeInsets.fromLTRB(16, 32, 16, 16),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    const SizedBox(width: 16),
+                    for (var i in item.value)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 16.0),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxWidth:
+                                MediaQuery.of(context).size.width - 32 - 32,
+                          ),
+                          child: _workoutCell(context, i, localTemplates),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
       ],
     );
   }
@@ -90,7 +125,8 @@ class _WTHomeState extends State<WTHome> {
     WorkoutTemplate template,
     List<WorkoutTemplate> localTemplates,
   ) {
-    var t = localTemplates.firstWhereOrNull((t) => t.id == template.id);
+    var t = localTemplates
+        .firstWhereOrNull((t) => t.workoutId == template.workoutId);
     return WorkoutCell(
       workout: t ?? template,
       allowActions: t != null,
@@ -103,7 +139,7 @@ class _WTHomeState extends State<WTHome> {
   Future<void> fetchData({bool reload = false}) async {
     try {
       var model = context.read<WorkoutTemplateModel>();
-      await model.fetchRemoteTemplates(reload: reload);
+      await model.getHomepageData(reload: reload);
     } catch (error, stack) {
       print(error);
       print(stack);

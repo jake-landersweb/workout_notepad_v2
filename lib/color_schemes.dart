@@ -99,6 +99,13 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
       dividerColor: colorScheme.outline.withOpacity(0.5),
       primaryColor: dmodel.color,
       scaffoldBackgroundColor: AppColors.background(context),
+      menuTheme: MenuThemeData(
+        style: MenuStyle(
+          backgroundColor: WidgetStateProperty.resolveWith(
+            (states) => AppColors.cell(context),
+          ),
+        ),
+      ),
     );
   }
 

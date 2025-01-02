@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS workout_template (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY,
     workoutId TEXT NOT NULL,
     title TEXT NOT NULL DEFAULT '',
     description TEXT,

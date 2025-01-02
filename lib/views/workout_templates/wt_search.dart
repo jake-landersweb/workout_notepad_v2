@@ -1,14 +1,23 @@
 // ignore_for_file: invalid_use_of_visible_for_testing_member, invalid_use_of_protected_member
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/cell_wrapper.dart';
 import 'package:workout_notepad_v2/components/field.dart';
+import 'package:workout_notepad_v2/components/header_bar.dart';
+import 'package:workout_notepad_v2/components/loading_indicator.dart';
+import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/components/section.dart';
 import 'package:workout_notepad_v2/data/category.dart';
+import 'package:workout_notepad_v2/data/workout_template.dart';
 import 'package:workout_notepad_v2/model/data_model.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/status/empty.dart';
+import 'package:workout_notepad_v2/views/status/error.dart';
 import 'package:workout_notepad_v2/views/workout_templates/workout_template_model.dart';
+import 'package:workout_notepad_v2/views/workouts/workout_cell.dart';
 
 extension WorkoutTemplateSearch on WorkoutTemplateModel {
   Widget header({
@@ -19,6 +28,7 @@ extension WorkoutTemplateSearch on WorkoutTemplateModel {
       children: [
         CellWrapper(
           backgroundColor: AppColors.cell(context),
+          border: Border.all(color: AppColors.border(context), width: 3),
           child: Row(
             children: [
               Icon(
@@ -71,7 +81,7 @@ extension WorkoutTemplateSearch on WorkoutTemplateModel {
         } else {
           categories.add(category.categoryId);
         }
-        fetchRemoteTemplates(reload: true);
+        searchRemoteTemplates(reload: true);
         notifyListeners();
       },
       child: Container(
@@ -107,5 +117,114 @@ extension WorkoutTemplateSearch on WorkoutTemplateModel {
         ),
       ),
     );
+  }
+}
+
+class WTSearch extends StatefulWidget {
+  const WTSearch({super.key});
+
+  @override
+  State<WTSearch> createState() => _WTSearchState();
+}
+
+class _WTSearchState extends State<WTSearch> {
+  @override
+  void initState() {
+    super.initState();
+    // Use addPostFrameCallback to avoid calling setState during build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchData();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var dmodel = context.watch<DataModel>();
+    return Scaffold(
+      body: Consumer<WorkoutTemplateModel>(
+        builder: (context, model, child) {
+          return HeaderBar(
+            isLarge: false,
+            title: "Search",
+            refreshable: true,
+            onRefresh: () async {
+              await fetchData(reload: true);
+            },
+            leading: [
+              BackButton2(),
+            ],
+            children: [
+              const SizedBox(height: 16),
+              model.header(
+                context: context,
+                dmodel: dmodel,
+              ),
+              const SizedBox(height: 32),
+              _build(context, model),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _build(BuildContext context, WorkoutTemplateModel model) {
+    switch (model.searchTemplateStatus) {
+      case LoadingStatus.loading:
+        return const LoadingIndicator();
+      case LoadingStatus.error:
+        return const ErrorScreen(
+          title: "There was an issue getting the templates.",
+        );
+      case LoadingStatus.done:
+        if (model.remoteTemplates == null || model.remoteTemplates!.isEmpty) {
+          return const EmptyScreen(title: "No templates found.");
+        } else {
+          return _body(context, model.remoteTemplates!);
+        }
+    }
+  }
+
+  Widget _body(BuildContext context, List<WorkoutTemplate> templates) {
+    var localTemplates = context.select(
+      (DataModel value) => value.workoutTemplates,
+    );
+
+    return Column(
+      children: [
+        for (var i in templates)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: _workoutCell(context, i, localTemplates),
+          ),
+      ],
+    );
+  }
+
+  Widget _workoutCell(
+    BuildContext context,
+    WorkoutTemplate template,
+    List<WorkoutTemplate> localTemplates,
+  ) {
+    var t = localTemplates
+        .firstWhereOrNull((t) => t.workoutId == template.workoutId);
+    return WorkoutCell(
+      workout: t ?? template,
+      allowActions: t != null,
+      isTemplate: t == null,
+      showBookmark: true,
+      bookmarkFilled: t != null,
+    );
+  }
+
+  Future<void> fetchData({bool reload = false}) async {
+    try {
+      var model = context.read<WorkoutTemplateModel>();
+      await model.searchRemoteTemplates(reload: reload);
+    } catch (error, stack) {
+      print(error);
+      print(stack);
+      snackbarErr(context, "Failed to get the remote workout templates.");
+    }
   }
 }

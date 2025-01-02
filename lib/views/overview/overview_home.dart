@@ -10,6 +10,7 @@ import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/overview/previous_workout.dart';
 import 'package:workout_notepad_v2/views/overview/workout_progress.dart';
+import 'package:workout_notepad_v2/views/profile/profile.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/workout_templates/wt_saved.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/launch_workout.dart';
@@ -43,28 +44,33 @@ class _OverviewHomeState extends State<OverviewHome> {
       //   )
       // ],
       children: [
-        Row(
-          children: [
-            dmodel.user!.avatar(context, size: 50),
-            const SizedBox(width: 16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Welcome Back",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w400,
-                    color: Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withOpacity(0.75),
+        Clickable(
+          onTap: () {
+            navigate(context: context, builder: (context) => Profile());
+          },
+          child: Row(
+            children: [
+              dmodel.user!.avatar(context, size: 50),
+              const SizedBox(width: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Welcome Back",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w400,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.75),
+                    ),
                   ),
-                ),
-                Text(dmodel.user?.getName() ?? "Unknown User",
-                    style: ttLargeLabel(context)),
-              ],
-            ),
-          ],
+                  Text(dmodel.user?.getName() ?? "Unknown User",
+                      style: ttLargeLabel(context)),
+                ],
+              ),
+            ],
+          ),
         ),
         // _templates2(context, dmodel),
         const SizedBox(height: 32),
@@ -210,7 +216,7 @@ class _OverviewHomeState extends State<OverviewHome> {
         _templates(context, dmodel),
         if (dmodel.workoutTemplates.isNotEmpty)
           _remoteTemplates(context, dmodel),
-        _exercises(context, dmodel),
+        // _exercises(context, dmodel),
         const SizedBox(height: 100),
       ],
     );
@@ -340,56 +346,6 @@ class _OverviewHomeState extends State<OverviewHome> {
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: WorkoutCell(workout: i),
               ),
-        ],
-      ),
-    );
-  }
-
-  Widget _exercises(BuildContext context, DataModel dmodel) {
-    var all = dmodel.exercises;
-    return Section(
-      "Exercises",
-      trailingWidget: Opacity(
-        opacity: 0.7,
-        child: Clickable(
-          onTap: () {
-            navigate(
-              context: context,
-              builder: (context) => const ExerciseHome(),
-            );
-          },
-          child: const Row(
-            children: [
-              Text("All"),
-              Icon(Icons.arrow_right_alt),
-            ],
-          ),
-        ),
-      ),
-      child: Column(
-        children: [
-          if (all.length > 5)
-            for (var i in dmodel.exercises.slice(0, 5))
-              ExerciseCell(
-                exercise: i,
-                onTap: () {
-                  cupertinoSheet(
-                    context: context,
-                    builder: (context) => ExerciseDetail(exercise: i),
-                  );
-                },
-              )
-          else
-            for (var i in dmodel.exercises)
-              ExerciseCell(
-                exercise: i,
-                onTap: () {
-                  cupertinoSheet(
-                    context: context,
-                    builder: (context) => ExerciseDetail(exercise: i),
-                  );
-                },
-              )
         ],
       ),
     );

@@ -12,7 +12,7 @@ clean:
 debug:
 	flutter run --debug
 
-run:
+release:
 	flutter run --release --enable-impeller
 
 build-android:

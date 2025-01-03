@@ -180,7 +180,7 @@ class _InsightsHomeState extends State<InsightsHome> {
                   grouping: LBGrouping.CATEGORY,
                   condensing: LBCondensing.COUNT,
                   weightNormalization: LBWeightNormalization.KG,
-                  graphType: LBGraphType.PIE,
+                  graphType: LBGraphType.SPIDER,
                   showLegend: true,
                   showXAxis: false,
                   showYAxis: true,

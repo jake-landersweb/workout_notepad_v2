@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/root.dart';
@@ -52,23 +53,29 @@ class _OverviewHomeState extends State<OverviewHome> {
             children: [
               dmodel.user!.avatar(context, size: 50),
               const SizedBox(width: 16),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Welcome Back",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w400,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withOpacity(0.75),
-                    ),
+              Expanded(
+                child: Container(
+                  color: AppColors.background(context),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Welcome Back",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w400,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withOpacity(0.75),
+                        ),
+                      ),
+                      Text(dmodel.user?.getName() ?? "Unknown User",
+                          style: ttLargeLabel(context)),
+                    ],
                   ),
-                  Text(dmodel.user?.getName() ?? "Unknown User",
-                      style: ttLargeLabel(context)),
-                ],
+                ),
               ),
+              Icon(LineIcons.verticalEllipsis),
             ],
           ),
         ),

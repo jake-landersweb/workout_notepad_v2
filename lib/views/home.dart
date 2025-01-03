@@ -270,7 +270,7 @@ class _HomeState extends State<Home> {
                       _barRow(
                         context,
                         dmodel,
-                        LineIcons.barChartAlt,
+                        LineIcons.lightbulb,
                         "Insights",
                         HomeScreen.insights,
                       ),

@@ -266,9 +266,7 @@ class Workout {
   }
 
   void setExercises(List<List<Exercise>> exercises) {
-    print(exercises.runtimeType);
     if (exercises is List<List<WorkoutExercise>>) {
-      print("ARE WORKOUT EXERCISES");
       _exercises = exercises;
     } else {
       print("ARE NOT WORKOUT EXERCISES");

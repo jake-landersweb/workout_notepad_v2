@@ -17,13 +17,11 @@ class CEWConfigure<T extends Exercise> extends StatelessWidget {
     required this.onGroupReorder,
     required this.removeSuperset,
     required this.addExercise,
-    required this.isReordering,
     required this.sState,
   });
   final List<List<T>> exercises;
   final void Function(List<List<T>> exercises) onReorderFinish;
   final void Function(int index) removeAt;
-  final bool isReordering;
 
   // for groups
   final void Function(int i, List<T> group) onGroupReorder;
@@ -45,9 +43,6 @@ class CEWConfigure<T extends Exercise> extends StatelessWidget {
         onReorderFinish(exercises);
       },
       slideBuilder: (item, index) {
-        if (!isReordering) {
-          return null;
-        }
         return ActionPane(
           extentRatio: 0.3,
           motion: const DrawerMotion(),
@@ -99,7 +94,6 @@ class CEWConfigure<T extends Exercise> extends StatelessWidget {
                 ),
               );
             },
-            disabled: isReordering,
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
@@ -163,7 +157,7 @@ class CEWConfigure<T extends Exercise> extends StatelessWidget {
                         ],
                       ),
                     ),
-                    if (isReordering) handle
+                    handle,
                   ],
                 ),
               ),

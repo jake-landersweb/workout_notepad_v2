@@ -40,7 +40,6 @@ class _LWConfigureState extends State<LWConfigure> {
   late List<List<WorkoutExercise>> _exercises = [];
   late List<Tuple3<String, List<WorkoutExercise>, List<ExerciseLog>>> _items;
   late TextEditingController _controller;
-  bool _isReordering = true;
 
   @override
   void initState() {
@@ -116,7 +115,6 @@ class _LWConfigureState extends State<LWConfigure> {
               _exercises.removeAt(index);
             });
           },
-          isReordering: _isReordering,
           onGroupReorder: (int i, List<Exercise> group) {
             setState(() {
               _exercises[i] = group as List<WorkoutExercise>;

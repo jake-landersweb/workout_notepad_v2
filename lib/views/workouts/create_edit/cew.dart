@@ -25,8 +25,6 @@ class CEW extends StatefulWidget {
 }
 
 class _CEWState extends State<CEW> {
-  bool _isReordering = false;
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -73,7 +71,6 @@ class _CEWState extends State<CEW> {
                         model.workout.removeExercise(index);
                       });
                     },
-                    isReordering: _isReordering,
                     onGroupReorder: (int i, List<Exercise> group) {
                       setState(() {
                         model.workout.setSuperSets(i, group);
@@ -206,18 +203,18 @@ class _CEWState extends State<CEW> {
                 },
               ),
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _headerButton(
-                context,
-                _isReordering ? Icons.check_circle_outline : Icons.reorder,
-                () {
-                  setState(() {
-                    _isReordering = !_isReordering;
-                  });
-                },
-              ),
-            ),
+            // const SizedBox(width: 8),
+            // Expanded(
+            //   child: _headerButton(
+            //     context,
+            //     _isReordering ? Icons.check_circle_outline : Icons.reorder,
+            //     () {
+            //       setState(() {
+            //         _isReordering = !_isReordering;
+            //       });
+            //     },
+            //   ),
+            // ),
             const SizedBox(width: 8),
             Expanded(
               child: _headerButton(
@@ -238,6 +235,8 @@ class _CEWState extends State<CEW> {
                 },
               ),
             ),
+            const SizedBox(width: 8),
+            Expanded(child: Container()),
           ],
         ),
       ],

@@ -19,40 +19,49 @@ class GraphTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var dmodel = context.watch<DataModel>();
-    return SingleChildScrollView(
-      child: Column(
-        children: data.mapIndexed(
-          (index, element) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Row(
+    return Column(
+      children: [
+        Divider(color: AppColors.border(context)),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: data.sorted((a, b) => b.v2.compareTo(a.v2)).mapIndexed(
+                (index, element) {
+                  return Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Expanded(
-                        child: Text(
-                          logBuilder.titleBuilder(
-                            dmodel,
-                            element,
-                            includeValue: false,
-                          ),
-                          style: ttLabel(context, color: logBuilder.color),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 4),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                logBuilder.titleBuilder(
+                                  dmodel,
+                                  element,
+                                  includeValue: false,
+                                ),
+                                style:
+                                    ttLabel(context, color: logBuilder.color),
+                              ),
+                            ),
+                            Text(
+                              logBuilder.formatValue(element.v2),
+                              style:
+                                  ttcaption(context, color: logBuilder.color),
+                            ),
+                          ],
                         ),
                       ),
-                      Text(
-                        logBuilder.formatValue(element.v2),
-                        style: ttcaption(context, color: logBuilder.color),
-                      ),
+                      Divider(color: AppColors.divider(context)),
                     ],
-                  ),
-                ),
-                Divider(color: AppColors.divider(context)),
-              ],
-            );
-          },
-        ).toList(),
-      ),
+                  );
+                },
+              ).toList(),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

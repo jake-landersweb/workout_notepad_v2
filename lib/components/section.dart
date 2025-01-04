@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
+import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
@@ -18,6 +19,7 @@ class Section extends StatefulWidget {
     this.style,
     this.trailingWidget,
     this.uppercase = true,
+    this.loading = false,
   }) : super(key: key);
 
   final String title;
@@ -30,6 +32,7 @@ class Section extends StatefulWidget {
   final TextStyle? style;
   final Widget? trailingWidget;
   final bool uppercase;
+  final bool loading;
 
   @override
   _SectionState createState() => _SectionState();
@@ -191,6 +194,19 @@ class _SectionState extends State<Section> with TickerProviderStateMixin {
   }
 
   Widget _title(BuildContext context) {
+    if (widget.loading) {
+      return LoadingWrapper(
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.cell(context),
+            borderRadius: BorderRadius.circular(5),
+          ),
+          height: 20,
+          width: 100,
+        ),
+      );
+    }
+
     return Text(
       // widget.uppercase ? widget.title.toUpperCase() : widget.title,
       widget.title,

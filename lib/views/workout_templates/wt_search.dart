@@ -171,7 +171,7 @@ class _WTSearchState extends State<WTSearch> {
   Widget _build(BuildContext context, WorkoutTemplateModel model) {
     switch (model.searchTemplateStatus) {
       case LoadingStatus.loading:
-        return const LoadingIndicator();
+        return _loading();
       case LoadingStatus.error:
         return const ErrorScreen(
           title: "There was an issue getting the templates.",
@@ -214,6 +214,31 @@ class _WTSearchState extends State<WTSearch> {
       isTemplate: t == null,
       showBookmark: true,
       bookmarkFilled: t != null,
+    );
+  }
+
+  Widget _loading() {
+    return Column(
+      children: [
+        for (int j = 0; j < 2; j++)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16.0),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width - 32,
+              ),
+              child: LoadingWrapper(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.cell(context),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  height: 250,
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 

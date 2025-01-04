@@ -18,6 +18,11 @@ class GraphPie extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var dmodel = context.watch<DataModel>();
+
+    // fold sum for getting percentages
+    var sum =
+        data.map((v) => v.v2.toDouble()).reduce((item, val) => val + item);
+
     return Column(
       children: [
         Expanded(
@@ -29,7 +34,9 @@ class GraphPie extends StatelessWidget {
                     value: i.v2.toDouble(),
                     color: logBuilder.getColor(context, item: i),
                     radius: MediaQuery.of(context).size.width / 4,
-                    title: logBuilder.titleBuilder(dmodel, i),
+                    title: i.v2.toDouble() / sum > 0.1
+                        ? logBuilder.titleBuilder(dmodel, i)
+                        : "", // only show titles that have a large enough percentage
                   ),
               ],
             ),

@@ -32,7 +32,7 @@ class WorkoutTemplateModel extends ChangeNotifier {
     bool reload = false,
   }) async {
     try {
-      if (remoteTemplates == null || remoteTemplates!.isEmpty || reload) {
+      if (homepageData == null || homepageData!.isEmpty || reload) {
         logger.info("Fetching the workout template dashboard ...");
         homeTemplateStatus = LoadingStatus.loading;
         notifyListeners();

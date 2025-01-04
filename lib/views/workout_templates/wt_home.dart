@@ -72,7 +72,7 @@ class _WTHomeState extends State<WTHome> {
   Widget _build(BuildContext context, WorkoutTemplateModel model) {
     switch (model.homeTemplateStatus) {
       case LoadingStatus.loading:
-        return const LoadingIndicator();
+        return _loading();
       case LoadingStatus.error:
         return const ErrorScreen(
           title: "There was an issue getting the templates.",
@@ -133,6 +133,47 @@ class _WTHomeState extends State<WTHome> {
       isTemplate: t == null,
       showBookmark: true,
       bookmarkFilled: t != null,
+    );
+  }
+
+  Widget _loading() {
+    return Column(
+      children: [
+        for (int i = 0; i < 3; i++)
+          Section(
+            "",
+            allowsCollapse: true,
+            initOpen: true,
+            headerPadding: const EdgeInsets.fromLTRB(16, 32, 16, 16),
+            loading: true,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  const SizedBox(width: 16),
+                  for (int j = 0; j < 2; j++)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 16.0),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: MediaQuery.of(context).size.width - 32 - 32,
+                        ),
+                        child: LoadingWrapper(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.cell(context),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            height: 250,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+      ],
     );
   }
 

@@ -139,15 +139,15 @@ class GraphLine extends StatelessWidget {
             ],
       barWidth: 3,
       color: color,
-      isCurved: false,
+      isCurved: true,
       preventCurveOverShooting: false,
-      curveSmoothness: 0.3,
+      curveSmoothness: 0.2,
       isStrokeCapRound: true,
       dotData: FlDotData(
         show: true,
         getDotPainter: (p0, p1, p2, p3) {
           return FlDotCirclePainter(
-            radius: 1,
+            radius: 4,
             color: color,
             strokeWidth: 0,
           );

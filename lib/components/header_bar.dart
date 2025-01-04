@@ -124,6 +124,9 @@ class _HeaderBarState extends State<HeaderBar> {
   // for controlling scroll
   late ScrollController _scrollController;
 
+  // internal tracker to not send too many requests
+  bool _isLoading = false;
+
   @override
   void initState() {
     // some assertions
@@ -214,12 +217,16 @@ class _HeaderBarState extends State<HeaderBar> {
     });
   }
 
-  void _refreshAction() async {
-    await widget.onRefresh!();
-    setState(() {
-      _shouldLoad = false;
-      _scrollAmount = 0;
-    });
+  Future<void> _refreshAction() async {
+    if (!_isLoading) {
+      _isLoading = true;
+      await widget.onRefresh!();
+      setState(() {
+        _shouldLoad = false;
+        _scrollAmount = 0;
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -282,6 +289,7 @@ class _HeaderBarState extends State<HeaderBar> {
               !notification.toString().contains("direction")) {
             // user released the screen, animate the position change
             if (_scrollAmount == 0 && _shouldLoad) {
+              print("LOADING");
               setState(() {
                 _scrollAmount = _scrollController.offset;
               });

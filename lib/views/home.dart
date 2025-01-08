@@ -307,6 +307,7 @@ class _HomeState extends State<Home> {
     HomeScreen screen,
   ) {
     return GestureDetector(
+      key: ValueKey("homescreen-key-$label"),
       onTap: () {
         dmodel.setTabScreen(screen);
       },

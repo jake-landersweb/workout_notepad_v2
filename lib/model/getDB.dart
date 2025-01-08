@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
@@ -5,20 +6,42 @@ import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
+class Mutex {
+  Completer<void>? _completer;
+
+  Future<void> acquire() async {
+    while (_completer != null) {
+      await _completer!.future;
+    }
+    _completer = Completer<void>();
+  }
+
+  void release() {
+    _completer?.complete();
+    _completer = null;
+  }
+}
+
 class DatabaseProvider {
   static final DatabaseProvider _databaseService = DatabaseProvider._internal();
   factory DatabaseProvider() => _databaseService;
   DatabaseProvider._internal();
   static Database? _database;
+  final Mutex _mutex = Mutex();
 
   Future<String> _getPath() async {
     return join(await getDatabasesPath(), 'workout_notepad.db');
   }
 
   Future<Database> get database async {
-    if (_database != null) return _database!;
-    _database = await _initDatabase();
-    return _database!;
+    await _mutex.acquire();
+    try {
+      if (_database != null) return _database!;
+      _database = await _initDatabase();
+      return _database!;
+    } finally {
+      _mutex.release();
+    }
   }
 
   Future<Database> _initDatabase() async {

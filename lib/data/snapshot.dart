@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:newrelic_mobile/newrelic_mobile.dart';
+import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/model/client.dart';
 import 'package:http/http.dart' as http;
 import 'package:workout_notepad_v2/model/root.dart';
@@ -99,8 +100,8 @@ class Snapshot {
         snapshots.add(Snapshot.fromJson(i));
       }
       return snapshots;
-    } catch (e) {
-      print(e);
+    } catch (error, stack) {
+      logger.exception(error, stack);
       return null;
     }
   }

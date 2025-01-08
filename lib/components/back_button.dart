@@ -15,6 +15,7 @@ class BackButton2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Clickable(
+      key: ValueKey("BackButton2"),
       onTap: () {
         Navigator.of(context, rootNavigator: useRoot).pop();
       },

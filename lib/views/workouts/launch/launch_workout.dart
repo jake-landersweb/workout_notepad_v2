@@ -154,6 +154,7 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
                   child: Row(
                     children: [
                       Clickable(
+                        key: ValueKey("launch-workout-back"),
                         onTap: () {
                           if (lmodel.state.workoutIndex > 0) {
                             lmodel.setPage(lmodel.state.workoutIndex - 1);
@@ -176,6 +177,7 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
                       ),
                       const Spacer(),
                       Clickable(
+                        key: ValueKey("launch-workout-next"),
                         onTap: () {
                           if (lmodel.state.workoutIndex <
                               lmodel.state.exercises.length) {

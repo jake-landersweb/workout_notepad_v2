@@ -6,11 +6,13 @@ import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/components/root.dart';
+import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/model/client.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:http/http.dart' as http;
 import 'package:workout_notepad_v2/model/env.dart';
 import 'package:workout_notepad_v2/utils/image.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 
 enum SubscriptionType { none, wn_unlocked }
 
@@ -88,9 +90,9 @@ class User {
     displayName = json['displayName'];
     phone = json['phone'];
     imgUrl = json['imgUrl'];
-    sync = json['sync'].round();
-    isAnon = json['isAnon'];
-    expireEpoch = json['expireEpoch'].round();
+    sync = json['sync']?.round() ?? 1;
+    isAnon = json['isAnon'] ?? false;
+    expireEpoch = -1;
     if (json.containsKey("created")) {
       created = json['created'].round();
     }
@@ -185,9 +187,9 @@ class User {
     String? anonUserId,
   }) async {
     try {
-      var client = Client(client: http.Client());
+      var client = GoClient(client: http.Client());
       var response = await client.post(
-        "/login",
+        "/v2/users",
         {},
         jsonEncode({
           "userId": userId,
@@ -264,31 +266,42 @@ class User {
     }
   }
 
-  static Future<User?> fromId(String uid) async {
+  static Future<Tuple2<int, User?>> fromId(String uid) async {
     try {
-      var client = Client(client: http.Client());
-      var response = await client.fetch("/users/$uid");
+      var client = GoClient(client: http.Client());
+      var response = await client.fetch("/v2/users/$uid");
+
+      if (response.statusCode == 404) {
+        logger.error("There was no user found with this id", {"userId": uid});
+        return Tuple2(404, null);
+      }
+
       if (response.statusCode != 200) {
-        print("ERROR - There was an error with the request ${response.body}");
-        return null;
+        logger.error(
+          "There was an unknown error fetching the user",
+          {"statusCode": response.statusCode, "body": response.body},
+        );
+        return Tuple2(response.statusCode, null);
       }
+
+      logger.info("Successfully fetched user");
+
+      // read the user
       Map<String, dynamic> body = jsonDecode(response.body);
-      if (!body.containsKey("status") || body['status'] != 200) {
-        print(body);
-        return null;
-      }
-      var user = User.fromJson(body['body']);
+      var user = User.fromJson(body);
+
       // save userid
       var prefs = await SharedPreferences.getInstance();
       prefs.setString("userId", user.userId);
-      return user;
-    } catch (error) {
+      return Tuple2(200, user);
+    } catch (error, stack) {
       NewrelicMobile.instance.recordError(
         error,
         StackTrace.current,
         attributes: {"err_code": "login_fromid"},
       );
-      print("UNKNOWN ERROR (passing to handling function) - $error");
+      logger.exception(error, stack);
+
       // throw so the encapsulating function is aware
       rethrow;
     }
@@ -390,24 +403,45 @@ class User {
   }
 
   Widget defaultAvatar(BuildContext context, {double size = 120}) {
-    return SvgPicture.network(
-      "$GO_HOST/users/$userId/avatar",
-      headers: const {"x-api-key": GO_API_KEY},
-      height: size,
-      fit: BoxFit.fitHeight,
-      placeholderBuilder: (context) {
-        return SvgPicture.asset(
-          "assets/svg/default_profile.svg",
+    try {
+      return SvgPicture.network(
+        "$GO_HOST/users/$userId/avatar",
+        headers: const {"x-api-key": GO_API_KEY},
+        height: size,
+        fit: BoxFit.fitHeight,
+        placeholderBuilder: (context) {
+          return SvgPicture.asset(
+            "assets/svg/default_profile.svg",
+            height: size,
+            fit: BoxFit.fitHeight,
+            placeholderBuilder: (context) {
+              return LoadingIndicator(
+                color: Theme.of(context).colorScheme.primary,
+              );
+            },
+          );
+        },
+      );
+    } catch (error, stack) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: SizedBox(
+          width: size,
           height: size,
-          fit: BoxFit.fitHeight,
-          placeholderBuilder: (context) {
-            return LoadingIndicator(
-              color: Theme.of(context).colorScheme.primary,
-            );
-          },
-        );
-      },
-    );
+          child: Align(
+            child: SvgPicture.asset(
+              "assets/svg/default_profile.svg",
+              height: size,
+              fit: BoxFit.fitHeight,
+              placeholderBuilder: (context) {
+                return LoadingIndicator(
+                    color: Theme.of(context).colorScheme.primary);
+              },
+            ),
+          ),
+        ),
+      );
+    }
   }
 
   // bool isPremiumUser() {

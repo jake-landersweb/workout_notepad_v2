@@ -76,7 +76,7 @@ class DataModel extends ChangeNotifier {
   SyncStatus dataSyncStatus = SyncStatus.loading;
   bool showPostWorkoutScreen = false;
 
-  DataModel() {
+  DataModel({String? defaultUser}) {
     // create the subscription notifier
     _subscription =
         InAppPurchase.instance.purchaseStream.listen((purchaseDetailsList) {
@@ -91,7 +91,7 @@ class DataModel extends ChangeNotifier {
       );
     });
 
-    init();
+    init(defaultUser: defaultUser);
   }
 
   @override
@@ -357,7 +357,7 @@ class DataModel extends ChangeNotifier {
     await init(u: u);
   }
 
-  Future<void> init({User? u}) async {
+  Future<void> init({User? u, String? defaultUser}) async {
     // set default metadata for the logger
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     logger.setAttribute("app.version", packageInfo.version);
@@ -369,6 +369,11 @@ class DataModel extends ChangeNotifier {
     notifyListeners();
 
     var prefs = await SharedPreferences.getInstance();
+
+    // for pumping information with tests
+    if (defaultUser != null) {
+      prefs.setString("user", defaultUser);
+    }
 
     // create the pb client
     pb = PocketBase(
@@ -446,13 +451,21 @@ class DataModel extends ChangeNotifier {
       // await Future.delayed(const Duration(seconds: 5));
 
       // get the user
-      var tmp = await User.fromId(user!.userId);
-      if (tmp == null) {
-        print("[GET_USER] There was no user found with the userId");
+      var userResponse = await User.fromId(user!.userId);
+
+      // only clear data if the response from the server told us this user does not exist
+      if (userResponse.v1 == 404) {
         await clearData();
         return;
       }
 
+      // legacy error throwing
+      if (userResponse.v2 == null) {
+        throw "user is null, unknown error";
+      }
+
+      // legacy variable
+      var tmp = userResponse.v2!;
       print("[GET_USER] valid user found in AWS");
 
       if (tmp.isAnon) {
@@ -468,20 +481,21 @@ class DataModel extends ChangeNotifier {
           user = tmp;
         }
       } else {
-        // user not anon, make sure there is a valid firebase instance
-        auth.User? firebaseUser = auth.FirebaseAuth.instance.currentUser;
-        if (firebaseUser == null) {
-          print("[GET_USER] No user loaded in firebase");
-          user = tmp;
+        // TODO -- replace with pocketbase auth
+        // // user not anon, make sure there is a valid firebase instance
+        // auth.User? firebaseUser = auth.FirebaseAuth.instance.currentUser;
+        // if (firebaseUser == null) {
+        //   print("[GET_USER] No user loaded in firebase");
+        //   user = tmp;
 
-          // ignore this
-          // await clearData();
-          // return;
-        } else {
-          print("[GET_USER] valid firebase user");
-          print(firebaseUser);
-          user = tmp;
-        }
+        //   // ignore this
+        //   // await clearData();
+        //   // return;
+        // } else {
+        //   print("[GET_USER] valid firebase user");
+        //   print(firebaseUser);
+        //   user = tmp;
+        // }
       }
 
       print("[GET_USER] the user is valid");
@@ -497,12 +511,8 @@ class DataModel extends ChangeNotifier {
       if (!user!.isAnon) {
         handleSnapshotInit();
       }
-    } catch (error) {
-      NewrelicMobile.instance.recordError(
-        error,
-        StackTrace.current,
-        attributes: {"err_code": "fetch_user"},
-      );
+    } catch (error, stack) {
+      logger.exception(error, stack);
       print(
           "GET_USER there was an error fetching the user. Assuming user is offline");
       user!.offline = true;
@@ -664,10 +674,17 @@ class DataModel extends ChangeNotifier {
       // check if the user has data
       if (checkData) {
         if (workouts.isEmpty && exercises.isEmpty) {
-          print("user has no data, adding basic data");
-          // add some base categories and tags
-          await importDefaults();
-          hasNoData = true;
+          // check if there are snapshots for this user
+          var serverSnapshots = await Snapshot.getList(user!.userId);
+          if (serverSnapshots != null && serverSnapshots.isNotEmpty) {
+            // sorted by first = latest on server
+            await importSnapshot(serverSnapshots.first);
+          } else {
+            print("user has no data, adding basic data");
+            // add some base categories and tags
+            await importDefaults();
+            hasNoData = true;
+          }
         }
       }
       notifyListeners();

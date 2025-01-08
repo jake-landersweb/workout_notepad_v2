@@ -56,3 +56,8 @@ GoogleService-Info.plist
 
 .env
 .env.make
+
+# screenshot server
+venv
+.screenshot-server-pid
+screenshots

@@ -716,11 +716,26 @@ class _PostWorkoutSummaryState extends State<PostWorkoutSummary> {
         LineChartData(
           lineBarsData: [
             LineChartBarData(
+              barWidth: 3,
+              color: Theme.of(context).colorScheme.primary,
+              isCurved: true,
+              preventCurveOverShooting: false,
+              curveSmoothness: 0.2,
+              isStrokeCapRound: true,
+              dotData: FlDotData(
+                show: true,
+                getDotPainter: (p0, p1, p2, p3) {
+                  return FlDotCirclePainter(
+                    radius: 4,
+                    color: Theme.of(context).colorScheme.primary,
+                    strokeWidth: 0,
+                  );
+                },
+              ),
               spots: [
                 for (int i = 0; i < model.weightDistribution.length; i++)
                   FlSpot(i + 1, model.weightDistribution[i].toDouble())
               ],
-              color: Theme.of(context).colorScheme.primary,
             ),
           ],
           gridData: FlGridData(show: false),

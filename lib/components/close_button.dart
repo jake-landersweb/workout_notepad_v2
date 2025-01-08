@@ -14,6 +14,7 @@ class CloseButton2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Clickable(
+      key: ValueKey("CloseButton2"),
       onTap: () {
         Navigator.of(context, rootNavigator: useRoot).pop();
       },

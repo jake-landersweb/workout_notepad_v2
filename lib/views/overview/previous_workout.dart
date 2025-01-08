@@ -339,11 +339,26 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
         LineChartData(
           lineBarsData: [
             LineChartBarData(
+              barWidth: 3,
+              color: Theme.of(context).colorScheme.primary,
+              isCurved: true,
+              preventCurveOverShooting: false,
+              curveSmoothness: 0.2,
+              isStrokeCapRound: true,
+              dotData: FlDotData(
+                show: true,
+                getDotPainter: (p0, p1, p2, p3) {
+                  return FlDotCirclePainter(
+                    radius: 4,
+                    color: Theme.of(context).colorScheme.primary,
+                    strokeWidth: 0,
+                  );
+                },
+              ),
               spots: [
                 for (int i = 0; i < _weightDistribution.length; i++)
                   FlSpot(i + 1, _weightDistribution[i].toDouble())
               ],
-              color: Theme.of(context).colorScheme.primary,
             ),
           ],
           gridData: FlGridData(show: false),

@@ -24,8 +24,7 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
     );
   }
 
-  ThemeData getTheme(
-      BuildContext context, Brightness brightness, DataModel dmodel) {
+  ThemeData getTheme(BuildContext context, Brightness brightness) {
     var colorScheme = _scheme(brightness).toColorScheme(brightness);
     return ThemeData(
       useMaterial3: true,
@@ -33,7 +32,7 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
       brightness: brightness,
       canvasColor: AppColors.background(context),
       colorScheme: Theme.of(context).colorScheme.copyWith(
-            primary: dmodel.color,
+            primary: primaryColor,
             surface: AppColors.background(context),
             onPrimaryContainer: Colors.white,
           ),
@@ -42,7 +41,7 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
       filledButtonTheme: FilledButtonThemeData(
         style: ButtonStyle(
           backgroundColor: WidgetStateProperty.resolveWith(
-            (states) => dmodel.color,
+            (states) => primaryColor,
           ),
           textStyle: WidgetStateProperty.resolveWith(
             (states) => const TextStyle(fontSize: 18),
@@ -97,7 +96,7 @@ class AppColorScheme extends ThemeExtension<AppColorScheme> {
         space: 0.5,
       ),
       dividerColor: colorScheme.outline.withOpacity(0.5),
-      primaryColor: dmodel.color,
+      primaryColor: primaryColor,
       scaffoldBackgroundColor: AppColors.background(context),
       menuTheme: MenuThemeData(
         style: MenuStyle(

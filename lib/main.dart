@@ -134,7 +134,11 @@ class _RestartWidgetState extends State<RestartWidget> {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({
+    super.key,
+    this.defaultUser,
+  });
+  final String? defaultUser;
 
   // This widget is the root of your application.
   @override
@@ -143,7 +147,9 @@ class MyApp extends StatelessWidget {
     return RestartWidget(
       child: MultiProvider(
         providers: [
-          ChangeNotifierProvider(create: (context) => DataModel()),
+          ChangeNotifierProvider(
+            create: (context) => DataModel(defaultUser: defaultUser),
+          ),
           ChangeNotifierProvider(create: (context) => SearchModel()),
           ChangeNotifierProvider(create: (context) => WorkoutTemplateModel()),
         ],
@@ -170,7 +176,7 @@ class MyApp extends StatelessWidget {
           title: 'Workout Notepad',
           navigatorObservers: [NewRelicNavigationObserver()],
           debugShowCheckedModeBanner: false,
-          theme: scheme.getTheme(context, Brightness.light, dmodel),
+          theme: scheme.getTheme(context, Brightness.light),
           onGenerateRoute: (settings) {
             return MaterialWithModalsPageRoute(
               settings: settings,

@@ -413,6 +413,7 @@ class _ProfileState extends State<Profile> {
                       submitText: "Delete Data",
                       submitColor: Colors.red,
                       onSubmit: () async {
+                        Navigator.of(context).pop();
                         await dmodel.logout(context);
                       },
                     );
@@ -428,6 +429,7 @@ class _ProfileState extends State<Profile> {
                       submitText: "Logout",
                       submitColor: Colors.red[500],
                       onSubmit: () async {
+                        Navigator.of(context).pop();
                         await dmodel.logout(context);
                         await Future.delayed(
                             const Duration(milliseconds: 1000));

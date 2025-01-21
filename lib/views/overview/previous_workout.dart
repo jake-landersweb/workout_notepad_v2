@@ -1,8 +1,10 @@
 import 'package:collection/collection.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
+import 'package:workout_notepad_v2/model/local_prefs.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/color.dart';
@@ -34,6 +36,7 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
     });
 
     var db = await DatabaseProvider().database;
+    var localPrefs = context.read<LocalPrefs>();
 
     var response = await db
         .rawQuery("SELECT * FROM workout_log ORDER BY created DESC LIMIT 1");
@@ -44,7 +47,21 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
         var weight = 0;
         for (var j in i) {
           // total weight
-          weight += j.metadata.map((e) => e.weight).sum;
+          if (j.metadata.isNotEmpty) {
+            if (j.metadata[0].weightPost == "kg") {
+              if (localPrefs.defaultWeightPost == "lbs") {
+                weight += (j.metadata.map((e) => e.weight).sum * 2.2).toInt();
+              } else {
+                weight += j.metadata.map((e) => e.weight).sum;
+              }
+            } else {
+              if (localPrefs.defaultWeightPost == "lbs") {
+                weight += j.metadata.map((e) => e.weight).sum;
+              } else {
+                weight += (j.metadata.map((e) => e.weight).sum / 2.2).toInt();
+              }
+            }
+          }
         }
         _weightDistribution.add(weight);
       }
@@ -333,6 +350,7 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
     BuildContext context,
     WorkoutLog log,
   ) {
+    var localPrefs = context.watch<LocalPrefs>();
     Widget content = Padding(
       padding: const EdgeInsets.fromLTRB(12, 0, 12, 4),
       child: LineChart(
@@ -382,7 +400,7 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
                 for (int i = 0; i < touchedSpots.length; i++) {
                   items.add(
                     LineTooltipItem(
-                      "Set #${touchedSpots[i].x.round()}\n${touchedSpots[i].y.round()} lbs",
+                      "Set #${touchedSpots[i].x.round()}\n${touchedSpots[i].y.round()} ${localPrefs.defaultWeightPost}",
                       ttBody(
                         context,
                         color: touchedSpots[i].bar.color,
@@ -406,7 +424,7 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
                     return Container();
                   }
                   return Text(
-                    "${_weightDistribution[value.round() - 1]} lbs",
+                    "${_weightDistribution[value.round() - 1]} ${localPrefs.defaultWeightPost}",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 12,
@@ -667,39 +685,70 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
       PieChartData(sections: pieSections),
     );
 
-    Widget legend = Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.border(context)),
-      ),
-      height: expanded ? double.infinity : 60,
-      child: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 4,
-          mainAxisSpacing: 4,
-          childAspectRatio: 2.5,
+    late Widget legend;
+    if (data.length > 4) {
+      legend = Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: AppColors.border(context)),
         ),
-        padding: EdgeInsets.symmetric(horizontal: 4),
-        itemCount: data.length,
-        itemBuilder: (context, index) {
-          return Row(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: ColorUtil.random(data[index].v1),
-                  shape: BoxShape.circle,
+        height: expanded ? double.infinity : 60,
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 4,
+            mainAxisSpacing: 4,
+            childAspectRatio: 2.5,
+          ),
+          padding: EdgeInsets.symmetric(horizontal: 4),
+          itemCount: data.length,
+          itemBuilder: (context, index) {
+            return Row(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: ColorUtil.random(data[index].v1),
+                    shape: BoxShape.circle,
+                  ),
+                  height: 10,
+                  width: 10,
                 ),
-                height: 10,
-                width: 10,
-              ),
-              const SizedBox(width: 4),
-              Expanded(child: Text(data[index].v1, style: ttcaption(context))),
+                const SizedBox(width: 4),
+                Expanded(
+                    child: Text(data[index].v1, style: ttcaption(context))),
+              ],
+            );
+          },
+        ),
+      );
+    } else {
+      legend = SizedBox(
+        height: expanded ? double.infinity : 60,
+        child: Center(
+          child: Wrap(
+            spacing: 4,
+            runSpacing: 4,
+            children: [
+              for (var i in data)
+                Row(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: ColorUtil.random(i.v1),
+                        shape: BoxShape.circle,
+                      ),
+                      height: 10,
+                      width: 10,
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(child: Text(i.v1, style: ttcaption(context))),
+                  ],
+                ),
             ],
-          );
-        },
-      ),
-    );
+          ),
+        ),
+      );
+    }
 
     return Container(
       decoration: BoxDecoration(

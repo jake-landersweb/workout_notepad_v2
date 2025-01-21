@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:workout_notepad_v2/logger.dart';
 
 class Mutex {
   Completer<void>? _completer;
@@ -52,13 +52,13 @@ class DatabaseProvider {
       path,
       version: 1,
       onDowngrade: (db, oldVersion, newVersion) {
-        print("IGNORING DOWNGRADE");
+        logger.debug("IGNORING DOWNGRADE");
       },
       onUpgrade: (db, oldVersion, newVersion) async {
-        print("IGNORING UPGRADE");
+        logger.debug("IGNORING UPGRADE");
       },
       onCreate: (db, version) async {
-        print("CREATING DATABASE");
+        logger.debug("CREATING DATABASE");
         // open sql file
         String contents = await rootBundle.loadString("sql/init.sql");
         // split into sql functions
@@ -73,21 +73,17 @@ class DatabaseProvider {
     );
 
     // check for migrations
-    print("Running initial migration ...");
+    logger.debug("Running initial migration ...");
     try {
       String contents = await rootBundle.loadString("sql/migration_1.sql");
       await db.execute(contents.trim());
+      logger.debug("Running all migrations");
+      await runMigrations(db);
+      return db;
     } catch (e, stack) {
-      print("failed to run the initial migration");
-      print(e);
-      print(stack);
+      logger.exception(e, stack);
       rethrow;
     }
-
-    print("Running all migrations");
-    await runMigrations(db);
-
-    return db;
   }
 
   Future<bool> delete() async {
@@ -99,13 +95,8 @@ class DatabaseProvider {
       String path = join(await getDatabasesPath(), 'workout_notepad.db');
       await databaseFactory.deleteDatabase(path);
       return true;
-    } catch (e) {
-      print(e);
-      NewrelicMobile.instance.recordError(
-        e,
-        StackTrace.current,
-        attributes: {"err_code": "db_delete"},
-      );
+    } catch (e, stack) {
+      logger.exception(e, stack);
       return false;
     }
   }
@@ -123,21 +114,21 @@ class DatabaseProvider {
       // await db.rawQuery("DELETE FROM migrations WHERE id = 4");
 
       for (var i in migrations) {
-        print("----");
-        print("Checking migration: $i");
+        var l = logger.withData({"migration": i});
+        l.debug("Checking migration");
 
         var response =
             await db.rawQuery("SELECT * FROM migrations WHERE id = ?", [i]);
         if (response.isEmpty) {
-          print("Migration $i not present");
-          print("Running migration: $i");
+          l.debug("Migration not present");
+          l.debug("Running migration ...");
           await db.transaction((txn) async {
             String contents =
                 await rootBundle.loadString("sql/migration_$i.sql");
             List<String> functions = contents.split("--");
             for (var i in functions) {
               if (i.isNotEmpty) {
-                print("EXECUTING: $i");
+                l.debug("Executing sql", {"sql": i});
                 await txn.execute(i.trim());
               }
             }
@@ -145,14 +136,13 @@ class DatabaseProvider {
             // insert the new migration record
             await txn.insert("migrations", {"id": i});
           });
-          print("Migration $i run successfully");
+          l.debug("Migration successful");
         } else {
-          print("Migration $i present");
+          l.debug("Migration already exists");
         }
       }
     } catch (e, stack) {
-      print(e);
-      print(stack);
+      logger.exception(e, stack);
       rethrow;
     }
   }

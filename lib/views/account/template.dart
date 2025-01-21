@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/alert.dart';
@@ -9,7 +7,6 @@ import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/account/root.dart';
-import 'package:workout_notepad_v2/views/account/singin_apple.dart';
 
 class AccountTemplate extends StatefulWidget {
   const AccountTemplate({
@@ -176,46 +173,6 @@ class _AccountTemplateState extends State<AccountTemplate> {
                 ),
               ),
             const SizedBox(height: 16),
-            const Divider(),
-            const SizedBox(height: 16),
-            SigninGoogle(
-              onSignIn: () async {
-                if (_isLoading) return;
-                setState(() {
-                  _isLoading = true;
-                });
-                var response = await widget.onGoogleCallback();
-                if (response.isNotEmpty) {
-                  snackbarErr(context, response);
-                } else {
-                  Navigator.of(context).pop();
-                }
-                setState(() {
-                  _isLoading = false;
-                });
-              },
-              isLoading: _isLoading || dmodel.loadStatus == LoadStatus.init,
-            ),
-            const SizedBox(height: 8),
-            if (Platform.isIOS)
-              SigninApple(
-                onSignIn: () async {
-                  if (_isLoading) return;
-                  setState(() {
-                    _isLoading = true;
-                  });
-                  var response = await widget.onAppleCallback();
-                  if (response.isNotEmpty) {
-                    snackbarErr(context, response);
-                  } else {
-                    Navigator.of(context).pop();
-                  }
-                  setState(() {
-                    _isLoading = false;
-                  });
-                },
-                isLoading: _isLoading || dmodel.loadStatus == LoadStatus.init,
-              ),
           ],
         ),
       ],

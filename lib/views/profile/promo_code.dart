@@ -4,12 +4,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/model/data_model.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/logger.dart';
 
 class PromoCodeSearch extends StatefulWidget {
   const PromoCodeSearch({
@@ -96,13 +96,8 @@ class _PromoCodeSearchState extends State<PromoCodeSearch> {
           Navigator.of(context).pop();
         }
       }
-    } catch (e) {
-      print(e);
-      NewrelicMobile.instance.recordError(
-        e,
-        StackTrace.current,
-        attributes: {"err_code": "promo_code_search"},
-      );
+    } catch (e, stack) {
+      logger.exception(e, stack);
     }
     setState(() {
       _isLoading = false;

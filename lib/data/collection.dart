@@ -1,7 +1,7 @@
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/data/root.dart';
+import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
@@ -14,7 +14,8 @@ int collectionTypeToJson(CollectionType ct) {
 CollectionType collectionTypeFromJson(int ct) {
   try {
     return CollectionType.values[ct];
-  } catch (e) {
+  } catch (e, stack) {
+    logger.exception(e, stack);
     throw "Invalid collection type index: $ct";
   }
 }
@@ -120,12 +121,8 @@ class Collection {
         tmpItems.add(item);
       }
       return tmpItems;
-    } catch (error) {
-      NewrelicMobile.instance.recordError(
-        error,
-        StackTrace.current,
-        attributes: {"err_code": "fetch_colection_items"},
-      );
+    } catch (error, stack) {
+      logger.exception(error, stack);
       print(error);
       return null;
     }
@@ -259,7 +256,8 @@ class CollectionItem {
         throw ("ERROR: no workout found");
       }
       return await Workout.fromJson(response[0]);
-    } catch (e) {
+    } catch (e, stack) {
+      logger.exception(e, stack);
       print(e);
       return null;
     }

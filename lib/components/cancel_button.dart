@@ -18,7 +18,7 @@ class CancelButton extends StatelessWidget {
       onTap: () => Navigator.of(context, rootNavigator: useRoot).pop(),
       child: Text(
         title ?? "Cancel",
-        style: ttLabel(context),
+        style: ttLabel(context, size: 16),
       ),
     );
   }

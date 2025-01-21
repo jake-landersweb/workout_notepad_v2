@@ -5,6 +5,7 @@ import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/logger.dart';
 
 enum ELDistributionType { weight, reps, time }
 
@@ -363,7 +364,8 @@ class _ELDistributionState extends State<ELDistribution> {
           Tuple2(d, i['min_val'] as num),
         );
       }
-    } catch (e) {
+    } catch (e, stack) {
+      logger.exception(e, stack);
       print(e);
       _hasError = true;
     }

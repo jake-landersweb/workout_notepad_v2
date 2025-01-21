@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -9,7 +10,7 @@ class SigninGoogle extends StatefulWidget {
     required this.isLoading,
   });
   // final Function(UserCredential credential) onSignIn;
-  final VoidCallback onSignIn;
+  final AsyncCallback onSignIn;
   final bool isLoading;
 
   @override
@@ -23,7 +24,7 @@ class _SigninGoogleState extends State<SigninGoogle> {
       onTap: () async {
         WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
         if (widget.isLoading) return;
-        widget.onSignIn();
+        await widget.onSignIn();
       },
       child: Container(
         decoration: BoxDecoration(

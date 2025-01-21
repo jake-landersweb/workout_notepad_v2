@@ -1,12 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/logger.dart';
 
 class WLEdit extends StatefulWidget {
   const WLEdit({
@@ -117,13 +117,8 @@ class _WLEditState extends State<WLEdit> {
       }
       widget.onSave(_wl);
       Navigator.of(context).pop();
-    } catch (e) {
-      print(e);
-      NewrelicMobile.instance.recordError(
-        e,
-        StackTrace.current,
-        attributes: {"err_code": "wl_save"},
-      );
+    } catch (e, stack) {
+      logger.exception(e, stack);
       snackbarErr(context, "There was an unknown error");
     }
   }

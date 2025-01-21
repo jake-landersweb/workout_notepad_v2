@@ -4,6 +4,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/root.dart';
+import 'package:workout_notepad_v2/model/internet_provider.dart';
 
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -19,6 +20,19 @@ import 'package:workout_notepad_v2/views/workouts/launch/launch_workout.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/lw_time.dart';
 
 enum HomeScreen { logs, overview, exercises, profile, discover, insights }
+
+class ScreenModel extends ChangeNotifier {
+  ScreenModel({HomeScreen? initScreen}) {
+    _currentScreen = initScreen ?? HomeScreen.overview;
+  }
+
+  late HomeScreen _currentScreen;
+  HomeScreen get screen => _currentScreen;
+  void setScreen(HomeScreen screen) {
+    _currentScreen = screen;
+    notifyListeners();
+  }
+}
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -72,20 +86,26 @@ class _HomeState extends State<Home> {
       _showPostWorkout(context);
     }
 
-    return Stack(
-      alignment: Alignment.bottomCenter,
-      children: [
-        _getBody(dmodel),
-        _bar(context, dmodel),
-      ],
+    return ChangeNotifierProvider(
+      create: (context) => ScreenModel(),
+      builder: (context, child) {
+        return Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            _getBody(context, dmodel),
+            _bar(context, dmodel),
+          ],
+        );
+      },
     );
   }
 
-  Widget _getBody(DataModel dmodel) {
+  Widget _getBody(BuildContext context, DataModel dmodel) {
+    var screenModel = Provider.of<ScreenModel>(context);
     if (dmodel.user == null) {
       return Container();
     }
-    switch (dmodel.currentTabScreen) {
+    switch (screenModel.screen) {
       case HomeScreen.overview:
         return const OverviewHome();
       // return const WorkoutsHome();
@@ -103,6 +123,8 @@ class _HomeState extends State<Home> {
   }
 
   Widget _bar(BuildContext context, DataModel dmodel) {
+    var internetModel = Provider.of<InternetProvider>(context);
+    var screenModel = Provider.of<ScreenModel>(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -124,7 +146,7 @@ class _HomeState extends State<Home> {
             top: false,
             child: Column(
               children: [
-                if (dmodel.user?.offline ?? false)
+                if (!internetModel.hasInternet())
                   Container(
                     color: AppColors.divider(context),
                     child: Padding(
@@ -172,39 +194,42 @@ class _HomeState extends State<Home> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Clickable(
-                              onTap: () async {
-                                await showAlert(
-                                  context: context,
-                                  title: "Are You Sure?",
-                                  body: const Text(
-                                      "If you cancel your workout, all progress will be lost."),
-                                  cancelText: "Go Back",
-                                  onCancel: () {},
-                                  cancelBolded: true,
-                                  submitColor: Colors.red,
-                                  submitText: "Yes",
-                                  onSubmit: () {
-                                    dmodel.stopWorkout(isCancel: true);
-                                    // dmodel.workoutState!.dumpToFile();
-                                  },
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.fromLTRB(16, 2, 8, 2),
-                                child: Icon(
-                                  Icons.stop_rounded,
-                                  size: 30,
-                                  color: AppColors.subtext(context),
-                                ),
-                              ),
-                            ),
+                            // Clickable(
+                            //   onTap: () async {
+                            //     await showAlert(
+                            //       context: context,
+                            //       title: "Are You Sure?",
+                            //       body: const Text(
+                            //           "If you cancel your workout, all progress will be lost."),
+                            //       cancelText: "Go Back",
+                            //       onCancel: () {},
+                            //       cancelBolded: true,
+                            //       submitColor: Colors.red,
+                            //       submitText: "Yes",
+                            //       onSubmit: () {
+                            //         dmodel.stopWorkout(isCancel: true);
+                            //         // dmodel.workoutState!.dumpToFile();
+                            //       },
+                            //     );
+                            //   },
+                            //   child: Padding(
+                            //     padding: const EdgeInsets.fromLTRB(16, 2, 8, 2),
+                            //     child: Icon(
+                            //       Icons.stop_rounded,
+                            //       size: 30,
+                            //       color: AppColors.subtext(context),
+                            //     ),
+                            //   ),
+                            // ),
+                            const SizedBox(width: 16),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
                                     "Current Workout",
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                       color: AppColors.subtext(context),
                                       fontSize: 10,
@@ -228,12 +253,17 @@ class _HomeState extends State<Home> {
                                 ],
                               ),
                             ),
-                            LWTime(
-                              start: dmodel.workoutState!.startTime,
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.subtext(context),
+                            SizedBox(
+                              width: 60,
+                              child: Center(
+                                child: LWTime(
+                                  start: dmodel.workoutState!.startTime,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.subtext(context),
+                                  ),
+                                ),
                               ),
                             ),
                           ],
@@ -248,35 +278,35 @@ class _HomeState extends State<Home> {
                     children: [
                       _barRow(
                         context,
-                        dmodel,
+                        screenModel,
                         LineIcons.list,
                         "Exercises",
                         HomeScreen.exercises,
                       ),
                       _barRow(
                         context,
-                        dmodel,
+                        screenModel,
                         LineIcons.compass,
                         "Discover",
                         HomeScreen.discover,
                       ),
                       _barRow(
                         context,
-                        dmodel,
+                        screenModel,
                         LineIcons.dumbbell,
                         "Dashboard",
                         HomeScreen.overview,
                       ),
                       _barRow(
                         context,
-                        dmodel,
+                        screenModel,
                         LineIcons.lightbulb,
                         "Insights",
                         HomeScreen.insights,
                       ),
                       _barRow(
                         context,
-                        dmodel,
+                        screenModel,
                         LineIcons.pieChart,
                         "Logs",
                         HomeScreen.logs,
@@ -301,7 +331,7 @@ class _HomeState extends State<Home> {
 
   Widget _barRow(
     BuildContext context,
-    DataModel dmodel,
+    ScreenModel screenModel,
     IconData icon,
     String label,
     HomeScreen screen,
@@ -309,17 +339,17 @@ class _HomeState extends State<Home> {
     return GestureDetector(
       key: ValueKey("homescreen-key-$label"),
       onTap: () {
-        dmodel.setTabScreen(screen);
+        screenModel.setScreen(screen);
       },
       child: Container(
         decoration: BoxDecoration(
-          color: dmodel.currentTabScreen == screen
+          color: screenModel.screen == screen
               ? Theme.of(context).colorScheme.primary
               : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: dmodel.currentTabScreen == screen
-                ? dmodel.color
+            color: screenModel.screen == screen
+                ? Theme.of(context).colorScheme.primary
                 : Colors.transparent,
           ),
         ),
@@ -327,7 +357,7 @@ class _HomeState extends State<Home> {
           padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
           child: Icon(
             icon,
-            color: dmodel.currentTabScreen == screen
+            color: screenModel.screen == screen
                 ? Theme.of(context).colorScheme.onPrimary
                 : null,
           ),

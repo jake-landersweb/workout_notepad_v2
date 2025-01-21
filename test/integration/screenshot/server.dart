@@ -20,7 +20,7 @@ Future<void> sendScreenshotToServer(String filename, List<int> bytes) async {
     } else {
       print('Failed to upload file: ${response.body}');
     }
-  } catch (e) {
+  } catch (e, stack) {
     print('Error occurred while uploading file: $e');
   }
 }

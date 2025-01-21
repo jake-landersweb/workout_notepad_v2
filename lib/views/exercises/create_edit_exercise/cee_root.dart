@@ -149,31 +149,7 @@ class _CEERootState extends State<CEERoot> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: _title(context, cemodel),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Section(
-            "Difficulty",
-            child: SegmentedPicker(
-              style: SegmentedPickerStyle(
-                height: 50,
-                backgroundColor: AppColors.cell(context),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                pickerColor: _pickerColor(context, cemodel).withOpacity(0.3),
-                selectedTextColor: _pickerColor(context, cemodel),
-              ),
-              titles: const ["Beginner", "Intermediate", "Advanced"],
-              selection: cemodel.exercise.difficulty,
-              onSelection: (v) {
-                setState(() {
-                  cemodel.exercise.difficulty = v;
-                });
-              },
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 16),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Clickable(
@@ -217,6 +193,25 @@ class _CEERootState extends State<CEERoot> {
                 ),
               ),
             ),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: SegmentedPicker(
+            style: SegmentedPickerStyle(
+              height: 40,
+              backgroundColor: AppColors.cell(context),
+              pickerColor: _pickerColor(context, cemodel).withOpacity(0.3),
+              selectedTextColor: _pickerColor(context, cemodel),
+            ),
+            titles: const ["Beginner", "Intermediate", "Advanced"],
+            selection: cemodel.exercise.difficulty,
+            onSelection: (v) {
+              setState(() {
+                cemodel.exercise.difficulty = v;
+              });
+            },
           ),
         ),
         comp.Section(

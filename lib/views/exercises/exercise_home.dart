@@ -21,12 +21,17 @@ class ExerciseHome extends StatefulWidget {
 class _ExerciseHomeState extends State<ExerciseHome> {
   @override
   Widget build(BuildContext context) {
-    var dmodel = Provider.of<DataModel>(context);
+    var dmodel = context.watch<DataModel>();
     var searchModel = Provider.of<SearchModel>(context);
     return Scaffold(
       body: HeaderBar(
         title: "Exercises",
         isLarge: true,
+        refreshable: true,
+        onRefresh: () async {
+          await Future.delayed(const Duration(milliseconds: 300));
+          await dmodel.refreshExercises();
+        },
         // leading: const [BackButton2()],
         trailing: [
           comp.AddButton(onTap: () {
@@ -55,9 +60,7 @@ class _ExerciseHomeState extends State<ExerciseHome> {
                 );
               },
             ),
-          SizedBox(
-              height: (dmodel.workoutState == null ? 100 : 130) +
-                  (dmodel.user!.offline ? 30 : 0)),
+          SizedBox(height: (dmodel.workoutState == null ? 100 : 130)),
         ],
       ),
     );

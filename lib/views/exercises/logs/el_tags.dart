@@ -1,11 +1,12 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+
+import 'package:workout_notepad_v2/logger.dart';
 
 class ELTags extends StatefulWidget {
   const ELTags({
@@ -102,13 +103,8 @@ class _ELTagsState extends State<ELTags> {
           Tuple2(i['tag_title'] as String, i['number_of_sets'] as int),
         );
       }
-    } catch (e) {
-      print(e);
-      NewrelicMobile.instance.recordError(
-        e,
-        StackTrace.current,
-        attributes: {"err_code": "log_tags"},
-      );
+    } catch (e, stack) {
+      logger.exception(e, stack);
       _hasError = true;
     }
     setState(() {

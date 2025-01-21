@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/model/client.dart';
 import 'package:http/http.dart' as http;
@@ -80,7 +79,8 @@ class Snapshot {
       }
       Map<String, dynamic> body = jsonDecode(response.body);
       return body['body'];
-    } catch (e) {
+    } catch (e, stack) {
+      logger.exception(e, stack);
       print(e);
       return null;
     }
@@ -128,12 +128,8 @@ class Snapshot {
         snps.add(Snapshot.fromJson(i));
       }
       return snps;
-    } catch (e) {
-      NewrelicMobile.instance.recordError(
-        e,
-        StackTrace.current,
-        attributes: {"err_code": "snapshot_create"},
-      );
+    } catch (e, stack) {
+      logger.exception(e, stack);
       return null;
     }
   }

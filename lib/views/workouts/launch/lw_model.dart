@@ -5,7 +5,6 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sprung/sprung.dart';
 import 'package:sqflite/sqflite.dart';
@@ -15,6 +14,7 @@ import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
 class TimerInstance {
@@ -111,7 +111,8 @@ class LaunchWorkoutModelState {
       await file.writeAsString(jsonEncode(obj));
       print("success.");
       return true;
-    } catch (e) {
+    } catch (e, stack) {
+      logger.exception(e, stack);
       print(e);
       return false;
     }
@@ -406,18 +407,13 @@ class LaunchWorkoutModel extends ChangeNotifier {
       // if here, then it worked
       notifyListeners();
       return true;
-    } catch (e) {
-      print(e);
-      NewrelicMobile.instance.recordError(
-        e,
-        StackTrace.current,
-        attributes: {
-          "userId": state.userId,
-          "i": i,
-          "j": j,
-          "state": jsonEncode(state.toMap()),
-        },
-      );
+    } catch (e, stack) {
+      logger.exception(e, stack, data: {
+        "userId": state.userId,
+        "i": i,
+        "j": j,
+        "state": jsonEncode(state.toMap()),
+      });
       notifyListeners();
       return false;
     }
@@ -463,12 +459,11 @@ class LaunchWorkoutModel extends ChangeNotifier {
       // });
       notifyListeners();
       return true;
-    } catch (e) {
-      print(e);
-      NewrelicMobile.instance.recordError(
+    } catch (e, stack) {
+      logger.exception(
         e,
-        StackTrace.current,
-        attributes: {
+        stack,
+        data: {
           "userId": state.userId,
           "i": i,
           "j": j,
@@ -564,16 +559,14 @@ class LaunchWorkoutModel extends ChangeNotifier {
             conflictAlgorithm: ConflictAlgorithm.replace,
           );
         });
-      } catch (e) {
-        print(e);
-        NewrelicMobile.instance.recordError(
+      } catch (e, stack) {
+        logger.exception(
           e,
-          StackTrace.current,
-          attributes: {
+          stack,
+          data: {
             "err_code": "workout_save",
             "state": jsonEncode(state.toMap()),
           },
-          isFatal: true,
         );
         return Tuple2(false,
             "There was an issue saving your workout to the database. Support has been notified.");
@@ -584,7 +577,7 @@ class LaunchWorkoutModel extends ChangeNotifier {
       //   try {
       //     var snp = await state.workout.toSnapshot(db);
       //     await db.insert("workout_snapshot", snp.toMap());
-      //   } catch (error) {
+      //   }  catch (error, stack) { logger.exception(e, stack);
       //     print(error);
       //     NewrelicMobile.instance.recordError(
       //       error,
@@ -601,16 +594,11 @@ class LaunchWorkoutModel extends ChangeNotifier {
 
       await dmodel.stopWorkout();
       return Tuple2(true, "");
-    } catch (oops) {
-      print(oops);
-      NewrelicMobile.instance.recordError(
-        oops,
-        StackTrace.current,
-        attributes: {
-          "err_code": "workout_unknown",
-          "state": jsonEncode(state.toMap()),
-        },
-      );
+    } catch (error, stack) {
+      logger.exception(error, stack, data: {
+        "err_code": "workout_unknown",
+        "state": jsonEncode(state.toMap()),
+      });
       return Tuple2(false,
           "There was an unknown issue when saving the workout. Support has been notified");
     }
@@ -657,13 +645,10 @@ class LaunchWorkoutModel extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e, stack) {
-      print(e);
-      print(stack);
-      print(StackTrace.current);
-      NewrelicMobile.instance.recordError(
+      logger.exception(
         e,
         stack,
-        attributes: {
+        data: {
           "err_code": "save_workout_as_template",
           "state": jsonEncode(state.toMap()),
         },

@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/components/root.dart';
@@ -11,6 +11,7 @@ import 'package:workout_notepad_v2/model/client.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:http/http.dart' as http;
 import 'package:workout_notepad_v2/model/env.dart';
+import 'package:workout_notepad_v2/model/internet_provider.dart';
 import 'package:workout_notepad_v2/utils/image.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
@@ -37,7 +38,6 @@ class User {
   late int expireEpoch;
   int? created;
   int? updated;
-  bool offline = false;
   late SubscriptionType subscriptionType = SubscriptionType.none;
   int? subscriptionEstimatedExpireEpoch;
   int? subscriptionTransactionEpoch;
@@ -94,17 +94,19 @@ class User {
     isAnon = json['isAnon'] ?? false;
     expireEpoch = -1;
     if (json.containsKey("created")) {
-      created = json['created'].round();
+      created =
+          json['created']?.round() ?? DateTime.now().millisecondsSinceEpoch;
     }
     if (json.containsKey("updated")) {
-      updated = json['updated'].round();
+      updated =
+          json['updated']?.round() ?? DateTime.now().millisecondsSinceEpoch;
     }
     subscriptionType = subStatusFromJson(json['subscriptionType']);
     _rawSubType = json['subscriptionType'];
     subscriptionEstimatedExpireEpoch =
-        json['subscriptionEstimatedExpireEpoch']?.round();
+        json['subscriptionEstimatedExpireEpoch']?.round() ?? -1;
     subscriptionTransactionEpoch =
-        json['subscriptionTransactionEpoch']?.round();
+        json['subscriptionTransactionEpoch']?.round() ?? -1;
     anonUserId = json['anonUserId'];
     newUserId = json['newUserId'];
   }
@@ -166,13 +168,8 @@ class User {
       var prefs = await SharedPreferences.getInstance();
       prefs.setString("userId", user.userId);
       return user;
-    } catch (error) {
-      NewrelicMobile.instance.recordError(
-        error,
-        StackTrace.current,
-        attributes: {"err_code": "login_auth"},
-      );
-      print("UNKNOWN ERROR - $error");
+    } catch (error, stack) {
+      logger.exception(error, stack);
       return null;
     }
   }
@@ -216,13 +213,8 @@ class User {
       var prefs = await SharedPreferences.getInstance();
       prefs.setString("userId", user.userId);
       return user;
-    } catch (error) {
-      NewrelicMobile.instance.recordError(
-        error,
-        StackTrace.current,
-        attributes: {"err_code": "login_auth"},
-      );
-      print("UNKNOWN ERROR - $error");
+    } catch (error, stack) {
+      logger.exception(error, stack);
       return null;
     }
   }
@@ -255,13 +247,8 @@ class User {
       var prefs = await SharedPreferences.getInstance();
       prefs.setString("userId", user.userId);
       return user;
-    } catch (error) {
-      NewrelicMobile.instance.recordError(
-        error,
-        StackTrace.current,
-        attributes: {"err_code": "login_anon"},
-      );
-      print("UNKNOWN ERROR - $error");
+    } catch (error, stack) {
+      logger.exception(error, stack);
       return null;
     }
   }
@@ -295,11 +282,6 @@ class User {
       prefs.setString("userId", user.userId);
       return Tuple2(200, user);
     } catch (error, stack) {
-      NewrelicMobile.instance.recordError(
-        error,
-        StackTrace.current,
-        attributes: {"err_code": "login_fromid"},
-      );
       logger.exception(error, stack);
 
       // throw so the encapsulating function is aware
@@ -316,18 +298,14 @@ class User {
         return false;
       }
       return true;
-    } catch (error) {
-      NewrelicMobile.instance.recordError(
-        error,
-        StackTrace.current,
-        attributes: {"err_code": "user_delete"},
-      );
-      print("UNKNOWN ERROR - $error");
+    } catch (error, stack) {
+      logger.exception(error, stack);
       return false;
     }
   }
 
   Widget avatar(BuildContext context, {double size = 120}) {
+    var internetModel = Provider.of<InternetProvider>(context);
     var offlineAvatar = ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: SizedBox(
@@ -350,7 +328,7 @@ class User {
     if (imgUrl == null ||
         imgUrl == "" ||
         (imgUrl?.contains("default") ?? false)) {
-      if (offline) {
+      if (!internetModel.hasInternet()) {
         return offlineAvatar;
       } else {
         return ClipRRect(
@@ -376,7 +354,7 @@ class User {
               height: size,
               fit: BoxFit.fitHeight,
               errorBuilder: (context, error, stackTrace) {
-                if (offline) {
+                if (!internetModel.hasInternet()) {
                   return offlineAvatar;
                 } else {
                   return defaultAvatar(context, size: size);
@@ -423,6 +401,7 @@ class User {
         },
       );
     } catch (error, stack) {
+      logger.exception(error, stack);
       return ClipRRect(
         borderRadius: BorderRadius.circular(10),
         child: SizedBox(

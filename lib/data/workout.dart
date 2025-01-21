@@ -1,11 +1,11 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/data/workout_snapshot.dart';
+import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/icons.dart';
 
@@ -370,9 +370,7 @@ class Workout {
 
       return true;
     } catch (error, stack) {
-      print(error);
-      print(stack);
-      NewrelicMobile.instance.recordError(error, stack);
+      logger.exception(error, stack);
       return false;
     }
   }

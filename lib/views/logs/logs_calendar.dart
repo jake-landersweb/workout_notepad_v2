@@ -45,6 +45,9 @@ class _LogsCalendarState extends State<LogsCalendar> {
                   dataSource: WorkoutLogCalendarDataSource(_workoutLogs),
                   cellBorderColor: Colors.transparent,
                   initialSelectedDate: DateTime.now(),
+                  headerStyle: CalendarHeaderStyle(
+                    backgroundColor: AppColors.cell(context),
+                  ),
                   showNavigationArrow: true,
                   onTap: (d) {
                     _currentWorkoutLogs = [];

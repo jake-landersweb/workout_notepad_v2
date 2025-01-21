@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/components/color_picker.dart';
@@ -11,6 +10,7 @@ import 'package:workout_notepad_v2/components/colored_cell.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder_item.dart';
+import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -678,9 +678,7 @@ class _GraphBuilderState extends State<GraphBuilder> {
       snackbarStatus(context, "Successfully saved graph");
       return true;
     } catch (error, stack) {
-      NewrelicMobile.instance.recordError(error, stack);
-      print(error);
-      print(stack);
+      logger.exception(error, stack);
       snackbarErr(context, "There was an issue saving the graph: $error");
       return false;
     }

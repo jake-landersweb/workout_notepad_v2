@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/views/account/template.dart';
+import 'package:workout_notepad_v2/logger.dart';
 
 class CreateAccount extends StatefulWidget {
   const CreateAccount({super.key});
@@ -55,7 +56,8 @@ class _CreateAccountState extends State<CreateAccount> {
           );
 
           return "";
-        } on ClientException catch (e) {
+        } on ClientException catch (e, stack) {
+          logger.exception(e, stack);
           print(e);
           if (e.response['data'] != null) {
             if (e.response['data']['email'] != null) {

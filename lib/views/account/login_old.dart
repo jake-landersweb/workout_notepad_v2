@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/account/template.dart';
+import 'package:workout_notepad_v2/logger.dart';
 
 class LoginOld extends StatefulWidget {
   const LoginOld({super.key});
@@ -49,20 +49,10 @@ class _LoginOldState extends State<LoginOld> {
             return "There was an issue getting your credentials";
           }
 
-          await NewrelicMobile.instance.recordCustomEvent(
-            "WN_Metric",
-            eventName: "login_email",
-            eventAttributes: {"userId": credential.user?.uid},
-          );
-
           await dmodel.loginUser(context, credential);
           return "";
-        } on FirebaseAuthException catch (e) {
-          NewrelicMobile.instance.recordError(
-            e,
-            StackTrace.current,
-            attributes: {"err_code": "email_login"},
-          );
+        } on FirebaseAuthException catch (e, stack) {
+          logger.exception(e, stack);
           if (e.code == 'user-not-found' || e.code == 'wrong-password') {
             return "Your username or password was incorrect.";
           } else {
@@ -84,21 +74,11 @@ class _LoginOldState extends State<LoginOld> {
           if (credential.user == null) {
             return "There was an error signing in with apple.";
           }
-          await NewrelicMobile.instance.recordCustomEvent(
-            "WN_Metric",
-            eventName: "login_apple",
-            eventAttributes: {"userId": credential.user?.uid},
-          );
 
           // login with the credential provider
           await dmodel.loginUser(context, credential);
           return "";
         } catch (error, stack) {
-          NewrelicMobile.instance.recordError(
-            error,
-            stack,
-            attributes: {"err_code": "login_apple"},
-          );
           return "There was an unknown error.";
         }
       },
@@ -118,21 +98,12 @@ class _LoginOldState extends State<LoginOld> {
           );
           var credential =
               await FirebaseAuth.instance.signInWithCredential(oauthCredential);
-          await NewrelicMobile.instance.recordCustomEvent(
-            "WN_Metric",
-            eventName: "login_google",
-            eventAttributes: {"userId": credential.user?.uid},
-          );
 
           // continue login flow
           await dmodel.loginUser(context, credential);
           return "";
         } catch (error, stack) {
-          NewrelicMobile.instance.recordError(
-            error,
-            stack,
-            attributes: {"err_code": "login_google"},
-          );
+          logger.exception(error, stack);
           return "There was an unknown error.";
         }
       },
@@ -160,7 +131,8 @@ class _LoginOldState extends State<LoginOld> {
               );
               snackbarStatus(context,
                   "Success. Check your inbox for instructions on how to reset your password.");
-            } on FirebaseAuthException catch (e) {
+            } on FirebaseAuthException catch (e, stack) {
+              logger.exception(e, stack);
               print(e.message);
               if (e.code == "auth/invalid-email") {
                 response = "The email was invalid. Do you have an account?";

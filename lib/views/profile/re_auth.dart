@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:workout_notepad_v2/model/data_model.dart';
 import 'package:workout_notepad_v2/views/account/template.dart';
+import 'package:workout_notepad_v2/logger.dart';
 
 class ReAuth extends StatefulWidget {
   const ReAuth({super.key});
@@ -50,7 +51,8 @@ class _ReAuthState extends State<ReAuth> {
 
           await _updateRemote(dmodel, record.record!.id, email);
           return "";
-        } on ClientException catch (e) {
+        } on ClientException catch (e, stack) {
+          logger.exception(e, stack);
           print(e);
           if (e.response['data'] != null) {
             if (e.response['data']['email'] != null) {

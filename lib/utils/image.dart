@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:video_compress/video_compress.dart';
@@ -15,6 +14,7 @@ import 'package:workout_notepad_v2/utils/tuple.dart';
 import 'package:aws_signature_v4/aws_signature_v4.dart';
 import 'package:aws_common/aws_common.dart';
 import 'package:http/http.dart' as http;
+import 'package:workout_notepad_v2/logger.dart';
 
 enum AppFileType { video, image, none }
 
@@ -198,14 +198,8 @@ class AppFile {
 
     if (tmpFile == null) {
       print("[APP FILE] There was an issue compressing the file.");
-      NewrelicMobile.instance.recordError(
-        "There was an issue compressing the ${type == AppFileType.video ? 'video' : 'image'}",
-        StackTrace.current,
-        attributes: {
-          "err_code":
-              type == AppFileType.video ? 'video_compress' : 'image_compress'
-        },
-      );
+      logger.info(
+          "There was an issue compressing the ${type == AppFileType.video ? 'video' : 'image'}");
       return false;
     }
 
@@ -460,7 +454,8 @@ Future<File?> _getCachedFile(String objectKey) async {
         print("The server response was not 200: '${response.statusCode}'");
         return null;
       }
-    } catch (e) {
+    } catch (e, stack) {
+      logger.exception(e, stack);
       // If there's an error (like no internet), return null
       print('Failed to download file: $e');
       return null;
@@ -514,13 +509,8 @@ Future<bool> _uploadFile(
     }
 
     return true;
-  } catch (e) {
-    NewrelicMobile.instance.recordError(
-      e,
-      StackTrace.current,
-      attributes: {"err_code": "media_upload"},
-    );
-    print(e);
+  } catch (e, stack) {
+    logger.exception(e, stack);
     return false;
   }
 }
@@ -551,13 +541,8 @@ Future<bool> _deleteFileAWS(String objectId) async {
       );
     }
     return true;
-  } catch (e) {
-    // NewrelicMobile.instance.recordError(
-    //   e,
-    //   StackTrace.current,
-    //   attributes: {"err_code": "image_delete"},
-    // );
-    print(e);
+  } catch (e, stack) {
+    logger.exception(e, stack);
     return false;
   }
 }
@@ -611,13 +596,8 @@ Future<bool> _deleteFile(File file) async {
       print("The file does not exist.");
       return false;
     }
-  } catch (e) {
-    print('Failed to delete file: $e');
-    NewrelicMobile.instance.recordError(
-      "There was an issue deleting the file",
-      StackTrace.current,
-      attributes: {"err_code": "file_tmp_delete"},
-    );
+  } catch (e, stack) {
+    logger.exception(e, stack);
     return false;
   }
 }

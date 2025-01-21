@@ -165,8 +165,7 @@ class _LogsHomeState extends State<LogsHome> {
             // ),
 
             SizedBox(
-              height: (dmodel.workoutState == null ? 100 : 130) +
-                  (dmodel.user!.offline ? 30 : 0),
+              height: (dmodel.workoutState == null ? 100 : 130),
             ),
           ],
         ),

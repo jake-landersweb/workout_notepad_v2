@@ -154,9 +154,9 @@ class OtelLogSink implements LogSink {
             'Failed to send logs to the otel backend: ${response.body}');
       }
       return true;
-    } catch (e) {
+    } catch (e, stack) {
       Zone.root.run(() {
-        print('Error sending log to Otel backend: $e');
+        print('Error sending log to Otel backend: $e $stack');
       });
       return false;
     }

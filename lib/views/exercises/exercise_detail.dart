@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
 import 'package:uuid/uuid.dart';
@@ -14,6 +13,7 @@ import 'package:workout_notepad_v2/data/log_builder/log_builder.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder_date.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder_item.dart';
 import 'package:workout_notepad_v2/data/root.dart';
+import 'package:workout_notepad_v2/model/local_prefs.dart';
 
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
@@ -25,6 +25,7 @@ import 'package:workout_notepad_v2/views/logs/graphs/graph_renderer.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:workout_notepad_v2/logger.dart';
 
 class ExerciseDetail extends StatefulWidget {
   const ExerciseDetail({
@@ -83,13 +84,8 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
         _file = await AppFile.fromFilename(filename: _exercise!.filename!);
         setState(() {});
       }
-    } catch (e) {
-      print(e);
-      NewrelicMobile.instance.recordError(
-        e,
-        StackTrace.current,
-        attributes: {"err_code": "exercise_detail_render"},
-      );
+    } catch (e, stack) {
+      logger.exception(e, stack);
       setState(() {
         _err = true;
       });
@@ -314,7 +310,11 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
   }
 
   LogBuilder _mainStatPanel(
-      BuildContext context, DataModel dmodel, Exercise e) {
+    BuildContext context,
+    DataModel dmodel,
+    Exercise e,
+  ) {
+    var localPrefs = context.watch<LocalPrefs>();
     switch (e.type) {
       case ExerciseType.weight:
         return LogBuilder(
@@ -331,6 +331,7 @@ class _ExerciseDetailState extends State<ExerciseDetail> {
           grouping: LBGrouping.DATE,
           condensing: LBCondensing.AVERAGE,
           graphType: LBGraphType.TIMESERIES,
+          weightNormalization: localPrefs.weightNormalization,
           showLegend: true,
           showXAxis: true,
           showYAxis: true,

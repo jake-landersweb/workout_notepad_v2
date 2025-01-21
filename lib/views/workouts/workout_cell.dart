@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
@@ -18,12 +19,16 @@ class WorkoutCell extends StatefulWidget {
     this.isTemplate = false,
     this.showBookmark = false,
     this.bookmarkFilled = false,
+    this.isExpandedExercises = false,
+    this.allowsTap = true,
   });
   final Workout workout;
   final bool allowActions;
   final bool isTemplate;
   final bool showBookmark;
   final bool bookmarkFilled;
+  final bool isExpandedExercises;
+  final bool allowsTap;
 
   @override
   State<WorkoutCell> createState() => _WorkoutCellState();
@@ -32,50 +37,61 @@ class WorkoutCell extends StatefulWidget {
 class _WorkoutCellState extends State<WorkoutCell> {
   @override
   Widget build(BuildContext context) {
+    if (widget.allowsTap) {
+      return Clickable(
+        onTap: () {
+          navigate(
+            context: context,
+            builder: (context) => WorkoutDetail(
+              workout: widget.workout,
+              allowActions: widget.allowActions,
+              isTemplate: widget.isTemplate,
+            ),
+          );
+        },
+        child: _cell(context),
+      );
+    }
+    return _cell(context);
+  }
+
+  Widget _cell(BuildContext context) {
     var color = widget.workout.getBackgroundColor(context);
     var swatch = getSwatch(color ?? AppColors.cell(context));
-    return Clickable(
-      onTap: () {
-        navigate(
-          context: context,
-          builder: (context) => WorkoutDetail(
-            workout: widget.workout,
-            allowActions: widget.allowActions,
-            isTemplate: widget.isTemplate,
-          ),
-        );
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: color ?? AppColors.cell(context),
-          gradient: color == null
-              ? null
-              : LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    swatch[100]!,
-                    swatch[400]!,
-                    swatch[800]!,
-                  ],
-                ),
-          border: Border.all(color: AppColors.border(context), width: 3),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        width: double.infinity,
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (widget.workout is WorkoutTemplate)
-              Row(
+    return Container(
+      decoration: BoxDecoration(
+        color: color ?? AppColors.cell(context),
+        gradient: color == null
+            ? null
+            : LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomRight,
+                colors: [
+                  swatch[100]!,
+                  swatch[400]!,
+                  swatch[800]!,
+                ],
+              ),
+        border: Border.all(color: AppColors.border(context), width: 3),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      width: double.infinity,
+      padding: EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (widget.workout is WorkoutTemplate)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4.0),
+              child: Row(
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 4.0),
-                    // child: _levelCell((widget.workout as WorkoutTemplate).level),
-                    child:
-                        _levelCell((widget.workout as WorkoutTemplate).level),
-                  ),
+                  _levelCell((widget.workout as WorkoutTemplate).level),
+                  if ((widget.workout as WorkoutTemplate).estTime.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4.0),
+                      child: _timeCell(
+                          (widget.workout as WorkoutTemplate).estTime),
+                    ),
                   const Spacer(),
                   if (widget.showBookmark)
                     Icon(
@@ -86,15 +102,19 @@ class _WorkoutCellState extends State<WorkoutCell> {
                     ),
                 ],
               ),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    widget.workout.title,
-                    style: ttLargeLabel(context),
-                  ),
+            ),
+          Row(
+            children: [
+              Expanded(
+                child: AutoSizeText(
+                  widget.workout.title,
+                  style: ttLargeLabel(context),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(width: 8),
+              ),
+              const SizedBox(width: 8),
+              if (widget.allowsTap)
                 Opacity(
                   opacity: 0.7,
                   child: const Row(
@@ -104,26 +124,42 @@ class _WorkoutCellState extends State<WorkoutCell> {
                     ],
                   ),
                 ),
-              ],
+            ],
+          ),
+          if ((widget.workout.description ?? "").isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 4.0),
+              child: Text(
+                widget.workout.description!,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                style: ttcaption(context),
+              ),
             ),
-            if ((widget.workout.description ?? "").isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 4.0),
-                child: Text(
-                  widget.workout.description!,
-                  style: ttcaption(context),
-                ),
+          const SizedBox(height: 4),
+          if (widget.isExpandedExercises)
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisSize: MainAxisSize.max,
+                children: _exercises(context),
               ),
-            const SizedBox(height: 4),
-            for (var item in widget.workout.getFlatExercises(limit: 3))
-              Padding(
-                padding: const EdgeInsets.only(top: 6.0),
-                child: _exerciseCell(context, item),
-              ),
-          ],
-        ),
+            )
+          else
+            Column(children: _exercises(context)),
+        ],
       ),
     );
+  }
+
+  List<Widget> _exercises(BuildContext context) {
+    return widget.workout
+        .getFlatExercises(limit: 3)
+        .map((item) => Padding(
+              padding: const EdgeInsets.only(top: 6.0),
+              child: _exerciseCell(context, item),
+            ))
+        .toList();
   }
 
   Widget _exerciseCell(BuildContext context, Exercise e) {
@@ -156,7 +192,7 @@ class _WorkoutCellState extends State<WorkoutCell> {
     }
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
-      child: getImageIcon(match.icon, size: 25),
+      child: getImageIcon(match.icon, size: 40),
     );
   }
 
@@ -172,6 +208,26 @@ class _WorkoutCellState extends State<WorkoutCell> {
       child: Text(
         level.capitalize(),
         style: ttcaption(context, size: 12, color: s[700]),
+      ),
+    );
+  }
+
+  Widget _timeCell(String time) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.text(context).withValues(alpha: 0.05),
+        border:
+            Border.all(color: AppColors.text(context).withValues(alpha: 0.5)),
+        borderRadius: BorderRadius.circular(100),
+      ),
+      padding: EdgeInsets.symmetric(horizontal: 8),
+      child: Text(
+        time,
+        style: ttcaption(
+          context,
+          size: 12,
+          color: AppColors.text(context).withValues(alpha: 0.5),
+        ),
       ),
     );
   }

@@ -23,7 +23,7 @@ Future<void> main() async {
         }
       },
     );
-  } catch (e) {
+  } catch (e, stack) {
     print('Error occured: $e');
   }
 }

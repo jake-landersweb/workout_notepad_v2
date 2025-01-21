@@ -10,6 +10,7 @@ import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/logs/no_logs.dart';
 import 'package:workout_notepad_v2/views/root.dart';
+import 'package:workout_notepad_v2/logger.dart';
 
 class ExerciseLogs extends StatefulWidget {
   const ExerciseLogs({
@@ -48,7 +49,8 @@ class _ExerciseLogsState extends State<ExerciseLogs> {
       setState(() {
         _exercise = Exercise.fromJson(resp[0]);
       });
-    } catch (e) {
+    } catch (e, stack) {
+      logger.exception(e, stack);
       print(e);
       setState(() {
         _error = true;

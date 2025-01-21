@@ -6,6 +6,7 @@ import 'package:workout_notepad_v2/components/expanded_page_view.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder_date.dart';
+import 'package:workout_notepad_v2/model/local_prefs.dart';
 import 'package:workout_notepad_v2/views/logs/graphs/graph_range_picker.dart';
 import 'package:workout_notepad_v2/views/logs/graphs/graph_renderer.dart';
 
@@ -52,6 +53,7 @@ class _InsightsHomeState extends State<InsightsHome> {
   }
 
   Widget _body(BuildContext context) {
+    var localPrefs = context.watch<LocalPrefs>();
     var graphRange = context.select(
       (GraphRangeProvider value) => value.getDate,
     );
@@ -85,10 +87,10 @@ class _InsightsHomeState extends State<InsightsHome> {
                   column: LBColumn.WORKOUT_DURATION,
                   grouping: LBGrouping.DATE,
                   condensing: LBCondensing.FIRST,
-                  weightNormalization: LBWeightNormalization.KG,
+                  weightNormalization: _weightNormalization(localPrefs),
                   graphType: LBGraphType.TIMESERIES,
                   showLegend: true,
-                  showXAxis: false,
+                  showXAxis: true,
                   showYAxis: true,
                   // backgroundColor: Colors.black,
                   // color: Colors.white,
@@ -102,10 +104,10 @@ class _InsightsHomeState extends State<InsightsHome> {
                   column: LBColumn.REPS,
                   grouping: LBGrouping.DATE,
                   condensing: LBCondensing.COUNT,
-                  weightNormalization: LBWeightNormalization.KG,
+                  weightNormalization: _weightNormalization(localPrefs),
                   graphType: LBGraphType.TIMESERIES,
                   showLegend: true,
-                  showXAxis: false,
+                  showXAxis: true,
                   showYAxis: true,
                 ),
               ),
@@ -118,10 +120,10 @@ class _InsightsHomeState extends State<InsightsHome> {
                     column: LBColumn.REPS,
                     grouping: LBGrouping.DATE,
                     condensing: LBCondensing.SUM,
-                    weightNormalization: LBWeightNormalization.KG,
+                    weightNormalization: _weightNormalization(localPrefs),
                     graphType: LBGraphType.TIMESERIES,
                     showLegend: true,
-                    showXAxis: false,
+                    showXAxis: true,
                     showYAxis: true,
                   ),
                 ),
@@ -135,7 +137,7 @@ class _InsightsHomeState extends State<InsightsHome> {
                     column: LBColumn.WEIGHT,
                     grouping: LBGrouping.DATE,
                     condensing: LBCondensing.SUM,
-                    weightNormalization: LBWeightNormalization.KG,
+                    weightNormalization: _weightNormalization(localPrefs),
                     graphType: LBGraphType.TIMESERIES,
                     showLegend: true,
                     showXAxis: false,
@@ -152,7 +154,7 @@ class _InsightsHomeState extends State<InsightsHome> {
                     column: LBColumn.TIME,
                     grouping: LBGrouping.DATE,
                     condensing: LBCondensing.SUM,
-                    weightNormalization: LBWeightNormalization.KG,
+                    weightNormalization: _weightNormalization(localPrefs),
                     graphType: LBGraphType.TIMESERIES,
                     showLegend: true,
                     showXAxis: false,
@@ -179,7 +181,7 @@ class _InsightsHomeState extends State<InsightsHome> {
                   column: LBColumn.REPS,
                   grouping: LBGrouping.CATEGORY,
                   condensing: LBCondensing.COUNT,
-                  weightNormalization: LBWeightNormalization.KG,
+                  weightNormalization: _weightNormalization(localPrefs),
                   graphType: LBGraphType.SPIDER,
                   showLegend: true,
                   showXAxis: false,
@@ -195,7 +197,7 @@ class _InsightsHomeState extends State<InsightsHome> {
                     column: LBColumn.REPS,
                     grouping: LBGrouping.CATEGORY,
                     condensing: LBCondensing.SUM,
-                    weightNormalization: LBWeightNormalization.KG,
+                    weightNormalization: _weightNormalization(localPrefs),
                     graphType: LBGraphType.PIE,
                     showLegend: true,
                     showXAxis: false,
@@ -212,7 +214,7 @@ class _InsightsHomeState extends State<InsightsHome> {
                     column: LBColumn.WEIGHT,
                     grouping: LBGrouping.CATEGORY,
                     condensing: LBCondensing.SUM,
-                    weightNormalization: LBWeightNormalization.KG,
+                    weightNormalization: _weightNormalization(localPrefs),
                     graphType: LBGraphType.PIE,
                     showLegend: true,
                     showXAxis: false,
@@ -229,7 +231,7 @@ class _InsightsHomeState extends State<InsightsHome> {
                     column: LBColumn.TIME,
                     grouping: LBGrouping.CATEGORY,
                     condensing: LBCondensing.SUM,
-                    weightNormalization: LBWeightNormalization.KG,
+                    weightNormalization: _weightNormalization(localPrefs),
                     graphType: LBGraphType.PIE,
                     showLegend: true,
                     showXAxis: false,
@@ -257,7 +259,7 @@ class _InsightsHomeState extends State<InsightsHome> {
                     column: LBColumn.REPS,
                     grouping: LBGrouping.TAG,
                     condensing: LBCondensing.COUNT,
-                    weightNormalization: LBWeightNormalization.KG,
+                    weightNormalization: _weightNormalization(localPrefs),
                     graphType: LBGraphType.PIE,
                     showLegend: true,
                     showXAxis: false,
@@ -274,7 +276,7 @@ class _InsightsHomeState extends State<InsightsHome> {
                     column: LBColumn.REPS,
                     grouping: LBGrouping.TAG,
                     condensing: LBCondensing.SUM,
-                    weightNormalization: LBWeightNormalization.KG,
+                    weightNormalization: _weightNormalization(localPrefs),
                     graphType: LBGraphType.PIE,
                     showLegend: true,
                     showXAxis: false,
@@ -291,7 +293,7 @@ class _InsightsHomeState extends State<InsightsHome> {
                     column: LBColumn.WEIGHT,
                     grouping: LBGrouping.TAG,
                     condensing: LBCondensing.SUM,
-                    weightNormalization: LBWeightNormalization.KG,
+                    weightNormalization: _weightNormalization(localPrefs),
                     graphType: LBGraphType.PIE,
                     showLegend: true,
                     showXAxis: false,
@@ -308,7 +310,7 @@ class _InsightsHomeState extends State<InsightsHome> {
                     column: LBColumn.TIME,
                     grouping: LBGrouping.TAG,
                     condensing: LBCondensing.SUM,
-                    weightNormalization: LBWeightNormalization.KG,
+                    weightNormalization: _weightNormalization(localPrefs),
                     graphType: LBGraphType.PIE,
                     showLegend: true,
                     showXAxis: false,
@@ -335,7 +337,7 @@ class _InsightsHomeState extends State<InsightsHome> {
                     column: LBColumn.WEIGHT,
                     grouping: LBGrouping.CATEGORY,
                     condensing: LBCondensing.MAX,
-                    weightNormalization: LBWeightNormalization.KG,
+                    weightNormalization: _weightNormalization(localPrefs),
                     graphType: LBGraphType.TABLE,
                     showLegend: true,
                     showXAxis: false,
@@ -352,7 +354,7 @@ class _InsightsHomeState extends State<InsightsHome> {
                     column: LBColumn.WEIGHT,
                     grouping: LBGrouping.TAG,
                     condensing: LBCondensing.MAX,
-                    weightNormalization: LBWeightNormalization.KG,
+                    weightNormalization: _weightNormalization(localPrefs),
                     graphType: LBGraphType.TABLE,
                     showLegend: true,
                     showXAxis: false,
@@ -369,7 +371,7 @@ class _InsightsHomeState extends State<InsightsHome> {
                     column: LBColumn.WEIGHT,
                     grouping: LBGrouping.EXERCISE,
                     condensing: LBCondensing.MAX,
-                    weightNormalization: LBWeightNormalization.KG,
+                    weightNormalization: _weightNormalization(localPrefs),
                     graphType: LBGraphType.TABLE,
                     showLegend: true,
                     showXAxis: false,
@@ -382,6 +384,15 @@ class _InsightsHomeState extends State<InsightsHome> {
         ),
       ],
     );
+  }
+
+  LBWeightNormalization _weightNormalization(LocalPrefs localPrefs) {
+    switch (localPrefs.defaultWeightPost) {
+      case "kg":
+        return LBWeightNormalization.KG;
+      default:
+        return LBWeightNormalization.LBS;
+    }
   }
 
   List<Key> _generateKeys() {

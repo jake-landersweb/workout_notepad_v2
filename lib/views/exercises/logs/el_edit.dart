@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
+import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -149,13 +149,7 @@ class _ELEditState extends State<ELEdit> {
       widget.onSave(widget.log);
       Navigator.of(context).pop();
     } catch (e, stack) {
-      print(e);
-      print(stack);
-      NewrelicMobile.instance.recordError(
-        e,
-        stack,
-        attributes: {"err_code": "exercise_log_update"},
-      );
+      logger.exception(e, stack);
       snackbarErr(context, "There was an issue updating the exercise log");
     }
   }

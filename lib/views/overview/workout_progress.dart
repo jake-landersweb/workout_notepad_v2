@@ -67,7 +67,7 @@ class _WorkoutProgressState extends State<WorkoutProgress> {
                   ],
                 ),
               ),
-              const WorkoutProgressIndicator(),
+              if (dmodel.workoutState != null) const WorkoutProgressIndicator(),
             ],
           ),
         ),

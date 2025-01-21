@@ -6,6 +6,7 @@ import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:intl/intl.dart';
+import 'package:workout_notepad_v2/logger.dart';
 
 class ExerciseLog {
   late String exerciseLogId;
@@ -228,7 +229,8 @@ class ExerciseLog {
         // success
       });
       return true;
-    } catch (e) {
+    } catch (e, stack) {
+      logger.exception(e, stack);
       print(e);
       return false;
     }
@@ -246,7 +248,8 @@ class ExerciseLog {
         elm.add(await ExerciseLogMeta.fromJson(i));
       }
       return elm;
-    } catch (e) {
+    } catch (e, stack) {
+      logger.exception(e, stack);
       print(e);
       return null;
     }
@@ -435,7 +438,8 @@ class ExerciseLogMeta {
         t.add(ExerciseLogMetaTag.fromJson(i));
       }
       return t;
-    } catch (e) {
+    } catch (e, stack) {
+      logger.exception(e, stack);
       print(e);
       return null;
     }

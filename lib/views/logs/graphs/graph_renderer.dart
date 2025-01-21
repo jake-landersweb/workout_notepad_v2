@@ -131,7 +131,19 @@ class GraphRenderer extends StatelessWidget {
                         onPressed: () {
                           provider.setCurrentGraphType(item);
                         },
-                        leadingIcon: Icon(item.getIcon()),
+                        style: ButtonStyle(
+                          foregroundColor: WidgetStateProperty.resolveWith(
+                            (states) => provider._currentGraphType == item
+                                ? Theme.of(context).colorScheme.primary
+                                : AppColors.text(context),
+                          ),
+                        ),
+                        leadingIcon: Icon(
+                          item.getIcon(),
+                          color: provider._currentGraphType == item
+                              ? Theme.of(context).colorScheme.primary
+                              : AppColors.text(context),
+                        ),
                         child: Text(item.name),
                       ),
                     )

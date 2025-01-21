@@ -45,9 +45,11 @@ TextStyle ttLabel(
   Color? color,
   double? size,
   FontWeight? fontWeight,
+  double? height,
 }) {
   return TextStyle(
     fontSize: size ?? 18,
+    height: height,
     color: color ?? AppColors.text(context),
     fontWeight: fontWeight ?? FontWeight.w500,
   );

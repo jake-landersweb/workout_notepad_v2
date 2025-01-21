@@ -11,9 +11,13 @@ class JSONLogFormatter implements LogFormatter {
       obj["message"] = record.message;
     }
 
-    return jsonEncode({
-      ...obj,
-      if (record.data != null) ...record.data!,
-    });
+    try {
+      return jsonEncode({
+        ...obj,
+        if (record.data != null) ...record.data!,
+      });
+    } catch (error, stack) {
+      return '{"level": "FATAL", "message": "failed to encode the json log message", "error": "${error.toString()}, "stack": "${stack.toString()}", "originalMessage": "${record.message}"}';
+    }
   }
 }

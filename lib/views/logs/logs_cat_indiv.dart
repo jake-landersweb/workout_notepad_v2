@@ -2,7 +2,6 @@
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
@@ -11,6 +10,7 @@ import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/logs/no_logs.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'dart:math' as math;
+import 'package:workout_notepad_v2/logger.dart';
 
 class LogsCategoryIndividual extends StatefulWidget {
   const LogsCategoryIndividual({
@@ -404,13 +404,8 @@ class _LogsCategoryIndividualState extends State<LogsCategoryIndividual> {
           Tuple2(i['title'] as String, i['number_of_tags'] as int),
         );
       }
-    } catch (e) {
-      print(e);
-      NewrelicMobile.instance.recordError(
-        e,
-        StackTrace.current,
-        attributes: {"err_code": "log_cat_indv"},
-      );
+    } catch (e, stack) {
+      logger.exception(e, stack);
       _hasError = true;
     }
     setState(() {

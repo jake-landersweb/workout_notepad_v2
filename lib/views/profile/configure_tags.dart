@@ -1,7 +1,6 @@
 import 'package:animated_list_plus/animated_list_plus.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sql.dart';
 import 'package:workout_notepad_v2/components/root.dart';
@@ -9,6 +8,7 @@ import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/logger.dart';
 
 class ConfigureTags extends StatefulWidget {
   const ConfigureTags({
@@ -226,20 +226,9 @@ class _ConfigureTagsState extends State<ConfigureTags> {
       });
       var dmodel = context.read<DataModel>();
       await dmodel.fetchData();
-      await NewrelicMobile.instance.recordCustomEvent(
-        "WN_Metric",
-        eventName: "tag_configure",
-        eventAttributes: {
-          "length": _tags.length,
-        },
-      );
       Navigator.of(context).pop();
-    } catch (e) {
-      NewrelicMobile.instance.recordError(
-        e,
-        StackTrace.current,
-        attributes: {"err_code": "tag_save"},
-      );
+    } catch (e, stack) {
+      logger.exception(e, stack);
       print(e);
       snackbarErr(context, "There was an issue updating the tags.");
     }

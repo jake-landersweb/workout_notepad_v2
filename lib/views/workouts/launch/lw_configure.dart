@@ -1,6 +1,5 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/components/root.dart';
@@ -12,6 +11,7 @@ import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/exercises/select_exercise.dart';
 import 'package:workout_notepad_v2/views/workouts/create_edit/cew_configure.dart';
+import 'package:workout_notepad_v2/logger.dart';
 
 class LWConfigure extends StatefulWidget {
   const LWConfigure({
@@ -202,9 +202,8 @@ class _LWConfigureState extends State<LWConfigure> {
         _controller.text,
       );
       return true;
-    } catch (e) {
-      print(e);
-      NewrelicMobile.instance.recordError(e, StackTrace.current);
+    } catch (e, stack) {
+      logger.exception(e, stack);
       return false;
     }
   }

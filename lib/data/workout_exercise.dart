@@ -157,7 +157,7 @@ class WorkoutExercise extends Exercise {
   //     await db.rawQuery(query.trim());
 
   //     return true;
-  //   } catch (e) {
+  //   }  catch (e, stack) { logger.exception(e, stack);
   //     print(e);
   //     return false;
   //   }

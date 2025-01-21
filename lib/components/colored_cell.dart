@@ -6,12 +6,15 @@ import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
 enum ColoredCellSize {
+  xs,
   small,
   medium,
   large;
 
   EdgeInsets getPadding() {
     switch (this) {
+      case ColoredCellSize.xs:
+        return const EdgeInsets.fromLTRB(4, 2, 4, 2);
       case ColoredCellSize.small:
         return const EdgeInsets.fromLTRB(10, 4, 10, 4);
       case ColoredCellSize.medium:
@@ -23,8 +26,8 @@ enum ColoredCellSize {
 
   BorderRadiusGeometry getBorderRadius() {
     switch (this) {
+      case ColoredCellSize.xs:
       case ColoredCellSize.small:
-        return BorderRadius.circular(5);
       case ColoredCellSize.medium:
         return BorderRadius.circular(5);
       case ColoredCellSize.large:
@@ -34,6 +37,8 @@ enum ColoredCellSize {
 
   double textSize() {
     switch (this) {
+      case ColoredCellSize.xs:
+        return 10;
       case ColoredCellSize.small:
         return 14;
       case ColoredCellSize.medium:

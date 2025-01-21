@@ -1,20 +1,18 @@
 // ignore_for_file: avoid_print, library_private_types_in_public_api
 
 import 'dart:async';
-import 'dart:io';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:newrelic_mobile/config.dart';
-import 'package:newrelic_mobile/newrelic_navigation_observer.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/color_schemes.dart';
 import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/root.dart';
-import 'package:workout_notepad_v2/env.dart';
 import 'package:workout_notepad_v2/logger.dart';
+import 'package:workout_notepad_v2/model/internet_provider.dart';
+import 'package:workout_notepad_v2/model/local_prefs.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/model/search_model.dart';
 import 'package:workout_notepad_v2/views/workout_templates/workout_template_model.dart';
@@ -26,67 +24,28 @@ import 'package:workout_notepad_v2/views/home.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 
 void main() async {
-  var appToken = "";
-  if (Platform.isIOS) {
-    appToken = NR_TOKEN_IOS;
-  } else if (Platform.isAndroid) {
-    appToken = NR_TOKEN_ANDROID;
-  }
-
-  Config config = Config(
-    accessToken: appToken,
-
-    // Android specific option
-    // Optional: Enable or disable collection of event data.
-    analyticsEventEnabled: false,
-    // iOS specific option
-    // Optional: Enable or disable automatic instrumentation of WebViews.
-    webViewInstrumentation: false,
-    // Optional: Enable or disable reporting successful HTTP requests to the MobileRequest event type.
-    networkErrorRequestEnabled: true,
-    // Optional: Enable or disable reporting network and HTTP request errors to the MobileRequestError event type.
-    networkRequestEnabled: true,
-    // Optional: Enable or disable crash reporting.
-    crashReportingEnabled: true,
-    // Optional: Enable or disable interaction tracing. Trace instrumentation still occurs, but no traces are harvested. This will disable default and custom interactions.
-    interactionTracingEnabled: false,
-    // Optional: Enable or disable capture of HTTP response bodies for HTTP error traces, and MobileRequestError events.
-    httpResponseBodyCaptureEnabled: true,
-    // Optional: Enable or disable agent logging.
-    loggingEnabled: false,
-    // Optional: Enable or disable print statements as Analytics Events.
-    printStatementAsEventsEnabled: false,
-    // Optional: Enable or disable automatic instrumentation of HTTP requests.
-    httpInstrumentationEnabled: true,
-  );
-
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
 
-      FlutterError.onError = NewrelicMobile.onError;
-      await NewrelicMobile.instance.startAgent(config);
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
       var _ = FirebaseAnalytics.instance;
 
-      runApp(const MyApp());
+      runApp(MyApp(
+        defaultUser: kDebugMode
+            ? '{"userId": "xL3zGrTtKYZp8ml6QiDDFmDu86w2", "displayName": "Jake Landers"}'
+            : null,
+      ));
     },
     (Object error, StackTrace stackTrace) {
       logger.exception(
         error,
         stackTrace,
-        {"err_code": "launch_app"},
-      );
-      NewrelicMobile.instance.recordError(
-        error,
-        stackTrace,
-        attributes: {"err_code": "launch_app"},
-        isFatal: true,
+        message: "failed to launch the app",
       );
     },
     zoneSpecification: ZoneSpecification(
@@ -152,6 +111,8 @@ class MyApp extends StatelessWidget {
           ),
           ChangeNotifierProvider(create: (context) => SearchModel()),
           ChangeNotifierProvider(create: (context) => WorkoutTemplateModel()),
+          ChangeNotifierProvider(create: (context) => InternetProvider()),
+          ChangeNotifierProvider(create: (context) => LocalPrefs()),
         ],
         builder: (context, child) {
           return _body(context);
@@ -162,6 +123,8 @@ class MyApp extends StatelessWidget {
 
   Widget _body(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
+    // init the local prefs
+    var _ = context.watch<LocalPrefs>();
     final scheme = AppColorScheme(primaryColor: dmodel.color);
     return GestureDetector(
       onTap: () {
@@ -174,7 +137,6 @@ class MyApp extends StatelessWidget {
             : SystemUiOverlayStyle.light,
         child: MaterialApp(
           title: 'Workout Notepad',
-          navigatorObservers: [NewRelicNavigationObserver()],
           debugShowCheckedModeBanner: false,
           theme: scheme.getTheme(context, Brightness.light),
           onGenerateRoute: (settings) {
@@ -216,8 +178,6 @@ class _IndexState extends State<Index> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     switch (state) {
       case AppLifecycleState.resumed:
-        print("[STATE] resumed");
-
         DataModel dmodel = Provider.of<DataModel>(context, listen: false);
 
         // check if enough time has passed
@@ -233,30 +193,24 @@ class _IndexState extends State<Index> with WidgetsBindingObserver {
 
         break;
       case AppLifecycleState.inactive:
-        print("[STATE] inactive");
 
         // dump current workout state to a tmp file if the user ends up closing the app
         DataModel dmodel = Provider.of<DataModel>(context, listen: false);
         if (dmodel.workoutState != null) {
           // create a snapshot of this workout state
-          print("DUMPING WORKOUT STATE TO FILE");
           dmodel.workoutState!.dumpToFile();
         }
 
         break;
       case AppLifecycleState.paused:
-        print("[STATE] paused");
 
         // keep track of time when to re-load the app
         _closedTime = DateTime.now();
 
         break;
       case AppLifecycleState.detached:
-        print("[STATE] detached");
-
         break;
       case AppLifecycleState.hidden:
-        print("[STATE] hidden");
         break;
     }
   }

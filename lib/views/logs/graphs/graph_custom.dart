@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder_date.dart';
+import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/views/logs/graphs/graph_builder.dart';
@@ -167,9 +167,7 @@ class _CustomGraphsState extends State<CustomGraphs> {
         _keys = _generateKeys();
       });
     } catch (error, stack) {
-      NewrelicMobile.instance.recordError(error, stack);
-      print(error);
-      print(stack);
+      logger.exception(error, stack);
     }
     setState(() {
       _isLoading = false;

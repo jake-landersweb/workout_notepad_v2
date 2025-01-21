@@ -8,7 +8,6 @@ import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:in_app_review/in_app_review.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -49,13 +48,6 @@ class DataModel extends ChangeNotifier {
   late StreamSubscription<List<PurchaseDetails>> _subscription;
   // late StreamSubscription<AuthStoreEvent> _pocketbaseAuth;
 
-  HomeScreen _currentTabScreen = HomeScreen.overview;
-  HomeScreen get currentTabScreen => _currentTabScreen;
-  void setTabScreen(HomeScreen screen) {
-    _currentTabScreen = screen;
-    notifyListeners();
-  }
-
   // global client to use
   final client = Client(client: http.Client());
   final purchaseClient = GoClient(client: http.Client());
@@ -84,11 +76,7 @@ class DataModel extends ChangeNotifier {
     }, onDone: () {
       _subscription.cancel();
     }, onError: (error) {
-      NewrelicMobile.instance.recordError(
-        error,
-        StackTrace.current,
-        attributes: {"err_code": "payment_exception"},
-      );
+      logger.error("payment failed", {"error": error});
     });
 
     init(defaultUser: defaultUser);
@@ -181,15 +169,10 @@ class DataModel extends ChangeNotifier {
           );
         }
 
-        // complete the purchase
-        await NewrelicMobile.instance.recordCustomEvent(
-          "WN_Metric",
-          eventName: "payment_complete",
-          eventAttributes: {
-            "userId": user!.userId,
-            "transactionDate": details.transactionDate,
-          },
-        );
+        logger.info("transaction succeeded", {
+          "userId": user!.userId,
+          "transactionDate": details.transactionDate,
+        });
         await InAppPurchase.instance.completePurchase(details);
         print("[PURCHASE] Successfully assigned purchase");
         paymentLoadStatus = PaymentLoadStatus.complete;
@@ -202,7 +185,8 @@ class DataModel extends ChangeNotifier {
         notifyListeners();
         return;
       }
-    } catch (error) {
+    } catch (error, stack) {
+      logger.exception(error, stack);
       print(error);
       _recordPaymentError(
         error,
@@ -220,16 +204,10 @@ class DataModel extends ChangeNotifier {
     PurchaseDetails details,
     String errCode,
   ) {
-    NewrelicMobile.instance.recordError(
-      error,
-      StackTrace.current,
-      attributes: {
-        "err_code": errCode,
-        "details": jsonEncode(details.toMap()),
-      },
-    );
-    print("[PURCHASE] **ERROR**");
-    print(error);
+    logger.fatal("PURCHASE ERROR", {
+      "err_code": errCode,
+      "details": jsonEncode(details.toMap()),
+    });
   }
 
   Future<bool> _verifyPurchase(PurchaseDetails details) async {
@@ -258,11 +236,6 @@ class DataModel extends ChangeNotifier {
       snackbarErr(context, "There was an issue getting your account.");
       return;
     }
-    await NewrelicMobile.instance.recordCustomEvent(
-      "WN_Metric",
-      eventName: "login_anon",
-      eventAttributes: {"userId": u.userId},
-    );
     prefs.setString("user", jsonEncode(u.toMap()));
     await init(u: u);
   }
@@ -296,11 +269,6 @@ class DataModel extends ChangeNotifier {
         await importSnapshot(serverSnapshots.first);
       }
     } else {
-      await NewrelicMobile.instance.recordCustomEvent(
-        "WN_Metric",
-        eventName: "anon_convert",
-        eventAttributes: {"new_user_id": u.userId, "old_user_id": user!.userId},
-      );
       // save on the user
       u.anonUserId = user!.userId;
       prefs.setString("user", jsonEncode(u.toMap()));
@@ -345,11 +313,6 @@ class DataModel extends ChangeNotifier {
         await importSnapshot(serverSnapshots.first);
       }
     } else {
-      await NewrelicMobile.instance.recordCustomEvent(
-        "WN_Metric",
-        eventName: "anon_convert",
-        eventAttributes: {"new_user_id": u.userId, "old_user_id": user!.userId},
-      );
       // save on the user
       u.anonUserId = user!.userId;
       prefs.setString("user", jsonEncode(u.toMap()));
@@ -380,10 +343,6 @@ class DataModel extends ChangeNotifier {
       'https://pocketbase.sapphirenw.com',
       authStore: SharedPreferencesAuthStore(prefs),
     );
-
-    // set to index page
-    _currentTabScreen = HomeScreen.overview;
-    notifyListeners();
 
     // check for saved userId
     if (!prefs.containsKey("user")) {
@@ -503,9 +462,6 @@ class DataModel extends ChangeNotifier {
       var prefs = await SharedPreferences.getInstance();
       prefs.setString("user", jsonEncode(user!.toMap()));
 
-      // set user id in newrelic
-      await NewrelicMobile.instance.setUserId(user!.userId);
-
       notifyListeners();
       // do not snapshot anon data
       if (!user!.isAnon) {
@@ -515,7 +471,6 @@ class DataModel extends ChangeNotifier {
       logger.exception(error, stack);
       print(
           "GET_USER there was an error fetching the user. Assuming user is offline");
-      user!.offline = true;
       notifyListeners();
     }
   }
@@ -539,7 +494,8 @@ class DataModel extends ChangeNotifier {
         prefs.setString("subscription", jsonEncode(subscription!.toJson()));
       }
       notifyListeners();
-    } catch (e) {
+    } catch (e, stack) {
+      logger.exception(e, stack);
       print(e);
     }
     print(subscription);
@@ -627,22 +583,13 @@ class DataModel extends ChangeNotifier {
       if (snps == null) {
         throw "There was an issue creating the snapshot";
       }
-      await NewrelicMobile.instance.recordCustomEvent(
-        "WN_Metric",
-        eventName: "snapshot_create",
-      );
+      logger.info("snapshot created");
       _snapshots = snps;
       dataSyncStatus = SyncStatus.inSync;
       notifyListeners();
       return true;
     } catch (e, s) {
-      print(e);
-      print(s);
-      NewrelicMobile.instance.recordError(
-        e,
-        s,
-        attributes: {"err_code": "snapshot_create"},
-      );
+      logger.exception(e, s);
       dataSyncStatus = SyncStatus.error;
       notifyListeners();
       return false;
@@ -861,14 +808,10 @@ class DataModel extends ChangeNotifier {
       workoutState!.exerciseLogs.add(logs);
     }
 
-    await NewrelicMobile.instance.recordCustomEvent(
-      "WN_Metric",
-      eventName: "workout_start",
-      eventAttributes: {
-        "workoutId": workoutState!.workout.workoutId,
-        "title": workoutState!.workout.title,
-      },
-    );
+    logger.info("user starting workout", {
+      "workoutId": workoutState!.workout.workoutId,
+      "title": workoutState!.workout.title,
+    });
     return workoutState!;
   }
 
@@ -883,15 +826,9 @@ class DataModel extends ChangeNotifier {
     if (!isCancel) {
       // create a snapshot of the database in background
       snapshotData();
-      NewrelicMobile.instance.recordCustomEvent(
-        "WN_Metric",
-        eventName: "workout_finish",
-      );
+      logger.info("user finished workout");
     } else {
-      NewrelicMobile.instance.recordCustomEvent(
-        "WN_Metric",
-        eventName: "workout_cancel",
-      );
+      logger.info("user cancelled workout");
     }
     // delete the temp file if created
     await workoutState!.deleteFile();
@@ -945,7 +882,8 @@ class DataModel extends ChangeNotifier {
       await init();
       notifyListeners();
       return true;
-    } catch (e) {
+    } catch (e, stack) {
+      logger.exception(e, stack);
       print(e);
       return false;
     }
@@ -986,7 +924,7 @@ class DataModel extends ChangeNotifier {
   }
 
   Future<void> checkUpdate() async {
-    print("[UPDATE] checking for required update asynchronously ...");
+    print("debug [UPDATE] checking for required update asynchronously ...");
     var prefs = await SharedPreferences.getInstance();
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String currentVersion = packageInfo.version;
@@ -996,14 +934,8 @@ class DataModel extends ChangeNotifier {
 
     // check for errors
     if (response.statusCode != 200) {
-      print("[UPDATE] there was an issue checking for the mobile metadata");
-      // ignore for now, but log to NEW RELIC
-      // TODO
-      NewrelicMobile.instance.recordError(
-        "Failed to fetch the mobile metadata",
-        null,
-        attributes: {"err_code": "mobile_metadata"},
-      );
+      print(
+          "debug [UPDATE] there was an issue checking for the mobile metadata");
       return;
     }
 
@@ -1011,22 +943,22 @@ class DataModel extends ChangeNotifier {
     Map<String, dynamic> body = jsonDecode(response.body);
 
     if (body['status'] != 200) {
-      print("[UPDATE] there was an issue with the request: $body");
+      print("debug [UPDATE] there was an issue with the request: $body");
       return;
     }
 
     // check rules for showing an update screen
     if (body['body']['force_update']) {
-      print("[UPDATE] a forced update has been detected");
+      print("debug [UPDATE] a forced update has been detected");
       // show non-dismissable model
       showForcedUpdate = true;
     } else if (body['body']['recommend_update']) {
       hasRecommendedUpdate = true;
-      print("[UPDATE] a recommended update has been detected");
+      print("debug [UPDATE] a recommended update has been detected");
       // check if this version has already been recommended
       var rec = prefs.get("recommend_version");
       if ((rec ?? currentVersion) != body['body']['current_version']) {
-        print("[UPDATE] showing the recommended update screen");
+        print("debug [UPDATE] showing the recommended update screen");
         // show recommend alert
         showRecommendedUpdate = true;
 
@@ -1034,7 +966,7 @@ class DataModel extends ChangeNotifier {
         prefs.setString("recommend_version", body['body']['current_version']);
       }
     }
-    print("[UPDATE] successfully checked");
+    print("debug [UPDATE] successfully checked");
     notifyListeners();
   }
 
@@ -1080,7 +1012,8 @@ class DataModel extends ChangeNotifier {
       print("successfully added testing data");
       await fetchData(checkData: false);
       return true;
-    } catch (e) {
+    } catch (e, stack) {
+      logger.exception(e, stack);
       print(e);
       return false;
     }
@@ -1108,7 +1041,8 @@ class DataModel extends ChangeNotifier {
       print("successfully added testing data");
       await fetchData(checkData: false);
       return true;
-    } catch (e) {
+    } catch (e, stack) {
+      logger.exception(e, stack);
       print(e);
       return false;
     }
@@ -1134,7 +1068,8 @@ class DataModel extends ChangeNotifier {
       print("successfully added default data");
       await fetchData(checkData: false);
       return true;
-    } catch (e) {
+    } catch (e, stack) {
+      logger.exception(e, stack);
       print(e);
       return false;
     }

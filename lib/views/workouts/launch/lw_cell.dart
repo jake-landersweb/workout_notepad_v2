@@ -23,6 +23,7 @@ import 'package:workout_notepad_v2/views/exercises/select_exercise.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/lw_model.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/lw_time.dart';
+import 'package:workout_notepad_v2/logger.dart';
 
 class LWCell extends StatefulWidget {
   const LWCell({
@@ -79,8 +80,12 @@ class _LWCellState extends State<LWCell> {
     );
   }
 
-  Widget _cell(BuildContext context, LaunchWorkoutModel lmodel,
-      DataModel dmodel, int j) {
+  Widget _cell(
+    BuildContext context,
+    LaunchWorkoutModel lmodel,
+    DataModel dmodel,
+    int j,
+  ) {
     var e = lmodel.state.exercises[widget.i][j];
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -89,101 +94,10 @@ class _LWCellState extends State<LWCell> {
         // Text(e.title, style: ttSubTitle(context)),
         Section(
           e.title,
-          allowsCollapse: true,
+          allowsCollapse: false,
           initOpen: true,
           headerPadding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-          child: Column(
-            children: [
-              Row(
-                children: [
-                  _actionCell(
-                    context,
-                    Icons.info_outline,
-                    "Details",
-                    () {
-                      cupertinoSheet(
-                        context: context,
-                        builder: (context) => ExerciseDetail(
-                          showEdit: false,
-                          exerciseId:
-                              lmodel.state.exercises[widget.i][j].exerciseId,
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 4),
-                  _actionCell(
-                    context,
-                    Icons.bar_chart_rounded,
-                    "Graphs",
-                    () {
-                      cupertinoSheet(
-                          context: context,
-                          builder: (context) => ElOverviewV2(
-                                exercise: lmodel.state.exercises[widget.i][j],
-                              )
-                          // builder: (context) => ExerciseLogs(
-                          //   exerciseId:
-                          //       lmodel.state.exercises[widget.i][j].exerciseId,
-                          //   isInteractive: false,
-                          // ),
-                          );
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Row(
-                children: [
-                  _actionCell(
-                    context,
-                    Icons.cached_rounded,
-                    "Swap Exercise",
-                    () {
-                      cupertinoSheet(
-                        context: context,
-                        builder: (context) => SelectExercise(
-                          title: "Swap Exercise",
-                          onSelect: (e) {
-                            lmodel.addExercise(
-                              widget.i,
-                              j,
-                              e,
-                              dmodel.tags.firstWhereOrNull(
-                                  (element) => element.isDefault),
-                            );
-                          },
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 4),
-                  _actionCell(
-                    context,
-                    Icons.delete_outline_outlined,
-                    "Remove",
-                    () async {
-                      await showAlert(
-                        context: context,
-                        title: "Delete Exercise",
-                        body: const Text(
-                          "Are you sure? You can re-add this at any time.",
-                        ),
-                        cancelText: "Cancel",
-                        onCancel: () {},
-                        cancelBolded: true,
-                        submitText: "Delete",
-                        submitColor: Colors.red,
-                        onSubmit: () async {
-                          await lmodel.removeExercise(widget.i, j);
-                        },
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
+          child: _actions2(context, lmodel, dmodel, j),
         ),
         const SizedBox(height: 16),
         if (e.type == ExerciseType.duration)
@@ -299,6 +213,243 @@ class _LWCellState extends State<LWCell> {
                   const SizedBox(height: 16),
                 ],
               ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _actions2(
+    BuildContext context,
+    LaunchWorkoutModel lmodel,
+    DataModel dmodel,
+    int j,
+  ) {
+    return Column(
+      children: [
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            Expanded(
+              child: _actionCell2(
+                context,
+                Icons.info_outline,
+                "Details",
+                () {
+                  cupertinoSheet(
+                    context: context,
+                    builder: (context) => ExerciseDetail(
+                      showEdit: false,
+                      exerciseId:
+                          lmodel.state.exercises[widget.i][j].exerciseId,
+                    ),
+                  );
+                },
+              ),
+            ),
+            Expanded(
+              child: _actionCell2(
+                context,
+                Icons.bar_chart_rounded,
+                "Graphs",
+                () {
+                  cupertinoSheet(
+                      context: context,
+                      builder: (context) => ElOverviewV2(
+                            exercise: lmodel.state.exercises[widget.i][j],
+                          )
+                      // builder: (context) => ExerciseLogs(
+                      //   exerciseId:
+                      //       lmodel.state.exercises[widget.i][j].exerciseId,
+                      //   isInteractive: false,
+                      // ),
+                      );
+                },
+              ),
+            ),
+            Expanded(
+              child: _actionCell2(
+                context,
+                Icons.data_array,
+                "Raw",
+                () {
+                  cupertinoSheet(
+                    context: context,
+                    builder: (context) => ExerciseLogs(
+                      exerciseId:
+                          lmodel.state.exercises[widget.i][j].exerciseId,
+                      isInteractive: false,
+                    ),
+                  );
+                },
+              ),
+            ),
+            Expanded(
+              child: _actionCell2(
+                context,
+                Icons.cached_rounded,
+                "Swap Exercise",
+                () {
+                  cupertinoSheet(
+                    context: context,
+                    builder: (context) => SelectExercise(
+                      title: "Swap Exercise",
+                      onSelect: (e) {
+                        lmodel.addExercise(
+                          widget.i,
+                          j,
+                          e,
+                          dmodel.tags
+                              .firstWhereOrNull((element) => element.isDefault),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+            Expanded(
+              child: _actionCell2(
+                context,
+                Icons.delete_outline_outlined,
+                "Remove",
+                () async {
+                  await showAlert(
+                    context: context,
+                    title: "Delete Exercise",
+                    body: const Text(
+                      "Are you sure? You can re-add this at any time.",
+                    ),
+                    cancelText: "Cancel",
+                    onCancel: () {},
+                    cancelBolded: true,
+                    submitText: "Delete",
+                    submitColor: Colors.red,
+                    onSubmit: () async {
+                      await lmodel.removeExercise(widget.i, j);
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _actionCell2(
+    BuildContext context,
+    IconData icon,
+    String title,
+    VoidCallback onTap,
+  ) {
+    return Clickable(
+      onTap: onTap,
+      child: Container(
+        color: AppColors.background(context),
+        child: Icon(
+          icon,
+          size: 18,
+          color: AppColors.text(context).withValues(alpha: 0.5),
+        ),
+      ),
+    );
+  }
+
+  Widget _actions(
+    BuildContext context,
+    LaunchWorkoutModel lmodel,
+    DataModel dmodel,
+    int j,
+  ) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            _actionCell(
+              context,
+              Icons.info_outline,
+              "Details",
+              () {
+                cupertinoSheet(
+                  context: context,
+                  builder: (context) => ExerciseDetail(
+                    showEdit: false,
+                    exerciseId: lmodel.state.exercises[widget.i][j].exerciseId,
+                  ),
+                );
+              },
+            ),
+            const SizedBox(width: 4),
+            _actionCell(
+              context,
+              Icons.bar_chart_rounded,
+              "Graphs",
+              () {
+                cupertinoSheet(
+                    context: context,
+                    builder: (context) => ElOverviewV2(
+                          exercise: lmodel.state.exercises[widget.i][j],
+                        )
+                    // builder: (context) => ExerciseLogs(
+                    //   exerciseId:
+                    //       lmodel.state.exercises[widget.i][j].exerciseId,
+                    //   isInteractive: false,
+                    // ),
+                    );
+              },
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            _actionCell(
+              context,
+              Icons.cached_rounded,
+              "Swap Exercise",
+              () {
+                cupertinoSheet(
+                  context: context,
+                  builder: (context) => SelectExercise(
+                    title: "Swap Exercise",
+                    onSelect: (e) {
+                      lmodel.addExercise(
+                        widget.i,
+                        j,
+                        e,
+                        dmodel.tags
+                            .firstWhereOrNull((element) => element.isDefault),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+            const SizedBox(width: 4),
+            _actionCell(
+              context,
+              Icons.delete_outline_outlined,
+              "Remove",
+              () async {
+                await showAlert(
+                  context: context,
+                  title: "Delete Exercise",
+                  body: const Text(
+                    "Are you sure? You can re-add this at any time.",
+                  ),
+                  cancelText: "Cancel",
+                  onCancel: () {},
+                  cancelBolded: true,
+                  submitText: "Delete",
+                  submitColor: Colors.red,
+                  onSubmit: () async {
+                    await lmodel.removeExercise(widget.i, j);
+                  },
+                );
+              },
             ),
           ],
         ),
@@ -440,7 +591,8 @@ class _LWCellState extends State<LWCell> {
         }
       }
       return Container();
-    } catch (e) {
+    } catch (e, stack) {
+      logger.exception(e, stack);
       // to allow for out-of-bounds index checks when animating
       return Container();
     }

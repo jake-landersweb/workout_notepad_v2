@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/logs/no_logs.dart';
 import 'package:workout_notepad_v2/views/root.dart';
+import 'package:workout_notepad_v2/logger.dart';
 
 class RecentExercises extends StatefulWidget {
   const RecentExercises({super.key});
@@ -67,13 +67,8 @@ class _RecentExercisesState extends State<RecentExercises> {
         _logs.add(Exercise.fromJson(i));
       }
       setState(() {});
-    } catch (e) {
-      print(e);
-      NewrelicMobile.instance.recordError(
-        e,
-        StackTrace.current,
-        attributes: {"err_code": "logs_recent_exercises"},
-      );
+    } catch (e, stack) {
+      logger.exception(e, stack);
       if (mounted) {
         snackbarErr(context, "There was an issue querying your data");
       }

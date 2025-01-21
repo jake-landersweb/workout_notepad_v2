@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:workout_notepad_v2/model/data_model.dart';
 import 'package:workout_notepad_v2/views/account/template.dart';
+import 'package:workout_notepad_v2/logger.dart';
 
 class LoginNew extends StatefulWidget {
   const LoginNew({super.key});
@@ -55,7 +56,8 @@ class _LoginNewState extends State<LoginNew> {
           );
 
           return "";
-        } on ClientException catch (e) {
+        } on ClientException catch (e, stack) {
+          logger.exception(e, stack);
           print(e);
           if (e.response['data'] != null) {
             if (e.response['data']['email'] != null) {
@@ -130,8 +132,7 @@ class _LoginNewState extends State<LoginNew> {
 
       return "";
     } catch (e, stack) {
-      print(e);
-      print(stack);
+      logger.exception(e, stack);
       return "There was an unknown error";
     }
   }

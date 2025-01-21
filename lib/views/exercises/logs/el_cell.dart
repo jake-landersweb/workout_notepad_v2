@@ -5,6 +5,7 @@ import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/exercises/logs/tag_group.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 
 class ELCellLarge extends StatefulWidget {
@@ -94,9 +95,9 @@ class ELCell extends StatelessWidget {
                                 //   style: ttcaption(context),
                                 // ),
                                 child: ColoredCell(
-                                  title: "Rest: ${getRestText(i)}",
+                                  title: getRestText(i),
                                   color: Colors.grey.withOpacity(0.5),
-                                  size: ColoredCellSize.small,
+                                  size: ColoredCellSize.xs,
                                 ),
                               ),
                       )
@@ -115,28 +116,9 @@ class ELCell extends StatelessWidget {
       children: [
         Expanded(
           flex: 1,
-          child: Column(
-            children: [
-              Center(
-                child: Text(
-                  "SET ${index + 1}",
-                  style: ttBody(
-                    context,
-                    color: AppColors.subtext(context),
-                  ),
-                ),
-              ),
-              for (var i in meta.tags)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 2.0),
-                  // child: ColoredCell(
-                  //   isTag: true,
-                  //   size: ColoredCellSize.small,
-                  //   title: i.title,
-                  // ),
-                  child: TagCell(title: "${i.title}"),
-                ),
-            ],
+          child: SetGroup(
+            title: "SET ${index + 1}",
+            tagTitles: meta.tags.map((e) => e.title),
           ),
         ),
         Expanded(

@@ -18,7 +18,8 @@ void main() async {
   testWidgets('Take Screenshots', (tester) async {
     // launch the app and wait for all internal processes
     runApp(MyApp(
-      defaultUser: '{"userId": "", "displayName": "Ryan Hockings"}',
+      defaultUser:
+          '{"userId": "xL3zGrTtKYZp8ml6QiDDFmDu86w2", "displayName": "Ryan Hockings"}',
     ));
     await tester.pumpAndSettle(Duration(seconds: 12));
 

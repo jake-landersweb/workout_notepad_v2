@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
 void snackbarErr(
@@ -6,6 +7,7 @@ void snackbarErr(
   String message, {
   Duration? duration,
 }) {
+  logger.error(message);
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       duration: duration ?? const Duration(seconds: 4),

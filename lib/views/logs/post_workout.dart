@@ -12,7 +12,9 @@ import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
+import 'package:workout_notepad_v2/model/env.dart';
 import 'package:workout_notepad_v2/model/getDB.dart';
+import 'package:workout_notepad_v2/model/local_prefs.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/exercises/category_cell.dart';
@@ -36,27 +38,28 @@ class WorkoutSummaryModel extends ChangeNotifier {
   List<int> weightDistribution = [];
   List<String> categories = [];
 
-  WorkoutSummaryModel({required this.wl}) {
-    setData();
+  WorkoutSummaryModel({required BuildContext context, required this.wl}) {
+    setData(context);
   }
 
-  void setData() {
+  void setData(BuildContext context) {
+    var localPrefs = context.read<LocalPrefs>();
     tags = [];
     exerciseTypes = [];
     weightDistribution = [];
     categories = [];
     duration = formatHHMMSS(wl.duration);
     totalExercises = wl.exerciseLogs.length;
+
     totalSets =
         wl.exerciseLogs.map((v1) => v1.map((v2) => v2.metadata.length).sum).sum;
+
     totalReps = wl.exerciseLogs
         .map((v1) => v1.map((v2) => v2.metadata.map((v3) => v3.reps).sum).sum)
         .sum;
-    totalWeight = wl.exerciseLogs
-        .map((v1) => v1
-            .map((v2) => v2.metadata.map((v3) => v3.weight * v3.reps).sum)
-            .sum)
-        .sum;
+
+    // calculated later
+    totalWeight = 0;
 
     for (var i in wl.exerciseLogs) {
       var weight = 0;
@@ -84,12 +87,31 @@ class WorkoutSummaryModel extends ChangeNotifier {
         }
 
         // total weight
-        weight += j.metadata.map((e) => e.weight).sum;
+        if (j.metadata.isNotEmpty) {
+          if (localPrefs.defaultWeightPost == "lbs") {
+            if (j.metadata[0].weightPost == "lbs") {
+              weight += j.metadata.map((e) => e.weight).sum;
+            } else {
+              weight +=
+                  (j.metadata.map((e) => e.weight).sum * KG_TO_LBS_CONVERSTION)
+                      .toInt();
+            }
+          } else {
+            if (j.metadata[0].weightPost == "lbs") {
+              weight +=
+                  (j.metadata.map((e) => e.weight).sum / KG_TO_LBS_CONVERSTION)
+                      .toInt();
+            } else {
+              weight += j.metadata.map((e) => e.weight).sum;
+            }
+          }
+        }
 
         // categories
         categories.add(j.category);
       }
       weightDistribution.add(weight);
+      totalWeight += weight;
     }
 
     // compose categories
@@ -127,126 +149,130 @@ class _PostWorkoutSummaryState extends State<PostWorkoutSummary> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.bottomCenter,
-      children: [
-        HeaderBar.sheet(
-          title: "Summary",
-          leading: const [CloseButton2()],
-          trailing: [
-            if (widget.onSave != null)
-              Padding(
-                padding: const EdgeInsets.only(left: 10.0),
-                child: EditButton(onTap: () {
-                  cupertinoSheet(
-                    context: context,
-                    builder: (context) => WLEdit(
-                        wl: _workoutLog!,
-                        onSave: (v) async {
-                          widget.onSave!(v);
-                          await _init();
-                          await Future.delayed(
-                              const Duration(milliseconds: 50));
-                          setState(() {
-                            _refresh = true;
-                          });
-                        }),
-                  );
-                }),
-              )
-          ],
-          horizontalSpacing: 0,
+    return Navigator(onGenerateRoute: (RouteSettings settings) {
+      return MaterialPageRoute(builder: (context) {
+        return Stack(
+          alignment: Alignment.bottomCenter,
           children: [
-            if (_workoutLog != null) _body(context, _workoutLog!),
-          ],
-        ),
-        // action buttons
-        Padding(
-          padding: EdgeInsets.fromLTRB(
-              8, 0, 8, MediaQuery.of(context).padding.bottom + 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Clickable(
-                onTap: () {
-                  if (_viewType == _ViewType.full) {
-                    setState(() {
-                      _viewType = _ViewType.square;
-                    });
-                  } else {
-                    setState(() {
-                      _viewType = _ViewType.full;
-                    });
-                  }
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.cell(context)[100],
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                      ),
-                    ],
-                  ),
-                  height: MediaQuery.of(context).size.width * 0.15,
-                  width: MediaQuery.of(context).size.width * 0.15,
-                  child: Center(
-                    child: Icon(_viewType == _ViewType.square
-                        ? Icons.crop_square_rounded
-                        : Icons.crop_portrait),
-                  ),
-                ),
-              ),
-              Clickable(
-                onTap: () async {
-                  setState(() {
-                    _isLoading = true;
-                  });
-                  await _share(context);
-                  setState(() {
-                    _isLoading = false;
-                  });
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                      ),
-                    ],
-                  ),
-                  height: MediaQuery.of(context).size.width * 0.15,
-                  width: MediaQuery.of(context).size.width * 0.15,
-                  child: Center(
-                    child: _isLoading
-                        ? LoadingIndicator(color: Colors.white)
-                        : Padding(
-                            padding: EdgeInsets.only(bottom: 3.0),
-                            child: Icon(
-                              Icons.ios_share_rounded,
-                              color: Colors.white,
-                            ),
+            HeaderBar.sheet(
+              title: "Summary",
+              leading: const [CloseButton2()],
+              trailing: [
+                if (widget.onSave != null)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: EditButton(onTap: () {
+                      cupertinoSheet(
+                        context: context,
+                        builder: (context) => WLEdit(
+                            wl: _workoutLog!,
+                            onSave: (v) async {
+                              widget.onSave!(v);
+                              await _init();
+                              await Future.delayed(
+                                  const Duration(milliseconds: 50));
+                              setState(() {
+                                _refresh = true;
+                              });
+                            }),
+                      );
+                    }),
+                  )
+              ],
+              horizontalSpacing: 0,
+              children: [
+                if (_workoutLog != null) _body(context, _workoutLog!),
+              ],
+            ),
+            // action buttons
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                  8, 0, 8, MediaQuery.of(context).padding.bottom + 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Clickable(
+                    onTap: () {
+                      if (_viewType == _ViewType.full) {
+                        setState(() {
+                          _viewType = _ViewType.square;
+                        });
+                      } else {
+                        setState(() {
+                          _viewType = _ViewType.full;
+                        });
+                      }
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.cell(context)[100],
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            spreadRadius: 5,
+                            blurRadius: 7,
                           ),
+                        ],
+                      ),
+                      height: MediaQuery.of(context).size.width * 0.15,
+                      width: MediaQuery.of(context).size.width * 0.15,
+                      child: Center(
+                        child: Icon(_viewType == _ViewType.square
+                            ? Icons.crop_square_rounded
+                            : Icons.crop_portrait),
+                      ),
+                    ),
                   ),
-                ),
+                  Clickable(
+                    onTap: () async {
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      await _share(context);
+                      setState(() {
+                        _isLoading = false;
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            spreadRadius: 5,
+                            blurRadius: 7,
+                          ),
+                        ],
+                      ),
+                      height: MediaQuery.of(context).size.width * 0.15,
+                      width: MediaQuery.of(context).size.width * 0.15,
+                      child: Center(
+                        child: _isLoading
+                            ? LoadingIndicator(color: Colors.white)
+                            : Padding(
+                                padding: EdgeInsets.only(bottom: 3.0),
+                                child: Icon(
+                                  Icons.ios_share_rounded,
+                                  color: Colors.white,
+                                ),
+                              ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
-      ],
-    );
+            ),
+          ],
+        );
+      });
+    });
   }
 
   Widget _body(BuildContext context, WorkoutLog wl) {
     return ChangeNotifierProvider(
-      create: (context) => WorkoutSummaryModel(wl: wl),
+      create: (context) => WorkoutSummaryModel(context: context, wl: wl),
       builder: (context, child) => _content(context),
     );
   }
@@ -256,7 +282,7 @@ class _PostWorkoutSummaryState extends State<PostWorkoutSummary> {
     if (_refresh) {
       _refresh = false;
       model.wl = _workoutLog!;
-      model.setData();
+      model.setData(context);
     }
     return RepaintBoundary(
       key: _reportKey,
@@ -265,6 +291,7 @@ class _PostWorkoutSummaryState extends State<PostWorkoutSummary> {
   }
 
   Widget _view(BuildContext context, WorkoutSummaryModel model) {
+    var localPrefs = context.watch<LocalPrefs>();
     switch (_viewType) {
       case _ViewType.full:
         return Container(
@@ -333,7 +360,7 @@ class _PostWorkoutSummaryState extends State<PostWorkoutSummary> {
                         context,
                         _attributeCell(
                           context,
-                          "Total lbs",
+                          "Total ${localPrefs.defaultWeightPost}",
                           model.totalWeight.toString(),
                         ),
                       ),
@@ -750,16 +777,10 @@ class _PostWorkoutSummaryState extends State<PostWorkoutSummary> {
               },
               getTooltipItems: (touchedSpots) {
                 List<LineTooltipItem> items = [];
-                items.add(
-                  LineTooltipItem(
-                    "Set #${touchedSpots[0].x.round()}",
-                    ttcaption(context),
-                  ),
-                );
                 for (var i in touchedSpots) {
                   items.add(
                     LineTooltipItem(
-                      "${i.y.round()} lbs",
+                      "Set #${i.x.round()}\n${i.y.round()} lbs",
                       ttBody(
                         context,
                         color: i.bar.color,

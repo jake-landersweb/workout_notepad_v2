@@ -10,6 +10,7 @@ class SegmentedPickerStyle {
   final Color? pickerColor;
   final ShapeBorder? shape;
   final FontWeight? selectedWeight;
+  final Border? border;
 
   const SegmentedPickerStyle({
     this.height = 33,
@@ -19,6 +20,7 @@ class SegmentedPickerStyle {
     this.pickerColor,
     this.shape,
     this.selectedWeight,
+    this.border,
   });
 }
 
@@ -45,11 +47,13 @@ class SegmentedPicker<T> extends StatefulWidget {
 class _SegmentedPickerState extends State<SegmentedPicker> {
   @override
   Widget build(BuildContext context) {
-    return Material(
-      shape: widget.style.shape ??
-          ContinuousRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      color: widget.style.backgroundColor ??
-          Theme.of(context).colorScheme.surfaceVariant,
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        color: widget.style.backgroundColor ??
+            Theme.of(context).colorScheme.surface,
+        border: widget.style.border,
+      ),
       child: SizedBox(
         height: widget.style.height + 2,
         child: Padding(
@@ -61,13 +65,12 @@ class _SegmentedPickerState extends State<SegmentedPicker> {
                 alignment: _alignment(),
                 curve: Sprung.overDamped,
                 duration: const Duration(milliseconds: 650),
-                child: Material(
-                  shape: widget.style.shape ??
-                      ContinuousRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                  color: widget.style.pickerColor ??
-                      Theme.of(context).primaryColor.withOpacity(0.3),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(13),
+                    color: widget.style.pickerColor ??
+                        Theme.of(context).primaryColor.withOpacity(0.3),
+                  ),
                   child: FractionallySizedBox(
                     widthFactor: 1 / widget.titles.length,
                     child: SizedBox(height: widget.style.height),

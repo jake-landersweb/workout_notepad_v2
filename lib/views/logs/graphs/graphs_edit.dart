@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:line_icons/line_icons.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder.dart';
+import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -177,11 +177,7 @@ class _GraphsEditState extends State<GraphsEdit> {
       });
       return "";
     } catch (e, stack) {
-      NewrelicMobile.instance.recordError(e, stack, attributes: {
-        "title": "There was an issue saving the edited graph items."
-      });
-      print(e);
-      print(stack);
+      logger.exception(e, stack);
       return e.toString();
     }
   }

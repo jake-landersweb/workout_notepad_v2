@@ -35,6 +35,7 @@ class HeaderBar extends StatefulWidget {
     this.crossAxisAlignment = CrossAxisAlignment.start,
     this.animateOnAdd = false,
     this.largeTitlePadding = EdgeInsets.zero,
+    this.forceNoBar = false,
   }) : super(key: key);
 
   HeaderBar.sheet({
@@ -59,6 +60,7 @@ class HeaderBar extends StatefulWidget {
     this.crossAxisAlignment = CrossAxisAlignment.start,
     this.animateOnAdd = false,
     this.largeTitlePadding = EdgeInsets.zero,
+    this.forceNoBar = false,
   }) {
     // set sheet specific attributes
     isLarge = false;
@@ -95,6 +97,7 @@ class HeaderBar extends StatefulWidget {
   final CrossAxisAlignment crossAxisAlignment;
   final bool animateOnAdd;
   final EdgeInsets largeTitlePadding;
+  final bool forceNoBar;
 
   @override
   _HeaderBarState createState() => _HeaderBarState();
@@ -260,7 +263,10 @@ class _HeaderBarState extends State<HeaderBar> {
                       top: (widget.hasSafeArea
                               ? MediaQuery.of(context).viewPadding.top
                               : 0) +
-                          (widget.isLarge ? 0 : 40) +
+                          ((widget.isLarge ||
+                                  (widget.title.isEmpty && widget.forceNoBar))
+                              ? 0
+                              : 40) +
                           10),
                   child: Align(
                     alignment: Alignment.topCenter,
@@ -372,55 +378,57 @@ class _HeaderBarState extends State<HeaderBar> {
             children: [
               if (widget.hasSafeArea)
                 SizedBox(height: MediaQuery.of(context).viewPadding.top),
-              SizedBox(
-                height: _barHeight,
-                child: Padding(
-                  padding: widget.itemBarPadding,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        Align(
-                          alignment:
-                              widget.leadingAlignment ?? Alignment.bottomLeft,
-                          child: Row(children: widget.leading),
-                        ),
-                        Align(
-                          alignment:
-                              widget.trailingAlignment ?? Alignment.bottomRight,
-                          child: Row(children: [
-                            const Spacer(),
-                            Row(children: widget.trailing),
-                          ]),
-                        ),
-                        if (widget.title.isNotEmpty)
+              if (widget.title.isNotEmpty || !widget.forceNoBar)
+                SizedBox(
+                  height: _barHeight,
+                  child: Padding(
+                    padding: widget.itemBarPadding,
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
                           Align(
                             alignment:
-                                widget.titleAlignment ?? Alignment.bottomCenter,
-                            child: widget.titleWidget != null
-                                ? widget.titleWidget!
-                                : AnimatedOpacity(
-                                    opacity: _showSmallTitle ? 1 : 0,
-                                    duration: const Duration(milliseconds: 150),
-                                    child: Text(
-                                      widget.title.length > 25
-                                          ? "${widget.title.substring(0, 25)}..."
-                                          : widget.title,
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w600,
-                                        color: widget.titleColor ??
-                                            AppColors.text(context),
+                                widget.leadingAlignment ?? Alignment.bottomLeft,
+                            child: Row(children: widget.leading),
+                          ),
+                          Align(
+                            alignment: widget.trailingAlignment ??
+                                Alignment.bottomRight,
+                            child: Row(children: [
+                              const Spacer(),
+                              Row(children: widget.trailing),
+                            ]),
+                          ),
+                          if (widget.title.isNotEmpty)
+                            Align(
+                              alignment: widget.titleAlignment ??
+                                  Alignment.bottomCenter,
+                              child: widget.titleWidget != null
+                                  ? widget.titleWidget!
+                                  : AnimatedOpacity(
+                                      opacity: _showSmallTitle ? 1 : 0,
+                                      duration:
+                                          const Duration(milliseconds: 150),
+                                      child: Text(
+                                        widget.title.length > 25
+                                            ? "${widget.title.substring(0, 25)}..."
+                                            : widget.title,
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600,
+                                          color: widget.titleColor ??
+                                              AppColors.text(context),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                          ),
-                      ],
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
             ],
           ),
         ),

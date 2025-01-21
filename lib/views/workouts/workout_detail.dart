@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/components/alert.dart';
@@ -205,6 +204,7 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
 
               // reload the templates
               await dmodel.refreshWorkoutTemplates();
+              await dmodel.refreshExercises();
               Navigator.of(context).pop();
 
               // send a report that this template was downloaded
@@ -363,13 +363,8 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
                           "Successfully deleted the workout",
                         );
                       }
-                    } catch (e) {
-                      print(e);
-                      NewrelicMobile.instance.recordError(
-                        e,
-                        StackTrace.current,
-                        attributes: {"err_code": "workout_delete"},
-                      );
+                    } catch (e, stack) {
+                      logger.exception(e, stack);
                     }
                   },
                 );

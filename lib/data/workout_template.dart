@@ -3,13 +3,13 @@ import 'dart:ui';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_template_exercise.dart';
 import 'package:workout_notepad_v2/model/getDB.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/utils/color.dart';
+import 'package:workout_notepad_v2/logger.dart';
 
 class WorkoutTemplate extends Workout {
   WorkoutTemplate({
@@ -322,7 +322,8 @@ class WorkoutTemplate extends Workout {
         return ColorUtil.hexToColor(backgroundColor);
       }
       return null;
-    } catch (e) {
+    } catch (e, stack) {
+      logger.exception(e, stack);
       return null;
     }
   }
@@ -398,9 +399,7 @@ class WorkoutTemplate extends Workout {
 
       return true;
     } catch (error, stack) {
-      print(error);
-      print(stack);
-      NewrelicMobile.instance.recordError(error, stack);
+      logger.exception(error, stack);
       return false;
     }
   }

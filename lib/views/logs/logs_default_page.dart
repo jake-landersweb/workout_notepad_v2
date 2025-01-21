@@ -6,6 +6,7 @@ import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder_date.dart';
 import 'package:workout_notepad_v2/data/log_builder/log_builder_item.dart';
+import 'package:workout_notepad_v2/model/local_prefs.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/logs/graphs/graph_range_picker.dart';
 import 'package:workout_notepad_v2/views/logs/graphs/graph_renderer.dart';
@@ -28,12 +29,10 @@ class DefaultLogPage extends StatefulWidget {
 class _DefaultLogPageState extends State<DefaultLogPage> {
   late LogBuilderItem _defaultCondition;
   late List<Key> _keys;
-  late LBWeightNormalization _weightNormalization;
 
   @override
   void initState() {
     _defaultCondition = widget.defaultCondition;
-    _weightNormalization = LBWeightNormalization.LBS;
     _keys = _generateKeys();
     super.initState();
   }
@@ -57,6 +56,7 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
 
   Widget _body(BuildContext context) {
     var range = context.select((GraphRangeProvider value) => value.getDate);
+    var localPrefs = context.watch<LocalPrefs>();
     return HeaderBar(
       title: widget.title.capitalize(),
       horizontalSpacing: 0,
@@ -64,9 +64,8 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
       children: [
         Column(
           children: [
-            const SizedBox(height: 16),
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.fromLTRB(16, 32, 16, 0),
               child: GraphRangeView(
                 date: range,
                 onSave: ((_, date) {
@@ -75,24 +74,6 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
                     _keys = _generateKeys();
                   });
                 }),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: SegmentedPicker(
-                titles: ["lbs", "kg"],
-                style: SegmentedPickerStyle(
-                  height: 45,
-                  backgroundColor: AppColors.cell(context),
-                ),
-                onSelection: (val) {
-                  setState(() {
-                    _weightNormalization = val;
-                    _keys = _generateKeys();
-                  });
-                },
-                selections: LBWeightNormalization.values,
-                selection: _weightNormalization,
               ),
             ),
             Section(
@@ -105,7 +86,7 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
                 children: [
                   GraphRenderer(
                     logBuilder: LogBuilder(
-                      weightNormalization: _weightNormalization,
+                      weightNormalization: localPrefs.weightNormalization,
                       color: widget.colorOverride,
                       title: "MAX WEIGHT By EXERCISE",
                       date: range,
@@ -117,7 +98,7 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
                   ),
                   GraphRenderer(
                     logBuilder: LogBuilder(
-                      weightNormalization: _weightNormalization,
+                      weightNormalization: localPrefs.weightNormalization,
                       color: widget.colorOverride,
                       title: "Tag Distribution",
                       date: range,
@@ -129,7 +110,7 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
                   ),
                   GraphRenderer(
                     logBuilder: LogBuilder(
-                      weightNormalization: _weightNormalization,
+                      weightNormalization: localPrefs.weightNormalization,
                       color: widget.colorOverride,
                       title: "Sets Distribution",
                       date: range,
@@ -157,7 +138,7 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
                     children: [
                       GraphRenderer(
                         logBuilder: LogBuilder(
-                          weightNormalization: _weightNormalization,
+                          weightNormalization: localPrefs.weightNormalization,
                           color: widget.colorOverride,
                           title: "Avg Weight Over Time",
                           date: range,
@@ -169,7 +150,7 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
                       ),
                       GraphRenderer(
                         logBuilder: LogBuilder(
-                          weightNormalization: _weightNormalization,
+                          weightNormalization: localPrefs.weightNormalization,
                           color: widget.colorOverride,
                           title: "Max Weight Over Time",
                           date: range,
@@ -181,7 +162,7 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
                       ),
                       GraphRenderer(
                         logBuilder: LogBuilder(
-                          weightNormalization: _weightNormalization,
+                          weightNormalization: localPrefs.weightNormalization,
                           color: widget.colorOverride,
                           title: "Min Weight Over Time",
                           date: range,
@@ -200,7 +181,7 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
                     children: [
                       GraphRenderer(
                         logBuilder: LogBuilder(
-                          weightNormalization: _weightNormalization,
+                          weightNormalization: localPrefs.weightNormalization,
                           color: widget.colorOverride,
                           title: "Avg Reps Over Time",
                           date: range,
@@ -213,7 +194,7 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
                       ),
                       GraphRenderer(
                         logBuilder: LogBuilder(
-                          weightNormalization: _weightNormalization,
+                          weightNormalization: localPrefs.weightNormalization,
                           color: widget.colorOverride,
                           title: "Max Reps Over Time",
                           date: range,
@@ -226,7 +207,7 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
                       ),
                       GraphRenderer(
                         logBuilder: LogBuilder(
-                          weightNormalization: _weightNormalization,
+                          weightNormalization: localPrefs.weightNormalization,
                           color: widget.colorOverride,
                           title: "Min Reps Over Time",
                           date: range,
@@ -246,7 +227,7 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
                     children: [
                       GraphRenderer(
                         logBuilder: LogBuilder(
-                          weightNormalization: _weightNormalization,
+                          weightNormalization: localPrefs.weightNormalization,
                           color: widget.colorOverride,
                           title: "Avg Duration Over Time",
                           date: range,
@@ -259,7 +240,7 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
                       ),
                       GraphRenderer(
                         logBuilder: LogBuilder(
-                          weightNormalization: _weightNormalization,
+                          weightNormalization: localPrefs.weightNormalization,
                           color: widget.colorOverride,
                           title: "Max Duration Over Time",
                           date: range,
@@ -272,7 +253,7 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
                       ),
                       GraphRenderer(
                         logBuilder: LogBuilder(
-                          weightNormalization: _weightNormalization,
+                          weightNormalization: localPrefs.weightNormalization,
                           color: widget.colorOverride,
                           title: "Min Duration Over Time",
                           date: range,
@@ -302,7 +283,7 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
                     children: [
                       GraphRenderer(
                         logBuilder: LogBuilder(
-                          weightNormalization: _weightNormalization,
+                          weightNormalization: localPrefs.weightNormalization,
                           color: widget.colorOverride,
                           title: "Max Weight Lifted",
                           date: range,
@@ -315,7 +296,7 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
                       ),
                       GraphRenderer(
                         logBuilder: LogBuilder(
-                          weightNormalization: _weightNormalization,
+                          weightNormalization: localPrefs.weightNormalization,
                           color: widget.colorOverride,
                           title: "Avg Weight Lifted",
                           date: range,
@@ -328,7 +309,7 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
                       ),
                       GraphRenderer(
                         logBuilder: LogBuilder(
-                          weightNormalization: _weightNormalization,
+                          weightNormalization: localPrefs.weightNormalization,
                           color: widget.colorOverride,
                           title: "Min Weight Lifted",
                           date: range,
@@ -348,7 +329,7 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
                     children: [
                       GraphRenderer(
                         logBuilder: LogBuilder(
-                          weightNormalization: _weightNormalization,
+                          weightNormalization: localPrefs.weightNormalization,
                           color: widget.colorOverride,
                           title: "Max Reps",
                           date: range,
@@ -361,7 +342,7 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
                       ),
                       GraphRenderer(
                         logBuilder: LogBuilder(
-                          weightNormalization: _weightNormalization,
+                          weightNormalization: localPrefs.weightNormalization,
                           color: widget.colorOverride,
                           title: "Avg Reps",
                           date: range,
@@ -374,7 +355,7 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
                       ),
                       GraphRenderer(
                         logBuilder: LogBuilder(
-                          weightNormalization: _weightNormalization,
+                          weightNormalization: localPrefs.weightNormalization,
                           color: widget.colorOverride,
                           title: "Min Reps",
                           date: range,
@@ -394,7 +375,7 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
                     children: [
                       GraphRenderer(
                         logBuilder: LogBuilder(
-                          weightNormalization: _weightNormalization,
+                          weightNormalization: localPrefs.weightNormalization,
                           color: widget.colorOverride,
                           title: "Max Duration",
                           date: range,
@@ -407,7 +388,7 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
                       ),
                       GraphRenderer(
                         logBuilder: LogBuilder(
-                          weightNormalization: _weightNormalization,
+                          weightNormalization: localPrefs.weightNormalization,
                           color: widget.colorOverride,
                           title: "Avg Duration",
                           date: range,
@@ -420,7 +401,7 @@ class _DefaultLogPageState extends State<DefaultLogPage> {
                       ),
                       GraphRenderer(
                         logBuilder: LogBuilder(
-                          weightNormalization: _weightNormalization,
+                          weightNormalization: localPrefs.weightNormalization,
                           color: widget.colorOverride,
                           title: "Min Duration",
                           date: range,

@@ -9,6 +9,7 @@ import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/logger.dart';
 
 class WorkoutLog {
   late String workoutLogId;
@@ -140,7 +141,8 @@ class WorkoutLog {
       }
 
       return groupedData.values.toList();
-    } catch (e) {
+    } catch (e, stack) {
+      logger.exception(e, stack);
       print(e);
       return null;
     }

@@ -156,7 +156,7 @@ class _CEWState extends State<CEW> {
             color: AppColors.text(context),
           ),
           textCapitalization: TextCapitalization.words,
-          labelText: "",
+          labelText: "Title",
           onChanged: (val) => cmodel.setTitle(val),
         ),
         Row(

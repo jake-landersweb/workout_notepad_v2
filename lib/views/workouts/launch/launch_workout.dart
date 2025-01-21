@@ -129,7 +129,7 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
     return Scaffold(
       body: comp.InteractiveSheet(
         header: (context) => _header(context, dmodel, lmodel),
-        headerPadding: const EdgeInsets.fromLTRB(16, 0, 0, 16),
+        headerPadding: const EdgeInsets.fromLTRB(16, 0, 0, 8),
         headerColor: AppColors.background(context),
         builder: (context) {
           return Stack(
@@ -221,6 +221,8 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
             Expanded(
               child: Text(
                 lmodel.state.wl.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: ttTitle(context),
               ),
             ),
@@ -267,6 +269,8 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
             padding: const EdgeInsets.only(right: 16.0),
             child: Text(
               lmodel.state.wl.description!,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: ttBody(
                 context,
                 color: AppColors.subtext(context),
@@ -275,48 +279,142 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
           ),
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 8, 16, 0),
-          child: Container(
-            decoration: BoxDecoration(
-              color: AppColors.cell(context),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: AppColors.border(context), width: 3),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  width: 120,
-                  height: 32,
-                  child: Center(
-                    child: LWTime(
-                      start: lmodel.state.startTime,
-                      style: ttLabel(
-                        context,
-                        color: AppColors.text(context),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 3,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.cell(context),
+                    borderRadius: BorderRadius.circular(10),
+                    border:
+                        Border.all(color: AppColors.border(context), width: 3),
+                  ),
+                  height: 35,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(
+                        flex: 5,
+                        child: Center(
+                          child: LWTime(
+                            start: lmodel.state.startTime,
+                            style: ttLabel(
+                              context,
+                              color: AppColors.text(context),
+                            ),
+                          ),
+                        ),
                       ),
+                      Container(
+                        height: 20,
+                        width: 0.5,
+                        color: AppColors.text(context).withOpacity(0.3),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Center(
+                          child: Text(
+                            "${lmodel.state.workoutIndex + 1 > lmodel.state.exercises.length ? '-' : lmodel.state.workoutIndex + 1}/${lmodel.state.exercises.length}",
+                            style: ttLabel(
+                              context,
+                              color: AppColors.text(context),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                flex: 1,
+                child: Clickable(
+                  onTap: () {
+                    Navigator.of(context, rootNavigator: true).pop();
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.cell(context),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                          color: AppColors.border(context), width: 3),
+                    ),
+                    height: 35,
+                    child: Icon(
+                      Icons.minimize,
+                      color: AppColors.text(context),
                     ),
                   ),
                 ),
-                Container(
-                  height: 20,
-                  width: 0.5,
-                  color: AppColors.text(context).withOpacity(0.3),
-                ),
-                SizedBox(
-                  width: 60,
-                  height: 32,
-                  child: Center(
-                    child: Text(
-                      "${lmodel.state.workoutIndex + 1 > lmodel.state.exercises.length ? '-' : lmodel.state.workoutIndex + 1}/${lmodel.state.exercises.length}",
-                      style: ttLabel(
-                        context,
-                        color: AppColors.text(context),
-                      ),
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                flex: 1,
+                child: Clickable(
+                  onTap: () async {
+                    await showAlert(
+                      context: context,
+                      title: "Are You Sure?",
+                      body: const Text(
+                          "If you cancel your workout, all progress will be lost."),
+                      cancelText: "Go Back",
+                      onCancel: () {},
+                      cancelBolded: true,
+                      submitColor: Colors.red,
+                      submitText: "Yes",
+                      onSubmit: () {
+                        Navigator.of(context, rootNavigator: true).pop();
+                        dmodel.stopWorkout(isCancel: true);
+                      },
+                    );
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.cell(context),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                          color: AppColors.border(context), width: 3),
                     ),
+                    height: 35,
+                    child: Icon(Icons.cancel_outlined, color: Colors.red[300]),
                   ),
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 4),
+              Expanded(
+                flex: 1,
+                child: Clickable(
+                  onTap: () async {
+                    await showAlert(
+                      context: context,
+                      title: "Are You Sure?",
+                      body: const Text(
+                          "Once you finish a workout, you cannot go back and modify it."),
+                      cancelText: "Go Back",
+                      onCancel: () {},
+                      submitBolded: true,
+                      submitText: "Finish",
+                      onSubmit: () async {
+                        Navigator.of(context, rootNavigator: true).pop();
+                        await lmodel.handleFinish(context, dmodel);
+                      },
+                    );
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.cell(context),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                          color: AppColors.border(context), width: 3),
+                    ),
+                    height: 35,
+                    child: Icon(Icons.star_rounded, color: Colors.amber[300]),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ],

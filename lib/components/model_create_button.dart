@@ -34,7 +34,7 @@ class ModelCreateButton extends StatelessWidget {
           ? const LoadingIndicator()
           : Text(
               title,
-              style: ttLabel(context).copyWith(
+              style: ttLabel(context, size: 16).copyWith(
                 color: textColor ??
                     (isValid ? dmodel.color : AppColors.subtext(context)),
               ),

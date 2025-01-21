@@ -227,7 +227,7 @@ class _ManagePurchasesState extends State<ManagePurchases> {
   //         }
   //       }
   //     }
-  //   } catch (e) {
+  //   }  catch (e, stack) { logger.exception(e, stack);
   //     print(e);
   //     NewrelicMobile.instance.recordError(
   //       e,
@@ -272,7 +272,7 @@ class _ManagePurchasesState extends State<ManagePurchases> {
   //         "There was an issue restoring the purchase. If you think this is a mistake, please contact support",
   //       );
   //     }
-  //   } catch (e) {
+  //   }  catch (e, stack) { logger.exception(e, stack);
   //     print(e);
   //     NewrelicMobile.instance.recordError(
   //       e,

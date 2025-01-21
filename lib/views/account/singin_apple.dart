@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -8,7 +9,7 @@ class SigninApple extends StatefulWidget {
     required this.onSignIn,
     required this.isLoading,
   });
-  final VoidCallback onSignIn;
+  final AsyncCallback onSignIn;
   final bool isLoading;
 
   @override
@@ -22,7 +23,7 @@ class _SigninAppleState extends State<SigninApple> {
       onTap: () async {
         if (widget.isLoading) return;
         WidgetsBinding.instance.focusManager.primaryFocus?.unfocus();
-        widget.onSignIn();
+        await widget.onSignIn();
       },
       child: Container(
         decoration: BoxDecoration(

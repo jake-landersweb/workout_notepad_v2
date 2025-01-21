@@ -105,14 +105,14 @@ class Logger {
   }
 
   void exception(Object error, StackTrace? stack,
-      [Map<String, dynamic>? data]) {
+      {Map<String, dynamic>? data, String? message}) {
     var attributes = {"exception": error};
     if (stack != null) {
       attributes["stackTrace"] = stack;
     }
     log(
       LogLevel.err,
-      error.toString(),
+      message ?? error.toString(),
       {
         ...attributes,
         if (data != null) ...data,
@@ -137,7 +137,9 @@ class Logger {
     }
 
     // parse keywords
-    if (message.toLowerCase().contains("error")) {
+    if (message.toLowerCase().contains("debug")) {
+      debug(message);
+    } else if (message.toLowerCase().contains("error")) {
       error(message);
     } else if (message.toLowerCase().contains("warn") ||
         message.toLowerCase().contains("warning")) {

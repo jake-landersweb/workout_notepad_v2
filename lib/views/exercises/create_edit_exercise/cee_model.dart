@@ -1,12 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:newrelic_mobile/newrelic_mobile.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/image.dart';
+import 'package:workout_notepad_v2/logger.dart';
 
 class CreateExerciseModel extends ChangeNotifier {
   late Exercise exercise;
@@ -113,13 +113,8 @@ class CreateExerciseModel extends ChangeNotifier {
         });
 
         return exercise;
-      } catch (e) {
-        NewrelicMobile.instance.recordError(
-          e,
-          StackTrace.current,
-          attributes: {"err_code": "exercise_update"},
-        );
-        print(e);
+      } catch (e, stack) {
+        logger.exception(e, stack);
         return null;
       }
     } else {
@@ -129,13 +124,8 @@ class CreateExerciseModel extends ChangeNotifier {
         });
 
         return exercise;
-      } catch (e) {
-        NewrelicMobile.instance.recordError(
-          e,
-          StackTrace.current,
-          attributes: {"err_code": "exercise_create"},
-        );
-        print(e);
+      } catch (e, stack) {
+        logger.exception(e, stack);
         return null;
       }
     }

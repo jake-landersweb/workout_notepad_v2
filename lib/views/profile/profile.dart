@@ -10,6 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/root.dart';
+import 'package:workout_notepad_v2/model/internet_provider.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -17,6 +18,7 @@ import 'package:workout_notepad_v2/views/account/root.dart';
 import 'package:workout_notepad_v2/views/profile/config_categories.dart';
 import 'package:workout_notepad_v2/views/profile/configure_tags.dart';
 import 'package:workout_notepad_v2/views/profile/edit_profile.dart';
+import 'package:workout_notepad_v2/views/profile/local_preferences.dart';
 
 import 'package:workout_notepad_v2/views/profile/manage_data.dart';
 import 'package:workout_notepad_v2/views/profile/manage_purchases.dart';
@@ -70,9 +72,10 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
+    var internetModel = Provider.of<InternetProvider>(context);
     if (dmodel.user == null) {
-      return const Center(
-        child: Text("No user found"),
+      return const Scaffold(
+        body: Center(child: Text("No user found")),
       );
     }
     return Scaffold(
@@ -82,7 +85,7 @@ class _ProfileState extends State<Profile> {
         trailing: [
           if (dmodel.user != null)
             EditButton(onTap: () {
-              if (dmodel.user!.offline) {
+              if (!internetModel.hasInternet()) {
                 snackbarErr(context, "You are offline.");
               } else {
                 cupertinoSheet(
@@ -285,6 +288,19 @@ class _ProfileState extends State<Profile> {
                   }
                 },
               ),
+              StyledSectionItem(
+                title: "Local Settings",
+                icon: Icons.settings_rounded,
+                color: Colors.orange.shade300,
+                post: StyledSectionItemPost.view,
+                isLocked: false,
+                onTap: () async {
+                  navigate(
+                    context: context,
+                    builder: (context) => const LocalPreferencesView(),
+                  );
+                },
+              ),
             ],
           ),
           const SizedBox(height: 32),
@@ -432,8 +448,8 @@ class _ProfileState extends State<Profile> {
                         Navigator.of(context).pop();
                         await dmodel.logout(context);
                         await Future.delayed(
-                            const Duration(milliseconds: 1000));
-                        setState(() {});
+                          const Duration(milliseconds: 1000),
+                        );
                       },
                     );
                   }

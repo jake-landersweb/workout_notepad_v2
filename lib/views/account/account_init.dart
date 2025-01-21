@@ -8,6 +8,7 @@ import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/account/login_new.dart';
 import 'package:workout_notepad_v2/views/account/root.dart';
+import 'package:workout_notepad_v2/views/account/signin_with.dart';
 
 class AccountInit extends StatefulWidget {
   const AccountInit({super.key});
@@ -22,6 +23,7 @@ class _AccountInitState extends State<AccountInit> {
   @override
   Widget build(BuildContext context) {
     return comp.HeaderBar(
+      forceNoBar: true,
       children: [
         Text("Welcome to Workout Notepad.", style: ttTitle(context)),
         Text(
@@ -53,6 +55,8 @@ class _AccountInitState extends State<AccountInit> {
             ),
           ),
         ),
+        SingInWith(),
+        const SizedBox(height: 16),
         AccountButton(
           title: "Create Account",
           bg: Theme.of(context).colorScheme.primary,
@@ -64,18 +68,6 @@ class _AccountInitState extends State<AccountInit> {
             );
           },
         ),
-        // const SizedBox(height: 8),
-        // AccountButton(
-        //   title: "Try Anonymously",
-        //   bg: AppColors.cell(context),
-        //   fg: AppColors.subtext(context),
-        //   onTap: () {
-        //     comp.cupertinoSheet(
-        //       context: context,
-        //       builder: (context) => const AnonAccount(),
-        //     );
-        //   },
-        // ),
         const SizedBox(height: 16),
         comp.Clickable(
           onTap: () {
@@ -91,7 +83,8 @@ class _AccountInitState extends State<AccountInit> {
               color: AppColors.subtext(context),
             ),
           ),
-        )
+        ),
+        const SizedBox(height: 100),
       ],
     );
   }

@@ -157,7 +157,7 @@ class Exercise {
     category = json['category'].toString();
     description = json['description'];
     difficulty = json['difficulty'] ?? "";
-    icon = json['icon'];
+    icon = json['icon'] ?? "";
     type = exerciseTypeFromJson(json['type']);
     sets = json['sets'];
     reps = json['reps'];

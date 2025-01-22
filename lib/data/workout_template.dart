@@ -135,6 +135,7 @@ class WorkoutTemplate extends Workout {
     db ??= await DatabaseProvider().database;
     String query = """
       SELECT * FROM workout_template
+      ORDER BY createdAt DESC
     """;
     final List<Map<String, dynamic>> results = await db.rawQuery(query.trim());
     if (results.isEmpty) {

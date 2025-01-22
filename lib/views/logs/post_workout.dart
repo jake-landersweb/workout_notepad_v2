@@ -156,7 +156,7 @@ class _PostWorkoutSummaryState extends State<PostWorkoutSummary> {
           children: [
             HeaderBar.sheet(
               title: "Summary",
-              leading: const [CloseButton2()],
+              leading: const [CloseButton2(useRoot: true)],
               trailing: [
                 if (widget.onSave != null)
                   Padding(

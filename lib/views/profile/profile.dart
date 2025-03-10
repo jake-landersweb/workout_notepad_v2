@@ -22,6 +22,7 @@ import 'package:workout_notepad_v2/views/profile/local_preferences.dart';
 
 import 'package:workout_notepad_v2/views/profile/manage_data.dart';
 import 'package:workout_notepad_v2/views/profile/manage_purchases.dart';
+import 'package:workout_notepad_v2/views/profile/paywall.dart';
 import 'package:workout_notepad_v2/views/profile/re_auth.dart';
 import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
 import 'package:workout_notepad_v2/views/welcome.dart';
@@ -191,10 +192,7 @@ class _ProfileState extends State<Profile> {
                 icon: Icons.star,
                 iconBg: Colors.amber[500],
                 onTap: () {
-                  cupertinoSheet(
-                    context: context,
-                    builder: (context) => const Subscriptions(),
-                  );
+                  showPaywall(context);
                 },
               ),
             ),
@@ -239,10 +237,7 @@ class _ProfileState extends State<Profile> {
                       ),
                     );
                   } else {
-                    cupertinoSheet(
-                      context: context,
-                      builder: (context) => const Subscriptions(),
-                    );
+                    showPaywall(context);
                   }
                 },
               ),
@@ -261,10 +256,7 @@ class _ProfileState extends State<Profile> {
                       ),
                     );
                   } else {
-                    cupertinoSheet(
-                      context: context,
-                      builder: (context) => const Subscriptions(),
-                    );
+                    showPaywall(context);
                   }
                 },
               ),
@@ -281,10 +273,7 @@ class _ProfileState extends State<Profile> {
                       builder: (context) => const ManageData(),
                     );
                   } else {
-                    cupertinoSheet(
-                      context: context,
-                      builder: (context) => const Subscriptions(),
-                    );
+                    showPaywall(context);
                   }
                 },
               ),
@@ -346,7 +335,7 @@ class _ProfileState extends State<Profile> {
                 title: "Leave Feedback",
                 icon: Icons.chat_rounded,
                 color: Colors.purple.shade300,
-                post: StyledSectionItemPost.view,
+                post: StyledSectionItemPost.external,
                 isLocked: false,
                 onTap: () async {
                   await launchSupportPage(context, dmodel.user!, "Feedback");
@@ -374,6 +363,16 @@ class _ProfileState extends State<Profile> {
                     context: context,
                     builder: (context) => const WelcomeScreen(),
                   );
+                },
+              ),
+              StyledSectionItem(
+                title: "Open Docs",
+                icon: Icons.book,
+                color: Colors.lightGreen,
+                post: StyledSectionItemPost.external,
+                isLocked: false,
+                onTap: () async {
+                  launchUrl(Uri.parse("https://docs.workoutnotepad.co/"));
                 },
               ),
             ],

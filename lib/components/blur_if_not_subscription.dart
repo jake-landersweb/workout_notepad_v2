@@ -3,9 +3,12 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
+import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/components/wrapped_button.dart';
 import 'package:workout_notepad_v2/model/data_model.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
+import 'package:workout_notepad_v2/utils/color.dart';
+import 'package:workout_notepad_v2/views/profile/paywall.dart';
 import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
 
 class BlurIfNotSubscription extends StatelessWidget {
@@ -32,33 +35,46 @@ class BlurIfNotSubscription extends StatelessWidget {
             ),
           ),
         if (!dmodel.hasValidSubscription())
-          Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  "Looking for more features?",
-                  style: ttTitle(context),
-                  textAlign: TextAlign.center,
+          Clickable(
+            onTap: () => showPaywall(context),
+            child: Center(
+              child: Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.text(context).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(15),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: WrappedButton(
-                    title: "Explore Premium",
-                    icon: Icons.star,
-                    iconBg: Colors.amber[700],
-                    backgroundColor: Colors.amber[700],
-                    fg: Colors.white,
-                    borderColor: Colors.amber[800],
-                    onTap: () {
-                      cupertinoSheet(
-                        context: context,
-                        builder: (context) => const Subscriptions(),
-                      );
-                    },
+                height: 200,
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.lock_rounded,
+                          color: AppColors.text(context).withValues(alpha: 0.5),
+                          size: 40,
+                        ),
+                        Text(
+                          "Looking for more features?",
+                          // style: ttSubTitle(context),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 16),
+                        Container(
+                          child: Text(
+                            "Explore Premium",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ],
+              ),
             ),
           ),
       ],

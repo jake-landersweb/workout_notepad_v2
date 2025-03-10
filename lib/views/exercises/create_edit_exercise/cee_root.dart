@@ -19,6 +19,7 @@ import 'package:workout_notepad_v2/utils/image.dart';
 import 'package:workout_notepad_v2/views/exercises/create_edit_exercise/cee_type.dart';
 import 'package:workout_notepad_v2/views/exercises/create_edit_exercise/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/profile/paywall.dart';
 import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
 
 class CEERoot extends StatefulWidget {
@@ -591,10 +592,7 @@ class _CEERootState extends State<CEERoot> {
       return Clickable(
         onTap: () async {
           if (!dmodel.hasValidSubscription()) {
-            cupertinoSheet(
-              context: context,
-              builder: (context) => const Subscriptions(),
-            );
+            showPaywall(context);
           } else {
             await promptMedia(
               context: context,

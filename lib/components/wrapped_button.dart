@@ -63,6 +63,7 @@ class WrappedButton extends StatelessWidget {
           width: 3,
         ),
       ),
+      width: double.infinity,
       child: ConstrainedBox(
         constraints: BoxConstraints(minHeight: height ?? 50),
         child: Padding(
@@ -74,39 +75,71 @@ class WrappedButton extends StatelessWidget {
   }
 
   Widget _content(BuildContext context) {
+    if (!center) {
+      return _notCenter(context);
+    }
+
+    return _center(context);
+  }
+
+  Widget _notCenter(BuildContext context) {
     return Row(
       mainAxisSize: rowAxisSize,
-      mainAxisAlignment:
-          center ? MainAxisAlignment.center : MainAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        if (icon != null)
-          Padding(
-            padding: EdgeInsets.only(right: iconSpacing),
-            child: Container(
-              decoration: BoxDecoration(
-                color: iconBg ?? Theme.of(context).colorScheme.primary,
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(2.0),
-                child: Icon(
-                  icon!,
-                  color: iconFg ?? Colors.white,
-                ),
-              ),
-            ),
-          ),
-        isLoading
-            ? LoadingIndicator(color: fg)
-            : Expanded(
-                child: Text(
-                  title,
-                  textAlign: center ? TextAlign.center : TextAlign.left,
-                  style: ttLabel(context, color: getFg(context)),
-                ),
-              ),
+        if (icon != null) _icon(context),
+        _title(context),
         if (trailing != null) trailing!,
       ],
+    );
+  }
+
+  Widget _center(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        if (icon != null)
+          Row(
+            children: [
+              _icon(context),
+              Spacer(),
+            ],
+          ),
+        _title(context),
+      ],
+    );
+  }
+
+  Widget _title(BuildContext context) {
+    return isLoading
+        ? LoadingIndicator(color: fg)
+        : Text(
+            title,
+            textAlign: center ? TextAlign.center : TextAlign.left,
+            style: ttLabel(context, color: getFg(context)),
+          );
+  }
+
+  Widget _icon(BuildContext context) {
+    if (icon == null) {
+      return Container();
+    }
+
+    return Padding(
+      padding: EdgeInsets.only(right: iconSpacing),
+      child: Container(
+        decoration: BoxDecoration(
+          color: iconBg ?? Theme.of(context).colorScheme.primary,
+          borderRadius: BorderRadius.circular(5),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(2.0),
+          child: Icon(
+            icon!,
+            color: iconFg ?? Colors.white,
+          ),
+        ),
+      ),
     );
   }
 

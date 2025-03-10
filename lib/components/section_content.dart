@@ -5,7 +5,7 @@ import 'package:workout_notepad_v2/components/wrapped_button.dart';
 import 'package:workout_notepad_v2/utils/color.dart';
 import 'dart:math' as math;
 
-enum StyledSectionItemPost { none, view, model }
+enum StyledSectionItemPost { none, view, model, external }
 
 class StyledSectionItem {
   final String title;
@@ -46,6 +46,11 @@ class StyledSectionItem {
             Icons.chevron_right_rounded,
             color: AppColors.subtext(context),
           ),
+        );
+      case StyledSectionItemPost.external:
+        return Icon(
+          Icons.open_in_new_rounded,
+          color: AppColors.subtext(context),
         );
     }
   }

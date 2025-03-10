@@ -75,11 +75,13 @@ class _SingInWithState extends State<SingInWith> {
         _currentProvider = provider;
       });
 
+      logger.debug("authing with oath provider");
       var data = await dmodel.pb!
           .collection('users')
           .authWithOAuth2(provider.name, (url) async {
         final theme = Theme.of(context);
         final mediaQuery = MediaQuery.of(context);
+        logger.debug("launching url");
         await launchUrl(
           url,
           customTabsOptions: CustomTabsOptions.partial(
@@ -94,7 +96,7 @@ class _SingInWithState extends State<SingInWith> {
             configuration: const SheetPresentationControllerConfiguration(
               detents: {
                 SheetPresentationControllerDetent.large,
-                // SheetPresentationControllerDetent.medium,
+                SheetPresentationControllerDetent.medium,
               },
               prefersScrollingExpandsWhenScrolledToEdge: true,
               prefersGrabberVisible: true,
@@ -102,12 +104,12 @@ class _SingInWithState extends State<SingInWith> {
             ),
             preferredBarTintColor: theme.colorScheme.surface,
             preferredControlTintColor: theme.colorScheme.onSurface,
-            dismissButtonStyle: SafariViewControllerDismissButtonStyle.close,
+            dismissButtonStyle: SafariViewControllerDismissButtonStyle.done,
           ),
         );
       });
-      await closeCustomTabs();
 
+      logger.debug(provider.name);
       await dmodel.loginUserPocketbase(
         context,
         userId: data.record.id,
@@ -128,7 +130,8 @@ class _SingInWithState extends State<SingInWith> {
       snackbarErr(context,
           "There was an unknown issue. Maybe you know? ${e.toString()}");
     } finally {
-      print("FINALLY");
+      logger.debug("closing tab");
+      await closeCustomTabs();
       setState(() {
         _currentProvider = _Provider.none;
       });

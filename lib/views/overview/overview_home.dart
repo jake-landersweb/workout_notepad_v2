@@ -1,7 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_custom_tabs/flutter_custom_tabs_lite.dart';
 import 'package:intl/intl.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/root.dart';
@@ -15,6 +17,7 @@ import 'package:workout_notepad_v2/views/profile/profile.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/workout_templates/wt_home.dart';
 import 'package:workout_notepad_v2/views/workout_templates/wt_saved.dart';
+import 'package:workout_notepad_v2/views/workouts/create_edit/cew.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/launch_workout.dart';
 
 class OverviewHome extends StatefulWidget {
@@ -38,17 +41,18 @@ class _OverviewHomeState extends State<OverviewHome> {
         await dmodel.fetchData(checkData: false);
       },
       children: [
-        _mainContent(context, dmodel),
-        if (dmodel.workouts.isNotEmpty) _templates(context, dmodel),
-        if (dmodel.workoutTemplates.isNotEmpty)
-          _remoteTemplates(context, dmodel),
+        _build(context, dmodel),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: _body(context, dmodel),
+        ),
         // _exercises(context, dmodel),
         const SizedBox(height: 100),
       ],
     );
   }
 
-  Widget _mainContent(BuildContext context, DataModel dmodel) {
+  Widget _build(BuildContext context, DataModel dmodel) {
     var screenModel = Provider.of<ScreenModel>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -290,10 +294,91 @@ class _OverviewHomeState extends State<OverviewHome> {
             )
           else
             const WorkoutProgress(),
-          const PreviousWorkout(),
         ],
       ),
     );
+  }
+
+  Widget _body(BuildContext context, DataModel dmodel) {
+    if (dmodel.workouts.isEmpty &&
+        (dmodel.remoteTemplates?.isEmpty ?? true) &&
+        dmodel.workoutTemplates.isEmpty) {
+      var screenModel = Provider.of<ScreenModel>(context);
+      return Column(
+        children: [
+          const SizedBox(height: 32),
+          Text(
+            "Welcome to\nWorkout Notepad!",
+            style: ttSubTitle(context, fontWeight: FontWeight.w700),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "We are exicted for you to get started. To get started, you can start a new workout, create a new template, or browse our templates.",
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 16),
+          WrappedButton(
+            title: "Start a New Workout",
+            icon: Icons.play_arrow,
+            center: true,
+            borderColor: AppColors.border(context),
+            onTap: () async {
+              var workout = Workout.init();
+              workout.title = "Workout ${DateFormat('MM/dd/yy').format(
+                DateTime.now(),
+              )}";
+              // var db = await DatabaseProvider().database;
+              // await db.insert("workout", workout.toMap());
+              await launchWorkout(context, dmodel, workout, isEmpty: true);
+            },
+          ),
+          const SizedBox(height: 8),
+          WrappedButton(
+            title: "Create a Template",
+            icon: Icons.add,
+            center: true,
+            borderColor: AppColors.border(context),
+            onTap: () {
+              showMaterialModalBottomSheet(
+                context: context,
+                enableDrag: false,
+                builder: (context) => const CEW(),
+              );
+            },
+          ),
+          const SizedBox(height: 8),
+          WrappedButton(
+            title: "Browse Templates",
+            icon: LineIcons.globe,
+            center: true,
+            borderColor: AppColors.border(context),
+            onTap: () {
+              screenModel.setScreen(HomeScreen.discover);
+            },
+          ),
+          const SizedBox(height: 8),
+          WrappedButton(
+            title: "Open Documentation",
+            icon: LineIcons.book,
+            center: true,
+            borderColor: AppColors.border(context),
+            onTap: () {
+              launchUrl(Uri.parse("https://docs.workoutnotepad.co/"));
+            },
+          ),
+        ],
+      );
+    } else {
+      return Column(
+        children: [
+          const PreviousWorkout(),
+          if (dmodel.workouts.isNotEmpty) _templates(context, dmodel),
+          if (dmodel.workoutTemplates.isNotEmpty)
+            _remoteTemplates(context, dmodel),
+        ],
+      );
+    }
   }
 
   Widget getIcon(DataModel dmodel, String categoryId) {

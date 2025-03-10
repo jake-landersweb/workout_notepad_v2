@@ -18,6 +18,7 @@ import 'package:workout_notepad_v2/views/logs/graphs/graph_item_builder.dart';
 import 'package:workout_notepad_v2/views/logs/graphs/graph_item_cell.dart';
 import 'package:workout_notepad_v2/views/logs/graphs/graph_range_picker.dart';
 import 'package:workout_notepad_v2/views/logs/graphs/graph_renderer.dart';
+import 'package:workout_notepad_v2/views/profile/paywall.dart';
 import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
 
 class GraphBuilder extends StatefulWidget {
@@ -80,10 +81,7 @@ class _GraphBuilderState extends State<GraphBuilder> {
                 Navigator.of(context).pop();
               }
             } else {
-              cupertinoSheet(
-                context: context,
-                builder: (context) => const Subscriptions(),
-              );
+              showPaywall(context);
             }
           },
           child: Text(

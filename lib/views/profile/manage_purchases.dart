@@ -45,6 +45,7 @@ class _ManagePurchasesState extends State<ManagePurchases> {
               title: "Manage Subscriptions",
               leading: const [BackButton2()],
               children: [
+                const SizedBox(height: 32),
                 Column(
                   children: [
                     _currentSubscription(context, dmodel),

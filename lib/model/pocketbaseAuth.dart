@@ -36,7 +36,6 @@ class SharedPreferencesAuthStore extends AuthStore {
   @override
   void clear() {
     super.clear();
-
     prefs.remove(key);
   }
 }

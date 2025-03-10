@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/foundation.dart' as foundation;
@@ -10,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pocketbase/pocketbase.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:workout_notepad_v2/data/collection.dart';
@@ -21,6 +23,7 @@ import 'package:workout_notepad_v2/data/workout_template.dart';
 import 'package:workout_notepad_v2/data/workout_template_exercise.dart';
 import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/model/client.dart';
+import 'package:workout_notepad_v2/model/env.dart';
 import 'package:workout_notepad_v2/model/pocketbaseAuth.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -45,9 +48,6 @@ enum PaymentLoadStatus {
 }
 
 class DataModel extends ChangeNotifier {
-  late StreamSubscription<List<PurchaseDetails>> _subscription;
-  // late StreamSubscription<AuthStoreEvent> _pocketbaseAuth;
-
   // global client to use
   final client = Client(client: http.Client());
   final purchaseClient = GoClient(client: http.Client());
@@ -69,164 +69,7 @@ class DataModel extends ChangeNotifier {
   bool showPostWorkoutScreen = false;
 
   DataModel({String? defaultUser}) {
-    // create the subscription notifier
-    _subscription =
-        InAppPurchase.instance.purchaseStream.listen((purchaseDetailsList) {
-      _listenToPurchaseUpdated(purchaseDetailsList);
-    }, onDone: () {
-      _subscription.cancel();
-    }, onError: (error) {
-      logger.error("payment failed", {"error": error});
-    });
-
     init(defaultUser: defaultUser);
-  }
-
-  @override
-  void dispose() {
-    _subscription.cancel();
-    super.dispose();
-  }
-
-  void _listenToPurchaseUpdated(
-    List<PurchaseDetails> purchaseDetailsList,
-  ) async {
-    for (var purchaseDetails in purchaseDetailsList) {
-      await _handlePurchaseRecord(purchaseDetails);
-    }
-  }
-
-  Future<void> _handlePurchaseRecord(PurchaseDetails details) async {
-    print("[PURCHASE] Handling Purchase");
-    print(details.print());
-    paymentLoadStatus = PaymentLoadStatus.loading;
-    notifyListeners();
-
-    try {
-      // check for payment errors
-      if (details.status == PurchaseStatus.error) {
-        _recordPaymentError(
-          "There was an error in the purchase itself",
-          details,
-          "purchase_error",
-        );
-        await InAppPurchase.instance.completePurchase(details);
-        paymentLoadStatus = PaymentLoadStatus.paymentError;
-        notifyListeners();
-        return;
-      }
-
-      if (details.status == PurchaseStatus.canceled) {
-        print("The payment was cancelled");
-        await InAppPurchase.instance.completePurchase(details);
-        paymentLoadStatus = PaymentLoadStatus.error;
-        notifyListeners();
-        return;
-      }
-
-      // check for missing metadata
-      if ((details.purchaseID?.isEmpty ?? true) || details.productID.isEmpty) {
-        print("There was missing metadata in the purchase request, ignoring");
-        return;
-      }
-
-      // if pending, ignore
-      if (details.status == PurchaseStatus.pending) {
-        print("the purchase is still pending");
-        paymentLoadStatus = PaymentLoadStatus.loading;
-        notifyListeners();
-        return;
-      }
-
-      // check if update notification
-      if (hasValidSubscription()) {
-        // TODO -- need to handle update logic here
-        // it is possible we are being notified of ended subscription here
-        // server events will handle this.
-        print("handling update notification");
-        paymentLoadStatus = PaymentLoadStatus.none;
-        notifyListeners();
-        await InAppPurchase.instance.completePurchase(details);
-        return;
-      }
-
-      // check for new payments
-      if (details.status == PurchaseStatus.purchased ||
-          details.status == PurchaseStatus.restored) {
-        print("The purchase was successful");
-        paymentLoadStatus = PaymentLoadStatus.loading;
-        notifyListeners();
-
-        // validate the purchase on the server
-        // this will create the purchase record needed for the store events
-        bool isValid = await _verifyPurchase(details);
-        if (!isValid) {
-          // log this error, but let the purchase continue. Can revoke later as needed.
-          _recordPaymentError(
-            "There was an error verifying the payment",
-            details,
-            "payment_verify",
-          );
-        }
-
-        logger.info("transaction succeeded", {
-          "userId": user!.userId,
-          "transactionDate": details.transactionDate,
-        });
-        await InAppPurchase.instance.completePurchase(details);
-        print("[PURCHASE] Successfully assigned purchase");
-        paymentLoadStatus = PaymentLoadStatus.complete;
-        notifyListeners();
-        return;
-      } else {
-        print("Unknown status");
-        await InAppPurchase.instance.completePurchase(details);
-        paymentLoadStatus = PaymentLoadStatus.error;
-        notifyListeners();
-        return;
-      }
-    } catch (error, stack) {
-      logger.exception(error, stack);
-      print(error);
-      _recordPaymentError(
-        error,
-        details,
-        "payment_unknown",
-      );
-      await InAppPurchase.instance.completePurchase(details);
-      paymentLoadStatus = PaymentLoadStatus.error;
-      notifyListeners();
-    }
-  }
-
-  void _recordPaymentError(
-    dynamic error,
-    PurchaseDetails details,
-    String errCode,
-  ) {
-    logger.fatal("PURCHASE ERROR", {
-      "err_code": errCode,
-      "details": jsonEncode(details.toMap()),
-    });
-  }
-
-  Future<bool> _verifyPurchase(PurchaseDetails details) async {
-    var response = await purchaseClient.put(
-      "/users/${user!.userId}/verifyPurchase",
-      {},
-      jsonEncode({
-        "purchaseDetails": details.toMap(),
-        "promoCode": currentPromoCode,
-      }),
-    );
-    if (response.statusCode == 200) {
-      print("Successfully verified purchase"); // TODO
-      return true;
-    } else {
-      print("There was error verifying the purchase"); // TODO
-      print(response.body);
-      return false;
-    }
   }
 
   Future<void> createAnonymousUser(BuildContext context) async {
@@ -365,9 +208,10 @@ class DataModel extends ChangeNotifier {
     logger.setAttribute("user.subscriptionType", user!.subscriptionType.name);
     logger.setAttribute("user.email", user!.email ?? "");
 
-    print(user?.subscriptionType);
-
     print("userId = ${user!.userId}");
+
+    // init revenue cat
+    await initRevenueCat(user!);
 
     // check to make sure the expire epoch is valid
     if (user!.expireEpoch != -1 &&
@@ -385,7 +229,7 @@ class DataModel extends ChangeNotifier {
     print("[INIT] app state is valid. Fetching user in background to ensure");
     await fetchData();
     getUser(); // run non-asynchonously to allow for no internet
-    getSubscription(user!.userId); // get subscription status async as well
+    // getSubscription(user!.userId); // get subscription status async as well
     checkUpdate(); // get app version asynchronously as well
     checkWorkoutState(); // see if there is a workout launch state to load
     loadStatus = LoadStatus.done;
@@ -455,12 +299,14 @@ class DataModel extends ChangeNotifier {
         //   print(firebaseUser);
         //   user = tmp;
         // }
+        user = tmp;
       }
 
       print("[GET_USER] the user is valid");
       print(user);
       var prefs = await SharedPreferences.getInstance();
       prefs.setString("user", jsonEncode(user!.toMap()));
+      logger.setAttribute("user.subscriptionType", user!.subscriptionType.name);
 
       notifyListeners();
       // do not snapshot anon data
@@ -736,6 +582,7 @@ class DataModel extends ChangeNotifier {
       await deleteDB();
       await clearData();
       auth.FirebaseAuth.instance.signOut();
+      await Purchases.logOut();
     }
     notifyListeners();
   }
@@ -1082,11 +929,57 @@ class DataModel extends ChangeNotifier {
   bool hasValidSubscription() {
     // return false;
     // legacy users
+    print("**** ${user!.subscriptionType}");
     if ((user?.subscriptionType ?? "") == SubscriptionType.wn_unlocked) {
       return true;
     }
 
-    return subscription?.active == 1;
+    // use the field set from revenue cat
+    return _hasValidEntitlement;
+  }
+
+  Future<void> initRevenueCat(User user) async {
+    try {
+      logger.debug("Initializing RevenueCat");
+      await Purchases.setLogLevel(LogLevel.debug);
+
+      late PurchasesConfiguration configuration;
+      if (Platform.isAndroid) {
+        configuration = PurchasesConfiguration(RC_GOOG_API_KEY);
+      } else if (Platform.isIOS) {
+        configuration = PurchasesConfiguration(RC_APPL_API_KEY);
+      } else {
+        logger.error(
+            "invalid platform detected when initializting the RevenueCat sdk");
+        return;
+      }
+
+      await Purchases.configure(configuration..appUserID = user.userId);
+
+      logger.debug("Successfully configured RevenueCat");
+
+      // init the check on whether the user has the entitlement or not
+      await _checkUserHasValidEntitlement();
+
+      // add a listener to ensure the status is updated in real time
+      Purchases.addCustomerInfoUpdateListener((customerInfo) async {
+        _checkUserHasValidEntitlement(customerInfo: customerInfo);
+      });
+      logger.debug("Successfully initialized RevenueCat");
+    } catch (e, stack) {
+      logger.exception(e, stack, message: "failed to init RevenueCat");
+    }
+  }
+
+  bool _hasValidEntitlement = false;
+  Future<void> _checkUserHasValidEntitlement({
+    CustomerInfo? customerInfo,
+  }) async {
+    customerInfo ??= await Purchases.getCustomerInfo();
+    EntitlementInfo? entitlement =
+        customerInfo.entitlements.all[RC_ENTITLEMENT_ID];
+    _hasValidEntitlement = entitlement?.isActive ?? false;
+    notifyListeners();
   }
 }
 

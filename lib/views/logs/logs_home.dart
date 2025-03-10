@@ -13,6 +13,7 @@ import 'package:workout_notepad_v2/views/logs/graphs/graph_custom.dart';
 import 'package:workout_notepad_v2/views/logs/logs_calendar.dart';
 import 'package:workout_notepad_v2/views/logs/logs_default_page.dart';
 import 'package:workout_notepad_v2/views/logs/root.dart';
+import 'package:workout_notepad_v2/views/profile/paywall.dart';
 import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
 
 class LogsHome extends StatefulWidget {
@@ -194,10 +195,7 @@ class _LogsHomeState extends State<LogsHome> {
               builder: (context) => item.v3,
             );
           } else {
-            cupertinoSheet(
-              context: context,
-              builder: (context) => const Subscriptions(),
-            );
+            showPaywall(context);
           }
         },
         childBuilder: (context, item, index) {
@@ -267,10 +265,7 @@ class _LogsHomeState extends State<LogsHome> {
               ),
             );
           } else {
-            cupertinoSheet(
-              context: context,
-              builder: (context) => const Subscriptions(),
-            );
+            showPaywall(context);
           }
         },
         childBuilder: (context, item, index) {
@@ -337,10 +332,7 @@ class _LogsHomeState extends State<LogsHome> {
               ),
             );
           } else {
-            cupertinoSheet(
-              context: context,
-              builder: (context) => const Subscriptions(),
-            );
+            showPaywall(context);
           }
         },
         childBuilder: (context, item, index) {

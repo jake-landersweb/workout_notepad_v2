@@ -2,70 +2,62 @@
 
 Source code for the Workout Notepad mobile application. You can download this app for [iOS](https://apps.apple.com/pk/app/workout-notepad/id6453561144) and [Android](https://play.google.com/store/apps/details?id=com.landersweb.workout_notepad_v2) at the links provided. You can also visit the [website](https://workoutnotepad.co).
 
-<div
-  style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;"
->
-  <img
-    src="screenshots/store-large/0-homescreen.png"
-    alt="Homescreen"
-    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
-  />
-  <img
-    src="screenshots/store-large/1-post-workout.png"
-    alt="Post Workout"
-    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
-  />
-  <img
-    src="screenshots/store-large/2-workout-detail.png"
-    alt="Workout Detail"
-    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
-  />
-  <img
-    src="screenshots/store-large/3-workout-edit.png"
-    alt="Workout Edit"
-    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
-  />
-  <img
-    src="screenshots/store-large/4-workout-launch.png"
-    alt="Workout Launch"
-    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
-  />
-  <img
-    src="screenshots/store-large/5-exercise-home.png"
-    alt="Exercise Home"
-    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
-  />
-  <img
-    src="screenshots/store-large/6-exercise-detail-cardio.png"
-    alt="Exercise Detail Cardio"
-    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
-  />
-  <img
-    src="screenshots/store-large/7-discover-home.png"
-    alt="Discover Home"
-    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
-  />
-  <img
-    src="screenshots/store-large/8-insights-home.png"
-    alt="Insights Home"
-    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
-  />
-  <img
-    src="screenshots/store-large/9-insights-home-2.png"
-    alt="Insights Home 2"
-    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
-  />
-  <img
-    src="screenshots/store-large/10-logs-home.png"
-    alt="Logs Home"
-    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
-  />
-  <img
-    src="screenshots/store-large/11-raw-workout-logs.png"
-    alt="Raw Workout Logs"
-    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
-  />
+| Homescreen                                                                        | Post Workout                                                                          | Workout Detail                                                                            |
+| --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| <img src="screenshots/store-large/0-homescreen.png" width="250" alt="Homescreen"> | <img src="screenshots/store-large/1-post-workout.png" width="250" alt="Post Workout"> | <img src="screenshots/store-large/2-workout-detail.png" width="250" alt="Workout Detail"> |
+
+| Workout Edit                                                                          | Workout Launch                                                                            | Exercise Home                                                                           |
+| ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| <img src="screenshots/store-large/3-workout-edit.png" width="250" alt="Workout Edit"> | <img src="screenshots/store-large/4-workout-launch.png" width="250" alt="Workout Launch"> | <img src="screenshots/store-large/5-exercise-home.png" width="250" alt="Exercise Home"> |
+
+| Exercise Detail Cardio                                                                                    | Discover Home                                                                           | Insights Home                                                                           |
+| --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| <img src="screenshots/store-large/6-exercise-detail-cardio.png" width="250" alt="Exercise Detail Cardio"> | <img src="screenshots/store-large/7-discover-home.png" width="250" alt="Discover Home"> | <img src="screenshots/store-large/8-insights-home.png" width="250" alt="Insights Home"> |
+
+| Insights Home 2                                                                             | Logs Home                                                                        | Raw Workout Logs                                                                               |
+| ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| <img src="screenshots/store-large/9-insights-home-2.png" width="250" alt="Insights Home 2"> | <img src="screenshots/store-large/10-logs-home.png" width="250" alt="Logs Home"> | <img src="screenshots/store-large/11-raw-workout-logs.png" width="250" alt="Raw Workout Logs"> |
+
+
+<div style="width: 100%; overflow: auto;">
+  <div style="display: inline-block; max-width: 250px; margin: 5px;">
+    <img src="screenshots/store-large/0-homescreen.png" width="250" alt="Homescreen">
+  </div>
+  <div style="display: inline-block; max-width: 250px; margin: 5px;">
+    <img src="screenshots/store-large/1-post-workout.png" width="250" alt="Post Workout">
+  </div>
+  <div style="display: inline-block; max-width: 250px; margin: 5px;">
+    <img src="screenshots/store-large/2-workout-detail.png" width="250" alt="Workout Detail">
+  </div>
+  <div style="display: inline-block; max-width: 250px; margin: 5px;">
+    <img src="screenshots/store-large/3-workout-edit.png" width="250" alt="Workout Edit">
+  </div>
+  <div style="display: inline-block; max-width: 250px; margin: 5px;">
+    <img src="screenshots/store-large/4-workout-launch.png" width="250" alt="Workout Launch">
+  </div>
+  <div style="display: inline-block; max-width: 250px; margin: 5px;">
+    <img src="screenshots/store-large/5-exercise-home.png" width="250" alt="Exercise Home">
+  </div>
+  <div style="display: inline-block; max-width: 250px; margin: 5px;">
+    <img src="screenshots/store-large/6-exercise-detail-cardio.png" width="250" alt="Exercise Detail Cardio">
+  </div>
+  <div style="display: inline-block; max-width: 250px; margin: 5px;">
+    <img src="screenshots/store-large/7-discover-home.png" width="250" alt="Discover Home">
+  </div>
+  <div style="display: inline-block; max-width: 250px; margin: 5px;">
+    <img src="screenshots/store-large/8-insights-home.png" width="250" alt="Insights Home">
+  </div>
+  <div style="display: inline-block; max-width: 250px; margin: 5px;">
+    <img src="screenshots/store-large/9-insights-home-2.png" width="250" alt="Insights Home 2">
+  </div>
+  <div style="display: inline-block; max-width: 250px; margin: 5px;">
+    <img src="screenshots/store-large/10-logs-home.png" width="250" alt="Logs Home">
+  </div>
+  <div style="display: inline-block; max-width: 250px; margin: 5px;">
+    <img src="screenshots/store-large/11-raw-workout-logs.png" width="250" alt="Raw Workout Logs">
+  </div>
 </div>
+
 
 ## About
 

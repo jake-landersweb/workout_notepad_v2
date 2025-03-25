@@ -60,6 +60,8 @@ GoogleService-Info.plist
 # screenshot server
 venv
 .screenshot-server-pid
-screenshots
+screenshots/device
+screenshots/raw
+screenshots/store-small
 
 android/app/.cxx

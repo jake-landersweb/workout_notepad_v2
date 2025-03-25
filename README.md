@@ -3,20 +3,68 @@
 Source code for the Workout Notepad mobile application. You can download this app for [iOS](https://apps.apple.com/pk/app/workout-notepad/id6453561144) and [Android](https://play.google.com/store/apps/details?id=com.landersweb.workout_notepad_v2) at the links provided. You can also visit the [website](https://workoutnotepad.co).
 
 <div
-  style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px;"
+  style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;"
 >
-  <img src="screenshots/store-large/0-homescreen.png" style="width: 100%;" alt="Screenshot 1">
-  <img src="screenshots/store-large/1-post-workout.png" style="width: 100%;" alt="Screenshot 2">
-  <img src="screenshots/store-large/2-workout-detail.png" style="width: 100%;" alt="Screenshot 3">
-  <img src="screenshots/store-large/3-workout-edit.png" style="width: 100%;" alt="Screenshot 4">
-  <img src="screenshots/store-large/4-workout-launch.png" style="width: 100%;" alt="Screenshot 5">
-  <img src="screenshots/store-large/5-exercise-home.png" style="width: 100%;" alt="Screenshot 6">
-  <img src="screenshots/store-large/6-exercise-detail-cardio.png" style="width: 100%;" alt="Screenshot 7">
-  <img src="screenshots/store-large/7-discover-home.png" style="width: 100%;" alt="Screenshot 8">
-  <img src="screenshots/store-large/8-insights-home.png" style="width: 100%;" alt="Screenshot 9">
-  <img src="screenshots/store-large/9-insights-home-2.png" style="width: 100%;" alt="Screenshot 10">
-  <img src="screenshots/store-large/10-logs-home.png" style="width: 100%;" alt="Screenshot 11">
-  <img src="screenshots/store-large/11-raw-workout-logs.png" style="width: 100%;" alt="Screenshot 12">
+  <img
+    src="screenshots/store-large/0-homescreen.png"
+    alt="Homescreen"
+    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
+  />
+  <img
+    src="screenshots/store-large/1-post-workout.png"
+    alt="Post Workout"
+    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
+  />
+  <img
+    src="screenshots/store-large/2-workout-detail.png"
+    alt="Workout Detail"
+    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
+  />
+  <img
+    src="screenshots/store-large/3-workout-edit.png"
+    alt="Workout Edit"
+    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
+  />
+  <img
+    src="screenshots/store-large/4-workout-launch.png"
+    alt="Workout Launch"
+    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
+  />
+  <img
+    src="screenshots/store-large/5-exercise-home.png"
+    alt="Exercise Home"
+    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
+  />
+  <img
+    src="screenshots/store-large/6-exercise-detail-cardio.png"
+    alt="Exercise Detail Cardio"
+    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
+  />
+  <img
+    src="screenshots/store-large/7-discover-home.png"
+    alt="Discover Home"
+    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
+  />
+  <img
+    src="screenshots/store-large/8-insights-home.png"
+    alt="Insights Home"
+    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
+  />
+  <img
+    src="screenshots/store-large/9-insights-home-2.png"
+    alt="Insights Home 2"
+    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
+  />
+  <img
+    src="screenshots/store-large/10-logs-home.png"
+    alt="Logs Home"
+    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
+  />
+  <img
+    src="screenshots/store-large/11-raw-workout-logs.png"
+    alt="Raw Workout Logs"
+    style="flex: 1 1 250px; max-width: 250px; width: 100%;"
+  />
 </div>
 
 ## About

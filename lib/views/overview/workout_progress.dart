@@ -79,7 +79,13 @@ class _WorkoutProgressState extends State<WorkoutProgress> {
 // Need to use this stupid timer system to rebuild the widget because the state cannot be sourced from here
 
 class WorkoutProgressIndicator extends StatefulWidget {
-  const WorkoutProgressIndicator({super.key});
+  const WorkoutProgressIndicator({
+    super.key,
+    this.size = 50,
+    this.fontSize = 14,
+  });
+  final double size;
+  final double fontSize;
 
   @override
   State<WorkoutProgressIndicator> createState() =>
@@ -112,6 +118,8 @@ class _WorkoutProgressIndicatorState extends State<WorkoutProgressIndicator> {
   Widget build(BuildContext context) {
     var dmodel = Provider.of<DataModel>(context);
     return GraphCircle(
+      size: widget.size,
+      fontSize: widget.fontSize,
       value: dmodel.workoutState!.getPercentageComplete(),
       textColor: Colors.white,
       foregroundColor: _getColor(dmodel.workoutState!.getPercentageComplete()),

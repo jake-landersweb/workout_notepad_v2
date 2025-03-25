@@ -43,7 +43,7 @@ class _OverviewHomeState extends State<OverviewHome> {
       children: [
         _build(context, dmodel),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 0.0),
           child: _body(context, dmodel),
         ),
         // _exercises(context, dmodel),
@@ -372,7 +372,10 @@ class _OverviewHomeState extends State<OverviewHome> {
     } else {
       return Column(
         children: [
-          const PreviousWorkout(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: const PreviousWorkout(),
+          ),
           if (dmodel.workouts.isNotEmpty) _templates(context, dmodel),
           if (dmodel.workoutTemplates.isNotEmpty)
             _remoteTemplates(context, dmodel),

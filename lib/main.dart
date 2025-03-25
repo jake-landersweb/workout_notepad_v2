@@ -36,10 +36,10 @@ void main() async {
       var _ = FirebaseAnalytics.instance;
 
       runApp(MyApp(
-          // defaultUser: kDebugMode
-          //     ? '{"userId": "xL3zGrTtKYZp8ml6QiDDFmDu86w2", "displayName": "Jake Landers"}'
-          //     : null,
-          ));
+        defaultUser: kDebugMode
+            ? '{"userId": "xL3zGrTtKYZp8ml6QiDDFmDu86w2", "displayName": "Jake Landers"}'
+            : null,
+      ));
     },
     (Object error, StackTrace stackTrace) {
       logger.exception(

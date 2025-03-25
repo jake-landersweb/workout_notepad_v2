@@ -61,3 +61,5 @@ GoogleService-Info.plist
 venv
 .screenshot-server-pid
 screenshots
+
+android/app/.cxx

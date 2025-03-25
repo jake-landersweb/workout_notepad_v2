@@ -64,6 +64,8 @@ class BlurredContainer extends StatelessWidget {
 
   final AlignmentGeometry? alignment;
 
+  final bool shrink;
+
   const BlurredContainer({
     Key? key,
     this.opacity = 0.05,
@@ -75,6 +77,7 @@ class BlurredContainer extends StatelessWidget {
     this.borderRadius,
     this.backgroundColor,
     this.alignment,
+    this.shrink = false,
   }) : super(key: key);
 
   @override
@@ -84,26 +87,36 @@ class BlurredContainer extends StatelessWidget {
       foregroundDecoration: BoxDecoration(
         borderRadius: borderRadius ?? BorderRadius.circular(10),
       ),
-      decoration: BoxDecoration(
-        border: border,
-      ),
       width: width,
-      child: ClipRRect(
-        borderRadius:
-            borderRadius as BorderRadius? ?? BorderRadius.circular(10),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(
-            sigmaX: blur,
-            sigmaY: blur,
+      child: shrink
+          ? Center(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _child(context),
+                ],
+              ),
+            )
+          : _child(context),
+    );
+  }
+
+  Widget _child(BuildContext context) {
+    return ClipRRect(
+      borderRadius: borderRadius as BorderRadius? ?? BorderRadius.circular(10),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(
+          sigmaX: blur,
+          sigmaY: blur,
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: borderRadius ?? BorderRadius.circular(10),
+            color: backgroundColor?.withOpacity(opacity),
+            border: border,
           ),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: borderRadius ?? BorderRadius.circular(10),
-              color: backgroundColor?.withOpacity(opacity),
-            ),
-            alignment: alignment,
-            child: child,
-          ),
+          alignment: alignment,
+          child: child,
         ),
       ),
     );

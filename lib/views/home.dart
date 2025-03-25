@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
+import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/model/internet_provider.dart';
@@ -9,6 +10,7 @@ import 'package:workout_notepad_v2/model/internet_provider.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/logs/insights_home.dart';
+import 'package:workout_notepad_v2/views/overview/workout_progress.dart';
 import 'package:workout_notepad_v2/views/workout_templates/wt_home.dart';
 import 'package:workout_notepad_v2/views/logs/post_workout.dart';
 import 'package:workout_notepad_v2/views/logs/root.dart';
@@ -43,6 +45,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   bool _modelShown = false;
+  final double _tabWidth = 45;
+  final double _tabHeight = 34;
 
   Future<void> _showWelcome(BuildContext context) async {
     await Future.delayed(const Duration(milliseconds: 500));
@@ -125,145 +129,35 @@ class _HomeState extends State<Home> {
   Widget _bar(BuildContext context, DataModel dmodel) {
     var internetModel = Provider.of<InternetProvider>(context);
     var screenModel = Provider.of<ScreenModel>(context);
+
+    var showCurrentWorkout = dmodel.workoutState != null;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Container(
-        //   height: 0.5,
-        //   width: double.infinity,
-        //   color: AppColors.divider(context),
-        // ),
-        BlurredContainer(
-          // backgroundColor: AppColors.background(context),
-          backgroundColor: AppColors.cell(context),
-          opacity: 0.5,
-          blur: 5,
-          borderRadius: BorderRadius.circular(0),
-          border: Border(
-            top: BorderSide(color: AppColors.border(context), width: 2),
-          ),
-          child: SafeArea(
-            top: false,
-            child: Column(
-              children: [
-                if (!internetModel.hasInternet())
-                  Container(
-                    color: AppColors.divider(context),
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 2, 16, 2),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text(
+        SafeArea(
+          bottom: true,
+          child: Column(
+            children: [
+              if (!internetModel.hasInternet())
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 2.0),
+                  child: Center(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.divider(context),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 2, 16, 2),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
                               "You are offline.",
                               style: TextStyle(
                                 color: AppColors.subtext(context),
                                 fontSize: 12,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                if (dmodel.workoutState != null)
-                  Clickable(
-                    onTap: () {
-                      showMaterialModalBottomSheet(
-                          context: context,
-                          enableDrag: true,
-                          builder: (context) {
-                            if (dmodel.workoutState == null) {
-                              return Container();
-                            } else {
-                              return LaunchWorkout(state: dmodel.workoutState!);
-                            }
-                          });
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.symmetric(
-                          horizontal: BorderSide(
-                            color: AppColors.divider(context),
-                          ),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(0, 4, 16, 4),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            // Clickable(
-                            //   onTap: () async {
-                            //     await showAlert(
-                            //       context: context,
-                            //       title: "Are You Sure?",
-                            //       body: const Text(
-                            //           "If you cancel your workout, all progress will be lost."),
-                            //       cancelText: "Go Back",
-                            //       onCancel: () {},
-                            //       cancelBolded: true,
-                            //       submitColor: Colors.red,
-                            //       submitText: "Yes",
-                            //       onSubmit: () {
-                            //         dmodel.stopWorkout(isCancel: true);
-                            //         // dmodel.workoutState!.dumpToFile();
-                            //       },
-                            //     );
-                            //   },
-                            //   child: Padding(
-                            //     padding: const EdgeInsets.fromLTRB(16, 2, 8, 2),
-                            //     child: Icon(
-                            //       Icons.stop_rounded,
-                            //       size: 30,
-                            //       color: AppColors.subtext(context),
-                            //     ),
-                            //   ),
-                            // ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Current Workout",
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: AppColors.subtext(context),
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          dmodel.workoutState!.workout.title,
-                                          style: TextStyle(
-                                            color: AppColors.text(context),
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              width: 60,
-                              child: Center(
-                                child: LWTime(
-                                  start: dmodel.workoutState!.startTime,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.subtext(context),
-                                  ),
-                                ),
                               ),
                             ),
                           ],
@@ -271,58 +165,152 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                   ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                ),
+              Center(
+                child: AnimatedSize(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Sprung(36),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      _barRow(
-                        context,
-                        screenModel,
-                        LineIcons.list,
-                        "Exercises",
-                        HomeScreen.exercises,
+                      // Your main bar as it currently is.
+                      BlurredContainer(
+                        backgroundColor: AppColors.cell(context),
+                        opacity: 0.5,
+                        blur: 5,
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(
+                            color: AppColors.border(context), width: 2),
+                        alignment: Alignment.center,
+                        shrink: true,
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Stack(
+                                alignment: Alignment.centerLeft,
+                                children: [
+                                  AnimatedPositioned(
+                                    duration: const Duration(milliseconds: 500),
+                                    curve: Sprung.overDamped,
+                                    left: _getPositionValue(
+                                            Provider.of<ScreenModel>(context)) *
+                                        _tabWidth,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary
+                                            .withValues(alpha: 0.5),
+                                        borderRadius: BorderRadius.circular(26),
+                                      ),
+                                      height: _tabHeight,
+                                      width: _tabWidth,
+                                    ),
+                                  ),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      _barRow(
+                                        context,
+                                        screenModel,
+                                        LineIcons.list,
+                                        "Exercises",
+                                        HomeScreen.exercises,
+                                      ),
+                                      _barRow(
+                                        context,
+                                        screenModel,
+                                        LineIcons.compass,
+                                        "Discover",
+                                        HomeScreen.discover,
+                                      ),
+                                      _barRow(
+                                        context,
+                                        screenModel,
+                                        LineIcons.dumbbell,
+                                        "Dashboard",
+                                        HomeScreen.overview,
+                                      ),
+                                      _barRow(
+                                        context,
+                                        screenModel,
+                                        LineIcons.lightbulb,
+                                        "Insights",
+                                        HomeScreen.insights,
+                                      ),
+                                      _barRow(
+                                        context,
+                                        screenModel,
+                                        LineIcons.pieChart,
+                                        "Logs",
+                                        HomeScreen.logs,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      _barRow(
-                        context,
-                        screenModel,
-                        LineIcons.compass,
-                        "Discover",
-                        HomeScreen.discover,
+
+                      // Animated gap: when the red widget is active, add a gap.
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Sprung(36),
+                        width: showCurrentWorkout ? 8.0 : 0,
                       ),
-                      _barRow(
-                        context,
-                        screenModel,
-                        LineIcons.dumbbell,
-                        "Dashboard",
-                        HomeScreen.overview,
+                      // This AnimatedContainer always reserves space for the red widget.
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Sprung(36),
+                        // Animate the width: full width when active, zero when not.
+                        width: showCurrentWorkout ? _tabHeight + 8 : 0,
+                        // You can animate the height as well if needed.
+                        height: _tabHeight + 8,
+                        // Optionally add alignment so that when the container shrinks, its child shrinks
+                        alignment: Alignment.center,
+                        child: showCurrentWorkout
+                            ? Clickable(
+                                onTap: () {
+                                  showMaterialModalBottomSheet(
+                                      context: context,
+                                      enableDrag: true,
+                                      builder: (context) {
+                                        if (dmodel.workoutState == null) {
+                                          return Container();
+                                        } else {
+                                          return LaunchWorkout(
+                                              state: dmodel.workoutState!);
+                                        }
+                                      });
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.black,
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                  height: _tabHeight + 8,
+                                  width: _tabHeight + 8,
+                                  child: Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: WorkoutProgressIndicator(
+                                        size: _tabHeight - 4,
+                                        fontSize: 10,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : null,
                       ),
-                      _barRow(
-                        context,
-                        screenModel,
-                        LineIcons.lightbulb,
-                        "Insights",
-                        HomeScreen.insights,
-                      ),
-                      _barRow(
-                        context,
-                        screenModel,
-                        LineIcons.pieChart,
-                        "Logs",
-                        HomeScreen.logs,
-                      ),
-                      // _barRow(
-                      //   context,
-                      //   dmodel,
-                      //   LineIcons.userCircle,
-                      //   "Settings",
-                      //   HomeScreen.profile,
-                      // ),
                     ],
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ],
@@ -342,19 +330,10 @@ class _HomeState extends State<Home> {
         screenModel.setScreen(screen);
       },
       child: Container(
-        decoration: BoxDecoration(
-          color: screenModel.screen == screen
-              ? Theme.of(context).colorScheme.primary
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: screenModel.screen == screen
-                ? Theme.of(context).colorScheme.primary
-                : Colors.transparent,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(8, 4, 8, 4),
+        width: _tabWidth,
+        height: _tabHeight,
+        color: Colors.black.withValues(alpha: 0.0001),
+        child: Center(
           child: Icon(
             icon,
             color: screenModel.screen == screen
@@ -364,5 +343,22 @@ class _HomeState extends State<Home> {
         ),
       ),
     );
+  }
+
+  double _getPositionValue(ScreenModel screenModel) {
+    switch (screenModel._currentScreen) {
+      case HomeScreen.exercises:
+        return 0;
+      case HomeScreen.discover:
+        return 1;
+      case HomeScreen.overview:
+        return 2;
+      case HomeScreen.insights:
+        return 3;
+      case HomeScreen.logs:
+        return 4;
+      default:
+        return 0;
+    }
   }
 }

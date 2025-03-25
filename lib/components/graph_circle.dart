@@ -6,6 +6,7 @@ class GraphCircle extends StatelessWidget {
     required this.value,
     this.titleBuilder,
     this.size = 50,
+    this.fontSize = 14,
     this.textColor,
     this.backgroundColor,
     this.foregroundColor,
@@ -13,6 +14,7 @@ class GraphCircle extends StatelessWidget {
   final double value;
   final String Function(BuildContext context, double value)? titleBuilder;
   final double size;
+  final double fontSize;
   final Color? textColor;
   final Color? foregroundColor;
   final Color? backgroundColor;
@@ -36,7 +38,7 @@ class GraphCircle extends StatelessWidget {
         Text(
           _getTitle(context),
           style: TextStyle(
-            fontSize: 14,
+            fontSize: fontSize,
             fontWeight: FontWeight.bold,
             color: textColor,
           ),

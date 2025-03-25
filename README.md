@@ -18,47 +18,6 @@ Source code for the Workout Notepad mobile application. You can download this ap
 | ------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | <img src="screenshots/store-large/9-insights-home-2.png" width="250" alt="Insights Home 2"> | <img src="screenshots/store-large/10-logs-home.png" width="250" alt="Logs Home"> | <img src="screenshots/store-large/11-raw-workout-logs.png" width="250" alt="Raw Workout Logs"> |
 
-
-<div style="width: 100%; overflow: auto;">
-  <div style="display: inline-block; max-width: 250px; margin: 5px;">
-    <img src="screenshots/store-large/0-homescreen.png" width="250" alt="Homescreen">
-  </div>
-  <div style="display: inline-block; max-width: 250px; margin: 5px;">
-    <img src="screenshots/store-large/1-post-workout.png" width="250" alt="Post Workout">
-  </div>
-  <div style="display: inline-block; max-width: 250px; margin: 5px;">
-    <img src="screenshots/store-large/2-workout-detail.png" width="250" alt="Workout Detail">
-  </div>
-  <div style="display: inline-block; max-width: 250px; margin: 5px;">
-    <img src="screenshots/store-large/3-workout-edit.png" width="250" alt="Workout Edit">
-  </div>
-  <div style="display: inline-block; max-width: 250px; margin: 5px;">
-    <img src="screenshots/store-large/4-workout-launch.png" width="250" alt="Workout Launch">
-  </div>
-  <div style="display: inline-block; max-width: 250px; margin: 5px;">
-    <img src="screenshots/store-large/5-exercise-home.png" width="250" alt="Exercise Home">
-  </div>
-  <div style="display: inline-block; max-width: 250px; margin: 5px;">
-    <img src="screenshots/store-large/6-exercise-detail-cardio.png" width="250" alt="Exercise Detail Cardio">
-  </div>
-  <div style="display: inline-block; max-width: 250px; margin: 5px;">
-    <img src="screenshots/store-large/7-discover-home.png" width="250" alt="Discover Home">
-  </div>
-  <div style="display: inline-block; max-width: 250px; margin: 5px;">
-    <img src="screenshots/store-large/8-insights-home.png" width="250" alt="Insights Home">
-  </div>
-  <div style="display: inline-block; max-width: 250px; margin: 5px;">
-    <img src="screenshots/store-large/9-insights-home-2.png" width="250" alt="Insights Home 2">
-  </div>
-  <div style="display: inline-block; max-width: 250px; margin: 5px;">
-    <img src="screenshots/store-large/10-logs-home.png" width="250" alt="Logs Home">
-  </div>
-  <div style="display: inline-block; max-width: 250px; margin: 5px;">
-    <img src="screenshots/store-large/11-raw-workout-logs.png" width="250" alt="Raw Workout Logs">
-  </div>
-</div>
-
-
 ## About
 
 This application is a passion project of mine, built out of the desire for a truly sandbox-esc workout planning and tracking experience. I was unsatisfied with the current offerings that were on the app store, and set out to build my own.

@@ -688,14 +688,14 @@ class LaunchWorkoutModel extends ChangeNotifier {
       List<List<ExerciseLog>> newLogs = [];
 
       var exercises = workout.getExercises() as List<List<WorkoutExercise>>;
-      print(exercises.flattened.map((e) => "${e.workoutExerciseId}"));
+      print(exercises.flattened.map((e) => "${e.getUniqueId()}"));
 
       // loop over the new exercises, and attempt to match the log to the
       for (var group in exercises) {
         List<ExerciseLog> logGroup = [];
         for (var exercise in group) {
           var log = existingLogs.firstWhereOrNull(
-            (l) => l.workoutExerciseId == exercise.workoutExerciseId,
+            (l) => l.workoutExerciseId == exercise.getUniqueId(),
           );
           if (log == null) {
             print("LOG IS NULL");

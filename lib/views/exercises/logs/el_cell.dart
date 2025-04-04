@@ -6,7 +6,6 @@ import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/exercises/logs/tag_group.dart';
-import 'package:workout_notepad_v2/views/root.dart';
 
 class ELCellLarge extends StatefulWidget {
   const ELCellLarge({

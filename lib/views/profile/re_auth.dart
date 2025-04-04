@@ -45,11 +45,7 @@ class _ReAuthState extends State<ReAuth> {
 
           print(record);
 
-          if (record.record == null) {
-            throw "The returned record was null";
-          }
-
-          await _updateRemote(dmodel, record.record!.id, email);
+          await _updateRemote(dmodel, record.record.id, email);
           return "";
         } on ClientException catch (e, stack) {
           logger.exception(e, stack);
@@ -112,11 +108,7 @@ class _ReAuthState extends State<ReAuth> {
         },
       );
 
-      if (data.record == null) {
-        return "Error creating the user record";
-      }
-
-      await _updateRemote(dmodel, data.record!.id, data.meta['email']);
+      await _updateRemote(dmodel, data.record.id, data.meta['email']);
       return "";
     } catch (e, stack) {
       print(e);

@@ -84,10 +84,6 @@ class _WTHomeState extends State<WTHome> {
   }
 
   Widget _body(BuildContext context, Map<String, List<WorkoutTemplate>> data) {
-    var localTemplates = context.select(
-      (DataModel value) => value.workoutTemplates,
-    );
-
     return Column(
       children: [
         for (var item in data.entries)

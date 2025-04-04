@@ -83,20 +83,6 @@ class _LocalPreferencesViewState extends State<LocalPreferencesView> {
     );
   }
 
-  Widget _boolValue(
-    BuildContext context,
-    LocalPrefs localPrefs,
-    String label,
-    bool initValue,
-    Function(bool) onSet,
-  ) {
-    return _wrapper(
-      context,
-      label,
-      Switch(value: initValue, onChanged: onSet),
-    );
-  }
-
   Widget _wrapper(
     BuildContext context,
     String label,

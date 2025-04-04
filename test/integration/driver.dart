@@ -24,6 +24,6 @@ Future<void> main() async {
       },
     );
   } catch (e, stack) {
-    print('Error occured: $e');
+    print('Error occured: $e - $stack');
   }
 }

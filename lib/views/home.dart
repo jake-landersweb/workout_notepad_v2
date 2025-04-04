@@ -3,7 +3,6 @@ import 'package:line_icons/line_icons.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
-import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/model/internet_provider.dart';
 
@@ -19,7 +18,6 @@ import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/profile/profile.dart';
 import 'package:workout_notepad_v2/views/welcome.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/launch_workout.dart';
-import 'package:workout_notepad_v2/views/workouts/launch/lw_time.dart';
 
 enum HomeScreen { logs, overview, exercises, profile, discover, insights }
 

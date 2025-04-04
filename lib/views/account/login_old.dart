@@ -79,7 +79,8 @@ class _LoginOldState extends State<LoginOld> {
           await dmodel.loginUser(context, credential);
           return "";
         } catch (error, stack) {
-          return "There was an unknown error.";
+          logger.exception(error, stack);
+          return "There was an unknown error";
         }
       },
       onGoogleCallback: () async {

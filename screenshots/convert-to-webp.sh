@@ -1,11 +1,12 @@
 #!/bin/bash
 
+
 for folder in ./*/; do
     echo "Processing: $folder"
+    mkdir -p "webp/$folder"
     cd $folder
-    mkdir webp
     for file in *.png; do
-        cwebp "$file" -o "./webp/${file%.png}.webp"
+        cwebp "$file" -o "../webp/$folder${file%.png}.webp"
     done
     cd ..
 done

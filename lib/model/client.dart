@@ -4,8 +4,8 @@ import 'env.dart';
 
 class Client {
   // base url that entire app will run off
-  static const host = HOST;
-  static const defaultHeaders = {
+  static var host = HOST;
+  static var defaultHeaders = {
     "Content-type": "application/json",
     "Authorization": "Bearer $API_KEY"
   };
@@ -84,8 +84,8 @@ class Client {
 
 class GoClient {
   // base url that entire app will run off
-  static const host = GO_HOST;
-  static const defaultHeaders = {
+  static var host = GO_HOST;
+  static var defaultHeaders = {
     "Content-type": "application/json",
     "x-api-key": GO_API_KEY,
   };

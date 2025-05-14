@@ -384,7 +384,7 @@ class User {
     try {
       return SvgPicture.network(
         "$GO_HOST/users/$userId/avatar",
-        headers: const {"x-api-key": GO_API_KEY},
+        headers: {"x-api-key": GO_API_KEY},
         height: size,
         fit: BoxFit.fitHeight,
         placeholderBuilder: (context) {

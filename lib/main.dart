@@ -4,6 +4,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +31,9 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 void main() {
   runZonedGuarded(
     () async {
+      // load environment
+      await dotenv.load(fileName: ".env");
+
       WidgetsFlutterBinding.ensureInitialized();
 
       // init the global telemetry provider

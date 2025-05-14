@@ -1,4 +1,4 @@
-include .env.make
+include .env
 export
 
 
@@ -27,16 +27,6 @@ clean: ## Clean the flutter project repo, along with android gradle cache
 	flutter clean && flutter pub get
 
 
-.PHONY: debug
-debug: ## Run in debug mode
-	flutter run --debug
-
-
-.PHONY: release
-release: ## Run in release mode
-	flutter run --release
-
-
 .PHONY: open-android
 open-android: ## Open the android build folder
 	open ./build/app/outputs/bundle/release/
@@ -44,19 +34,20 @@ open-android: ## Open the android build folder
 
 .PHONY: build-android
 build-android: ## Build the app for android and open the android build folder
-	flutter build appbundle
+	flutter build appbundle 
 	$(MAKE) open-android
+
+
+.PHONY: build-ios
+build-ios: ## Build the app for ios and push to the app store
+	flutter build ipa 
+	$(MAKE) upload-ios
 
 
 .PHONY: upload-ios
 upload-ios: ## Upload a compiled binary to the ios store
 	xcrun altool --upload-app --type ios -f ./build/ios/ipa/*.ipa --apiKey $(APPLE_API_KEY) --apiIssuer $(APPLE_ISSUER_ID)
 
-
-.PHONY: build-ios
-build-ios: ## Build the app for ios and push to the app store
-	flutter build ipa
-	$(MAKE) upload-ios
 
 
 .PHONY: build-android build-ios
@@ -78,6 +69,7 @@ screenshot: kill-screenshot-server ## Run the screenshot integration tests to ta
 		test/screenshot/screenshot.dart
 	@echo "Stopping screenshot-server..."
 	@$(MAKE) kill-screenshot-server
+	@./screenshots/convert-to-webp.sh
 
 
 .PHONY: test

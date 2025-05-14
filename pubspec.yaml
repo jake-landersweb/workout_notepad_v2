@@ -80,7 +80,6 @@ dependencies:
   purchases_flutter: ^8.6.0
   purchases_ui_flutter: ^8.6.0
   opentelemetry: ^0.18.10
-  flutter_dotenv: ^5.2.1
 
 dependency_overrides:
   win32: ^5.5.4
@@ -111,8 +110,6 @@ flutter:
   uses-material-design: true
 
   assets:
-    - .env
-
     - sql/init.sql
     - sql/pre-init.json
     - sql/migration_1.sql

@@ -1,4 +1,4 @@
-name: Ensure Build
+name: Build Application
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  flutter-android-build:
+  flutter-build:
     name: Build APK (debug)
     runs-on: ubuntu-latest
     steps:
@@ -43,4 +43,4 @@ jobs:
         run: flutter doctor -v
 
       - name: Build Android debug APK
-        run: flutter build apk --debug --no-shrink
+        run: flutter build appbundle --debug

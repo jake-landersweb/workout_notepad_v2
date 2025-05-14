@@ -178,63 +178,7 @@ class _TemplateSectionState extends State<TemplateSection> {
 
   @override
   Widget build(BuildContext context) {
-    var localTemplates = context.select(
-      (DataModel value) => value.workoutTemplates,
-    );
-
     return WorkoutList(title: widget.title, workouts: widget.templates);
-
-    return Column(
-      children: [
-        Section(
-          widget.title,
-          allowsCollapse: widget.trailingWidget == null,
-          initOpen: true,
-          trailingWidget: widget.trailingWidget,
-          headerPadding: const EdgeInsets.fromLTRB(16, 32, 16, 16),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: 350),
-            child: PageView(
-              controller: _controller,
-              onPageChanged: (value) {
-                setState(() {
-                  _pageIndex = value;
-                });
-              },
-              children: [
-                for (var i in widget.templates)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Center(
-                      child: _workoutCell(context, i, localTemplates),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 4),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            for (int i = 0; i < widget.templates.length; i++)
-              Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: i == _pageIndex
-                        ? AppColors.subtext(context)
-                        : AppColors.light(context),
-                    shape: BoxShape.circle,
-                  ),
-                  height: 7,
-                  width: 7,
-                ),
-              ),
-          ],
-        ),
-      ],
-    );
   }
 
   Widget _workoutCell(

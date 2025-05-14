@@ -270,8 +270,6 @@ class WorkoutCell2 extends StatefulWidget {
 }
 
 class _WorkoutCell2State extends State<WorkoutCell2> {
-  bool _isList = false;
-
   @override
   Widget build(BuildContext context) {
     if (widget.allowsTap) {

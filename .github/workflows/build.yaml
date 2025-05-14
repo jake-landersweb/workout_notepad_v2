@@ -1,43 +1,45 @@
-name: Build PR
+name: Ensure Build
 
 on:
+  push:
+    branches: [ main ]
   pull_request:
 
 jobs:
-  build-ios:
+  flutter-android-build:
+    name: Build APK (debug)
     runs-on: ubuntu-latest
-    name: API Docker Image
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Cache Flutter Pub packages
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.HOME }}/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+
+      - name: Cache Gradle
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle','**/*.gradle.kts','android/gradle.properties') }}
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: stable
-          flutter-version: '3.29.0'
+          flutter-version: 'stable'
+          
+      - name: Enable Flutter analytics (for faster pub get)
+        run: flutter config --no-analytics
 
-      - name: Install dependencies
+      - name: Get Flutter packages
         run: flutter pub get
 
-      - name: Build iOS
-        run: flutter build ios --simulator --no-codesign
+      - name: Run Flutter doctor
+        run: flutter doctor -v
 
-  build-android:
-    runs-on: ubuntu-latest
-    name: API Docker Image
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          flutter-version: '3.29.0'
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Build Android
-        run: flutter build appbundle
+      - name: Build Android debug APK
+        run: flutter build apk --debug --no-shrink

@@ -10,6 +10,9 @@ class JSONLogFormatter implements LogFormatter {
     if (record.message.isNotEmpty) {
       obj["message"] = record.message;
     }
+    if (record.eventName != null) {
+      obj['eventName'] = record.eventName!;
+    }
 
     try {
       return jsonEncode({

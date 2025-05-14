@@ -9,6 +9,9 @@ class TextLogFormatter implements LogFormatter {
     if (record.message.isNotEmpty) {
       msg += " ${record.message}";
     }
+    if (record.eventName != null) {
+      msg += " ${record.eventName!}";
+    }
     if (record.data != null) {
       msg += " ${record.data!}";
     }

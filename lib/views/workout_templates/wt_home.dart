@@ -7,6 +7,7 @@ import 'package:workout_notepad_v2/data/workout.dart';
 import 'package:workout_notepad_v2/data/workout_template.dart';
 import 'package:workout_notepad_v2/model/data_model.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
+import 'package:workout_notepad_v2/views/overview/workout_list.dart';
 import 'package:workout_notepad_v2/views/status/error.dart';
 import 'package:workout_notepad_v2/views/workout_templates/workout_template_model.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -180,6 +181,8 @@ class _TemplateSectionState extends State<TemplateSection> {
     var localTemplates = context.select(
       (DataModel value) => value.workoutTemplates,
     );
+
+    return WorkoutList(title: widget.title, workouts: widget.templates);
 
     return Column(
       children: [

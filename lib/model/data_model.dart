@@ -165,9 +165,9 @@ class DataModel extends ChangeNotifier {
   Future<void> init({User? u, String? defaultUser}) async {
     // set default metadata for the logger
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    logger.setAttribute("app.version", packageInfo.version);
-    logger.setAttribute("app.buildNumber", packageInfo.buildNumber);
-    logger.setAttribute("app.store", packageInfo.installerStore);
+    logger.setAttribute("app_version", packageInfo.version);
+    logger.setAttribute("app_buildNumber", packageInfo.buildNumber);
+    logger.setAttribute("app_store", packageInfo.installerStore);
 
     print("INIT");
     loadStatus = LoadStatus.done;
@@ -371,10 +371,11 @@ class DataModel extends ChangeNotifier {
           "The snapshot does not contain a hash, using old method to compare database");
       shouldSnapshot = !currSnap.compareMetadata(serverSnapshots.first);
     } else {
-      print("comparing sha256");
       var localContent = await Snapshot.getLocalData();
-      print(localContent['sha256Hash']);
-      print(serverSnapshots.first.sha256Hash);
+      logger.info("comparing sha256", {
+        "device": localContent['sha256Hash'],
+        "server": serverSnapshots.first.sha256Hash
+      });
       shouldSnapshot =
           localContent['sha256Hash'] != serverSnapshots.first.sha256Hash!;
     }
@@ -462,6 +463,7 @@ class DataModel extends ChangeNotifier {
       _workoutTemplates = results[3];
       _exercises = results[4];
       _tags = results[5];
+      _allWorkouts = await _getAllWorkouts();
 
       // check if the user has data
       if (checkData) {
@@ -535,10 +537,106 @@ class DataModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  List<Collection> _collections = [];
-  List<Collection> get collections => _collections;
-  Future<void> refreshCollections() async {
-    // _collections = await Collection.getList();
+  List<Workout> _allWorkouts = [];
+  List<Workout> get allWorkouts => _allWorkouts;
+  Future<void> refreshAllWorkouts() async {
+    _allWorkouts = await _getAllWorkouts();
+    notifyListeners();
+  }
+
+  Future<List<Workout>> _getAllWorkouts() async {
+    var db = await DatabaseProvider().database;
+
+    var res = await db.rawQuery("""
+      WITH
+        -- 1) For each workoutId that appears in workout_log, pick its latest timestamp
+        last_logs AS (
+          SELECT
+            workoutId,
+            MAX(created) AS last_log
+          FROM   workout_log
+          GROUP  BY workoutId
+        ),
+
+        -- 2) Union the two “sources” into one list, one row per workoutId
+        base AS (
+          SELECT
+            w.workoutId       AS workoutId,
+            w.title           AS title,
+            w.description     AS description,
+            w.icon            AS icon,
+            w.template        AS is_template,
+            w.created         AS created,
+            w.updated         AS updated,
+            NULL              AS id,
+            NULL              AS keywords,
+            NULL              AS metadata,
+            NULL              AS level,
+            NULL              AS estTime,
+            NULL              AS backgroundColor,
+            NULL              AS imageId,
+            NULL              AS sha256,
+            NULL              AS createdAt,
+            NULL              AS updatedAt
+          FROM   workout AS w
+
+          UNION ALL
+
+          SELECT
+            t.workoutId       AS workoutId,
+            t.title           AS title,
+            t.description     AS description,
+            NULL              AS icon,
+            NULL              AS is_template,
+            NULL              AS created,
+            NULL              AS updated,
+            t.id              AS id,
+            t.keywords        AS keywords,
+            t.metadata        AS metadata,
+            t.level           AS level,
+            t.estTime         AS estTime,
+            t.backgroundColor AS backgroundColor,
+            t.imageId         AS imageId,
+            t.sha256          AS sha256,
+            t.createdAt       AS createdAt,
+            t.updatedAt       AS updatedAt
+          FROM   workout_template AS t
+        )
+
+      -- 3) LEFT JOIN to last_logs to pull in the most recent log time (if any)
+      SELECT
+        b.*,
+        ll.last_log AS last_log
+      FROM base AS b
+      LEFT JOIN last_logs AS ll
+        ON b.workoutId = ll.workoutId
+
+      -- Order so that:
+      --   • items with logs (last_log NOT NULL) come first
+      --   • within them, newest‐first
+      --   • then items with no logs (last_log IS NULL) at the end
+      ORDER BY
+        (ll.last_log IS NULL) ASC,
+        ll.last_log        DESC;
+
+    """);
+
+    List<Workout> response = [];
+
+    for (var i in res) {
+      if (i['id'] != null) {
+        // workout template
+        var template = WorkoutTemplate.fromJson({"template": i});
+        template.fetchChildren(db: db);
+        response.add(template);
+      } else {
+        // normal workout
+        response.add(await Workout.fromJson(i));
+      }
+    }
+
+    print(response.length);
+    return response;
   }
 
   CollectionItem? _nextWorkout;
@@ -928,7 +1026,6 @@ class DataModel extends ChangeNotifier {
   bool hasValidSubscription() {
     // return false;
     // legacy users
-    print("**** ${user!.subscriptionType}");
     if ((user?.subscriptionType ?? "") == SubscriptionType.wn_unlocked) {
       return true;
     }

@@ -13,7 +13,7 @@ void main() {
       formatter: LogFMTLogFormatter(),
       sinks: [
         OtelLogSink(
-          endpoint: OTEL_BACKEND_HOST,
+          endpoint: "$OTEL_BACKEND_HOST/v1/logs",
           apiKey: OTEL_BACKEND_API_KEY,
           flushDuration: Duration(milliseconds: 0),
         ),

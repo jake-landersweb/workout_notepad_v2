@@ -126,7 +126,7 @@ class WorkoutTemplate extends Workout {
     var template = WorkoutTemplate.fromJson({"template": results[0]});
 
     // fetch the children
-    template._fetchChildren(db: db);
+    template.fetchChildren(db: db);
 
     return template;
   }
@@ -145,14 +145,14 @@ class WorkoutTemplate extends Workout {
     List<WorkoutTemplate> items = [];
     for (var i in results) {
       var template = WorkoutTemplate.fromJson({"template": i});
-      await template._fetchChildren(db: db);
+      await template.fetchChildren(db: db);
 
       items.add(template);
     }
     return items;
   }
 
-  Future<List<List<WorkoutTemplateExercise>>> _fetchChildren({
+  Future<List<List<WorkoutTemplateExercise>>> fetchChildren({
     Database? db,
   }) async {
     try {

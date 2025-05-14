@@ -108,7 +108,7 @@ extension AppColors on Color {
   }
 
   static Color border(BuildContext context) {
-    return text(context).withValues(alpha: 0.15);
+    return ColorUtil.hexToColor("#d5d1c9");
   }
 
   static Color error() {

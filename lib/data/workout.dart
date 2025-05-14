@@ -312,13 +312,36 @@ class Workout {
 
   List<Exercise> getFlatExercises({int? limit}) {
     if (limit == null) {
-      return _exercises.flattened.toList();
+      return getExercises().flattened.toList();
     }
-    if (_exercises.flattened.length > limit) {
-      return _exercises.flattened.toList().slice(0, limit);
+    if (getExercises().flattened.length > limit) {
+      return getExercises().flattened.toList().slice(0, limit);
     }
-    return _exercises.flattened.toList();
+    return getExercises().flattened.toList();
   }
+
+  List<String> getUniqueCategories() {
+    return getExercises().flattened.map((v) => v.category).toSet().toList();
+  }
+
+  List<String> getTopCategories({int? limit}) {
+    var t = getExercises()
+        .flattened
+        .groupListsBy((e) => e.category)
+        .map((key, value) => MapEntry(key, value.length))
+        .entries
+        .sortedByCompare((v) => v.value, (a, b) => b.compareTo(a))
+        .map((v) => v.key)
+        .toList();
+    if (limit == null) {
+      return t;
+    }
+    if (t.length <= limit) {
+      return t;
+    }
+    return t.sublist(0, limit);
+  }
+
   // --------------------------------
 
   Future<bool> handleInsert({Database? db}) async {

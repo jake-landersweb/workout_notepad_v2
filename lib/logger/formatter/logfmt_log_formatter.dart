@@ -8,6 +8,9 @@ class LogFMTLogFormatter implements LogFormatter {
     if (record.message.isNotEmpty) {
       msg += " message=\"${record.message}\"";
     }
+    if (record.eventName != null) {
+      msg += " eventName=\"${record.eventName!}\"";
+    }
     if (record.data != null) {
       msg += " ${logfmt(record.data!)}";
     }

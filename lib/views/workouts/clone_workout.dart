@@ -78,6 +78,7 @@ class _CloneWorkoutState extends State<CloneWorkout> {
             });
             await dmodel.refreshWorkouts();
             await dmodel.refreshDefaultWorkouts();
+            await dmodel.refreshAllWorkouts();
             setState(() {
               _isLoading = false;
             });

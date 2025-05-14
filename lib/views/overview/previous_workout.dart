@@ -3,6 +3,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
+import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/local_prefs.dart';
 import 'package:workout_notepad_v2/model/root.dart';
@@ -133,218 +134,156 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
     return _view(context, _wl!);
   }
 
-  // Widget _view2(BuildContext context, WorkoutLog log) {
-  //   return Column(
-  //     children: [
-  //       Expanded(
-  //         flex: 4,
-  //         child: Row(
-  //           children: [
-  //             Expanded(
-  //               flex: 3,
-  //               child: Container(
-  //                 decoration: BoxDecoration(
-  //                   color: Theme.of(context)
-  //                       .colorScheme
-  //                       .primary
-  //                       .withValues(alpha: 0.15),
-  //                   borderRadius: BorderRadius.circular(20),
-  //                 ),
-  //                 child: Center(
-  //                   child: Column(
-  //                     mainAxisSize: MainAxisSize.min,
-  //                     crossAxisAlignment: CrossAxisAlignment.center,
-  //                     children: [
-  //                       Container(
-  //                         decoration: BoxDecoration(
-  //                           color: AppColors.cell(context),
-  //                           borderRadius: BorderRadius.circular(15),
-  //                         ),
-  //                         padding: EdgeInsets.all(8),
-  //                         child: Icon(LineIcons.clock),
-  //                       ),
-  //                       const SizedBox(height: 10),
-  //                       Text(
-  //                         formatHHMMSS(log.duration),
-  //                         style: TextStyle(
-  //                           fontSize: 20,
-  //                           fontWeight: FontWeight.w900,
-  //                         ),
-  //                       ),
-  //                       Text(
-  //                         "duration",
-  //                         style: ttBody(
-  //                           context,
-  //                           color:
-  //                               AppColors.text(context).withValues(alpha: 0.5),
-  //                           fontWeight: FontWeight.w600,
-  //                           height: 0.97,
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //             const SizedBox(width: 8),
-  //             Expanded(
-  //               flex: 4,
-  //               child: Column(
-  //                 children: [
-  //                   Expanded(
-  //                     flex: 2,
-  //                     child: Container(
-  //                       decoration: BoxDecoration(
-  //                         color: Colors.blue.withValues(alpha: 0.15),
-  //                         borderRadius: BorderRadius.circular(20),
-  //                       ),
-  //                       child: Center(
-  //                         child: Row(
-  //                           mainAxisSize: MainAxisSize.min,
-  //                           crossAxisAlignment: CrossAxisAlignment.center,
-  //                           children: [
-  //                             Container(
-  //                               decoration: BoxDecoration(
-  //                                 color: AppColors.cell(context),
-  //                                 borderRadius: BorderRadius.circular(15),
-  //                               ),
-  //                               padding: EdgeInsets.all(8),
-  //                               child: Icon(LineIcons.dumbbell),
-  //                             ),
-  //                             const SizedBox(width: 14),
-  //                             Column(
-  //                               mainAxisSize: MainAxisSize.min,
-  //                               crossAxisAlignment: CrossAxisAlignment.start,
-  //                               children: [
-  //                                 Text(
-  //                                   log.exerciseLogs.length.toString(),
-  //                                   style: TextStyle(
-  //                                     fontSize: 18,
-  //                                     fontWeight: FontWeight.w900,
-  //                                     height: 0.95,
-  //                                   ),
-  //                                 ),
-  //                                 Text(
-  //                                   "exercises",
-  //                                   style: ttBody(
-  //                                     context,
-  //                                     color: AppColors.text(context)
-  //                                         .withValues(alpha: 0.5),
-  //                                     fontWeight: FontWeight.w600,
-  //                                     height: 0.95,
-  //                                   ),
-  //                                 ),
-  //                               ],
-  //                             ),
-  //                           ],
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ),
-  //                   const SizedBox(height: 8),
-  //                   Expanded(
-  //                     flex: 2,
-  //                     child: Container(
-  //                       decoration: BoxDecoration(
-  //                         color: AppColors.divider(context),
-  //                         borderRadius: BorderRadius.circular(20),
-  //                       ),
-  //                       child: Center(
-  //                         child: Row(
-  //                           mainAxisSize: MainAxisSize.min,
-  //                           crossAxisAlignment: CrossAxisAlignment.center,
-  //                           children: [
-  //                             Container(
-  //                               decoration: BoxDecoration(
-  //                                 color: AppColors.cell(context),
-  //                                 borderRadius: BorderRadius.circular(15),
-  //                               ),
-  //                               padding: EdgeInsets.all(8),
-  //                               child: Icon(LineIcons.barChartAlt),
-  //                             ),
-  //                             const SizedBox(width: 14),
-  //                             Column(
-  //                               mainAxisSize: MainAxisSize.min,
-  //                               crossAxisAlignment: CrossAxisAlignment.start,
-  //                               children: [
-  //                                 Text(
-  //                                   _getTotalReps(log).toString(),
-  //                                   style: TextStyle(
-  //                                     fontSize: 18,
-  //                                     fontWeight: FontWeight.w900,
-  //                                     height: 0.95,
-  //                                   ),
-  //                                 ),
-  //                                 Text(
-  //                                   "total reps",
-  //                                   style: ttBody(
-  //                                     context,
-  //                                     color: AppColors.text(context)
-  //                                         .withOpacity(0.5),
-  //                                     fontWeight: FontWeight.w600,
-  //                                     height: 0.95,
-  //                                   ),
-  //                                 ),
-  //                               ],
-  //                             ),
-  //                           ],
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //       const SizedBox(height: 8),
-  //       Expanded(
-  //         flex: 3,
-  //         child: Container(
-  //           decoration: BoxDecoration(
-  //             color: AppColors.cell(context),
-  //             borderRadius: BorderRadius.circular(20),
-  //           ),
-  //           child: Row(
-  //             children: [
-  //               Padding(
-  //                 padding: const EdgeInsets.all(16.0),
-  //                 child: Column(
-  //                   mainAxisSize: MainAxisSize.min,
-  //                   crossAxisAlignment: CrossAxisAlignment.center,
-  //                   children: [
-  //                     Text(
-  //                       "total",
-  //                       style: ttBody(
-  //                         context,
-  //                         color: AppColors.text(context).withValues(alpha: 0.5),
-  //                         fontWeight: FontWeight.w600,
-  //                       ),
-  //                     ),
-  //                     Text(
-  //                       "${_getTotalWeight(log)} lbs",
-  //                       style: TextStyle(
-  //                         fontSize: 18,
-  //                         fontWeight: FontWeight.w900,
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //               Expanded(
-  //                 child: Padding(
-  //                   padding: const EdgeInsets.all(8.0),
-  //                   child: _weightBySet(context, log),
-  //                 ),
-  //               ),
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
+  var repsColor = Colors.red.shade300;
+  var weightColor = Colors.green.shade300;
+  var timeColor = Colors.blue.shade300;
+
+  List<BarChartGroupData> _barData(WorkoutLog wl) {
+    List<BarChartGroupData> groups = [];
+    if (wl.exerciseLogs.length <= 2) {
+      for (int i = 0; i < wl.exerciseLogs.length; i++) {
+        groups.add(
+          BarChartGroupData(
+            x: i,
+            barRods: [
+              for (var log in wl.exerciseLogs[i])
+                BarChartRodData(
+                  toY: log.metadata.map((v) => v.reps).sum.toDouble(),
+                  color: repsColor,
+                ),
+              for (var log in wl.exerciseLogs[i])
+                BarChartRodData(
+                  toY: log.metadata.map((v) => v.weight).sum.toDouble(),
+                  color: weightColor,
+                ),
+              for (var log in wl.exerciseLogs[i])
+                BarChartRodData(
+                  toY: log.metadata.map((v) => v.time).sum.toDouble(),
+                  color: timeColor,
+                ),
+            ],
+          ),
+        );
+      }
+      return groups;
+    }
+
+    var totalReps = wl.exerciseLogs
+        .map((v) => v.map((e) => e.metadata.map((v) => v.reps).sum).sum)
+        .max
+        .toDouble();
+
+    var totalWeight = wl.exerciseLogs
+        .map((v) => v.map((e) => e.metadata.map((v) => v.weight).sum).sum)
+        .max
+        .toDouble();
+
+    var totalTime = wl.exerciseLogs
+        .map((v) => v.map((e) => e.metadata.map((v) => v.time).sum).sum)
+        .max
+        .toDouble();
+
+    for (int i = 0; i < wl.exerciseLogs.length; i++) {
+      var reps = wl.exerciseLogs[i]
+              .map((e) => e.metadata.map((v) => v.reps).sum)
+              .sum
+              .toDouble() /
+          totalReps;
+      var weight = wl.exerciseLogs[i]
+              .map((e) => e.metadata.map((v) => v.weight).sum)
+              .sum
+              .toDouble() /
+          totalWeight;
+      var time = wl.exerciseLogs[i]
+              .map((e) => e.metadata.map((v) => v.time).sum)
+              .sum
+              .toDouble() /
+          totalTime;
+      groups.add(BarChartGroupData(
+        x: i,
+        barRods: [
+          BarChartRodData(toY: reps, color: repsColor),
+          BarChartRodData(toY: weight, color: weightColor),
+          BarChartRodData(toY: time, color: timeColor),
+        ],
+      ));
+    }
+
+    return groups;
+  }
+
+  Widget _barDistribution(
+    BuildContext context,
+    WorkoutLog log,
+  ) {
+    return Column(
+      children: [
+        Expanded(
+          child: BarChart(
+            BarChartData(
+              barGroups: _barData(log),
+              gridData: FlGridData(show: false),
+              borderData: FlBorderData(show: false),
+              titlesData: FlTitlesData(
+                rightTitles: AxisTitles(),
+                topTitles: AxisTitles(),
+                leftTitles: AxisTitles(),
+                bottomTitles: AxisTitles(),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Row(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: repsColor,
+                    shape: BoxShape.circle,
+                  ),
+                  height: 10,
+                  width: 10,
+                ),
+                const SizedBox(width: 4),
+                Text("Reps", style: ttcaption(context)),
+              ],
+            ),
+            Row(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: weightColor,
+                    shape: BoxShape.circle,
+                  ),
+                  height: 10,
+                  width: 10,
+                ),
+                const SizedBox(width: 4),
+                Text("Weight", style: ttcaption(context)),
+              ],
+            ),
+            Row(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: timeColor,
+                    shape: BoxShape.circle,
+                  ),
+                  height: 10,
+                  width: 10,
+                ),
+                const SizedBox(width: 4),
+                Text("Time", style: ttcaption(context)),
+              ],
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 
   Widget _weightBySet(
     BuildContext context,
@@ -423,12 +362,22 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
                   if (value.round() != value) {
                     return Container();
                   }
-                  return Text(
-                    "${_weightDistribution[value.round() - 1]} ${localPrefs.defaultWeightPost}",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: AppColors.subtext(context),
+                  late String text;
+                  if (_weightDistribution.length > 5) {
+                    text = "${value.round() - 1}";
+                  } else {
+                    text =
+                        "${_weightDistribution[value.round() - 1]} ${localPrefs.defaultWeightPost}";
+                  }
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Text(
+                      text,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.subtext(context),
+                      ),
                     ),
                   );
                 },
@@ -454,7 +403,7 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
           log: log,
           endContent: Container(),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 8),
         Row(
           children: [
             Expanded(
@@ -463,7 +412,10 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
                 _attributeCell(
                   context,
                   "Exercises",
-                  log.exerciseLogs.length.toString(),
+                  (log.exerciseLogs.length > 3
+                          ? log.exerciseLogs.length
+                          : log.exerciseLogs.flattened.length)
+                      .toString(),
                   vertical: true,
                 ),
               ),
@@ -505,15 +457,19 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
                   child: _pieChart(
                     context,
                     "Tag Dist.",
-                    _getTagsData(log),
+                    _getDynamicPieChartData(log),
                     expanded: true,
                     showHeader: false,
                   ),
                 ),
-                const SizedBox(height: 4),
                 Expanded(
                   child: _weightBySet(context, log),
                 ),
+
+                // const SizedBox(height: 4),
+                // Expanded(
+                //   child: _barDistribution(context, log),
+                // ),
               ],
             ),
           ),
@@ -549,45 +505,6 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
                             previousValue + element.reps)));
   }
 
-  // int _getTotalWeight(WorkoutLog log) {
-  //   return log.exerciseLogs.fold(
-  //       0,
-  //       (previousValue, element) =>
-  //           previousValue +
-  //           element.fold(
-  //               0,
-  //               (previousValue, element) =>
-  //                   previousValue +
-  //                   element.metadata.fold(
-  //                       0,
-  //                       (previousValue, element) =>
-  //                           previousValue + element.weight)));
-  // }
-
-  // double _getNumSetsNotWarmup(WorkoutLog log) {
-  //   return log.exerciseLogs.fold(
-  //         0,
-  //         (previousValue, element) =>
-  //             previousValue +
-  //             element.fold(
-  //               0,
-  //               (previousValue, element) =>
-  //                   previousValue +
-  //                   element.metadata.fold(
-  //                     0,
-  //                     (previousValue, element) =>
-  //                         previousValue +
-  //                         (element.tags.firstWhereOrNull(
-  //                                     (element) => element.title == "Warmup") ==
-  //                                 null
-  //                             ? 1
-  //                             : 0),
-  //                   ),
-  //             ),
-  //       ) /
-  //       _getTotalSets(log);
-  // }
-
   List<Tuple2<String, int>> _getTagsData(WorkoutLog log) {
     List<Tuple2<String, int>> tags = [];
 
@@ -610,12 +527,30 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
     return tags;
   }
 
+  List<Tuple2<String, int>> _getSetTypeData(WorkoutLog log) {
+    List<Tuple2<String, int>> types = [];
+
+    for (var i in log.exerciseLogs) {
+      for (var j in i) {
+        var tmp =
+            types.firstWhereOrNull((v) => v.v1 == exerciseTypeTitle(j.type));
+        if (tmp == null) {
+          types.add(Tuple2(exerciseTypeTitle(j.type), 0));
+        } else {
+          tmp.v2 += 1;
+        }
+      }
+    }
+
+    return types;
+  }
+
   Widget _cell(BuildContext context, Widget value, {double height = 50}) {
     return Container(
       decoration: BoxDecoration(
         // color: AppColors.cell(context)[300],
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.border(context)),
+        // border: Border.all(color: AppColors.border(context)),
       ),
       width: double.infinity,
       height: height,
@@ -663,6 +598,18 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
         ],
       );
     }
+  }
+
+  List<Tuple2<String, int>> _getDynamicPieChartData(WorkoutLog log) {
+    var tags = _getTagsData(log);
+    var types = _getSetTypeData(log);
+    if (tags.length == 1) {
+      if (types.length == 1) {
+        return tags;
+      }
+      return types;
+    }
+    return tags;
   }
 
   Widget _pieChart(

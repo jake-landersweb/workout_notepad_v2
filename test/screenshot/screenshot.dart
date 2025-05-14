@@ -51,14 +51,14 @@ void main() async {
 
     // workout detail
     await tester.scrollUntilVisible(
-      find.text("More").first,
+      find.text("Arms+Shoulders").first,
       200.0,
       scrollable: find.byType(Scrollable).first,
     );
     await tester.pumpAndSettle();
     await tester.drag(find.byType(Scrollable).first, const Offset(0, 200));
     await tester.pumpAndSettle();
-    await tester.tap(find.text("More").first);
+    await tester.tap(find.text("Arms+Shoulders").first);
     await tester.pumpAndSettle();
     await takeScreenshot(
       "workout-detail",

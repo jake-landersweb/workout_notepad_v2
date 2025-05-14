@@ -205,6 +205,7 @@ class _WorkoutDetailState extends State<WorkoutDetail> {
               // reload the templates
               await dmodel.refreshWorkoutTemplates();
               await dmodel.refreshExercises();
+              await dmodel.refreshAllWorkouts();
               Navigator.of(context).pop();
 
               // send a report that this template was downloaded

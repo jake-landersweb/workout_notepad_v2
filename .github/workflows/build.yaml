@@ -42,5 +42,5 @@ jobs:
       - name: Run Flutter doctor
         run: flutter doctor -v
 
-      - name: Build Android debug APK
+      - name: Build Android debug appbundle
         run: flutter build appbundle --debug

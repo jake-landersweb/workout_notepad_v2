@@ -3,7 +3,6 @@ import 'package:workout_notepad_v2/logger/formatter/logfmt_log_formatter.dart';
 import 'package:workout_notepad_v2/logger/level.dart';
 import 'package:workout_notepad_v2/logger/logger.dart';
 import 'package:workout_notepad_v2/logger/sink/otel_log_sink.dart';
-import 'package:workout_notepad_v2/model/env.dart';
 
 void main() {
   test("test otel sink", () async {
@@ -13,8 +12,8 @@ void main() {
       formatter: LogFMTLogFormatter(),
       sinks: [
         OtelLogSink(
-          endpoint: "$OTEL_BACKEND_HOST/v1/logs",
-          apiKey: OTEL_BACKEND_API_KEY,
+          endpoint: "http://localhost:8043/v1/logs",
+          apiKey: "",
           flushDuration: Duration(milliseconds: 0),
         ),
       ],

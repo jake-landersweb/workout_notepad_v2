@@ -4,7 +4,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:collection/collection.dart';
-import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -79,42 +78,6 @@ class DataModel extends ChangeNotifier {
       return;
     }
     prefs.setString("user", jsonEncode(u.toMap()));
-    await init(u: u);
-  }
-
-  Future<void> loginUser(
-    BuildContext context,
-    auth.UserCredential credential,
-  ) async {
-    print("LOGIN");
-    loadStatus = LoadStatus.init;
-    notifyListeners();
-    var prefs = await SharedPreferences.getInstance();
-    var u = await User.loginAuth(
-      credential,
-      convertFromAnon: user != null,
-      anonUserId: user?.anonUserId,
-    );
-    if (u == null) {
-      snackbarErr(context, "There was an issue getting your account.");
-      loadStatus = LoadStatus.noUser;
-      notifyListeners();
-      return;
-    }
-    prefs.setString("user", jsonEncode(u.toMap()));
-    if (user == null) {
-      // check if there are snapshots for this user
-      var serverSnapshots = await Snapshot.getList(u.userId);
-      // import the first snapshot as the user's data
-      if (serverSnapshots != null && serverSnapshots.isNotEmpty) {
-        // sorted by first = latest on server
-        await importSnapshot(serverSnapshots.first);
-      }
-    } else {
-      // save on the user
-      u.anonUserId = user!.userId;
-      prefs.setString("user", jsonEncode(u.toMap()));
-    }
     await init(u: u);
   }
 
@@ -678,7 +641,6 @@ class DataModel extends ChangeNotifier {
     if (cont) {
       await deleteDB();
       await clearData();
-      auth.FirebaseAuth.instance.signOut();
       await Purchases.logOut();
     }
     notifyListeners();
@@ -690,7 +652,6 @@ class DataModel extends ChangeNotifier {
     await user!.delete();
     await deleteDB();
     await clearData();
-    auth.FirebaseAuth.instance.signOut();
     notifyListeners();
   }
 

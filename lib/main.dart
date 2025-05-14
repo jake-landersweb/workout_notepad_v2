@@ -24,9 +24,6 @@ import 'package:workout_notepad_v2/utils/functions.dart';
 import 'package:workout_notepad_v2/views/account/anon_create.dart';
 import 'package:workout_notepad_v2/views/account/root.dart';
 import 'package:workout_notepad_v2/views/home.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 
 void main() {
   runZonedGuarded(
@@ -38,11 +35,6 @@ void main() {
 
       // init the global telemetry provider
       await GlobalTelemetry.initialize();
-
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-      var _ = FirebaseAnalytics.instance;
 
       runApp(MyApp(
         defaultUser: kDebugMode

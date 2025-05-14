@@ -56,9 +56,6 @@ dependencies:
   fl_chart: ^0.70.2
   auto_size_text: ^3.0.0
   flutter_svg: ^2.0.10+1
-  firebase_core: ^3.6.0
-  firebase_analytics: ^11.3.3
-  firebase_auth: ^5.3.1
   google_sign_in: ^6.2.1
   syncfusion_flutter_calendar: ^28.2.9
   collection: ^1.19.0
@@ -115,7 +112,7 @@ flutter:
 
   assets:
     - .env
-    
+
     - sql/init.sql
     - sql/pre-init.json
     - sql/migration_1.sql

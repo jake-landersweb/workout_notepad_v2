@@ -1,5 +1,4 @@
 // ignore_for_file: avoid_print
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
@@ -18,8 +17,6 @@ class AccountInit extends StatefulWidget {
 }
 
 class _AccountInitState extends State<AccountInit> {
-  Timer? _timer;
-
   @override
   Widget build(BuildContext context) {
     return comp.HeaderBar(
@@ -33,26 +30,13 @@ class _AccountInitState extends State<AccountInit> {
             color: AppColors.subtext(context),
           ),
         ),
-        GestureDetector(
-          onLongPressStart: (details) {
-            _timer = Timer(const Duration(seconds: 3), () {
-              comp.cupertinoSheet(
-                context: context,
-                builder: (context) => const LoginOld(),
-              );
-            });
-          },
-          onLongPressEnd: (details) {
-            _timer?.cancel();
-          },
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height / 2,
-            ),
-            child: SvgPicture.asset(
-              "assets/svg/workout.svg",
-              semanticsLabel: 'Workout Logo',
-            ),
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height / 2,
+          ),
+          child: SvgPicture.asset(
+            "assets/svg/workout.svg",
+            semanticsLabel: 'Workout Logo',
           ),
         ),
         SingInWith(),

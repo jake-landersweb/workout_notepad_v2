@@ -8,7 +8,6 @@ import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/model/client.dart';
-import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:http/http.dart' as http;
 import 'package:workout_notepad_v2/model/env.dart';
 import 'package:workout_notepad_v2/model/internet_provider.dart';
@@ -127,51 +126,6 @@ class User {
       "anonUserId": anonUserId,
       "newUserId": newUserId,
     };
-  }
-
-  static Future<User?> loginAuth(
-    auth.UserCredential credential, {
-    bool convertFromAnon = false,
-    String? anonUserId,
-  }) async {
-    try {
-      if (credential.user == null) {
-        print("ERROR - The user credential was null");
-        return null;
-      }
-      var client = Client(client: http.Client());
-      var response = await client.post(
-        "/login",
-        {},
-        jsonEncode({
-          "userId": credential.user!.uid,
-          "email": credential.user!.email,
-          "displayName": credential.user!.displayName,
-          "phone": credential.user!.phoneNumber,
-          "imgUrl": credential.user!.photoURL,
-          "convertFromAnon": convertFromAnon,
-          "signInMethod": credential.credential?.signInMethod ?? "unknown",
-          "anonUserId": anonUserId,
-        }),
-      );
-      if (response.statusCode != 200) {
-        print("ERROR - There was an error with the request ${response.body}");
-        return null;
-      }
-      Map<String, dynamic> body = jsonDecode(response.body);
-      if (!body.containsKey("status") || body['status'] != 200) {
-        print(body);
-        return null;
-      }
-      var user = User.fromJson(body['body']);
-      // save userid
-      var prefs = await SharedPreferences.getInstance();
-      prefs.setString("userId", user.userId);
-      return user;
-    } catch (error, stack) {
-      logger.exception(error, stack);
-      return null;
-    }
   }
 
   static Future<User?> loginPocketbase({

@@ -1,6 +1,8 @@
 // singleton instance
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:workout_notepad_v2/logger/events/log_event.dart';
 import 'package:workout_notepad_v2/logger/formatter/log_formatter.dart';
 import 'package:workout_notepad_v2/logger/formatter/text_log_formatter.dart';
 import 'package:workout_notepad_v2/logger/level.dart';
@@ -118,6 +120,23 @@ class Logger {
         if (data != null) ...data,
       },
     );
+  }
+
+  void event(LogEvent e) {
+    var record = LogRecord(
+      timestamp: "${DateTime.now().microsecondsSinceEpoch * 1000}",
+      level: LogLevel.info,
+      message: e.message,
+      data: {
+        ...e.data(),
+        if (_internalData != null) ..._internalData!,
+      },
+      eventName: e.eventName,
+    );
+    var formatted = formatter.format(record);
+    for (var sink in sinks) {
+      sink.send(record, formatted);
+    }
   }
 
   // takes in a raw unformated string (i.e.) from a legacy print statement

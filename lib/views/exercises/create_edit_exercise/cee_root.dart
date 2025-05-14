@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
 import 'package:workout_notepad_v2/components/contained_list.dart';
-import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
 import 'package:workout_notepad_v2/components/field.dart';
 import 'package:workout_notepad_v2/components/header_bar.dart';
 
@@ -20,7 +19,6 @@ import 'package:workout_notepad_v2/views/exercises/create_edit_exercise/cee_type
 import 'package:workout_notepad_v2/views/exercises/create_edit_exercise/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/profile/paywall.dart';
-import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
 
 class CEERoot extends StatefulWidget {
   const CEERoot({

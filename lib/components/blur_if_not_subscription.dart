@@ -2,14 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:workout_notepad_v2/components/cupertino_sheet.dart';
 import 'package:workout_notepad_v2/components/root.dart';
-import 'package:workout_notepad_v2/components/wrapped_button.dart';
 import 'package:workout_notepad_v2/model/data_model.dart';
-import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/color.dart';
 import 'package:workout_notepad_v2/views/profile/paywall.dart';
-import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
 
 class BlurIfNotSubscription extends StatelessWidget {
   const BlurIfNotSubscription({

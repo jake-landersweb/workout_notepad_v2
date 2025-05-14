@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:workout_notepad_v2/logger/formatter/logfmt_log_formatter.dart';
 import 'package:workout_notepad_v2/logger/record.dart';
 import 'package:workout_notepad_v2/logger/sink/log_sink.dart';
+import 'package:workout_notepad_v2/otel.dart';
 
 class OtelLogSink implements LogSink {
   late String title;
@@ -24,7 +25,7 @@ class OtelLogSink implements LogSink {
     this.batchSize = 50,
     Duration? flushDuration,
   }) {
-    this.flushDuration = flushDuration ?? Duration(seconds: 30);
+    this.flushDuration = flushDuration ?? Duration(seconds: 60);
     _buffer = [];
     _bufferFormatted = [];
 
@@ -99,8 +100,9 @@ class OtelLogSink implements LogSink {
   ) {
     List<Map<String, dynamic>> logs = [];
     for (int i = 0; i < records.length; i++) {
-      logs.add({
+      var record = {
         "time_unix_nano": records[i].timestamp,
+        "observed_time_unix_nano": records[i].timestamp,
         "severity_number": records[i].level.number,
         "severity_text": records[i].level.name,
         "body": {"stringValue": records[i].message},
@@ -113,7 +115,30 @@ class OtelLogSink implements LogSink {
             }
           ]
         ],
-      });
+      };
+
+      // check for trace information
+      final span = SpanContextManager.currentSpan;
+      final traceId = span?.spanContext.traceId.toString() ?? '';
+      final spanId = span?.spanContext.spanId.toString() ?? '';
+      if (traceId.isNotEmpty) {
+        record['trace_id'] = traceId;
+      }
+      if (spanId.isNotEmpty) {
+        record['span_id'] = spanId;
+      }
+
+      // check for an event
+      if (records[i].eventName != null) {
+        record['event_name'] = records[i].eventName!;
+        (record['attributes'] as List<dynamic>).add({
+          "key": "event_name",
+          "value": {"stringValue": records[i].eventName!},
+        });
+      }
+
+      // add to the array
+      logs.add(record);
     }
 
     return {
@@ -149,7 +174,7 @@ class OtelLogSink implements LogSink {
         body: jsonEncode(payload),
       );
 
-      if (response.statusCode != 200) {
+      if (response.statusCode > 299) {
         throw Exception(
             'Failed to send logs to the otel backend: ${response.body}');
       }

@@ -4,7 +4,6 @@ import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/views/profile/paywall.dart';
-import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 
 class ELRaw extends StatelessWidget {

@@ -1,10 +1,11 @@
 import 'package:http/http.dart' as http;
+import 'package:workout_notepad_v2/otel.dart';
 import 'env.dart';
 
 class Client {
   // base url that entire app will run off
-  static const host = HOST;
-  static const defaultHeaders = {
+  static var host = HOST;
+  static var defaultHeaders = {
     "Content-type": "application/json",
     "Authorization": "Bearer $API_KEY"
   };
@@ -19,12 +20,15 @@ class Client {
 
   // generic fetch function
   Future<http.Response> fetch(String path) async {
-    // start the response
-    final response = await client.get(
-      Uri.parse("$HOST$path"),
+    return GlobalTelemetry.traceHttp(
+      'GET',
+      path,
+      () => client.get(
+        Uri.parse("$HOST$path"),
+        headers: defaultHeaders,
+      ),
       headers: defaultHeaders,
     );
-    return response;
   }
 
   Future<http.Response> post(
@@ -32,13 +36,18 @@ class Client {
     Map<String, String> headers,
     dynamic body,
   ) async {
-    var response = await http.post(
-      Uri.parse("$HOST$path"),
+    final mergedHeaders = {...headers, ...defaultHeaders};
+    return GlobalTelemetry.traceHttp(
+      'POST',
+      path,
+      () => client.post(
+        Uri.parse("$HOST$path"),
+        body: body,
+        headers: mergedHeaders,
+      ),
+      headers: mergedHeaders,
       body: body,
-      headers: {...headers, ...defaultHeaders},
     );
-
-    return response;
   }
 
   Future<http.Response> put(
@@ -46,29 +55,37 @@ class Client {
     Map<String, String> headers,
     dynamic body,
   ) async {
-    var response = await http.put(
-      Uri.parse("$HOST$path"),
+    final mergedHeaders = {...headers, ...defaultHeaders};
+    return GlobalTelemetry.traceHttp(
+      'PUT',
+      path,
+      () => client.put(
+        Uri.parse("$HOST$path"),
+        body: body,
+        headers: mergedHeaders,
+      ),
+      headers: mergedHeaders,
       body: body,
-      headers: {...headers, ...defaultHeaders},
     );
-
-    return response;
   }
 
   Future<http.Response> delete(String path) async {
-    // start the response
-    final response = await client.delete(
-      Uri.parse("$HOST$path"),
+    return GlobalTelemetry.traceHttp(
+      'DELETE',
+      path,
+      () => client.delete(
+        Uri.parse("$HOST$path"),
+        headers: defaultHeaders,
+      ),
       headers: defaultHeaders,
     );
-    return response;
   }
 }
 
 class GoClient {
   // base url that entire app will run off
-  static const host = GO_HOST;
-  static const defaultHeaders = {
+  static var host = GO_HOST;
+  static var defaultHeaders = {
     "Content-type": "application/json",
     "x-api-key": GO_API_KEY,
   };
@@ -82,13 +99,18 @@ class GoClient {
   });
 
   // generic fetch function
+  // generic fetch function
   Future<http.Response> fetch(String path) async {
-    // start the response
-    final response = await client.get(
-      Uri.parse("$host$path"),
+    return GlobalTelemetry.traceHttp(
+      'GET',
+      path,
+      () => client.get(
+        Uri.parse("$host$path"),
+        headers: defaultHeaders,
+      ),
+      customHost: GO_HOST,
       headers: defaultHeaders,
     );
-    return response;
   }
 
   Future<http.Response> post(
@@ -96,13 +118,19 @@ class GoClient {
     Map<String, String> headers,
     dynamic body,
   ) async {
-    var response = await http.post(
-      Uri.parse("$host$path"),
+    final mergedHeaders = {...headers, ...defaultHeaders};
+    return GlobalTelemetry.traceHttp(
+      'POST',
+      path,
+      () => client.post(
+        Uri.parse("$host$path"),
+        body: body,
+        headers: mergedHeaders,
+      ),
+      customHost: GO_HOST,
+      headers: mergedHeaders,
       body: body,
-      headers: {...headers, ...defaultHeaders},
     );
-
-    return response;
   }
 
   Future<http.Response> put(
@@ -110,21 +138,31 @@ class GoClient {
     Map<String, String> headers,
     dynamic body,
   ) async {
-    var response = await http.put(
-      Uri.parse("$host$path"),
+    final mergedHeaders = {...headers, ...defaultHeaders};
+    return GlobalTelemetry.traceHttp(
+      'PUT',
+      path,
+      () => client.put(
+        Uri.parse("$host$path"),
+        body: body,
+        headers: mergedHeaders,
+      ),
+      customHost: GO_HOST,
+      headers: mergedHeaders,
       body: body,
-      headers: {...headers, ...defaultHeaders},
     );
-
-    return response;
   }
 
   Future<http.Response> delete(String path) async {
-    // start the response
-    final response = await client.delete(
-      Uri.parse("$host$path"),
+    return GlobalTelemetry.traceHttp(
+      'DELETE',
+      path,
+      () => client.delete(
+        Uri.parse("$host$path"),
+        headers: defaultHeaders,
+      ),
+      customHost: GO_HOST,
       headers: defaultHeaders,
     );
-    return response;
   }
 }

@@ -44,13 +44,9 @@ class _CreateAccountState extends State<CreateAccount> {
 
           print(record);
 
-          if (record.record == null) {
-            throw "The returned record was null";
-          }
-
           await dmodel.loginUserPocketbase(
             context,
-            userId: record.record!.id,
+            userId: record.record.id,
             email: email,
             provider: "email/pass",
           );
@@ -117,13 +113,9 @@ class _CreateAccountState extends State<CreateAccount> {
         },
       );
 
-      if (data.record == null) {
-        return "Error creating the user record";
-      }
-
       await dmodel.loginUserPocketbase(
         context,
-        userId: data.record!.id,
+        userId: data.record.id,
         email: data.meta['email'],
         avatar: data.meta['avatarUrl'],
         displayName: data.meta['username'],

@@ -295,7 +295,6 @@ class _HeaderBarState extends State<HeaderBar> {
               !notification.toString().contains("direction")) {
             // user released the screen, animate the position change
             if (_scrollAmount == 0 && _shouldLoad) {
-              print("LOADING");
               setState(() {
                 _scrollAmount = _scrollController.offset;
               });

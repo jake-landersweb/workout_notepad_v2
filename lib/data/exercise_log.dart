@@ -68,7 +68,7 @@ class ExerciseLog {
     exerciseLogId = const Uuid().v4();
     exerciseId = exercise.exerciseId;
     supersetId = exercise.supersetId;
-    workoutExerciseId = exercise.workoutExerciseId;
+    workoutExerciseId = exercise.getUniqueId().toString();
     exerciseOrder = 0;
     supersetOrder = exercise.supersetOrder;
     workoutLogId = workoutLog.workoutLogId;

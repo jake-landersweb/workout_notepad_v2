@@ -11,29 +11,26 @@ import 'package:workout_notepad_v2/color_schemes.dart';
 import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/logger.dart';
+import 'package:workout_notepad_v2/logger/events/navigation.dart';
 import 'package:workout_notepad_v2/model/internet_provider.dart';
 import 'package:workout_notepad_v2/model/local_prefs.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/model/search_model.dart';
+import 'package:workout_notepad_v2/otel.dart';
 import 'package:workout_notepad_v2/views/workout_templates/workout_template_model.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/functions.dart';
 import 'package:workout_notepad_v2/views/account/anon_create.dart';
 import 'package:workout_notepad_v2/views/account/root.dart';
 import 'package:workout_notepad_v2/views/home.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 
-void main() async {
+void main() {
   runZonedGuarded(
     () async {
       WidgetsFlutterBinding.ensureInitialized();
 
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-      var _ = FirebaseAnalytics.instance;
+      // init the global telemetry provider
+      await GlobalTelemetry.initialize();
 
       runApp(MyApp(
         defaultUser: kDebugMode
@@ -139,6 +136,7 @@ class MyApp extends StatelessWidget {
           title: 'Workout Notepad',
           debugShowCheckedModeBanner: false,
           theme: scheme.getTheme(context, Brightness.light),
+          navigatorObservers: [NavigationLoggingObserver(logger)],
           onGenerateRoute: (settings) {
             return MaterialWithModalsPageRoute(
               settings: settings,
@@ -209,6 +207,8 @@ class _IndexState extends State<Index> with WidgetsBindingObserver {
 
         break;
       case AppLifecycleState.detached:
+        // app is closing
+        logger.flush();
         break;
       case AppLifecycleState.hidden:
         break;

@@ -603,7 +603,7 @@ Future<bool> _deleteFile(File file) async {
 }
 
 AWSSigV4Signer _getAwsSigner() {
-  return const AWSSigV4Signer(
+  return AWSSigV4Signer(
     credentialsProvider: AWSCredentialsProvider(
       AWSCredentials(
         AWS_ACCESS_KEY,

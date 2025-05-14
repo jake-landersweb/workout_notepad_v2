@@ -14,7 +14,6 @@ import 'package:workout_notepad_v2/views/logs/logs_calendar.dart';
 import 'package:workout_notepad_v2/views/logs/logs_default_page.dart';
 import 'package:workout_notepad_v2/views/logs/root.dart';
 import 'package:workout_notepad_v2/views/profile/paywall.dart';
-import 'package:workout_notepad_v2/views/profile/subscriptions.dart';
 
 class LogsHome extends StatefulWidget {
   const LogsHome({super.key});

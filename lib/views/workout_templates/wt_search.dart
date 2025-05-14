@@ -4,14 +4,10 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:provider/provider.dart';
-import 'package:workout_notepad_v2/components/cell_wrapper.dart';
-import 'package:workout_notepad_v2/components/field.dart';
-import 'package:workout_notepad_v2/components/header_bar.dart';
-import 'package:workout_notepad_v2/components/loading_indicator.dart';
 import 'package:workout_notepad_v2/components/root.dart';
-import 'package:workout_notepad_v2/components/section.dart';
 import 'package:workout_notepad_v2/data/category.dart';
 import 'package:workout_notepad_v2/data/workout_template.dart';
+import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/model/data_model.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/status/empty.dart';
@@ -247,8 +243,7 @@ class _WTSearchState extends State<WTSearch> {
       var model = context.read<WorkoutTemplateModel>();
       await model.searchRemoteTemplates(reload: reload);
     } catch (error, stack) {
-      print(error);
-      print(stack);
+      logger.exception(error, stack);
       snackbarErr(context, "Failed to get the remote workout templates.");
     }
   }

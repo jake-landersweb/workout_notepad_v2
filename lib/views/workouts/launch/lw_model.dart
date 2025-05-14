@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:opentelemetry/api.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sprung/sprung.dart';
 import 'package:sqflite/sqflite.dart';
@@ -15,6 +16,7 @@ import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/logger.dart';
+import 'package:workout_notepad_v2/otel.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
 class TimerInstance {
@@ -211,8 +213,18 @@ class LaunchWorkoutModelState {
 
 class LaunchWorkoutModel extends ChangeNotifier {
   late LaunchWorkoutModelState state;
+  late Span _span;
 
   LaunchWorkoutModel({required this.state}) {
+    // setup the span to run
+    _span = GlobalTelemetry.startSpan(
+      "workout_launch",
+      attributes: [
+        Attribute.fromString("workoutId", state.workout.workoutId),
+        Attribute.fromString("workoutLogId", state.wl.workoutLogId),
+        Attribute.fromInt("numExercises", state.exercises.length),
+      ],
+    );
     init();
   }
 
@@ -246,6 +258,10 @@ class LaunchWorkoutModel extends ChangeNotifier {
       if (state.exerciseLogs[i][j].metadata[idx].saved && idx != m) continue;
       state.exerciseLogs[i][j].metadata[idx].reps = reps;
     }
+    _span.addEvent("setReps", attributes: [
+      Attribute.fromString("exercise", state.exercises[i][j].title),
+      Attribute.fromInt("value", reps),
+    ]);
     notifyListeners();
   }
 
@@ -255,6 +271,10 @@ class LaunchWorkoutModel extends ChangeNotifier {
       if (state.exerciseLogs[i][j].metadata[idx].saved && idx != m) continue;
       state.exerciseLogs[i][j].metadata[idx].weight = weight;
     }
+    _span.addEvent("setWeight", attributes: [
+      Attribute.fromString("exercise", state.exercises[i][j].title),
+      Attribute.fromInt("value", weight),
+    ]);
     notifyListeners();
   }
 
@@ -263,6 +283,10 @@ class LaunchWorkoutModel extends ChangeNotifier {
     for (int idx = 0; idx < state.exerciseLogs[i][j].metadata.length; idx++) {
       state.exerciseLogs[i][j].metadata[idx].weightPost = post;
     }
+    _span.addEvent("setWeightPost", attributes: [
+      Attribute.fromString("exercise", state.exercises[i][j].title),
+      Attribute.fromString("value", post),
+    ]);
     notifyListeners();
   }
 
@@ -272,6 +296,10 @@ class LaunchWorkoutModel extends ChangeNotifier {
       if (state.exerciseLogs[i][j].metadata[idx].saved && idx != m) continue;
       state.exerciseLogs[i][j].metadata[idx].time = time;
     }
+    _span.addEvent("setTime", attributes: [
+      Attribute.fromString("exercise", state.exercises[i][j].title),
+      Attribute.fromInt("value", time),
+    ]);
     notifyListeners();
   }
 
@@ -282,16 +310,26 @@ class LaunchWorkoutModel extends ChangeNotifier {
       state.exerciseLogs[i][j].metadata[m].savedDate =
           savedDate ?? DateTime.now();
     }
+    _span.addEvent("setSaved", attributes: [
+      Attribute.fromString("exercise", state.exercises[i][j].title),
+      Attribute.fromBoolean("value", saved),
+    ]);
     notifyListeners();
   }
 
   void addSet(int i, int j, Tag? defaultTag) {
     state.exerciseLogs[i][j].addSet(defaultTag: defaultTag);
+    _span.addEvent("addSet", attributes: [
+      Attribute.fromString("exercise", state.exercises[i][j].title),
+    ]);
     notifyListeners();
   }
 
   void removeSet(int i, int j, int m) {
     state.exerciseLogs[i][j].removeSet(m);
+    _span.addEvent("removeSet", attributes: [
+      Attribute.fromString("exercise", state.exercises[i][j].title),
+    ]);
     notifyListeners();
   }
 
@@ -405,6 +443,9 @@ class LaunchWorkoutModel extends ChangeNotifier {
       //   }
       // });
       // if here, then it worked
+      _span.addEvent("add_exercise");
+      _span.setAttribute(
+          Attribute.fromInt("numExercises", state.exercises.length));
       notifyListeners();
       return true;
     } catch (e, stack) {
@@ -416,7 +457,7 @@ class LaunchWorkoutModel extends ChangeNotifier {
       });
       notifyListeners();
       return false;
-    }
+    } finally {}
   }
 
   Future<bool> removeExercise(int i, int j) async {
@@ -470,6 +511,9 @@ class LaunchWorkoutModel extends ChangeNotifier {
           "state": jsonEncode(state.toMap()),
         },
       );
+      _span.addEvent("remove_exercise");
+      _span.setAttribute(
+          Attribute.fromInt("numExercises", state.exercises.length));
       notifyListeners();
       return false;
     }
@@ -593,14 +637,21 @@ class LaunchWorkoutModel extends ChangeNotifier {
       // }
 
       await dmodel.stopWorkout();
+      _span.setStatus(StatusCode.ok);
       return Tuple2(true, "");
     } catch (error, stack) {
+      _span
+        ..setStatus(StatusCode.error, error.toString())
+        ..recordException(error, stackTrace: stack);
+
       logger.exception(error, stack, data: {
         "err_code": "workout_unknown",
         "state": jsonEncode(state.toMap()),
       });
       return Tuple2(false,
           "There was an unknown issue when saving the workout. Support has been notified");
+    } finally {
+      GlobalTelemetry.endSpan(_span);
     }
   }
 
@@ -688,14 +739,14 @@ class LaunchWorkoutModel extends ChangeNotifier {
       List<List<ExerciseLog>> newLogs = [];
 
       var exercises = workout.getExercises() as List<List<WorkoutExercise>>;
-      print(exercises.flattened.map((e) => "${e.workoutExerciseId}"));
+      print(exercises.flattened.map((e) => "${e.getUniqueId()}"));
 
       // loop over the new exercises, and attempt to match the log to the
       for (var group in exercises) {
         List<ExerciseLog> logGroup = [];
         for (var exercise in group) {
           var log = existingLogs.firstWhereOrNull(
-            (l) => l.workoutExerciseId == exercise.workoutExerciseId,
+            (l) => l.workoutExerciseId == exercise.getUniqueId(),
           );
           if (log == null) {
             print("LOG IS NULL");
@@ -725,5 +776,13 @@ class LaunchWorkoutModel extends ChangeNotifier {
       print(stack);
       return false;
     }
+  }
+
+  @override
+  void dispose() {
+    // ensure the span gets disposed if the workout is cancelled
+    _span.addEvent("cancel");
+    GlobalTelemetry.endSpan(_span);
+    super.dispose();
   }
 }

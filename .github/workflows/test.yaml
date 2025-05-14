@@ -1,0 +1,38 @@
+name: Test Code
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Cache Flutter Pub packages
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.HOME }}/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.29.0'
+          
+      - name: Enable Flutter analytics (for faster pub get)
+        run: flutter config --no-analytics
+
+      - name: Get Flutter packages
+        run: flutter pub get
+
+      - name: Run Flutter doctor
+        run: flutter doctor -v
+
+      - name: Make Test
+        run: make test

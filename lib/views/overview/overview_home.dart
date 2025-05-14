@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs_lite.dart';
 import 'package:intl/intl.dart';
@@ -7,16 +6,14 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/root.dart';
-import 'package:workout_notepad_v2/data/workout_template.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/overview/previous_workout.dart';
+import 'package:workout_notepad_v2/views/overview/workout_list.dart';
 import 'package:workout_notepad_v2/views/overview/workout_progress.dart';
 import 'package:workout_notepad_v2/views/profile/profile.dart';
 import 'package:workout_notepad_v2/views/root.dart';
-import 'package:workout_notepad_v2/views/workout_templates/wt_home.dart';
-import 'package:workout_notepad_v2/views/workout_templates/wt_saved.dart';
 import 'package:workout_notepad_v2/views/workouts/create_edit/cew.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/launch_workout.dart';
 
@@ -99,7 +96,7 @@ class _OverviewHomeState extends State<OverviewHome> {
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(18),
                 border: Border.all(
-                  color: AppColors.border(context).withValues(alpha: 0.08),
+                  color: AppColors.border(context),
                   width: 3,
                 ),
               ),
@@ -122,7 +119,7 @@ class _OverviewHomeState extends State<OverviewHome> {
                         },
                         child: Container(
                           color: AppColors.cell(context),
-                          height: 90,
+                          height: 80,
                           child: Center(
                             child: Padding(
                               padding:
@@ -156,71 +153,15 @@ class _OverviewHomeState extends State<OverviewHome> {
                     Expanded(
                       child: Clickable(
                         onTap: () async {
-                          cupertinoSheet(
+                          showMaterialModalBottomSheet(
                             context: context,
-                            builder: (context) => HeaderBar.sheet(
-                              title: "Select Template",
-                              leading: const [CloseButton2()],
-                              children: [
-                                if (dmodel.defaultWorkouts.isNotEmpty)
-                                  Section(
-                                    "Default Templates",
-                                    allowsCollapse: true,
-                                    initOpen: dmodel.workouts.isEmpty,
-                                    child: Column(
-                                      children: [
-                                        for (var i in dmodel.defaultWorkouts)
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                bottom: 8.0),
-                                            child: Clickable(
-                                              onTap: () async {
-                                                Navigator.of(context).pop();
-                                                await launchWorkout(
-                                                    context, dmodel, i);
-                                              },
-                                              child: WorkoutCell(
-                                                workout: i,
-                                                allowsTap: false,
-                                              ),
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                                if (dmodel.workouts.isNotEmpty)
-                                  Section(
-                                    "My Templates",
-                                    allowsCollapse: true,
-                                    initOpen: true,
-                                    child: Column(
-                                      children: [
-                                        for (var i in dmodel.workouts)
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                bottom: 8.0),
-                                            child: Clickable(
-                                              onTap: () async {
-                                                Navigator.of(context).pop();
-                                                await launchWorkout(
-                                                    context, dmodel, i);
-                                              },
-                                              child: WorkoutCell(
-                                                workout: i,
-                                                allowsTap: false,
-                                              ),
-                                            ),
-                                          ),
-                                      ],
-                                    ),
-                                  ),
-                              ],
-                            ),
+                            enableDrag: false,
+                            builder: (context) => const CEW(),
                           );
                         },
                         child: Container(
                           color: AppColors.cell(context),
-                          height: 90,
+                          height: 80,
                           child: Center(
                             child: Padding(
                               padding:
@@ -236,7 +177,7 @@ class _OverviewHomeState extends State<OverviewHome> {
                                     size: 24,
                                   ),
                                   Text(
-                                    "Start from a\nTemplate",
+                                    "Create a\nTemplate",
                                     style: ttBody(
                                       context,
                                       fontWeight: FontWeight.w600,
@@ -258,7 +199,7 @@ class _OverviewHomeState extends State<OverviewHome> {
                         },
                         child: Container(
                           color: AppColors.cell(context),
-                          height: 90,
+                          height: 80,
                           child: Center(
                             child: Padding(
                               padding:
@@ -377,8 +318,6 @@ class _OverviewHomeState extends State<OverviewHome> {
             child: const PreviousWorkout(),
           ),
           if (dmodel.workouts.isNotEmpty) _templates(context, dmodel),
-          if (dmodel.workoutTemplates.isNotEmpty)
-            _remoteTemplates(context, dmodel),
         ],
       );
     }
@@ -396,52 +335,10 @@ class _OverviewHomeState extends State<OverviewHome> {
   }
 
   Widget _templates(BuildContext context, DataModel dmodel) {
-    List<Workout> _all = dmodel.workouts + dmodel.defaultWorkouts;
-    return TemplateSection(
-      title: "My Templates",
-      trailingWidget: Opacity(
-        opacity: 0.7,
-        child: Clickable(
-          onTap: () {
-            navigate(
-              context: context,
-              builder: (context) => const WorkoutsHome(),
-            );
-          },
-          child: const Row(
-            children: [
-              Text("All"),
-              Icon(Icons.arrow_right_alt),
-            ],
-          ),
-        ),
-      ),
-      templates: _all.length > 5 ? _all.slice(0, 5) : _all,
-    );
-  }
-
-  Widget _remoteTemplates(BuildContext context, DataModel dmodel) {
-    List<WorkoutTemplate> _all = dmodel.workoutTemplates;
-    return TemplateSection(
-      title: "Saved Templates",
-      trailingWidget: Opacity(
-        opacity: 0.7,
-        child: Clickable(
-          onTap: () {
-            navigate(
-              context: context,
-              builder: (context) => const WTSaved(),
-            );
-          },
-          child: const Row(
-            children: [
-              Text("All"),
-              Icon(Icons.arrow_right_alt),
-            ],
-          ),
-        ),
-      ),
-      templates: _all.length > 5 ? _all.slice(0, 5) : _all,
+    return WorkoutList(
+      title: "My Workouts",
+      workouts: dmodel.allWorkouts,
+      allowsExpand: false,
     );
   }
 }

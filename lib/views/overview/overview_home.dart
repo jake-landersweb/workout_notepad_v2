@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_tabs/flutter_custom_tabs_lite.dart';
 import 'package:intl/intl.dart';
@@ -9,6 +11,7 @@ import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/logs/previous_workouts.dart';
 import 'package:workout_notepad_v2/views/overview/previous_workout.dart';
 import 'package:workout_notepad_v2/views/overview/workout_list.dart';
 import 'package:workout_notepad_v2/views/overview/workout_progress.dart';
@@ -245,70 +248,73 @@ class _OverviewHomeState extends State<OverviewHome> {
         (dmodel.remoteTemplates?.isEmpty ?? true) &&
         dmodel.workoutTemplates.isEmpty) {
       var screenModel = Provider.of<ScreenModel>(context);
-      return Column(
-        children: [
-          const SizedBox(height: 32),
-          Text(
-            "Welcome to\nWorkout Notepad!",
-            style: ttSubTitle(context, fontWeight: FontWeight.w700),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            "We are exicted for you to get started. To get started, you can start a new workout, create a new template, or browse our templates.",
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          WrappedButton(
-            title: "Start a New Workout",
-            icon: Icons.play_arrow,
-            center: true,
-            borderColor: AppColors.border(context),
-            onTap: () async {
-              var workout = Workout.init();
-              workout.title = "Workout ${DateFormat('MM/dd/yy').format(
-                DateTime.now(),
-              )}";
-              // var db = await DatabaseProvider().database;
-              // await db.insert("workout", workout.toMap());
-              await launchWorkout(context, dmodel, workout, isEmpty: true);
-            },
-          ),
-          const SizedBox(height: 8),
-          WrappedButton(
-            title: "Create a Template",
-            icon: Icons.add,
-            center: true,
-            borderColor: AppColors.border(context),
-            onTap: () {
-              showMaterialModalBottomSheet(
-                context: context,
-                enableDrag: false,
-                builder: (context) => const CEW(),
-              );
-            },
-          ),
-          const SizedBox(height: 8),
-          WrappedButton(
-            title: "Browse Templates",
-            icon: LineIcons.globe,
-            center: true,
-            borderColor: AppColors.border(context),
-            onTap: () {
-              screenModel.setScreen(HomeScreen.discover);
-            },
-          ),
-          const SizedBox(height: 8),
-          WrappedButton(
-            title: "Open Documentation",
-            icon: LineIcons.book,
-            center: true,
-            borderColor: AppColors.border(context),
-            onTap: () {
-              launchUrl(Uri.parse("https://docs.workoutnotepad.co/"));
-            },
-          ),
-        ],
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            const SizedBox(height: 32),
+            Text(
+              "Welcome to\nWorkout Notepad!",
+              style: ttSubTitle(context, fontWeight: FontWeight.w700),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              "We are exicted for you to get started. To get started, you can start a new workout, create a new template, or browse our templates.",
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 16),
+            WrappedButton(
+              title: "Start a New Workout",
+              icon: Icons.play_arrow,
+              center: true,
+              borderColor: AppColors.border(context),
+              onTap: () async {
+                var workout = Workout.init();
+                workout.title = "Workout ${DateFormat('MM/dd/yy').format(
+                  DateTime.now(),
+                )}";
+                // var db = await DatabaseProvider().database;
+                // await db.insert("workout", workout.toMap());
+                await launchWorkout(context, dmodel, workout, isEmpty: true);
+              },
+            ),
+            const SizedBox(height: 8),
+            WrappedButton(
+              title: "Create a Template",
+              icon: Icons.add,
+              center: true,
+              borderColor: AppColors.border(context),
+              onTap: () {
+                showMaterialModalBottomSheet(
+                  context: context,
+                  enableDrag: false,
+                  builder: (context) => const CEW(),
+                );
+              },
+            ),
+            const SizedBox(height: 8),
+            WrappedButton(
+              title: "Browse Templates",
+              icon: LineIcons.globe,
+              center: true,
+              borderColor: AppColors.border(context),
+              onTap: () {
+                screenModel.setScreen(HomeScreen.discover);
+              },
+            ),
+            const SizedBox(height: 8),
+            WrappedButton(
+              title: "Open Documentation",
+              icon: LineIcons.book,
+              center: true,
+              borderColor: AppColors.border(context),
+              onTap: () {
+                launchUrl(Uri.parse("https://docs.workoutnotepad.co/"));
+              },
+            ),
+          ],
+        ),
       );
     } else {
       return Column(
@@ -316,6 +322,45 @@ class _OverviewHomeState extends State<OverviewHome> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: const PreviousWorkout(),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+            child: Clickable(
+              onTap: () {
+                navigate(
+                  context: context,
+                  builder: (context) => LogsPreviousWorkouts(),
+                );
+              },
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.cell(context),
+                  borderRadius: BorderRadius.circular(16),
+                  border:
+                      Border.all(color: AppColors.border(context), width: 3),
+                ),
+                padding: EdgeInsets.fromLTRB(16, 0, 8, 0),
+                height: 50,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "All Completed Workouts",
+                        style: ttBody(context),
+                      ),
+                    ),
+                    Opacity(
+                      opacity: 0.7,
+                      child: Icon(
+                        Platform.isIOS
+                            ? Icons.chevron_right
+                            : Icons.arrow_right_alt,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
           if (dmodel.workouts.isNotEmpty) _templates(context, dmodel),
         ],

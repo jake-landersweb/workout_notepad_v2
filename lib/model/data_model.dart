@@ -21,6 +21,7 @@ import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/data/workout_template.dart';
 import 'package:workout_notepad_v2/data/workout_template_exercise.dart';
 import 'package:workout_notepad_v2/logger.dart';
+import 'package:workout_notepad_v2/logger/events/generic.dart';
 import 'package:workout_notepad_v2/model/client.dart';
 import 'package:workout_notepad_v2/model/env.dart';
 import 'package:workout_notepad_v2/model/pocketbaseAuth.dart';
@@ -521,7 +522,7 @@ class DataModel extends ChangeNotifier {
           GROUP  BY workoutId
         ),
 
-        -- 2) Union the two “sources” into one list, one row per workoutId
+        -- 2) Union the two "sources" into one list, one row per workoutId
         base AS (
           SELECT
             w.workoutId       AS workoutId,
@@ -574,14 +575,15 @@ class DataModel extends ChangeNotifier {
       LEFT JOIN last_logs AS ll
         ON b.workoutId = ll.workoutId
 
-      -- Order so that:
-      --   • items with logs (last_log NOT NULL) come first
-      --   • within them, newest‐first
-      --   • then items with no logs (last_log IS NULL) at the end
+      -- Order by the maximum of workout creation date and last log date
+      -- For workout table, use created; for workout_template table, use createdAt
       ORDER BY
-        (ll.last_log IS NULL) ASC,
-        ll.last_log        DESC;
-
+        CASE
+          WHEN ll.last_log IS NOT NULL THEN
+            MAX(COALESCE(b.created, b.createdAt), ll.last_log)
+          ELSE
+            COALESCE(b.created, b.createdAt)
+        END DESC;
     """);
 
     List<Workout> response = [];
@@ -1036,6 +1038,15 @@ class DataModel extends ChangeNotifier {
     EntitlementInfo? entitlement =
         customerInfo.entitlements.all[RC_ENTITLEMENT_ID];
     _hasValidEntitlement = entitlement?.isActive ?? false;
+
+    logger.event(
+      GenericEvent("revenue-cat-entitlement-change", metadata: {
+        "allPurchaseDates": customerInfo.allPurchaseDates,
+        "activeSubscriptions": customerInfo.activeSubscriptions,
+        "isActive": entitlement?.isActive,
+      }),
+    );
+
     notifyListeners();
   }
 }

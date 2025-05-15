@@ -5,6 +5,8 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/user.dart';
+import 'package:workout_notepad_v2/logger.dart';
+import 'package:workout_notepad_v2/logger/events/generic.dart';
 import 'package:workout_notepad_v2/model/data_model.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/image.dart';
@@ -232,6 +234,8 @@ class _EditProfileState extends State<EditProfile> {
       print(e);
       print(stack);
       return false;
+    } finally {
+      logger.event(GenericEvent("save-profile"));
     }
   }
 }

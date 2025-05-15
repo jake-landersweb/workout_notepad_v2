@@ -34,7 +34,7 @@ open-android: ## Open the android build folder
 
 .PHONY: build-android
 build-android: ## Build the app for android and open the android build folder
-	flutter build appbundle \
+	@flutter build appbundle \
 		--dart-define=HOST=$(HOST) \
 		--dart-define=GO_HOST=$(GO_HOST) \
 		--dart-define=GO_API_KEY=$(GO_API_KEY) \
@@ -52,7 +52,7 @@ build-android: ## Build the app for android and open the android build folder
 
 .PHONY: build-ios
 build-ios: ## Build the app for ios and push to the app store
-	flutter build ipa \
+	@flutter build ipa \
 		--dart-define=HOST=$(HOST) \
 		--dart-define=GO_HOST=$(GO_HOST) \
 		--dart-define=GO_API_KEY=$(GO_API_KEY) \
@@ -90,6 +90,18 @@ screenshot: kill-screenshot-server ## Run the screenshot integration tests to ta
 	@echo "Staring application..."
 	@flutter drive \
 		--driver test/screenshot/driver.dart \
+		--dart-define=HOST=$(HOST) \
+		--dart-define=GO_HOST=$(GO_HOST) \
+		--dart-define=GO_API_KEY=$(GO_API_KEY) \
+		--dart-define=API_KEY=$(API_KEY) \
+		--dart-define=AWS_ACCESS_KEY=$(AWS_ACCESS_KEY) \
+		--dart-define=AWS_SECRET_ACCESS_KEY=$(AWS_SECRET_ACCESS_KEY) \
+		--dart-define=AWS_S3_BUCKET=$(AWS_S3_BUCKET) \
+		--dart-define=OTEL_BACKEND_HOST=$(OTEL_BACKEND_HOST) \
+		--dart-define=OTEL_BACKEND_API_KEY=$(OTEL_BACKEND_API_KEY) \
+		--dart-define=RC_APPL_API_KEY=$(RC_APPL_API_KEY) \
+		--dart-define=RC_GOOG_API_KEY=$(RC_GOOG_API_KEY) \
+		--dart-define=RC_ENTITLEMENT_ID=$(RC_ENTITLEMENT_ID) \
 		test/screenshot/screenshot.dart
 	@echo "Stopping screenshot-server..."
 	@$(MAKE) kill-screenshot-server

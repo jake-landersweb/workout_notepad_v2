@@ -364,7 +364,7 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
                   }
                   late String text;
                   if (_weightDistribution.length > 5) {
-                    text = "${value.round() - 1}";
+                    text = "${value.round()}";
                   } else {
                     text =
                         "${_weightDistribution[value.round() - 1]} ${localPrefs.defaultWeightPost}";

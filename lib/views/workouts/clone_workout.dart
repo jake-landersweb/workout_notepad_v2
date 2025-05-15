@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart' as comp;
 import 'package:workout_notepad_v2/components/wrapped_button.dart';
 import 'package:workout_notepad_v2/data/workout.dart';
+import 'package:workout_notepad_v2/logger.dart';
+import 'package:workout_notepad_v2/logger/events/generic.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
@@ -79,6 +81,10 @@ class _CloneWorkoutState extends State<CloneWorkout> {
             await dmodel.refreshWorkouts();
             await dmodel.refreshDefaultWorkouts();
             await dmodel.refreshAllWorkouts();
+            logger.event(GenericEvent(
+              "clone-workout",
+              metadata: {"workoutId": widget.workout.workoutId},
+            ));
             setState(() {
               _isLoading = false;
             });

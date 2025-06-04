@@ -7,6 +7,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
+import 'package:workout_notepad_v2/data/query_model.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
@@ -39,6 +40,7 @@ class _OverviewHomeState extends State<OverviewHome> {
       onRefresh: () async {
         await Future.delayed(const Duration(milliseconds: 300));
         await dmodel.fetchData(checkData: false);
+        context.read<QueryModel>().invalidateAll();
       },
       children: [
         _build(context, dmodel),
@@ -362,7 +364,7 @@ class _OverviewHomeState extends State<OverviewHome> {
               ),
             ),
           ),
-          if (dmodel.workouts.isNotEmpty) _templates(context, dmodel),
+          if (dmodel.allWorkouts.isNotEmpty) _templates(context, dmodel),
         ],
       );
     }

@@ -57,7 +57,7 @@ class WrappedButton extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: getBg(context),
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: borderColor ?? getBg(context) ?? Colors.transparent,
           width: 3,

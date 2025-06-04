@@ -1,13 +1,15 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:sprung/sprung.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:workout_notepad_v2/components/modal_sheet.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/getDB.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/color.dart';
 import 'package:workout_notepad_v2/views/logs/post_workout.dart';
-import 'dart:math' as math;
 
 class LogsCalendar extends StatefulWidget {
   const LogsCalendar({super.key});
@@ -82,11 +84,15 @@ class _LogsCalendarState extends State<LogsCalendar> {
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Clickable(
                           onTap: () {
-                            cupertinoSheet(
+                            showModalSheet(
                               context: context,
-                              builder: (context) => PostWorkoutSummary(
+                              builder:
+                                  (context, scrollController, scrollArea) =>
+                                      PostWorkoutSummary(
                                 workoutLogId:
                                     _currentWorkoutLogs[i].workoutLogId,
+                                scrollController: scrollController,
+                                scrollArea: scrollArea,
                                 onSave: (wl) {
                                   setState(() {
                                     _currentWorkoutLogs[i] = wl;

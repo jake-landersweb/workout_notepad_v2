@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 // API Config
 const HOST = String.fromEnvironment("HOST", defaultValue: "");
 const GO_HOST = String.fromEnvironment("GO_HOST", defaultValue: "");
+// const GO_HOST = "http://localhost:3000";
 const GO_API_KEY = String.fromEnvironment("GO_API_KEY", defaultValue: "");
 const API_KEY = String.fromEnvironment("API_KEY", defaultValue: "");
 

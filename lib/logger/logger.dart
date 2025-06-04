@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:workout_notepad_v2/logger/events/log_event.dart';
 import 'package:workout_notepad_v2/logger/formatter/log_formatter.dart';
 import 'package:workout_notepad_v2/logger/formatter/text_log_formatter.dart';
@@ -84,6 +85,12 @@ class Logger {
         sink.send(record, formatted);
       }
     }
+  }
+
+  void raw(dynamic message) {
+    Zone.root.run(() {
+      debugPrint(message.toString());
+    });
   }
 
   void debug(String message, [Map<String, dynamic>? data]) {

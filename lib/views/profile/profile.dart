@@ -1,14 +1,13 @@
 // ignore_for_file: unused_field
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import 'package:workout_notepad_v2/components/alert.dart';
+import 'package:workout_notepad_v2/components/modal_sheet.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/model/internet_provider.dart';
 import 'package:workout_notepad_v2/model/root.dart';
@@ -19,10 +18,10 @@ import 'package:workout_notepad_v2/views/profile/config_categories.dart';
 import 'package:workout_notepad_v2/views/profile/configure_tags.dart';
 import 'package:workout_notepad_v2/views/profile/edit_profile.dart';
 import 'package:workout_notepad_v2/views/profile/local_preferences.dart';
-
 import 'package:workout_notepad_v2/views/profile/manage_data.dart';
 import 'package:workout_notepad_v2/views/profile/manage_purchases.dart';
 import 'package:workout_notepad_v2/views/profile/paywall.dart';
+import 'package:workout_notepad_v2/views/profile/promo_code_v2.dart';
 import 'package:workout_notepad_v2/views/profile/re_auth.dart';
 import 'package:workout_notepad_v2/views/welcome.dart';
 
@@ -53,6 +52,7 @@ class _ProfileState extends State<Profile> {
   late Key _avatarKey;
   int _loadingIndex = -1;
   String buildInfo = "";
+  final GlobalKey _myListKey = GlobalKey();
 
   @override
   void initState() {
@@ -296,7 +296,7 @@ class _ProfileState extends State<Profile> {
             title: "",
             items: [
               StyledSectionItem(
-                title: "Manage Subscriptions",
+                title: "Manage Subscription",
                 icon: Icons.local_mall_rounded,
                 color: Colors.black,
                 post: StyledSectionItemPost.view,
@@ -310,6 +310,34 @@ class _ProfileState extends State<Profile> {
                   );
                 },
               ),
+              StyledSectionItem(
+                title: "Input Promo Code",
+                icon: Icons.sell_rounded,
+                color: Colors.green[300]!,
+                post: StyledSectionItemPost.model,
+                isLocked: false,
+                onTap: () async {
+                  // var iap = InAppPurchase.instance;
+                  // await iap.restorePurchases();
+                  showModalSheet(
+                    context: context,
+                    height: MediaQuery.of(context).size.height * 0.9,
+                    hasSafeArea: false,
+                    builder: (context, controller, scrollKey) => Scaffold(
+                      body: ViewPromoCodeV2(
+                        scrollController: controller,
+                        scrollableArea: scrollKey,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 32),
+          StyledSection(
+            title: "",
+            items: [
               StyledSectionItem(
                 title: "Export Data",
                 icon: Icons.download_rounded,

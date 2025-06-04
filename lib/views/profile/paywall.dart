@@ -9,10 +9,14 @@ Future<void> showPaywall(BuildContext context) async {
   //   builder: (context) => const Subscriptions(),
   // );
 
-  final paywallResult = await RevenueCatUI.presentPaywall();
-  logger.info("RevenueCat paywall result: ${paywallResult.name}");
-  logger.event(GenericEvent(
-    "view-paywall",
-    metadata: {"result": paywallResult.name},
-  ));
+  try {
+    final paywallResult = await RevenueCatUI.presentPaywall();
+    logger.info("RevenueCat paywall result: ${paywallResult.name}");
+    logger.event(GenericEvent(
+      "view-paywall",
+      metadata: {"result": paywallResult.name},
+    ));
+  } catch (error, stack) {
+    logger.exception(error, stack);
+  }
 }

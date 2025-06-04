@@ -3,10 +3,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/root.dart';
+import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/model/data_model.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
@@ -49,38 +52,48 @@ class _ManagePurchasesState extends State<ManagePurchases> {
                 Column(
                   children: [
                     _currentSubscription(context, dmodel),
+                    const SizedBox(height: 32),
                     StyledSection(
                       title: "",
                       items: [
-                        // StyledSectionItem(
-                        //   title: "Missing A Purchase",
-                        //   icon: Icons.search_rounded,
-                        //   color: Colors.blueGrey[300]!,
-                        //   onTap: () async {
-                        //     await showAlert(
-                        //       context: context,
-                        //       title: "Are You Sure?",
-                        //       body: const Column(
-                        //         children: [
-                        //           Text(
-                        //               "The recommended way to restore purchases is through support or in your transaction history."),
-                        //           Text(
-                        //               "If you click yes, your purchases will be queried from the store, and your app will reload if a purchase is found.")
-                        //         ],
-                        //       ),
-                        //       cancelText: "Cancel",
-                        //       onCancel: () {},
-                        //       cancelBolded: true,
-                        //       submitText: "Yes",
-                        //       onSubmit: () async {
-                        //         var iap = InAppPurchase.instance;
-                        //         await iap.restorePurchases();
-                        //       },
-                        //     );
-                        //   },
-                        //   post: StyledSectionItemPost.view,
-                        //   isLocked: false,
-                        // ),
+                        StyledSectionItem(
+                          title: "Restore Subscription",
+                          icon: Icons.paid_outlined,
+                          color: Colors.blueGrey[300]!,
+                          onTap: () async {
+                            try {
+                              CustomerInfo customerInfo =
+                                  await Purchases.restorePurchases();
+                              for (var entry
+                                  in customerInfo.entitlements.active.entries) {
+                                if (entry.value.isActive) {
+                                  snackbarStatus(context,
+                                      "Successfully found an active subscription! Restarting the application ...");
+                                  await Future.delayed(
+                                      const Duration(seconds: 2));
+                                  return;
+                                }
+                              }
+
+                              snackbarStatus(
+                                  context, "No valid subscriptions found");
+                            } on PlatformException catch (error, stack) {
+                              logger.exception(error, stack);
+                              switch (error.code) {
+                                case "8":
+                                  snackbarStatus(
+                                      context, "No valid subscriptions found");
+                                  break;
+                                default:
+                                  snackbarErr(context,
+                                      "There was an unknown error. Please contact support for aid in restoring your subscription.");
+                              }
+                            }
+                            // Error restoring purchases
+                          },
+                          post: StyledSectionItemPost.view,
+                          isLocked: false,
+                        ),
                         StyledSectionItem(
                           title: "Request a Refund",
                           icon: Icons.currency_exchange_rounded,
@@ -148,7 +161,7 @@ class _ManagePurchasesState extends State<ManagePurchases> {
     late String title;
     late String dates;
     if (dmodel.user!.subscriptionType == SubscriptionType.wn_unlocked) {
-      title = "Permanently Unlocked";
+      title = "Promo Code Unlocked";
       dates = "";
     } else if (dmodel.subscription != null) {
       title = dmodel.subscription!.title;
@@ -158,7 +171,8 @@ class _ManagePurchasesState extends State<ManagePurchases> {
           DateTime.parse(dmodel.subscription!.updated),
         )} (expired)")}";
     } else {
-      return Container();
+      title = "No Valid Subscription";
+      dates = "";
     }
     return Padding(
       padding: const EdgeInsets.only(top: 16.0),

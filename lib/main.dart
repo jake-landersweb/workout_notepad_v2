@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print, library_private_types_in_public_api
 
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/color_schemes.dart';
 import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/root.dart';
+import 'package:workout_notepad_v2/data/query_model.dart';
 import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/logger/events/navigation.dart';
 import 'package:workout_notepad_v2/model/internet_provider.dart';
@@ -17,12 +19,12 @@ import 'package:workout_notepad_v2/model/local_prefs.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/model/search_model.dart';
 import 'package:workout_notepad_v2/otel.dart';
-import 'package:workout_notepad_v2/views/workout_templates/workout_template_model.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/functions.dart';
 import 'package:workout_notepad_v2/views/account/anon_create.dart';
 import 'package:workout_notepad_v2/views/account/root.dart';
 import 'package:workout_notepad_v2/views/home.dart';
+import 'package:workout_notepad_v2/views/workout_templates/workout_template_model.dart';
 
 void main() {
   runZonedGuarded(
@@ -110,6 +112,7 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider(create: (context) => WorkoutTemplateModel()),
           ChangeNotifierProvider(create: (context) => InternetProvider()),
           ChangeNotifierProvider(create: (context) => LocalPrefs()),
+          ChangeNotifierProvider(create: (context) => QueryModel()),
         ],
         builder: (context, child) {
           return _body(context);

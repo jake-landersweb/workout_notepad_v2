@@ -17,6 +17,7 @@ import 'package:workout_notepad_v2/views/overview/previous_workout.dart';
 import 'package:workout_notepad_v2/views/overview/workout_list.dart';
 import 'package:workout_notepad_v2/views/overview/workout_progress.dart';
 import 'package:workout_notepad_v2/views/profile/profile.dart';
+import 'package:workout_notepad_v2/views/profile/profile_photo.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/workouts/create_edit/cew.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/launch_workout.dart';
@@ -66,7 +67,8 @@ class _OverviewHomeState extends State<OverviewHome> {
             },
             child: Row(
               children: [
-                dmodel.user!.avatar(context, size: 50),
+                // dmodel.user!.avatar(context, size: 50),
+                ProfilePhoto(user: dmodel.user!, size: 50),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Container(

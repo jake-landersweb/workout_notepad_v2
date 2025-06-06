@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
+import 'package:workout_notepad_v2/data/query_model.dart';
 import 'package:workout_notepad_v2/data/user.dart';
 import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/logger/events/generic.dart';
@@ -11,6 +12,7 @@ import 'package:workout_notepad_v2/model/data_model.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/image.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+import 'package:workout_notepad_v2/views/profile/profile_photo.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({
@@ -73,12 +75,17 @@ class _EditProfileState extends State<EditProfile> {
             });
             var response = await _save(context, dmodel);
             if (response) {
+              context.read<QueryModel>().invalidateAll(
+                fn: (unencodedKey, key) {
+                  return key.contains("profile-photo-");
+                },
+              );
               await dmodel.getUser();
               widget.onSave();
               Navigator.of(context, rootNavigator: true).pop();
             }
             setState(() {
-              _isLoading = true;
+              _isLoading = false;
             });
           },
           child: _isLoading
@@ -97,18 +104,13 @@ class _EditProfileState extends State<EditProfile> {
         Clickable(
           onTap: () => _selectMedia(context),
           child: _file == null
-              ? SizedBox(
-                  height: 150,
-                  width: 150,
-                  child: Align(
-                    child: widget.user.avatar(context, size: 150),
-                  ),
-                )
+              ? ProfilePhoto(user: widget.user)
               : SizedBox(
                   height: 150,
                   width: 150,
                   child: Align(
-                    child: ClipOval(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
                       child: Image(
                         image: FileImage(_file!.file!),
                         height: 150,
@@ -219,20 +221,17 @@ class _EditProfileState extends State<EditProfile> {
           jsonEncode(body),
         );
         if (response.statusCode != 200) {
-          print(response.body);
-          return false;
+          throw Exception(response.body);
         }
         if (_changedImg) {
           _file!.ejectFromCache();
         }
         snackbarStatus(context, "Successfully updated your profile");
-      } else {
-        print("No changes to make");
       }
       return true;
     } catch (e, stack) {
-      print(e);
-      print(stack);
+      logger.exception(e, stack);
+      snackbarErr(context, "There was an unknown issue saving your profile");
       return false;
     } finally {
       logger.event(GenericEvent("save-profile"));

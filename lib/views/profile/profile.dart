@@ -21,6 +21,7 @@ import 'package:workout_notepad_v2/views/profile/local_preferences.dart';
 import 'package:workout_notepad_v2/views/profile/manage_data.dart';
 import 'package:workout_notepad_v2/views/profile/manage_purchases.dart';
 import 'package:workout_notepad_v2/views/profile/paywall.dart';
+import 'package:workout_notepad_v2/views/profile/profile_photo.dart';
 import 'package:workout_notepad_v2/views/profile/promo_code_v2.dart';
 import 'package:workout_notepad_v2/views/profile/re_auth.dart';
 import 'package:workout_notepad_v2/views/welcome.dart';
@@ -106,10 +107,12 @@ class _ProfileState extends State<Profile> {
           const SizedBox(height: 16),
           Center(
             child: Padding(
-              key: _avatarKey,
-              padding: const EdgeInsets.only(bottom: 16.0),
-              child: dmodel.user!.avatar(context, size: 125),
-            ),
+                key: _avatarKey,
+                padding: const EdgeInsets.only(bottom: 16.0),
+                child: ProfilePhoto(
+                  user: dmodel.user!,
+                  size: 125,
+                )),
           ),
           Center(
             child: Row(
@@ -317,8 +320,6 @@ class _ProfileState extends State<Profile> {
                 post: StyledSectionItemPost.model,
                 isLocked: false,
                 onTap: () async {
-                  // var iap = InAppPurchase.instance;
-                  // await iap.restorePurchases();
                   showModalSheet(
                     context: context,
                     height: MediaQuery.of(context).size.height * 0.9,
@@ -330,6 +331,23 @@ class _ProfileState extends State<Profile> {
                       ),
                     ),
                   );
+                  // showModalSheet(
+                  //   context: context,
+                  //   builder: (context, controller, scrollKey) {
+                  //     return ListView(
+                  //       key: scrollKey,
+                  //       controller: controller,
+                  //       children: [
+                  //         for (var i = 0; i < 20; i++)
+                  //           Container(
+                  //             height: 100,
+                  //             width: double.infinity,
+                  //             color: ColorUtil.random(i.toString()),
+                  //           ),
+                  //       ],
+                  //     );
+                  //   },
+                  // );
                 },
               ),
             ],

@@ -3,6 +3,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/utils/color.dart';
 
@@ -192,7 +193,7 @@ class _ModalWidgetState extends State<_ModalWidget>
   // Animation constants
   static const double _minScale = 0.8;
   static const double _maxScale = 1.0;
-  static const double _dismissThresholdRatio = 0.4; // 40% of screen height
+  static const double _dismissThresholdRatio = 0.25; // 25% of screen height
 
   @override
   void initState() {
@@ -206,21 +207,18 @@ class _ModalWidgetState extends State<_ModalWidget>
 
     // Animation controllers setup
     _animationController = AnimationController(
-        duration: const Duration(milliseconds: 300), vsync: this);
+        duration: const Duration(milliseconds: 500), vsync: this);
     _snapBackController = AnimationController(
-        duration: const Duration(milliseconds: 250), vsync: this);
+        duration: const Duration(milliseconds: 450), vsync: this);
     _dismissController = AnimationController(
-        duration: const Duration(milliseconds: 200), vsync: this);
+        duration: const Duration(milliseconds: 400), vsync: this);
 
     _slideAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
-        CurvedAnimation(
-            parent: _animationController, curve: Curves.easeOutCubic));
+        CurvedAnimation(parent: _animationController, curve: Sprung(36)));
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(
-            parent: _animationController, curve: Curves.easeOutCubic));
+        CurvedAnimation(parent: _animationController, curve: Sprung(36)));
     _snapBackAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
-        CurvedAnimation(
-            parent: _snapBackController, curve: Curves.easeOutCubic));
+        CurvedAnimation(parent: _snapBackController, curve: Sprung(36)));
     _dismissAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(parent: _dismissController, curve: Curves.easeInCubic));
 

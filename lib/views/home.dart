@@ -3,22 +3,22 @@ import 'package:line_icons/line_icons.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
+import 'package:workout_notepad_v2/components/modal_sheet.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/logger/events/navigation.dart';
 import 'package:workout_notepad_v2/model/internet_provider.dart';
-
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/logs/insights_home.dart';
-import 'package:workout_notepad_v2/views/overview/workout_progress.dart';
-import 'package:workout_notepad_v2/views/workout_templates/wt_home.dart';
 import 'package:workout_notepad_v2/views/logs/post_workout.dart';
 import 'package:workout_notepad_v2/views/logs/root.dart';
 import 'package:workout_notepad_v2/views/overview/root.dart';
-import 'package:workout_notepad_v2/views/root.dart';
+import 'package:workout_notepad_v2/views/overview/workout_progress.dart';
 import 'package:workout_notepad_v2/views/profile/profile.dart';
+import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/welcome.dart';
+import 'package:workout_notepad_v2/views/workout_templates/wt_home.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/launch_workout.dart';
 
 enum HomeScreen { logs, overview, exercises, profile, discover, insights }
@@ -65,10 +65,13 @@ class _HomeState extends State<Home> {
     if (wlid.isNotEmpty) {
       print(wlid);
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        cupertinoSheet(
+        showModalSheet(
           context: context,
-          builder: (context) => PostWorkoutSummary(
+          builder: (context, scrollController, scrollArea) =>
+              PostWorkoutSummary(
             workoutLogId: wlid[0]['workoutLogId'] as String,
+            scrollController: scrollController,
+            scrollArea: scrollArea,
             onSave: (v) {},
           ),
         );

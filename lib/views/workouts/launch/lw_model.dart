@@ -14,8 +14,8 @@ import 'package:workout_notepad_v2/data/collection.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
-import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/logger.dart';
+import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/otel.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
@@ -523,13 +523,29 @@ class LaunchWorkoutModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Tuple2<bool, String>> finishWorkout(DataModel dmodel) async {
+  Future<Tuple2<bool, String>> finishWorkout(
+      BuildContext context, DataModel dmodel) async {
     try {
-      if (state.exercises.isEmpty) {
-        await dmodel.stopWorkout(isCancel: true);
+      // check if exercise is empty
+      bool empty = true;
+      if (state.exercises.isNotEmpty) {
+        empty = false;
+      }
+
+      for (var group in state.exerciseLogs) {
+        for (var exercise in group) {
+          if (exercise.metadata.isNotEmpty) {
+            empty = false;
+          }
+        }
+      }
+
+      if (empty) {
+        await dmodel.stopWorkout(context, isCancel: true);
         return Tuple2(
             true, "The exercise was empty, so this workout was not saved.");
       }
+
       var db = await DatabaseProvider().database;
       // remove all metadata that is not valid
       for (var i in state.exerciseLogs) {
@@ -636,7 +652,7 @@ class LaunchWorkoutModel extends ChangeNotifier {
       //   }
       // }
 
-      await dmodel.stopWorkout();
+      await dmodel.stopWorkout(context);
       _span.setStatus(StatusCode.ok);
       return Tuple2(true, "");
     } catch (error, stack) {
@@ -710,7 +726,7 @@ class LaunchWorkoutModel extends ChangeNotifier {
 
   Future<void> handleFinish(BuildContext context, DataModel dmodel) async {
     // send the request
-    var response = await finishWorkout(dmodel);
+    var response = await finishWorkout(context, dmodel);
     if (response.v1) {
       if (response.v2.isNotEmpty) {
         snackbarStatus(

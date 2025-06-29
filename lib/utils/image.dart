@@ -1,20 +1,21 @@
 // ignore_for_file: avoid_print
 
 import 'dart:io';
+
+import 'package:aws_common/aws_common.dart';
+import 'package:aws_signature_v4/aws_signature_v4.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:video_compress/video_compress.dart';
 import 'package:workout_notepad_v2/components/root.dart';
+import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/model/env.dart';
 import 'package:workout_notepad_v2/utils/tuple.dart';
-import 'package:aws_signature_v4/aws_signature_v4.dart';
-import 'package:aws_common/aws_common.dart';
-import 'package:http/http.dart' as http;
-import 'package:workout_notepad_v2/logger.dart';
 
 enum AppFileType { video, image, none }
 
@@ -393,7 +394,7 @@ Future<void> promptMedia({
 }
 
 /// Generates a signed download url for an object in s3
-Future<String> _getPresignedUrl(String objectKey) async {
+Future<String> getPresignedUrl(String objectKey) async {
   var signer = _getAwsSigner();
   final scope = AWSCredentialScope(
     region: "us-west-2",
@@ -440,7 +441,7 @@ Future<File?> _getCachedFile(String objectKey) async {
     // If the file doesn't exist in cache, try to download it
     try {
       // Assuming a function getSignedUrl exists that can generate signed URL
-      String signedUrl = await _getPresignedUrl(objectKey);
+      String signedUrl = await getPresignedUrl(objectKey);
 
       // Download the file from the signedUrl
       var response = await http.get(Uri.parse(signedUrl));

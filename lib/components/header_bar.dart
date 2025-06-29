@@ -1,9 +1,11 @@
 // ignore_for_file: must_be_immutable
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'dart:io';
 import 'package:sprung/sprung.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
+
 import 'root.dart' as sui;
 
 class HeaderBar extends StatefulWidget {
@@ -36,6 +38,7 @@ class HeaderBar extends StatefulWidget {
     this.animateOnAdd = false,
     this.largeTitlePadding = EdgeInsets.zero,
     this.forceNoBar = false,
+    this.scrollKey,
   }) : super(key: key);
 
   HeaderBar.sheet({
@@ -61,6 +64,7 @@ class HeaderBar extends StatefulWidget {
     this.animateOnAdd = false,
     this.largeTitlePadding = EdgeInsets.zero,
     this.forceNoBar = false,
+    this.scrollKey,
   }) {
     // set sheet specific attributes
     isLarge = false;
@@ -98,6 +102,7 @@ class HeaderBar extends StatefulWidget {
   final bool animateOnAdd;
   final EdgeInsets largeTitlePadding;
   final bool forceNoBar;
+  final Key? scrollKey;
 
   @override
   _HeaderBarState createState() => _HeaderBarState();
@@ -182,13 +187,17 @@ class _HeaderBarState extends State<HeaderBar> {
       // show elevation indicators soon after scroll
       // FOR BOTH SMALL AND LARGE
       if (_scrollController.offset > 10) {
-        setState(() {
-          _showElevation = true;
-        });
+        if (mounted) {
+          setState(() {
+            _showElevation = true;
+          });
+        }
       } else {
-        setState(() {
-          _showElevation = false;
-        });
+        if (mounted) {
+          setState(() {
+            _showElevation = false;
+          });
+        }
       }
 
       // FOR CONTROLLING SHOWING AND HIDING SMALL TITLE
@@ -312,6 +321,7 @@ class _HeaderBarState extends State<HeaderBar> {
                     children: _children(context),
                   )
                 : ListView(
+                    key: widget.scrollKey,
                     controller: _scrollController,
                     padding: EdgeInsets.zero,
                     physics: Platform.isIOS

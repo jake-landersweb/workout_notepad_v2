@@ -2,19 +2,22 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/logger.dart';
 import 'package:workout_notepad_v2/model/client.dart';
-import 'package:http/http.dart' as http;
 import 'package:workout_notepad_v2/model/env.dart';
 import 'package:workout_notepad_v2/model/internet_provider.dart';
 import 'package:workout_notepad_v2/utils/image.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 
-enum SubscriptionType { none, wn_unlocked }
+enum SubscriptionType {
+  none,
+  wn_unlocked,
+}
 
 SubscriptionType subStatusFromJson(String? status) {
   switch (status) {

@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
-
 import 'package:workout_notepad_v2/components/alert.dart';
 import 'package:workout_notepad_v2/components/blurred_container.dart';
 import 'package:workout_notepad_v2/components/clickable.dart';
@@ -366,7 +365,7 @@ class _LaunchWorkoutState extends State<LaunchWorkout> {
                       submitText: "Yes",
                       onSubmit: () {
                         Navigator.of(context, rootNavigator: true).pop();
-                        dmodel.stopWorkout(isCancel: true);
+                        dmodel.stopWorkout(context, isCancel: true);
                       },
                     );
                   },

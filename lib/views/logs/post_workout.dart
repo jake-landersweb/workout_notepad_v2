@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:workout_notepad_v2/components/modal_sheet.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/exercise.dart';
 import 'package:workout_notepad_v2/data/root.dart';
@@ -19,7 +21,7 @@ import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/exercises/category_cell.dart';
 import 'package:workout_notepad_v2/views/exercises/logs/el_cell.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:workout_notepad_v2/views/workouts/logs/graphs/wl_distribution.dart';
 import 'package:workout_notepad_v2/views/workouts/logs/wl_edit.dart';
 
 class WorkoutSummaryModel extends ChangeNotifier {
@@ -125,10 +127,14 @@ class PostWorkoutSummary extends StatefulWidget {
   const PostWorkoutSummary({
     super.key,
     required this.workoutLogId,
+    required this.scrollController,
+    required this.scrollArea,
     this.onSave,
   });
   final String workoutLogId;
   final void Function(WorkoutLog wl)? onSave;
+  final ScrollController scrollController;
+  final GlobalKey scrollArea;
 
   @override
   State<PostWorkoutSummary> createState() => _PostWorkoutSummaryState();
@@ -149,125 +155,120 @@ class _PostWorkoutSummaryState extends State<PostWorkoutSummary> {
 
   @override
   Widget build(BuildContext context) {
-    return Navigator(onGenerateRoute: (RouteSettings settings) {
-      return MaterialPageRoute(builder: (context) {
-        return Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            HeaderBar.sheet(
-              title: "Summary",
-              leading: const [CloseButton2(useRoot: true)],
-              trailing: [
-                if (widget.onSave != null)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: EditButton(onTap: () {
-                      cupertinoSheet(
-                        context: context,
-                        builder: (context) => WLEdit(
-                            wl: _workoutLog!,
-                            onSave: (v) async {
-                              widget.onSave!(v);
-                              await _init();
-                              await Future.delayed(
-                                  const Duration(milliseconds: 50));
-                              setState(() {
-                                _refresh = true;
-                              });
-                            }),
-                      );
-                    }),
-                  )
-              ],
-              horizontalSpacing: 0,
-              children: [
-                if (_workoutLog != null) _body(context, _workoutLog!),
-              ],
-            ),
-            // action buttons
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                  8, 0, 8, MediaQuery.of(context).padding.bottom + 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Clickable(
-                    onTap: () {
-                      if (_viewType == _ViewType.full) {
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        HeaderBar(
+          title: "Summary",
+          scrollController: widget.scrollController,
+          scrollKey: widget.scrollArea,
+          leading: [
+            if (widget.onSave != null)
+              EditButton(onTap: () {
+                showModalSheet(
+                  context: context,
+                  hasSafeArea: false,
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  builder: (context, _, __) => WLEdit(
+                      wl: _workoutLog!,
+                      onSave: (v) async {
+                        widget.onSave!(v);
+                        await _init();
+                        await Future.delayed(const Duration(milliseconds: 50));
                         setState(() {
-                          _viewType = _ViewType.square;
+                          _refresh = true;
                         });
-                      } else {
-                        setState(() {
-                          _viewType = _ViewType.full;
-                        });
-                      }
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.cell(context)[100],
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            spreadRadius: 5,
-                            blurRadius: 7,
-                          ),
-                        ],
-                      ),
-                      height: MediaQuery.of(context).size.width * 0.15,
-                      width: MediaQuery.of(context).size.width * 0.15,
-                      child: Center(
-                        child: Icon(_viewType == _ViewType.square
-                            ? Icons.crop_square_rounded
-                            : Icons.crop_portrait),
-                      ),
-                    ),
-                  ),
-                  Clickable(
-                    onTap: () async {
-                      setState(() {
-                        _isLoading = true;
-                      });
-                      await _share(context);
-                      setState(() {
-                        _isLoading = false;
-                      });
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            spreadRadius: 5,
-                            blurRadius: 7,
-                          ),
-                        ],
-                      ),
-                      height: MediaQuery.of(context).size.width * 0.15,
-                      width: MediaQuery.of(context).size.width * 0.15,
-                      child: Center(
-                        child: _isLoading
-                            ? LoadingIndicator(color: Colors.white)
-                            : Padding(
-                                padding: EdgeInsets.only(bottom: 3.0),
-                                child: Icon(
-                                  Icons.ios_share_rounded,
-                                  color: Colors.white,
-                                ),
-                              ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+                      }),
+                );
+              })
           ],
-        );
-      });
-    });
+          horizontalSpacing: 0,
+          children: [
+            if (_workoutLog != null) _body(context, _workoutLog!),
+          ],
+        ),
+        // action buttons
+        Padding(
+          padding: EdgeInsets.fromLTRB(
+              8, 0, 8, MediaQuery.of(context).padding.bottom + 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Clickable(
+                onTap: () {
+                  if (_viewType == _ViewType.full) {
+                    setState(() {
+                      _viewType = _ViewType.square;
+                    });
+                  } else {
+                    setState(() {
+                      _viewType = _ViewType.full;
+                    });
+                  }
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.cell(context)[100],
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                      ),
+                    ],
+                  ),
+                  height: MediaQuery.of(context).size.width * 0.15,
+                  width: MediaQuery.of(context).size.width * 0.15,
+                  child: Center(
+                    child: Icon(_viewType == _ViewType.square
+                        ? Icons.crop_square_rounded
+                        : Icons.crop_portrait),
+                  ),
+                ),
+              ),
+              Clickable(
+                onTap: () async {
+                  setState(() {
+                    _isLoading = true;
+                  });
+                  await _share(context);
+                  setState(() {
+                    _isLoading = false;
+                  });
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        spreadRadius: 5,
+                        blurRadius: 7,
+                      ),
+                    ],
+                  ),
+                  height: MediaQuery.of(context).size.width * 0.15,
+                  width: MediaQuery.of(context).size.width * 0.15,
+                  child: Center(
+                    child: _isLoading
+                        ? LoadingIndicator(color: Colors.white)
+                        : Padding(
+                            padding: EdgeInsets.only(bottom: 3.0),
+                            child: Icon(
+                              Icons.ios_share_rounded,
+                              color: Colors.white,
+                            ),
+                          ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _body(BuildContext context, WorkoutLog wl) {
@@ -737,87 +738,7 @@ class _PostWorkoutSummaryState extends State<PostWorkoutSummary> {
     bool showHeader = true,
     bool expanded = false,
   }) {
-    Widget content = Padding(
-      padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
-      child: LineChart(
-        LineChartData(
-          lineBarsData: [
-            LineChartBarData(
-              barWidth: 3,
-              color: Theme.of(context).colorScheme.primary,
-              isCurved: true,
-              preventCurveOverShooting: false,
-              curveSmoothness: 0.2,
-              isStrokeCapRound: true,
-              dotData: FlDotData(
-                show: true,
-                getDotPainter: (p0, p1, p2, p3) {
-                  return FlDotCirclePainter(
-                    radius: 4,
-                    color: Theme.of(context).colorScheme.primary,
-                    strokeWidth: 0,
-                  );
-                },
-              ),
-              spots: [
-                for (int i = 0; i < model.weightDistribution.length; i++)
-                  FlSpot(i + 1, model.weightDistribution[i].toDouble())
-              ],
-            ),
-          ],
-          gridData: FlGridData(show: false),
-          borderData: FlBorderData(show: false),
-          lineTouchData: LineTouchData(
-            enabled: true,
-            touchTooltipData: LineTouchTooltipData(
-              fitInsideHorizontally: true,
-              fitInsideVertically: true,
-              getTooltipColor: (spot) {
-                return AppColors.cell(context);
-              },
-              getTooltipItems: (touchedSpots) {
-                List<LineTooltipItem> items = [];
-                for (var i in touchedSpots) {
-                  items.add(
-                    LineTooltipItem(
-                      "Set #${i.x.round()}\n${i.y.round()} lbs",
-                      ttBody(
-                        context,
-                        color: i.bar.color,
-                      ),
-                    ),
-                  );
-                }
-                return items;
-              },
-            ),
-          ),
-          titlesData: FlTitlesData(
-            rightTitles: AxisTitles(),
-            topTitles: AxisTitles(),
-            leftTitles: AxisTitles(),
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                getTitlesWidget: (value, meta) {
-                  if (value.round() != value) {
-                    return Container();
-                  }
-                  return Text(
-                    "${model.weightDistribution[value.round() - 1]}",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: AppColors.subtext(context),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+    Widget content = WLDistribution(workoutLogId: model.wl.workoutLogId);
     return Container(
       decoration: BoxDecoration(
         color: AppColors.cell(context),
@@ -829,7 +750,7 @@ class _PostWorkoutSummaryState extends State<PostWorkoutSummary> {
           if (showHeader)
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text("Weight by Set", style: ttcaption(context)),
+              child: Text("Distribution", style: ttcaption(context)),
             ),
           if (expanded)
             Expanded(child: content)

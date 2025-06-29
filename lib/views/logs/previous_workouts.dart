@@ -1,5 +1,8 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:workout_notepad_v2/components/modal_sheet.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/model/root.dart';
@@ -7,7 +10,6 @@ import 'package:workout_notepad_v2/text_themes.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/views/logs/no_logs.dart';
 import 'package:workout_notepad_v2/views/logs/post_workout.dart';
-import 'dart:math' as math;
 
 class LogsPreviousWorkouts extends StatefulWidget {
   const LogsPreviousWorkouts({super.key});
@@ -108,10 +110,13 @@ class _LogsPreviousWorkoutsState extends State<LogsPreviousWorkouts> {
         children: _workoutLogs,
         onChildTap: (context, item, index) {
           print(item.workoutLogId);
-          cupertinoSheet(
+          showModalSheet(
             context: context,
-            builder: (context) => PostWorkoutSummary(
+            builder: (context, scrollController, scrollArea) =>
+                PostWorkoutSummary(
               workoutLogId: item.workoutLogId,
+              scrollController: scrollController,
+              scrollArea: scrollArea,
               onSave: (wl) => setState(() {
                 _workoutLogs[index] = wl;
               }),

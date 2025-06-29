@@ -7,6 +7,7 @@ import 'package:line_icons/line_icons.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:workout_notepad_v2/components/root.dart';
+import 'package:workout_notepad_v2/data/query_model.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
@@ -16,6 +17,7 @@ import 'package:workout_notepad_v2/views/overview/previous_workout.dart';
 import 'package:workout_notepad_v2/views/overview/workout_list.dart';
 import 'package:workout_notepad_v2/views/overview/workout_progress.dart';
 import 'package:workout_notepad_v2/views/profile/profile.dart';
+import 'package:workout_notepad_v2/views/profile/profile_photo.dart';
 import 'package:workout_notepad_v2/views/root.dart';
 import 'package:workout_notepad_v2/views/workouts/create_edit/cew.dart';
 import 'package:workout_notepad_v2/views/workouts/launch/launch_workout.dart';
@@ -39,6 +41,7 @@ class _OverviewHomeState extends State<OverviewHome> {
       onRefresh: () async {
         await Future.delayed(const Duration(milliseconds: 300));
         await dmodel.fetchData(checkData: false);
+        context.read<QueryModel>().invalidateAll();
       },
       children: [
         _build(context, dmodel),
@@ -64,7 +67,8 @@ class _OverviewHomeState extends State<OverviewHome> {
             },
             child: Row(
               children: [
-                dmodel.user!.avatar(context, size: 50),
+                // dmodel.user!.avatar(context, size: 50),
+                ProfilePhoto(user: dmodel.user!, size: 50),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Container(
@@ -362,7 +366,7 @@ class _OverviewHomeState extends State<OverviewHome> {
               ),
             ),
           ),
-          if (dmodel.workouts.isNotEmpty) _templates(context, dmodel),
+          if (dmodel.allWorkouts.isNotEmpty) _templates(context, dmodel),
         ],
       );
     }

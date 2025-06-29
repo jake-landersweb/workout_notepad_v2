@@ -1,7 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-
-import 'package:workout_notepad_v2/components/root.dart' as comp;
+import 'package:workout_notepad_v2/components/modal_sheet.dart';
 import 'package:workout_notepad_v2/components/wrapped_button.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
 import 'package:workout_notepad_v2/text_themes.dart';
@@ -66,10 +65,13 @@ class _WorkoutLogCellState extends State<WorkoutLogCell> {
                     rowAxisSize: MainAxisSize.max,
                     center: true,
                     onTap: () {
-                      comp.cupertinoSheet(
+                      showModalSheet(
                         context: context,
-                        builder: (context) => PostWorkoutSummary(
+                        builder: (context, scrollController, scrollArea) =>
+                            PostWorkoutSummary(
                           workoutLogId: widget.workoutLog.workoutLogId,
+                          scrollController: scrollController,
+                          scrollArea: scrollArea,
                           onSave: (wl) async {
                             _wl = wl;
                             _wl.exerciseLogs = await _wl.getExercises() ?? [];

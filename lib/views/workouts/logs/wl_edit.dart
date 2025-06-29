@@ -1,12 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:workout_notepad_v2/components/modal_sheet.dart';
 import 'package:workout_notepad_v2/components/root.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
-import 'package:workout_notepad_v2/model/root.dart';
-import 'package:workout_notepad_v2/text_themes.dart';
-import 'package:workout_notepad_v2/utils/root.dart';
 import 'package:workout_notepad_v2/logger.dart';
+import 'package:workout_notepad_v2/model/root.dart';
+import 'package:workout_notepad_v2/utils/root.dart';
 
 class WLEdit extends StatefulWidget {
   const WLEdit({
@@ -44,20 +44,7 @@ class _WLEditState extends State<WLEdit> {
   @override
   Widget build(BuildContext context) {
     return HeaderBar.sheet(
-      title: "",
-      leading: const [CancelButton()],
-      trailing: [
-        Clickable(
-          onTap: () => _onSave(),
-          child: Text(
-            "Save",
-            style: ttLabel(
-              context,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-          ),
-        ),
-      ],
+      title: "Edit Workout Log",
       children: [
         const SizedBox(height: 16),
         Container(
@@ -95,6 +82,15 @@ class _WLEditState extends State<WLEdit> {
             },
           ),
         ),
+        const SizedBox(height: 32),
+        WrappedButton(
+          title: "Save",
+          type: WrappedButtonType.main,
+          center: true,
+          onTap: () {
+            _onSave();
+          },
+        ),
       ],
     );
   }
@@ -116,7 +112,7 @@ class _WLEditState extends State<WLEdit> {
         throw "No items were changed in database";
       }
       widget.onSave(_wl);
-      Navigator.of(context).pop();
+      ModalSheet.dismissTop();
     } catch (e, stack) {
       logger.exception(e, stack);
       snackbarErr(context, "There was an unknown error");

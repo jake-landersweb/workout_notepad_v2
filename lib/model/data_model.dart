@@ -3,18 +3,23 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pocketbase/pocketbase.dart';
+import 'package:provider/provider.dart';
 import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:workout_notepad_v2/data/collection.dart';
 import 'package:workout_notepad_v2/data/exercise_log.dart';
+import 'package:workout_notepad_v2/data/query_model.dart';
 import 'package:workout_notepad_v2/data/root.dart';
 import 'package:workout_notepad_v2/data/snapshot.dart';
 import 'package:workout_notepad_v2/data/workout_log.dart';
@@ -27,8 +32,6 @@ import 'package:workout_notepad_v2/model/env.dart';
 import 'package:workout_notepad_v2/model/pocketbaseAuth.dart';
 import 'package:workout_notepad_v2/model/root.dart';
 import 'package:workout_notepad_v2/utils/root.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:http/http.dart' as http;
 import 'package:workout_notepad_v2/views/workouts/launch/lw_model.dart';
 
 enum LoadStatus { init, noUser, done, expired }
@@ -619,6 +622,7 @@ class DataModel extends ChangeNotifier {
   bool loadingRemoteTemplates = true;
 
   Future<void> logout(BuildContext context) async {
+    context.read<QueryModel>().invalidateAll();
     // create a snapshot of their data
     // var response = await snapshotData();
     var cont = true;
@@ -722,7 +726,8 @@ class DataModel extends ChangeNotifier {
     return workoutState!;
   }
 
-  Future<void> stopWorkout({bool isCancel = false}) async {
+  Future<void> stopWorkout(BuildContext context,
+      {bool isCancel = false}) async {
     if (workoutState!.isEmpty && isCancel) {
       print("Deleting this temporary workout");
       var db = await DatabaseProvider().database;
@@ -741,6 +746,10 @@ class DataModel extends ChangeNotifier {
     await workoutState!.deleteFile();
     workoutState = null;
     await fetchData();
+
+    // invalidate the previous workout query
+    context.read<QueryModel>().invalidate(QueryKey.PREVIOUS_WORKOUT_LOG());
+
     notifyListeners();
   }
 

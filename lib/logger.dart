@@ -14,12 +14,12 @@ var logger = Logger(
   level: kDebugMode ? LogLevel.debug : LogLevel.info,
   sinks: [
     ConsoleLogSink(),
-    if (!kDebugMode)
-      OtelLogSink(
-        endpoint: "$OTEL_BACKEND_HOST/v1/logs",
-        apiKey: OTEL_BACKEND_API_KEY,
-        flushDuration: Duration(seconds: kDebugMode ? 5 : 30),
-      ),
+    // if (!kDebugMode)
+    OtelLogSink(
+      endpoint: "$OTEL_BACKEND_HOST/v1/logs",
+      apiKey: OTEL_BACKEND_API_KEY,
+      flushDuration: Duration(seconds: kDebugMode ? 5 : 30),
+    ),
     // ConsoleLogSink(),
     // OtelLogSink(
     //   endpoint: "$OTEL_BACKEND_HOST/v1/logs",

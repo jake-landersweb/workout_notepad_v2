@@ -22,8 +22,8 @@ class QueryKey {
 class QueryModel extends ChangeNotifier {
   QueryModel() {
     CachedQuery.instance.config(
-      config: QueryConfig(
-        refetchDuration: Duration(minutes: 30),
+      config: GlobalQueryConfig(
+        staleDuration: Duration(minutes: 30),
         cacheDuration: Duration(minutes: 30),
       ),
     );

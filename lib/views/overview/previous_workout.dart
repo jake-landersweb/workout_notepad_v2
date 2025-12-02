@@ -89,14 +89,14 @@ class _PreviousWorkoutState extends State<PreviousWorkout> {
         if (snapshot.connectionState == ConnectionState.waiting ||
             (snapshot.hasData &&
                 snapshot.data?.data == null &&
-                snapshot.data?.error == null)) {
+                snapshot.error == null)) {
           return const Center(child: LoadingIndicator());
         }
 
         // Error getting the actual data packet
-        if (snapshot.hasData && snapshot.data?.error != null) {
+        if (snapshot.hasData && snapshot.error != null) {
           return Center(
-            child: Text("Uh oh! Issue: ${snapshot.data!.error}"),
+            child: Text("Uh oh! Issue: ${snapshot.error}"),
           );
         }
 

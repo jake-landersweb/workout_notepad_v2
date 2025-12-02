@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'package:workout_notepad_v2/logger/formatter/logfmt_log_formatter.dart';
 import 'package:workout_notepad_v2/logger/record.dart';
@@ -25,7 +26,7 @@ class OtelLogSink implements LogSink {
     this.batchSize = 50,
     Duration? flushDuration,
   }) {
-    this.flushDuration = flushDuration ?? Duration(seconds: 60);
+    this.flushDuration = flushDuration ?? Duration(seconds: 5);
     _buffer = [];
     _bufferFormatted = [];
 
@@ -80,6 +81,7 @@ class OtelLogSink implements LogSink {
 
         // TODO: handle failing of responses (i.e. bad internet connection)
         response;
+        print(response);
       }
     } catch (error, stack) {
       Zone.root.run(() {
@@ -165,14 +167,14 @@ class OtelLogSink implements LogSink {
 
   Future<bool> _sendToOtelBackend(Map<String, dynamic> payload) async {
     try {
-      final response = await http.post(
-        Uri.parse(endpoint),
-        headers: {
-          'Content-Type': 'application/json',
-          if (apiKey.isNotEmpty) 'x-api-key': apiKey,
-        },
-        body: jsonEncode(payload),
-      );
+      final request = http.Request('POST', Uri.parse(endpoint));
+      request.headers['Content-Type'] = 'application/json';
+      request.headers['Authorization'] = 'Basic $apiKey';
+
+      request.bodyBytes = utf8.encode(jsonEncode(payload));
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
 
       if (response.statusCode > 299) {
         throw Exception(

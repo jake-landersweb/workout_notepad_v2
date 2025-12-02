@@ -23,7 +23,7 @@ class ProfilePhoto extends StatelessWidget {
       width: size,
       child: Align(
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(size),
           child: _body(context),
         ),
       ),
@@ -54,12 +54,12 @@ class ProfilePhoto extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting ||
               (snapshot.hasData &&
                   snapshot.data?.data == null &&
-                  snapshot.data?.error == null)) {
+                  snapshot.error == null)) {
             return _loading(context);
           }
 
           // fetch error
-          if (snapshot.hasData && snapshot.data?.error != null) {
+          if (snapshot.hasData && snapshot.error != null) {
             return _offline(context);
           }
 

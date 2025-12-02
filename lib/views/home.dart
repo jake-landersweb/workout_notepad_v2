@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:line_icons/line_icons.dart';
+import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:sprung/sprung.dart';
@@ -45,8 +46,8 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   bool _modelShown = false;
-  final double _tabWidth = 45;
-  final double _tabHeight = 34;
+  final double _tabWidth = 54;
+  final double _tabHeight = 40;
 
   Future<void> _showWelcome(BuildContext context) async {
     await Future.delayed(const Duration(milliseconds: 500));
@@ -177,85 +178,102 @@ class _HomeState extends State<Home> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       // Your main bar as it currently is.
-                      BlurredContainer(
-                        backgroundColor: AppColors.cell(context),
-                        opacity: 0.5,
-                        blur: 5,
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(
-                            color: AppColors.border(context), width: 2),
-                        alignment: Alignment.center,
-                        shrink: true,
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Stack(
-                                alignment: Alignment.centerLeft,
-                                children: [
-                                  AnimatedPositioned(
-                                    duration: const Duration(milliseconds: 500),
-                                    curve: Sprung.overDamped,
-                                    left: _getPositionValue(
-                                            Provider.of<ScreenModel>(context)) *
-                                        _tabWidth,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .primary
-                                            .withValues(alpha: 0.5),
-                                        borderRadius: BorderRadius.circular(26),
-                                      ),
-                                      height: _tabHeight,
-                                      width: _tabWidth,
-                                    ),
-                                  ),
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
+                      // BlurredContainer(
+                      //   backgroundColor: AppColors.cell(context),
+                      //   opacity: 0.5,
+                      //   blur: 5,
+                      //   borderRadius: BorderRadius.circular(30),
+                      //   border: Border.all(
+                      //       color: AppColors.border(context), width: 2),
+                      //   alignment: Alignment.center,
+                      //   shrink: true,
+                      Stack(
+                        alignment: Alignment.centerLeft,
+                        children: [
+                          LiquidGlass(
+                            shape: LiquidRoundedSuperellipse(
+                              borderRadius: Radius.circular(30),
+                            ),
+                            settings: LiquidGlassSettings(
+                              glassColor: AppColors.cell(context)
+                                  .withValues(alpha: 0.5),
+                              refractiveIndex: 1.1,
+                            ),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Stack(
+                                    alignment: Alignment.centerLeft,
                                     children: [
-                                      _barRow(
-                                        context,
-                                        screenModel,
-                                        LineIcons.list,
-                                        "Exercises",
-                                        HomeScreen.exercises,
-                                      ),
-                                      _barRow(
-                                        context,
-                                        screenModel,
-                                        LineIcons.compass,
-                                        "Discover",
-                                        HomeScreen.discover,
-                                      ),
-                                      _barRow(
-                                        context,
-                                        screenModel,
-                                        LineIcons.dumbbell,
-                                        "Dashboard",
-                                        HomeScreen.overview,
-                                      ),
-                                      _barRow(
-                                        context,
-                                        screenModel,
-                                        LineIcons.lightbulb,
-                                        "Insights",
-                                        HomeScreen.insights,
-                                      ),
-                                      _barRow(
-                                        context,
-                                        screenModel,
-                                        LineIcons.pieChart,
-                                        "Logs",
-                                        HomeScreen.logs,
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          _barRow(
+                                            context,
+                                            screenModel,
+                                            LineIcons.list,
+                                            "Exercises",
+                                            HomeScreen.exercises,
+                                          ),
+                                          _barRow(
+                                            context,
+                                            screenModel,
+                                            LineIcons.compass,
+                                            "Discover",
+                                            HomeScreen.discover,
+                                          ),
+                                          _barRow(
+                                            context,
+                                            screenModel,
+                                            LineIcons.dumbbell,
+                                            "Dashboard",
+                                            HomeScreen.overview,
+                                          ),
+                                          _barRow(
+                                            context,
+                                            screenModel,
+                                            LineIcons.lightbulb,
+                                            "Insights",
+                                            HomeScreen.insights,
+                                          ),
+                                          _barRow(
+                                            context,
+                                            screenModel,
+                                            LineIcons.pieChart,
+                                            "Logs",
+                                            HomeScreen.logs,
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
-                                ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          AnimatedPositioned(
+                            duration: const Duration(milliseconds: 500),
+                            curve: Sprung.overDamped,
+                            left: _getPositionValue(
+                                    Provider.of<ScreenModel>(context)) *
+                                _tabWidth,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 4),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(26),
+                                ),
+                                height: _tabHeight,
+                                width: _tabWidth,
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
 
                       // Animated gap: when the red widget is active, add a gap.
@@ -340,9 +358,8 @@ class _HomeState extends State<Home> {
         child: Center(
           child: Icon(
             icon,
-            color: screenModel.screen == screen
-                ? Theme.of(context).colorScheme.onPrimary
-                : null,
+            size: 30,
+            color: Colors.black,
           ),
         ),
       ),

@@ -726,10 +726,10 @@ class _ModalWidgetState extends State<_ModalWidget>
                                         color: AppColors.cell(context),
                                         shape: BoxShape.circle,
                                       ),
-                                      padding: EdgeInsets.all(4),
+                                      padding: EdgeInsets.all(8),
                                       child: const Icon(
                                         Icons.close_rounded,
-                                        size: 20,
+                                        size: 28,
                                       ),
                                     ),
                                   ),

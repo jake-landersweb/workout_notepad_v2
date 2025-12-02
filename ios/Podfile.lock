@@ -1,14 +1,18 @@
 PODS:
-  - AppAuth (1.7.6):
-    - AppAuth/Core (= 1.7.6)
-    - AppAuth/ExternalUserAgent (= 1.7.6)
-  - AppAuth/Core (1.7.6)
-  - AppAuth/ExternalUserAgent (1.7.6):
+  - AppAuth (2.0.0):
+    - AppAuth/Core (= 2.0.0)
+    - AppAuth/ExternalUserAgent (= 2.0.0)
+  - AppAuth/Core (2.0.0)
+  - AppAuth/ExternalUserAgent (2.0.0):
     - AppAuth/Core
+  - AppCheckCore (11.2.0):
+    - GoogleUtilities/Environment (~> 8.0)
+    - GoogleUtilities/UserDefaults (~> 8.0)
+    - PromisesObjC (~> 2.4)
   - connectivity_plus (0.0.1):
     - Flutter
   - Flutter (1.0.0)
-  - flutter_custom_tabs_ios (2.0.0):
+  - flutter_custom_tabs_ios (2.4.0):
     - Flutter
   - flutter_image_compress_common (1.0.0):
     - Flutter
@@ -16,17 +20,26 @@ PODS:
     - SDWebImage
     - SDWebImageWebPCoder
   - google_sign_in_ios (0.0.1):
-    - AppAuth (>= 1.7.4)
     - Flutter
     - FlutterMacOS
-    - GoogleSignIn (~> 7.1)
+    - GoogleSignIn (~> 9.0)
     - GTMSessionFetcher (>= 3.4.0)
-  - GoogleSignIn (7.1.0):
-    - AppAuth (< 2.0, >= 1.7.3)
-    - GTMAppAuth (< 5.0, >= 4.1.1)
+  - GoogleSignIn (9.0.0):
+    - AppAuth (~> 2.0)
+    - AppCheckCore (~> 11.0)
+    - GTMAppAuth (~> 5.0)
     - GTMSessionFetcher/Core (~> 3.3)
-  - GTMAppAuth (4.1.1):
-    - AppAuth/Core (~> 1.7)
+  - GoogleUtilities/Environment (8.1.0):
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/Logger (8.1.0):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Privacy
+  - GoogleUtilities/Privacy (8.1.0)
+  - GoogleUtilities/UserDefaults (8.1.0):
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Privacy
+  - GTMAppAuth (5.0.0):
+    - AppAuth/Core (~> 2.0)
     - GTMSessionFetcher/Core (< 4.0, >= 3.3)
   - GTMSessionFetcher (3.5.0):
     - GTMSessionFetcher/Full (= 3.5.0)
@@ -62,23 +75,24 @@ PODS:
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - purchases_flutter (8.6.0):
+  - PromisesObjC (2.4.0)
+  - purchases_flutter (9.6.2):
     - Flutter
-    - PurchasesHybridCommon (= 13.21.0)
-  - purchases_ui_flutter (8.6.0):
+    - PurchasesHybridCommon (= 17.7.0)
+  - purchases_ui_flutter (9.6.2):
     - Flutter
-    - PurchasesHybridCommonUI (= 13.21.0)
-  - PurchasesHybridCommon (13.21.0):
-    - RevenueCat (= 5.18.0)
-  - PurchasesHybridCommonUI (13.21.0):
-    - PurchasesHybridCommon (= 13.21.0)
-    - RevenueCatUI (= 5.18.0)
-  - RevenueCat (5.18.0)
-  - RevenueCatUI (5.18.0):
-    - RevenueCat (= 5.18.0)
-  - SDWebImage (5.21.0):
-    - SDWebImage/Core (= 5.21.0)
-  - SDWebImage/Core (5.21.0)
+    - PurchasesHybridCommonUI (= 17.7.0)
+  - PurchasesHybridCommon (17.7.0):
+    - RevenueCat (= 5.39.0)
+  - PurchasesHybridCommonUI (17.7.0):
+    - PurchasesHybridCommon (= 17.7.0)
+    - RevenueCatUI (= 5.39.0)
+  - RevenueCat (5.39.0)
+  - RevenueCatUI (5.39.0):
+    - RevenueCat (= 5.39.0)
+  - SDWebImage (5.21.2):
+    - SDWebImage/Core (= 5.21.2)
+  - SDWebImage/Core (5.21.2)
   - SDWebImageWebPCoder (0.14.6):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.17)
@@ -122,11 +136,14 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - AppAuth
+    - AppCheckCore
     - GoogleSignIn
+    - GoogleUtilities
     - GTMAppAuth
     - GTMSessionFetcher
     - libwebp
     - Mantle
+    - PromisesObjC
     - PurchasesHybridCommon
     - PurchasesHybridCommonUI
     - RevenueCat
@@ -175,30 +192,33 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/video_player_avfoundation/darwin"
 
 SPEC CHECKSUMS:
-  AppAuth: d4f13a8fe0baf391b2108511793e4b479691fb73
+  AppAuth: 1c1a8afa7e12f2ec3a294d9882dfa5ab7d3cb063
+  AppCheckCore: cc8fd0a3a230ddd401f326489c99990b013f0c4f
   connectivity_plus: cb623214f4e1f6ef8fe7403d580fdad517d2f7dd
-  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  flutter_custom_tabs_ios: dd647919edd75e82ba6b00009eb3460a28c011b8
+  Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
+  flutter_custom_tabs_ios: 87333f36c33a5971502766aca2f6ff4823b09bda
   flutter_image_compress_common: 1697a328fd72bfb335507c6bca1a65fa5ad87df1
-  google_sign_in_ios: 19297361f2c51d7d8ac0201b866ef1fa5d1f94a8
-  GoogleSignIn: d4281ab6cf21542b1cfaff85c191f230b399d2db
-  GTMAppAuth: f69bd07d68cd3b766125f7e072c45d7340dea0de
+  google_sign_in_ios: 205742c688aea0e64db9da03c33121694a365109
+  GoogleSignIn: c7f09cfbc85a1abf69187be091997c317cc33b77
+  GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
+  GTMAppAuth: 217a876b249c3c585a54fd6f73e6b58c4f5c4238
   GTMSessionFetcher: 5aea5ba6bd522a239e236100971f10cb71b96ab6
   image_picker_ios: 7fe1ff8e34c1790d6fff70a32484959f563a928a
-  in_app_purchase_storekit: d1a48cb0f8b29dbf5f85f782f5dd79b21b90a5e6
-  in_app_review: 5596fe56fab799e8edb3561c03d053363ab13457
+  in_app_purchase_storekit: 22cca7d08eebca9babdf4d07d0baccb73325d3c8
+  in_app_review: 7dd1ea365263f834b8464673f9df72c80c17c937
   integration_test: 4a889634ef21a45d28d50d622cf412dc6d9f586e
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
   Mantle: c5aa8794a29a022dfbbfc9799af95f477a69b62d
   package_info_plus: af8e2ca6888548050f16fa2f1938db7b5a5df499
   path_provider_foundation: 080d55be775b7414fd5a5ef3ac137b97b097e564
-  purchases_flutter: cbcf97969b7bf0f1db71d802f4e682bb851f0576
-  purchases_ui_flutter: 1fd9285b377fc04d7e69cd778d940a0f735624d4
-  PurchasesHybridCommon: 9691d74a051f30858360d78936d59dc14575014e
-  PurchasesHybridCommonUI: 19a14aea9521c58814d2fba56f584ec58363c12c
-  RevenueCat: e825836f5d6baa870c53d7281be25a5fd91abd91
-  RevenueCatUI: f52648672be46e692955aab397a4a491f8aa196f
-  SDWebImage: f84b0feeb08d2d11e6a9b843cb06d75ebf5b8868
+  PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
+  purchases_flutter: 6b62051d2bc7e2a977c7cd52c18a6281c4641361
+  purchases_ui_flutter: 3e139566b11b2358da8b1e8d618753613c54d527
+  PurchasesHybridCommon: 6bc96162fb0c061e1980f474be618c088cfd1428
+  PurchasesHybridCommonUI: 6026c0e1583deb09e9eac4250592562fbf966ec3
+  RevenueCat: 4743a5eee0004e1c03eabeb3498818f902a5d622
+  RevenueCatUI: d7ead994884d8eaa23efaf9a0e13a7757af2c3f7
+  SDWebImage: 9f177d83116802728e122410fb25ad88f5c7608a
   SDWebImageWebPCoder: e38c0a70396191361d60c092933e22c20d5b1380
   share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a
   shared_preferences_foundation: 9e1978ff2562383bd5676f64ec4e9aa8fa06a6f7

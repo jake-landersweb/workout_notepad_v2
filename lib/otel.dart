@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:opentelemetry/api.dart';
@@ -36,10 +37,18 @@ class GlobalTelemetry {
                 CollectorExporter(
                   Uri.parse('$OTEL_BACKEND_HOST/v1/traces'),
                   headers: {
-                    "x-api-key": OTEL_BACKEND_API_KEY,
+                    "Authorization": 'Basic $OTEL_BACKEND_API_KEY',
                   },
                 ),
               ),
+        BatchSpanProcessor(
+          CollectorExporter(
+            Uri.parse('$OTEL_BACKEND_HOST/v1/traces'),
+            headers: {
+              "Authorization": 'Basic $OTEL_BACKEND_API_KEY',
+            },
+          ),
+        ),
       ],
       resource: Resource([
         Attribute.fromString("service_name", OTEL_INSTRUMENTATION_NAME),
